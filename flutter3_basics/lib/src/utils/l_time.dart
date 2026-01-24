@@ -68,3 +68,18 @@ class LTime {
 
 @callPoint
 LTime get lTime => LTime.def;
+
+/// 测量一个异步方法的耗时时长
+/// @return 返回耗时的毫秒数ms
+Future<int> measureTime(Future Function() callback) async {
+  final start = DateTime.now();
+  try {
+    await callback();
+  } catch (e) {
+    //print(e);
+    l.e(e);
+  }
+  final end = DateTime.now();
+  //l.d("耗时:${end.difference(start).inMilliseconds}ms");
+  return end.difference(start).inMilliseconds;
+}

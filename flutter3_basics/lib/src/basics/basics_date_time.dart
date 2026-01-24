@@ -156,4 +156,10 @@ extension TimeEx on int {
   }) {
     return toPatternTime(pattern: pattern, unit: unit, is24Hour: is24Hour);
   }
+
+  /// ms转换成耗时的日志时间
+  String get logTime => toPatternTime(
+    pattern: const [0, 0, 0, 0, 0],
+    unit: const ["ms", "s", "m", "h", "d"],
+  );
 }

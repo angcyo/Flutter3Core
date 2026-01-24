@@ -12,12 +12,16 @@ extension MatUiImageEx on UiImage {
   Future<cv.Mat> get cvMat async => await toMatAsync();
 
   /// 获取灰度颜色对应的[cv.Mat]
+  /// - 输出[cv.MatType.CV_8UC1]
   Future<cv.Mat> get cvGrayMat async =>
       await toMatAsync(flags: cv.IMREAD_GRAYSCALE);
 
+  Future<(double, cv.Mat)> get cvOtsuMatPair async =>
+      cv.threshold(await cvGrayMat, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU);
+
   /// 使用otsu自动阈值，获取二值化图片对应的[cv.Mat]
-  Future<cv.Mat> get cvOtsuMat async =>
-      cv.threshold(await cvMat, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU).$2;
+  /// - 入参[cv.MatType.CV_8UC1]
+  Future<cv.Mat> get cvOtsuMat async => (await cvOtsuMatPair).$2;
 
   /// 自适应二值化
   Future<cv.Mat> get cvAdaptiveMat async =>
