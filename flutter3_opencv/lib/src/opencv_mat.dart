@@ -114,16 +114,22 @@ extension MatEx on cv.Mat {
     final thresh = 10.0; //透明阈值, 灰度<此值视为透明颜色
     if (channels == 1) {
       final gray = this;
-      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
+      final alpha = cv
+          .threshold(gray, thresh, 255, cv.THRESH_BINARY)
+          .$2;
       return cv.merge(cv.VecMat.fromList([gray, gray, gray, alpha]));
     } else if (channels == 3) {
       final gray = cv.cvtColor(this, cv.COLOR_BGR2GRAY);
-      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
+      final alpha = cv
+          .threshold(gray, thresh, 255, cv.THRESH_BINARY)
+          .$2;
       final bgr = cv.split(this);
       return cv.merge(cv.VecMat.fromList([bgr[0], bgr[1], bgr[2], alpha]));
     } else if (channels == 4) {
       final gray = cv.cvtColor(this, cv.COLOR_BGRA2GRAY);
-      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
+      final alpha = cv
+          .threshold(gray, thresh, 255, cv.THRESH_BINARY)
+          .$2;
       final bgr = cv.split(this);
       return cv.merge(cv.VecMat.fromList([bgr[0], bgr[1], bgr[2], alpha]));
     }
@@ -133,7 +139,9 @@ extension MatEx on cv.Mat {
   /// 将灰度图进行二值化处理
   /// - [thresh] 阈值>这个值的灰度值会被设置为255
   cv.Mat cvThreshold({double thresh = 10}) =>
-      cv.threshold(this, thresh, 255, cv.THRESH_BINARY).$2;
+      cv
+          .threshold(this, thresh, 255, cv.THRESH_BINARY)
+          .$2;
 
   /// 将矩阵转换成字符串
   String flattenString() {
@@ -189,5 +197,86 @@ extension MatEx on cv.Mat {
     final ret = <List<int>>[];
     forEachRow((r, v) => ret.add(v.map((e) => e.round()).toList()));
     return ret;
+  }
+
+  //MARK: - other
+
+  /// # 几何变换 (Geometric Transformations)
+  /// 原理：通过坐标映射改变像素位置。分为仿射变换（平行性不变）和透视变换（直线投影不变）。
+  /// - [cv.resize]
+  /// - [cv.warpAffine] 仿射变换（旋转、平移、缩放）。
+  /// - [cv.getRotationMatrix2D]
+  /// - [cv.warpPerspective] 透视变换（矫正倾斜的文档）。
+  /// - [cv.remap]
+  ///
+  /// # 图像滤波与平滑 (Image Filtering)
+  /// 原理：通过滑动窗口（Kernel/核）与图像进行卷积运算，达到去噪、模糊或锐化效果。
+  /// - [cv.filter2D] 自定义卷积核进行线性滤波。
+  /// - [cv.gaussianBlur] 高斯滤波，基于正态分布权重，适合滤除高斯噪声。
+  ///   - [cv.BORDER_CONSTANT]: 填固定值（如黑边）。
+  ///   - [cv.BORDER_REFLECT]: 镜像反射（例如 abcde | edcba）。
+  ///   - [cv.BORDER_REPLICATE]: 复制边缘（例如 aaaaa | abcde）。
+  /// - [cv.medianBlur] 中值滤波，取窗口中位数，对椒盐噪声效果极佳。
+  /// - [cv.bilateralFilter] 双边滤波，考虑空间距离和像素差值，能在平滑图像的同时保留边缘。
+  ///
+  /// # 边缘检测与图像梯度 (Image Gradients & Edge Detection)
+  /// 原理：计算图像一阶或二阶导数，捕捉像素值剧烈变化的区域。
+  /// - [cv.sobel] 计算水平或垂直梯度（基于 Sobel 算子）。
+  /// - [cv.laplacian] 二阶导数，对图像细节非常敏感。
+  /// - [cv.canny] 目前最主流的边缘检测算法，包含高斯滤波、梯度计算、非极大值抑制和双阈值滞后处理。
+  ///
+  /// # 形态学操作 (Morphological Operations)
+  /// 原理：基于集合论，通过结构元素（Kernel）在图像上移动，常用于二值图像。
+  /// - [cv.erode] 腐蚀（减小高亮区域，消除细小噪点）。
+  /// - [cv.dilate] 膨胀（扩大高亮区域，连接断裂部分）。
+  /// - [cv.morphologyEx] 高级操作，如 开运算（先腐蚀后膨胀，去伪影）和 闭运算（先膨胀后腐蚀，填补空洞）。
+  ///
+  /// # 直方图处理 (Histogram Processing)
+  /// 原理：分析图像像素强度分布，进行对比度增强。
+  /// - [cv.calcHist] 计算图像直方图。
+  /// - [cv.equalizeHist] 直方图均衡化（全局增强对比度）。
+  /// - [cv.createCLAHE] 限制对比度的自适应直方图均衡化（局部增强，避免噪声过度放大）。
+  ///
+  /// # 轮廓与形状分析 (Contours & Shape Analysis)
+  /// 原理：基于拓扑结构提取闭合边界。
+  /// - [cv.findContours] 提取轮廓。
+  /// - [cv.drawContours] 绘制轮廓。
+  /// - [cv.boundingRect] 计算外接矩形。
+  /// - [cv.arcLength].[cv.contourArea] 计算周长与面积。
+  /// - [cv.approxPolyDP] 多边形拟合，用于形状简化。
+  ///
+  /// # 霍夫变换 (Hough Transforms)
+  /// 原理：将图像空间转换到参数空间，通过累加器投票检测几何图形。
+  void _other() {
+    //cv.resize(src, dsize)
+    //cv.warpAffine(src, dsize)
+    //cv.getRotationMatrix2D(src, dsize)
+    //cv.warpPerspective(src, dsize)
+
+    //cv.filter2D()
+    //cv.gaussianBlur()
+    //cv.medianBlur()
+    //cv.bilateralFilter()
+
+    //cv.sobel()
+    //cv.laplacian()
+    //cv.canny(image, threshold1, threshold2)
+
+    //cv.erode()
+    //cv.dilate()
+    //cv.morphologyEx()
+
+    //cv.calcHist()
+    //cv.equalizeHist()
+    //cv.createCLAHE()
+
+    //cv.findContours()
+    //cv.drawContours()
+    //cv.boundingRect()
+    //cv.arcLength()
+    //cv.contourArea()
+    //cv.approxPolyDP()
+
+    //cv.findHomographyUsac(srcPoints, dstPoints, params)
   }
 }

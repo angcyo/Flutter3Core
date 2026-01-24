@@ -13,6 +13,11 @@ extension MatUiImageEx on UiImage {
 
   /// 获取灰度颜色对应的[cv.Mat]
   /// - 输出[cv.MatType.CV_8UC1]
+  ///
+  /// ```
+  /// # 加权平均法计算亮度
+  /// $Y = 0.299R + 0.587G + 0.114B$。
+  /// ```
   Future<cv.Mat> get cvGrayMat async =>
       await toMatAsync(flags: cv.IMREAD_GRAYSCALE);
 
