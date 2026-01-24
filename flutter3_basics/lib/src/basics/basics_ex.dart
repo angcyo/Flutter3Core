@@ -2282,6 +2282,12 @@ extension NumEx on num {
 }
 
 extension IntEx on int {
+  /// 保证是奇数
+  int get odd => this % 2 == 1 ? this : this + 1;
+
+  /// 保证是偶数
+  int get even => this % 2 == 0 ? this : this - 1;
+
   /// 取2个数的最大值
   int maxOf(int other) => math.max(this, other);
 

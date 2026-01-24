@@ -22,9 +22,7 @@ extension MatXimgprocEx on cv.Mat {
     cv.Mat temp;
     cv.Mat skel = cv.Mat.zeros(img.rows, img.cols, cv.MatType.CV_8UC1);
     // 定义 3x3 结构元素
-    if (kSize % 2 == 0) {
-      kSize++;
-    }
+    kSize = kSize.odd;
     final kernel = cv.getStructuringElement(cv.MORPH_CROSS, (kSize, kSize));
     bool done = false;
     while (!done) {
@@ -40,5 +38,38 @@ extension MatXimgprocEx on cv.Mat {
       if (cv.countNonZero(img) == 0) done = true;
     }
     return skel.uiImage;
+  }
+
+  //MARK: - morphology 形态学
+
+  /// 腐蚀
+  /// - [cv.erode] 侵蚀操作
+  /// - 腐蚀 (Erosion): 核在图像上滑动，只有当核覆盖的所有像素都是 1 时，中心像素才保持 1。效果是“收缩”白色区域，去除细小的噪声。
+  /// - 如果结构元素内的像素全部为 1，则中心点保留为 1，否则为 0。
+  Future<UiImage?> erode({int kSize = 3}) {
+    cv.Mat img = this;
+    kSize = kSize.odd;
+    final kernel = cv.getStructuringElement(cv.MORPH_CROSS, (kSize, kSize));
+    return cv.erode(img, kernel).uiImage;
+  }
+
+  /// 膨胀
+  /// - [cv.dilate] 膨胀操作
+  /// - 膨胀 (Dilation): 核在图像上滑动，只要核覆盖范围内有一个像素是 1，中心像素就变为 1。效果是“扩张”白色区域，填充小孔洞。
+  /// - 如果结构元素内只要有一个像素为 1，则中心点变为 1。
+  Future<UiImage?> dilate({int kSize = 3}) {
+    cv.Mat img = this;
+    kSize = kSize.odd;
+    final kernel = cv.getStructuringElement(cv.MORPH_CROSS, (kSize, kSize));
+    return cv.dilate(img, kernel).uiImage;
+  }
+
+  /// 学习不同的形态学操作，如侵蚀，膨胀，开放，关闭等
+  /// [cvMorphologyMat]
+  Future<UiImage?> morphology({int operation = cv.MORPH_OPEN, int kSize = 3}) {
+    cv.Mat img = this;
+    kSize = kSize.odd;
+    final kernel = cv.getStructuringElement(cv.MORPH_CROSS, (kSize, kSize));
+    return cvMorphologyMat(img, kernel, operation: operation).uiImage;
   }
 }

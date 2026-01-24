@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -16,6 +15,21 @@ part 'src/opencv_mat.dart';
 part 'src/opencv_mat_image.dart';
 part 'src/opencv_ximgproc.dart';
 part 'src/widgets/histogram_widget.dart';
+
+/// 先腐蚀，后膨胀. 去噪：消除亮点、断开细长的连接。
+const int cvMorphOpen = cv.MORPH_OPEN;
+
+/// 先膨胀，后腐蚀. 填洞：填充黑色小孔，连接断开的物体。
+const int cvMorphClose = cv.MORPH_CLOSE;
+
+/// 膨胀图 - 腐蚀图. 提取轮廓：获得物体的边缘。
+const int cvMorphGradient = cv.MORPH_GRADIENT;
+
+/// 原图 - 开运算图. 背景补光：提取比背景亮的细节（如光照不均时的文字）。
+const int cvMorphTopHat = cv.MORPH_TOPHAT;
+
+/// 闭运算图 - 原图. 闭运算差值：提取比背景暗的细节。
+const int cvMorphBlackHat = cv.MORPH_BLACKHAT;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>

@@ -78,9 +78,7 @@ extension MatImageEx on cv.Mat {
   /// - 容易产生块状感
   Future<UiImage?> medianBlur({int kSize = 5 /*卷积核的大小, 影响性能, 必须要是基数*/}) async {
     final mat = this;
-    if (kSize % 2 == 0) {
-      kSize += 1;
-    }
+    kSize = kSize.odd;
     return cv.medianBlur(mat, kSize).uiImage;
   }
 
@@ -93,9 +91,7 @@ extension MatImageEx on cv.Mat {
     double sigmaX = kSigma /*高斯核的sigma值, 影响性能*/,
   }) async {
     final mat = this;
-    if (kSize % 2 == 0) {
-      kSize += 1;
-    }
+    kSize = kSize.odd;
     return cv.gaussianBlur(mat, (kSize, kSize), sigmaX).uiImage;
   }
 
