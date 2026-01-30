@@ -61,6 +61,7 @@ export 'src/widgets/simple_app.dart';
 
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
+part 'src/basics/basics_async.dart';
 part 'src/basics/basics_breakpoints.dart';
 part 'src/basics/basics_crypto.dart';
 part 'src/basics/basics_date_time.dart';
