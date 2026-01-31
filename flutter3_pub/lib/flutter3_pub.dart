@@ -31,6 +31,8 @@ export 'package:photo_view/photo_view.dart';
 export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
 
+export 'src/http/cmse_api.dart';
+export 'src/http/cmse_widget.dart';
 export 'src/http/idiom_api.dart';
 export 'src/http/idiom_widget.dart';
 

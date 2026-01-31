@@ -5,17 +5,18 @@ part of '../../flutter3_basics.dart';
 /// @author angcyo
 /// @date 2023/12/08
 ///
-
+/// 分页请求参数
+/// 分页加载信息
 class RequestPage {
   /// 默认一页请求的数量
-  static var PAGE_SIZE = 20;
+  static var kPageSize = 20;
 
   /// 默认第一页的索引
-  static var FIRST_PAGE_INDEX = 1;
+  static var kFirstPageIndex = 1;
 
   /// 请求体中, 默认的header key
-  static var KEY_PAGE_INDEX = "pageNo";
-  static var KEY_PAGE_SIZE = "pageSize";
+  static var kKeyPageIndex = "pageNo";
+  static var kKeyPageSize = "pageSize";
 
   /// 单列表数据, 无加载更多
   static RequestPage createSinglePage() {
@@ -24,13 +25,13 @@ class RequestPage {
 
   /// 网络请求中的header key
   @property
-  var keyPageIndex = KEY_PAGE_INDEX;
+  var keyPageIndex = kKeyPageIndex;
 
   @property
-  var keyPageSize = KEY_PAGE_SIZE;
+  var keyPageSize = kKeyPageSize;
 
   /// 默认的第一页
-  var _firstPageIndex = FIRST_PAGE_INDEX;
+  var _firstPageIndex = kFirstPageIndex;
 
   @property
   int get firstPageIndex => _firstPageIndex;
@@ -49,7 +50,7 @@ class RequestPage {
 
   /// 每页请求的数量
   @property
-  var requestPageSize = PAGE_SIZE;
+  var requestPageSize = kPageSize;
 
   /// 当前请求开始的索引
   int get currentStartIndex =>

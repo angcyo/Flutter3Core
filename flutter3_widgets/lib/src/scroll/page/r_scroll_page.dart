@@ -20,6 +20,13 @@ part of '../../../flutter3_widgets.dart';
 /// [AbsScrollPage] 基础[RScrollView]页面
 /// [RScrollPage]   全功能[RScrollView]页面
 /// [RStatusScrollPage]
+///
+/// ## 分页信息
+///
+/// - [RScrollController.requestPage]
+/// - [resetPage]
+/// - [singlePage]
+///
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 保存最后一次[rebuildByBean]方法创建的更新信号,
   /// 然后在[RItemTileExtension]中消耗此对象
