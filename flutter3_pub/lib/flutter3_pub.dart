@@ -32,10 +32,10 @@ export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
 
 export 'src/http/idiom_api.dart';
+export 'src/http/idiom_widget.dart';
 
 part 'src/archive/zip_ex.dart';
 part 'src/http/html_pub.dart';
-part 'src/http/idiom_widget.dart';
 part 'src/http/markdown_pub.dart';
 part 'src/image_pub.dart';
 part 'src/launcher_pub.dart';

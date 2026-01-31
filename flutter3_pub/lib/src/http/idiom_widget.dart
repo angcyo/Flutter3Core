@@ -1,4 +1,7 @@
-part of '../../flutter3_pub.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter3_core/flutter3_core.dart';
+
+import 'idiom_api.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
