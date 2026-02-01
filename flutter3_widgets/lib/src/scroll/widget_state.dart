@@ -40,7 +40,7 @@ enum WidgetBuildState {
   /// 正常数据状态
   none,
 
-  /// 空数据状态
+  /// 空数据状态/无加载更多了
   empty,
 
   /// 错误状态
@@ -234,6 +234,10 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   @override
   Widget build(BuildContext context) {
     //debugger();
+    assert(() {
+      l.d("[${classHash()}]$_buildState/${widget.widgetState}");
+      return true;
+    }());
     return buildStateWidget(context, _buildState, widget.stateData) ??
         _buildDefaultWidget(context);
   }
@@ -247,6 +251,12 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   void didUpdateWidget(covariant WidgetStateBuildWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateState = null;
+    if (oldWidget.widgetState != widget.widgetState) {
+      assert(() {
+        l.i("[${classHash()}]${oldWidget.widgetState}->${widget.widgetState}");
+        return true;
+      }());
+    }
   }
 }
 

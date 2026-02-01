@@ -49,7 +49,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   @private
   @override
   void loadDataEnd([
-    List? loadData,
+    Iterable? loadData,
     dynamic stateData,
     bool handleData = true,
   ]) {
@@ -77,8 +77,9 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
     bool handleData = true,
   ]) {
     //debugger();
-    StatusInfo? statusInfo =
-        statusInfoList.firstWhereOrNull((element) => element.status == status);
+    StatusInfo? statusInfo = statusInfoList.firstWhereOrNull(
+      (element) => element.status == status,
+    );
     if (statusInfo != null) {
       if (statusInfo == currentStatusInfo) {
         //状态一致, 走默认处理即可
@@ -99,12 +100,12 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
             pageWidgetList.addAll(loadData!.cast<Widget>());
           }
         }
-        statusInfo.loadMoreWidgetState =
-            scrollController.widgetStateIntercept.interceptorWidgetBuildState(
-          statusInfo.requestPage,
-          loadData,
-          stateData,
-        );
+        statusInfo.loadMoreWidgetState = scrollController.widgetStateIntercept
+            .interceptorWidgetBuildState(
+              statusInfo.requestPage,
+              loadData,
+              stateData,
+            );
       }
     }
   }
@@ -143,7 +144,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
       if (isNullOrEmpty(pageWidgetList) ||
           statusInfo.requestPage.isFirstPage && forceLoad) {
         //切换到一个没有数据, 或者第一页的状态时, 需要重新加载数据
-        if (!updateAdapterState(WidgetBuildState.loading) /*情感图会触发刷新回调 */) {
+        if (!updateAdapterState(WidgetBuildState.loading) /*情感图会触发刷新回调 */ ) {
           //可能是相同情感图状态, 则需要手动触发加载数据
           onLoadStatusData(statusInfo.status);
         }
@@ -195,7 +196,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
     switchStatus(currentStatusInfo, forceLoad: oldIsNullOrEmpty);
   }
 
-//endregion 状态控制
+  //endregion 状态控制
 }
 
 /// 当前页面的请求状态信息

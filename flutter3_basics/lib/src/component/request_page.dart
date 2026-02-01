@@ -110,7 +110,7 @@ class RequestPage {
 
   @override
   String toString() {
-    return "首页[$firstPageIndex],请求页[$requestPageIndex],请求数量[$requestPageSize].";
+    return "首页[$firstPageIndex],当前页[$_currentPageIndex],请求页[$requestPageIndex],请求数量[$requestPageSize].";
   }
 
   /// 请求体重中的参数

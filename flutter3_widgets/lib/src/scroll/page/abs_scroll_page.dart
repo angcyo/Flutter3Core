@@ -151,6 +151,7 @@ mixin AbsScrollPage {
         /*physics: null,
           scrollBehavior: null,*/
         /*children: children,*/
+        tag: classHash(),
         updateSignal: pageScrollChildrenUpdateSignal,
         childrenBuilder: (context) => buildChildren(),
       );

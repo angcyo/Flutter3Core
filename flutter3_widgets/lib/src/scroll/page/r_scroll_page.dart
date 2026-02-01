@@ -32,7 +32,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 然后在[RItemTileExtension]中消耗此对象
   static WeakReference<UpdateValueNotifier>? _lastRebuildBeanSignal;
 
-  /// [rebuildByBean]
+  /// - 使用 [rebuildByBean] 创建一个更新信号
+  /// - 使用 [RItemTileExtension] 扩展消耗更新信号
   static UpdateValueNotifier? consumeRebuildBeanSignal() {
     if (_lastRebuildBeanSignal?.target != null) {
       final signal = _lastRebuildBeanSignal?.target;
@@ -47,9 +48,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [RScrollController.buildAdapterStateWidget] 自定义情感图状态
   /// [RScrollController.buildLoadMoreStateWidget] 自定义加载更多状态
   /// [RequestPage]
-  late final RScrollController scrollController = RScrollController()
-    ..isSupportScrollLoadDataCallback = isSelfSupportScrollLoadData
-    ..onLoadDataCallback = onSelfLoadDataWrap;
+  late final RScrollController scrollController =
+      RScrollController(tag: classHash(), debugLabel: null)
+        ..isSupportScrollLoadDataCallback = isSelfSupportScrollLoadData
+        ..onLoadDataCallback = onSelfLoadDataWrap;
 
   /// 首次加载[initState]时, 需要触发的情感图状态
   /// 默认的情感图状态, 同时也会触发对应的事件
@@ -92,8 +94,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [updateAdapterState]
   bool _isPageBuild = false;
 
-  /// [pageRScrollView]->[RScrollView]的更新信号
-  final UpdateValueNotifier _scrollUpdateSignal = createUpdateSignal();
+  /// 在[pageRScrollView]中使用->[RScrollView]小部件的更新信号
+  /// - [updateLoadDataWidget] 刷新界面
+  final UpdateValueNotifier _scrollViewUpdateSignal = createUpdateSignal();
 
   //region 生命周期
 
@@ -209,6 +212,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 加载数据完成后, 调用[loadDataEnd]刷新界面
   ///
   /// - [onSelfLoadDataWrap]
+  /// - [RScrollController.requestPage]
   @overridePoint
   FutureOr onLoadData();
 
@@ -245,19 +249,20 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   ///
   @callPoint
   @updateMark
+  @api
   void loadDataEnd(
-    List? loadData /*支持[WidgetList]*/, [
-    dynamic stateData,
-    bool handleData = true,
+    Iterable? loadData /*支持[WidgetList]*/, [
+    dynamic stateData /*不同的状态, 附加的任意数据*/,
+    bool handleData = true /*是否处理数据*/,
   ]) {
     if (handleData && loadData != null) {
-      if (loadData is WidgetList) {
-        if (scrollController.requestPage.isFirstPage) {
+      if (loadData is Iterable<Widget>) {
+        if (requestPage.isFirstPage) {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData);
       } else if (loadData.firstOrNull is Widget) {
-        if (scrollController.requestPage.isFirstPage) {
+        if (requestPage.isFirstPage) {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData.cast<Widget>());
@@ -272,7 +277,33 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     scrollController.finishRefresh(loadData, stateData);
   }
 
-  /// 首次状态加载
+  /// 处理[onLoadData]加载了的数据
+  /// - [loadDataEnd]
+  /// - [enableRebuild] 是否支持通过[beanList]中的数据动态更新[Widget]
+  ///   - [deleteTile]
+  ///   - [removeTile]
+  ///   - [updateTile]
+  ///   - [updateTileList]
+  ///   - [updateAllTile]
+  @api
+  void loadBeanEnd(
+    Iterable? beanList, [
+    dynamic stateData /*不同的状态, 附加的任意数据*/,
+    WidgetValueIndexBuilder? builder,
+    bool enableRebuild = false,
+  ]) {
+    final widgetList = beanList?.mapIndex((bean, index) {
+      final widget = builder?.call(context, bean, index, null);
+      if (widget != null && enableRebuild) {
+        return rebuildByBean(bean, (ctx, data) => widget);
+      } else {
+        return widget;
+      }
+    }).filterNull();
+    loadDataEnd(widgetList, stateData, true);
+  }
+
+  /// 设置首次的加载状态
   /// [initState]
   @callPoint
   void firstState([WidgetBuildState? state]) {
@@ -309,17 +340,13 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   void updateLoadDataWidget([WidgetList? widgetList]) {
     widgetList ??= pageWidgetList;
     if (pageWidgetList != widgetList) {
-      if (scrollController.requestPage.isFirstPage) {
+      if (requestPage.isFirstPage) {
         pageWidgetList.clear();
       }
       pageWidgetList.addAll(widgetList);
     }
-    _scrollUpdateSignal.update();
+    _scrollViewUpdateSignal.update();
   }
-
-  /// 分页请求参数
-  Map<String, dynamic> pageRequestData() =>
-      scrollController.requestPage.toMap();
 
   //endregion 数据加载
 
@@ -333,11 +360,18 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @configProperty
   bool get enablePageLoadMore => true;
 
+  @output
+  RequestPage get requestPage => scrollController.requestPage;
+
+  /// 分页请求参数
+  @output
+  Map<String, dynamic> pageRequestData() => requestPage.toMap();
+
   /// 重置分页请求信息
   @api
   void resetPage([RequestPage? page]) {
     if (page == null) {
-      scrollController.requestPage.reset();
+      requestPage.reset();
     } else {
       scrollController.requestPage = page;
     }
@@ -346,7 +380,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 简单页面请求, 只有一页数据
   @api
   void singlePage() {
-    scrollController.requestPage.singlePage();
+    requestPage.singlePage();
   }
 
   /// 显示下拉刷新
@@ -404,13 +438,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }) {
     //debugger();
     _isPageBuild = true;
-    return rebuild(_scrollUpdateSignal, (context, value) {
-      scrollController.scrollViewUpdateSignal = _scrollUpdateSignal;
+    return rebuild(_scrollViewUpdateSignal, (context, value) {
+      scrollController.scrollViewUpdateSignal = _scrollViewUpdateSignal;
       //debugger();
       return RScrollView(
         controller: scrollController,
-        enableRefresh: enableRefresh ?? this.enablePageRefresh,
-        enableLoadMore: enableLoadMore ?? this.enablePageLoadMore,
+        tag: classHash(),
+        enableRefresh: enableRefresh ?? enablePageRefresh,
+        enableLoadMore: enableLoadMore ?? enablePageLoadMore,
         children: wrapScrollChildren(children ?? pageWidgetList),
       );
     });
@@ -491,8 +526,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   /// 更新所有tile
-  /// [updateTile]
-  /// [rebuildTile]
+  /// - [updateTile]
+  /// - [rebuildTile]
   @api
   void updateAllTile() {
     rebuildTile((tile, signal) {
@@ -530,7 +565,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     }
   }
 
-  /// [deleteTile]
+  /// - [deleteTile]
+  /// - [removeTile]
   @api
   void removeTile(dynamic value) {
     deleteTile((tile, signal) {
@@ -540,7 +576,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   /// 在[pageWidgetList]中移除所有[RItemTile.updateSignal]满足条件的value
-  /// [updateTile]
+  /// - [updateTile]
+  /// - [deleteTile]
+  /// - [removeTile]
   ///
   /// [pageWidgetList]
   @api
@@ -572,7 +610,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     }
     if (removeList.isNotEmpty) {
       pageWidgetList.removeAll(removeList);
-      _scrollUpdateSignal.update();
+      _scrollViewUpdateSignal.update();
 
       if (pageWidgetList.isEmpty) {
         //显示空页面

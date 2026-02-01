@@ -323,10 +323,10 @@ class L {
     debugger(when: debugLabel != null);
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
-    final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}] ' : '';
-    final msgType = object?.runtimeType == null
+    final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}]' : '';
+    final msgType = object?.runtimeType == null || object?.runtimeType == String
         ? ''
-        : '[${object?.runtimeType}]';
+        : '[${object?.runtimeType}] ';
     final msg = object?.toString() ?? 'null';
 
     //获取当前调用方法的文件名和行数
@@ -348,7 +348,7 @@ class L {
     final methodName = methodNameList.get(-2);
     //debugger();
     final log =
-        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}] $tagStr$levelStr->$msgType $msg';
+        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}]$tagStr$levelStr->$msgType$msg';
 
     //MARK: - log panel
     final controller =

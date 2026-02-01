@@ -44,6 +44,8 @@ class RScrollView extends StatefulWidget {
     this.enableFrameLoad = false,
     this.frameSplitCount = 1,
     this.frameSplitDuration = const Duration(milliseconds: 16),
+    this.tag,
+    this.debugLabel,
   });
 
   //--
@@ -142,6 +144,11 @@ class RScrollView extends StatefulWidget {
 
   //endregion 分帧加载属性
 
+  //MARK: - tag
+
+  final String? tag;
+  final String? debugLabel;
+
   @override
   State<RScrollView> createState() => _RScrollViewState();
 }
@@ -158,6 +165,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
     WidgetList? children,
     bool? useFrameLoad,
   }) {
+    //debugger();
     children ??= widget.childrenBuilder?.call(context) ?? widget.children ?? [];
 
     //debugger();
@@ -174,14 +182,25 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
                 children.length >= controller.requestPage.requestPageSize) ||
             (callback != null && callback())) {
           //show load more
-          loadMoreWidget = controller.buildLoadMoreStateWidget.call(context,
-              controller.loadMoreStateValue.value, controller._widgetStateData);
+          loadMoreWidget = controller.buildLoadMoreStateWidget.call(
+            context,
+            controller.loadMoreStateValue.value,
+            controller._widgetStateData,
+          );
         }
       }
       if (loadMoreWidget != null) {
         result.addAll(_transformTileList(context, [loadMoreWidget]));
       }
     }
+
+    assert(() {
+      l.d(
+        "[${widget.tag ?? widget.debugLabel}][${classHash()}]转换:${children?.length}[${children?.firstOrNull?.runtimeType}...]"
+        "->${result.size()}[${result.firstOrNull?.runtimeType}...]",
+      );
+      return true;
+    }());
 
     //result
     if (useFrameLoad == true) {
@@ -251,7 +270,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
               controller.adapterStateValue.value,
               controller._widgetStateData,
             )
-            .rFill()
+            .rFill(),
       ]);
     }
     Widget result = CustomScrollView(
@@ -276,10 +295,7 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
       result = widget.controller?.wrapRefreshWidget(context, result) ?? result;
     }
     if (widget.showScrollbar) {
-      result = Scrollbar(
-        controller: widget.controller,
-        child: result,
-      );
+      result = Scrollbar(controller: widget.controller, child: result);
     }
     return result;
   }
@@ -295,11 +311,17 @@ extension RScrollViewEx on WidgetNullList {
     ChildrenBuilder? childrenBuilder,
     Listenable? updateSignal,
     bool shrinkWrap = false,
+    //--
+    String? tag,
+    String? debugLabel,
   }) {
     return RScrollView(
+      tag: tag,
+      debugLabel: debugLabel,
       controller: controller,
       scrollDirection: axis,
-      scrollBehavior: scrollBehavior ??
+      scrollBehavior:
+          scrollBehavior ??
           (physics == null ? null : const MaterialScrollBehavior()),
       physics: physics,
       childrenBuilder: childrenBuilder,
