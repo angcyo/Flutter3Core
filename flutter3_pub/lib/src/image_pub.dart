@@ -51,12 +51,13 @@ extension ImagePubEx on String {
   ImageProvider toImageProvider() => isHttpUrl
       ? toCacheNetworkImageProvider()
       : (isLocalUrl || isFilePath
-          ? toFileImageProvider()
-          : toAssetImageProvider()) as ImageProvider;
+                ? toFileImageProvider()
+                : toAssetImageProvider())
+            as ImageProvider;
 
   /// 根据类型, 自动转换成对应的图片小部件
-  /// 支持http/file
-  /// 支持svg/image
+  /// - 支持http/file
+  /// - 支持svg/image
   /// [toImageProvider]
   /// [ImagePubEx.toImageWidget]
   /// [ImageMetaEx.toImageWidget]
@@ -129,9 +130,9 @@ extension ImagePubEx on String {
             width: size ?? width,
             height: size ?? height,
             color: tintColor,
-            errorBuilder: (context, error, stackTrace) =>
-                GlobalConfig.of(context)
-                    .errorPlaceholderBuilder(context, error),
+            errorBuilder: (context, error, stackTrace) => GlobalConfig.of(
+              context,
+            ).errorPlaceholderBuilder(context, error),
           );
         } else if (!isNil(this)) {
           return Image.asset(
@@ -142,9 +143,9 @@ extension ImagePubEx on String {
             width: size ?? width,
             height: size ?? height,
             color: tintColor,
-            errorBuilder: (context, error, stackTrace) =>
-                GlobalConfig.of(context)
-                    .errorPlaceholderBuilder(context, error),
+            errorBuilder: (context, error, stackTrace) => GlobalConfig.of(
+              context,
+            ).errorPlaceholderBuilder(context, error),
           );
         }
       }
@@ -160,6 +161,21 @@ extension ImagePubEx on String {
   }
 
   /// 网络图片提供器
+  ///
+  /// ```
+  /// CachedNetworkImageProvider(
+  ///   imageUrl,
+  ///   headers: httpHeaders,
+  ///   cacheManager: cacheManager,
+  ///   cacheKey: cacheKey,
+  ///   imageRenderMethodForWeb: imageRenderMethodForWeb,
+  ///   maxWidth: maxWidthDiskCache,
+  ///   maxHeight: maxHeightDiskCache,
+  ///   errorListener: errorListener,
+  ///   scale: scale,
+  ///  )
+  /// ```
+  ///
   /// [ImageProvider]
   /// [toNetworkImageWidget]
   CachedNetworkImageProvider toCacheNetworkImageProvider() =>
@@ -175,10 +191,7 @@ extension ImagePubEx on String {
 
   /// Asset图片提供器
   /// [AssetImage]
-  AssetImage toAssetImageProvider({
-    AssetBundle? bundle,
-    String? package,
-  }) =>
+  AssetImage toAssetImageProvider({AssetBundle? bundle, String? package}) =>
       AssetImage(this, bundle: bundle, package: package);
 
   /// [toFileImageProvider]
@@ -186,9 +199,9 @@ extension ImagePubEx on String {
   NetworkImage toNetworkImageProvider({
     double scale = 1,
     Map<String, String>? headers,
-  }) =>
-      NetworkImage(this, scale: scale, headers: headers);
+  }) => NetworkImage(this, scale: scale, headers: headers);
 
+  /// 仅支持加载网络图片, 可以使用更强的[toImageWidget]扩展
   /// [loadAssetImageWidget]
   /// [placeholder].[progressIndicatorBuilder] 只能设置一个
   /// [usePlaceholder] 是否使用默认的占位图, 否则使用进度指示器
@@ -218,14 +231,19 @@ extension ImagePubEx on String {
         color: tintColor,
         placeholder: needPlaceholder
             ? placeholder ??
-                (context, url) => GlobalConfig.of(context)
-                    .imagePlaceholderBuilder(context, url)
+                  (context, url) => GlobalConfig.of(
+                    context,
+                  ).imagePlaceholderBuilder(context, url)
             : null,
         progressIndicatorBuilder: needPlaceholder
             ? null
-            : (context, url, downloadProgress) => GlobalConfig.of(context)
-                .loadingIndicatorBuilder(
-                    context, url, downloadProgress.progress, null),
+            : (context, url, downloadProgress) =>
+                  GlobalConfig.of(context).loadingIndicatorBuilder(
+                    context,
+                    url,
+                    downloadProgress.progress,
+                    null,
+                  ),
         errorWidget: (context, url, error) =>
             GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
       );
@@ -240,21 +258,23 @@ extension ImagePubEx on String {
         color: tintColor,
         placeholderBuilder: needPlaceholder
             ? (context) => placeholder == null
-                ? GlobalConfig.of(context).imagePlaceholderBuilder(context, url)
-                : placeholder(context, url)
+                  ? GlobalConfig.of(
+                      context,
+                    ).imagePlaceholderBuilder(context, url)
+                  : placeholder(context, url)
             : null,
         progressIndicatorBuilder: needPlaceholder
             ? null
             : (context, progress) =>
-                GlobalConfig.of(context).loadingIndicatorBuilder(
-                  context,
-                  this,
-                  (progress == null || progress.expectedTotalBytes == null)
-                      ? null
-                      : progress.cumulativeBytesLoaded /
-                          progress.expectedTotalBytes!,
-                  null,
-                ),
+                  GlobalConfig.of(context).loadingIndicatorBuilder(
+                    context,
+                    this,
+                    (progress == null || progress.expectedTotalBytes == null)
+                        ? null
+                        : progress.cumulativeBytesLoaded /
+                              progress.expectedTotalBytes!,
+                    null,
+                  ),
         errorBuilder: (context, url, error) =>
             GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
       );
