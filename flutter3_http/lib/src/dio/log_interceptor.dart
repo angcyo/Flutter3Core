@@ -245,3 +245,10 @@ class LogFileInterceptor extends Interceptor {
     }
   }
 }
+
+/// 禁用请求日志
+@output
+const Map<String, bool> noRequestLogMap = {
+  LogFileInterceptor.kNoRequestLogPrintKey: true,
+  LogFileInterceptor.kNoResponseLogPrintKey: true,
+};
