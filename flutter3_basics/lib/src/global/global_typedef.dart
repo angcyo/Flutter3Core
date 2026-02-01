@@ -152,6 +152,16 @@ typedef WidgetNullBuilder = Widget? Function(BuildContext context);
 typedef WidgetValueBuilder =
     Widget? Function(BuildContext context, dynamic value);
 
+/// 通过一个[value], 返回对应的[Widget]
+/// [WidgetBuilder]
+typedef WidgetValueIndexBuilder<T> =
+    Widget? Function(
+      BuildContext context,
+      T value,
+      int index,
+      bool? isSelected,
+    );
+
 /// [RoutePageBuilder]
 /// [ModalRoute.buildTransitions]
 /// [RouteTransitionsBuilder]

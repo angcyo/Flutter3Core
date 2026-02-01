@@ -659,7 +659,7 @@ AssetImage? loadAssetImageProvider(
 /// [loadAssetString]
 /// [loadAssetImage]
 /// [loadAssetImageByProvider]
-Future<UiImage>? loadAssetImageByProvider(
+Future<UiImage?>? loadAssetImageByProvider(
   String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package,

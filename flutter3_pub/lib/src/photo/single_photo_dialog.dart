@@ -8,14 +8,19 @@ part of '../../flutter3_pub.dart';
 /// - [SingleImageDialog] 不支持放大缩小
 /// - [SinglePhotoDialog] 支持放大缩小
 class SinglePhotoDialog extends StatefulWidget {
-  /// [Hero] 动画属性
-  final PhotoViewHeroAttributes? heroAttributes;
+  /// 图片提供者
+  final ImageProvider? imageProvider;
 
   /// 指定文件路径
   final String? filePath;
 
   /// 强行指定图片内容
   final UiImage? content;
+
+  //--
+
+  /// [Hero] 动画属性
+  final PhotoViewHeroAttributes? heroAttributes;
 
   /// 是否模糊背景
   final bool blur;
@@ -25,9 +30,11 @@ class SinglePhotoDialog extends StatefulWidget {
 
   const SinglePhotoDialog({
     super.key,
-    this.heroAttributes,
+    this.imageProvider,
     this.filePath,
     this.content,
+    //--
+    this.heroAttributes,
     this.blur = true,
     this.tapDismiss = true,
   });
@@ -44,16 +51,30 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
   PhotoViewScaleStateController? photoScaleStateController =
       PhotoViewScaleStateController();
 
+  @property
   ImageProvider? _imageProvider;
+
+  /// 临时图片
+  @tempFlag
+  UiImage? _debugImage;
 
   @override
   void initState() {
     super.initState();
+    _imageProvider ??= widget.imageProvider;
     if (widget.content != null) {
       _imageProvider = widget.content!.toImageProvider();
     }
     if (widget.filePath != null) {
       _imageProvider = FileImage(File(widget.filePath!));
+    }
+    if (isDebug) {
+      _imageProvider?.toImage().then((image) {
+        _debugImage = image;
+        if (image != null) {
+          updateState();
+        }
+      });
     }
   }
 
@@ -73,7 +94,7 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
     );
 
     if (isDebug) {
-      final image = widget.content;
+      final image = _debugImage ?? widget.content;
       final imageLog = image == null
           ? ''
           : "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})";

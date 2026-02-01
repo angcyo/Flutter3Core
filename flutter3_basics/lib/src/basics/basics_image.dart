@@ -815,19 +815,23 @@ extension RenderObjectImageEx on RenderObject {
 
 extension ImageProviderEx<T extends Object> on ImageProvider<T> {
   /// 获取图片的字节数据
-  Future<ui.Image> toImage([
+  Future<ui.Image?> toImage([
     ImageConfiguration configuration = const ImageConfiguration(),
   ]) async {
     final Completer completer = Completer<ImageInfo>();
     final ImageStream stream = resolve(configuration);
-    final listener = ImageStreamListener((
-      ImageInfo info,
-      bool synchronousCall,
-    ) {
-      if (!completer.isCompleted) {
-        completer.complete(info);
-      }
-    });
+    final listener = ImageStreamListener(
+      (ImageInfo info, bool synchronousCall) {
+        if (!completer.isCompleted) {
+          completer.complete(info);
+        }
+      },
+      onError: (e, s) {
+        if (!completer.isCompleted) {
+          completer.completeError(e, s);
+        }
+      },
+    );
     stream.addListener(listener);
     final imageInfo = await completer.future;
     final ui.Image image = imageInfo.image;
