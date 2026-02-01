@@ -244,8 +244,15 @@ extension ImagePubEx on String {
                     downloadProgress.progress,
                     null,
                   ),
-        errorWidget: (context, url, error) =>
-            GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
+        errorWidget: (context, url, error) {
+          assert(() {
+            l.e("图片[$url]加载失败->$error");
+            return true;
+          }());
+          return GlobalConfig.of(
+            context,
+          ).errorPlaceholderBuilder(context, null);
+        },
       );
     } else {
       return OctoImage(

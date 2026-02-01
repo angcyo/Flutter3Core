@@ -16,12 +16,13 @@ class CmseApi {
 
   /// 获取飞行任务列表
   Future<List<CmseFXRWItemBean>?> getFXRWList({RequestPage? page}) async {
+    //debugger(when: page != null && !page.isFirstPage);
     final api =
-        (page != null && page.isFirstPage != false
+        (page != null && page.isFirstPage == false
                 ? "fxrw/index_${page.requestPageIndex - 1}.html"
                 : "fxrw")
             .toApi(_host);
-    final html = await api.dioGetString();
+    final html = await api.dioGetString(queryParameters: noRequestLogMap);
     if (html == null || html.isNil) {
       return null;
     }
@@ -34,7 +35,7 @@ class CmseApi {
 
     final List<CmseFXRWItemBean> result = [];
     for (final liElement in liElementList) {
-      final bean = _buildFXRWItem(liElement, baseUrl: api);
+      final bean = _buildFXRWItem(liElement, baseUrl: "fxrw".toApi(_host));
       if (bean != null) {
         result.add(bean);
       }
@@ -57,8 +58,14 @@ class CmseApi {
 
     final infoItemElementList = liElement.querySelectorAll(".infoItem");
     final infoItemList = infoItemElementList.map((element) {
-      final label = element.querySelector(".infoL")?.text;
-      final des = element.querySelector(".infoR")?.text;
+      final label = element
+          .querySelector(".infoL")
+          ?.text
+          .replaceAll(RegExp("\n|\t"), "");
+      final des = element
+          .querySelector(".infoR")
+          ?.text
+          .replaceAll(RegExp("\n|\t"), "");
       return (label, des);
     });
     return CmseFXRWItemBean(
@@ -87,4 +94,9 @@ class CmseFXRWItemBean with EquatableMixin {
 
   @override
   List<Object?> get props => [title];
+
+  @override
+  String toString() {
+    return 'CmseFXRWItemBean{imgUrl: $imgUrl, title: $title, infoItemList: $infoItemList}';
+  }
 }
