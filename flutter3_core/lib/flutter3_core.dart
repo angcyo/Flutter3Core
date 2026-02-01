@@ -14,6 +14,7 @@ import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_core/src/debug/debug_file_tiles.dart';
 import 'package:flutter3_vector/flutter3_vector.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:path/path.dart' as p;
 
 import 'src/isar/isar_test_collection.dart';
@@ -22,10 +23,7 @@ export 'package:cross_file/cross_file.dart';
 export 'package:flutter3_basics/flutter3_basics.dart';
 export 'package:flutter3_http/flutter3_http.dart';
 export 'package:flutter3_widgets/flutter3_widgets.dart';
-export 'package:hive/hive.dart';
-export 'package:hive_flutter/hive_flutter.dart';
-export 'package:isar_community/isar.dart';
-//export 'package:isar_flutter_libs/isar_flutter_libs.dart';
+export 'package:isar_community/isar.dart'; //export 'package:isar_flutter_libs/isar_flutter_libs.dart';
 export 'package:isar_community_flutter_libs/isar_flutter_libs.dart';
 export 'package:mime/mime.dart';
 export 'package:path_provider/path_provider.dart';
@@ -33,11 +31,11 @@ export 'package:provider/provider.dart';
 
 export 'src/core/build_config.dart';
 export 'src/debug/debug_overlay.dart';
-export 'src/view_model/jetpack/livedata.dart';
-export 'src/view_model/jetpack/viewmodel.dart';
 export 'src/log/log_message_mix.dart';
 export 'src/log/log_scope_widget.dart';
 export 'src/process/process_shell.dart';
+export 'src/view_model/jetpack/livedata.dart';
+export 'src/view_model/jetpack/viewmodel.dart';
 
 // @formatter:off
 
@@ -53,11 +51,11 @@ part 'src/debug/navigator_route_overlay.dart';
 part 'src/debug/screen_capture_overlay.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/options_dialog.dart';
+part 'src/dialog/shortcut_dialog.dart';
 part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
-part 'src/dialog/shortcut_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';
@@ -113,6 +111,10 @@ Future<void> initFlutter3Core() async {
 
 /// 初始化hive
 /// [RCoreException]
+/// [ROccupiedException]
+///
+/// - [initHive]
+/// - [initIsar]
 @initialize
 @entryPoint
 @CallFrom("runGlobalApp")
@@ -123,11 +125,13 @@ Future<void> initHive() async {
     await Hive.initHive();
   } catch (e, s) {
     debugger(when: isDebug);
-    throw RCoreException(
-      message: isDebug ? '初始化Hive数据库失败:$e' : "初始化数据库失败, 请关闭已存在的应用程序, 重新启动.",
-      cause: e,
-      stackTrace: s,
-    );
+    final log = "初始化Hive数据库失败->$e";
+    l.e(log);
+    if (e is FileSystemException) {
+      throw ROccupiedException(message: log, cause: e, stackTrace: s);
+    } else {
+      throw RCoreException(message: log, cause: e, stackTrace: s);
+    }
   }
 
   //device uuid
@@ -136,6 +140,12 @@ Future<void> initHive() async {
 
 /// 初始化Isar数据库, 初始化之前请先注册表结构
 /// [registerIsarCollection]
+///
+/// [RCoreException]
+/// [ROccupiedException]
+///
+/// - [initHive]
+/// - [initIsar]
 @initialize
 @entryPoint
 @CallFrom("runGlobalApp")
@@ -145,7 +155,13 @@ Future<void> initIsar() async {
     await openIsar();
   } catch (e, s) {
     debugger(when: isDebug);
-    throw RCoreException(message: '初始化Isar数据库失败:$e', cause: e, stackTrace: s);
+    final log = "初始化Isar数据库失败->$e";
+    l.e(log);
+    if (e is FileSystemException) {
+      throw ROccupiedException(message: log, cause: e, stackTrace: s);
+    } else {
+      throw RCoreException(message: log, cause: e, stackTrace: s);
+    }
   }
 }
 

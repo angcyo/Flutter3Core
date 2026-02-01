@@ -143,7 +143,6 @@ extension HiveStringEx on String {
 
 /// Flutter extensions for Hive.
 extension HiveEx on HiveInterface {
-
   /// # Android
   /// 默认路径在:/data/user/0/com.angcyo.flutter3_abc/app_flutter
   /// 移动到:/storage/emulated/0/Android/data/com.angcyo.flutter3_abc/files
@@ -170,7 +169,7 @@ extension HiveEx on HiveInterface {
     defHiveBoxFilePath = hiveBoxPath.join("${kHiveBox.toLowerCase()}.hive");
     //MARK: -
     l.i(
-      "[$kHiveBox]HiveBox数据库路径:$defHiveBoxFilePath :${defHiveBoxFilePath.file().lengthSync().toSizeStr()}",
+      "[$kHiveBox]HiveBox数据库路径${defHiveBoxFilePath.file().lengthSync().toSizeStr().wsb}: $defHiveBoxFilePath",
     );
     //_hiveBox.add(value)
     //_hiveBox.get(key)
@@ -187,7 +186,11 @@ mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
   /// [key] 持久化存储的key值
   /// [ValueListenable]
   /// [TextEditingValue]
-  void hookHiveKey(String key, ValueListenable notify, {bool notifyChanged = true}) {
+  void hookHiveKey(
+    String key,
+    ValueListenable notify, {
+    bool notifyChanged = true,
+  }) {
     if (hiveHookMap.containsKey(notify)) {
       return;
     }

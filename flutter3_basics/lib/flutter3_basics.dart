@@ -334,6 +334,15 @@ void exitApp([int code = 0]) {
   exit(code);
 }
 
+/// 异常退出app
+@api
+void crashApp([Object? message]) {
+  if (message != null) {
+    print(message);
+  }
+  exit(1);
+}
+
 //--
 
 @testPoint

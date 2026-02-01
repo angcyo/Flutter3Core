@@ -127,7 +127,7 @@ Future<void> openIsar([
   //Android : /storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/isar/isar.isar :1MB
   //macOS : /Users/angcyo/Library/Containers/com.laserabc.laserabcFactoryTools/Data/Library/Application Support/com.laserabc.laserabcFactoryTools/isar/isar.isar
   l.i(
-    "[$name]isar数据库路径:$defIsarFilePath :${defIsarFilePath.file().lengthSync().toSizeStr()}",
+    "[$name]isar数据库路径${defIsarFilePath.file().lengthSync().toSizeStr().wsb}: $defIsarFilePath",
   );
 }
 

@@ -15,11 +15,8 @@ class RException implements Exception {
 
   final StackTrace? stackTrace;
 
-  RException({
-    this.message,
-    this.cause,
-    StackTrace? stackTrace,
-  }) : stackTrace = stackTrace ?? StackTrace.current;
+  RException({this.message, this.cause, StackTrace? stackTrace})
+    : stackTrace = stackTrace ?? StackTrace.current;
 
   @override
   String toString() {
@@ -68,4 +65,11 @@ class RInvalidException extends RException {
 /// [FileSystemException]
 class RCoreException extends RException {
   RCoreException({super.message, super.cause, super.stackTrace});
+}
+
+/// 应用程序被占用异常, 此异常必须处理.
+/// - 比如数据库文件被其他程序占用
+/// - 必备端口被占用等
+class ROccupiedException extends RCoreException {
+  ROccupiedException({super.message, super.cause, super.stackTrace});
 }

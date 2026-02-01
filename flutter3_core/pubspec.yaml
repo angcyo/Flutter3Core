@@ -8,11 +8,11 @@ environment:
   sdk: ^3.10.0
   flutter: ">=1.17.0"
 
-# https://pub.dev/packages/isar
-# https://pub.dev/packages/isar_community
+# old->https://pub.dev/packages/isar
+# new->https://pub.dev/packages/isar_community
 isar_version: &isar_version ^3.3.0
 # https://pub.dev/packages/hive
-hive_version: &hive_version ^2.2.3
+#hive_version: &hive_version ^2.2.3
 
 # https://dart.dev/tools/pub/workspaces/
 # Support for pub workspaces was introduced in Dart 3.6.0.
@@ -107,14 +107,25 @@ dependencies:
   # https://pub.dev/packages/isar
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/hive_generator
-  hive: *hive_version
+  #hive: *hive_version
 
   # https://pub.dev/packages/hive_flutter
   # https://github.com/hivedb/hive_flutter
   # https://pub.dev/packages/hive
   # https://pub.dev/packages/path_provider
   # https://pub.dev/packages/path
-  hive_flutter: ^1.1.0
+  #hive_flutter: ^1.1.0
+
+  # https://pub.dev/packages/hive_ce
+  # https://pub.dev/packages/crypto
+  # https://pub.dev/packages/isolate_channel
+  # https://pub.dev/packages/json_annotation
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/web
+  hive_ce: ^2.19.1
+  # https://pub.dev/packages/hive_ce_flutter
+  # https://pub.dev/packages/hive_ce
+  hive_ce_flutter: ^2.3.4
 
   # https://pub.dev/packages/process_run
   # https://pub.dev/packages/args

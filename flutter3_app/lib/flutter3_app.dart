@@ -197,6 +197,9 @@ Future runGlobalApp(
       stack = s;
       printError(e, s);
       debugger(when: isDebug);
+      if (!isDebug && e is ROccupiedException) {
+        crashApp(e);
+      }
     }
 
     //网络请求基础信息拦截器
@@ -209,6 +212,9 @@ Future runGlobalApp(
       stack = s;
       printError(e, s);
       debugger(when: isDebug);
+      if (!isDebug && e is ROccupiedException) {
+        crashApp(e);
+      }
     }
     AppLifecycleObserver.install(); //app生命周期监听/日志
 
@@ -224,6 +230,9 @@ Future runGlobalApp(
       stack = s;
       printError(e, s);
       debugger(when: isDebug);
+      if (!isDebug && e is ROccupiedException) {
+        crashApp(e);
+      }
     }
     try {
       //open isar, 为了能在[beforeAction]中初始化外部数据库表结构
@@ -233,6 +242,9 @@ Future runGlobalApp(
       stack = s;
       printError(e, s);
       debugger(when: isDebug);
+      if (!isDebug && e is ROccupiedException) {
+        crashApp(e);
+      }
     }
 
     //app
@@ -240,8 +252,8 @@ Future runGlobalApp(
       app = ErrorWidget.builder(
         FlutterErrorDetails(exception: error, stack: stack, library: 'angcyo'),
       );
-      if (!isDebug && error is RCoreException) {
-        exitApp();
+      if (!isDebug && error is ROccupiedException) {
+        crashApp(error);
       }
     }
     //app
@@ -264,7 +276,7 @@ Future runGlobalApp(
 
     //MARK: - end
     globalAppEndTime = nowTimestamp();
-    "启动完成[${Platform.resolvedExecutable}]:${lTime.time()}".writeToLog(
+    "启动完成[${lTime.time()}] ${Platform.resolvedExecutable}".writeToLog(
       level: L.info,
     );
   }
