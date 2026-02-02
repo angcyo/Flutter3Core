@@ -196,8 +196,8 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
 
     assert(() {
       l.d(
-        "[${widget.tag ?? widget.debugLabel}][${classHash()}]转换:${children?.length}[${children?.firstOrNull?.runtimeType}...]"
-        "->${result.size()}[${result.firstOrNull?.runtimeType}...]",
+        "[${widget.tag ?? widget.debugLabel}][${classHash()}]tile转换:${children?.length}个[${children?.firstOrNull?.runtimeType}...]"
+        "->${result.size()}个[${result.firstOrNull?.runtimeType}...]",
       );
       return true;
     }());

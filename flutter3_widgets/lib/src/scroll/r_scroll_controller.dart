@@ -114,7 +114,7 @@ class RScrollController extends ScrollController {
         //debugger();
         if (refreshStateValue.value == .loading) {
           assert(() {
-            l.d("[${tag ?? debugLabel}]正在刷新中...忽略加载更多处理.");
+            l.d("[${tag ?? debugLabel}]正在刷新中,忽略加载更多处理!");
             return true;
           }());
         } else if (loadMoreStateValue.value == .loading) {
@@ -123,7 +123,7 @@ class RScrollController extends ScrollController {
         } else if (loadMoreStateValue.value == .empty) {
           //没有更多数据了
           assert(() {
-            l.d("[${tag ?? debugLabel}]没有更多数据了...忽略加载更多处理.");
+            l.d("[${tag ?? debugLabel}]没有更多数据了,忽略加载更多处理!");
             return true;
           }());
         } else if (isSupportScrollLoadData()) {
@@ -280,7 +280,7 @@ class RScrollController extends ScrollController {
         }
       } else {
         assert(() {
-          l.d("[${tag ?? debugLabel}]未处理的状态$widgetState");
+          l.d("[${tag ?? debugLabel}]未处理的状态[$widgetState]");
           return true;
         }());
         debugger();
