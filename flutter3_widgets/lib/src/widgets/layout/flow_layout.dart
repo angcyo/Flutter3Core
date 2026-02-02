@@ -559,7 +559,7 @@ class FlowLayoutRender extends RenderBox
     }
     if (maxHeight == double.infinity) {
       assert(() {
-        l.w('[${classHash()}]无法确定的 refMaxHeight !');
+        l.w('[${classHash()}]无法确定的 refMaxHeight!');
         return true;
       }());
     }

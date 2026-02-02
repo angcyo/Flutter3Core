@@ -350,10 +350,10 @@ extension ImageEx on UiImage {
 
   /// 获取图片中的像素值
   Future<int?> getPixelColor(int x, int y) async {
-    final pixels = await toPixels();
+    final pixels = await toPixels(UiImageByteFormat.rawRgba);
 
-    int bytesPerPixel = 4; // RGBA
-    int byteOffset = (y * width + x) * bytesPerPixel;
+    final bytesPerPixel = 4; // RGBA
+    final byteOffset = (y * width + x) * bytesPerPixel;
 
     final r = pixels?.getOrNull(byteOffset);
     final g = pixels?.getOrNull(byteOffset + 1);
@@ -364,6 +364,27 @@ extension ImageEx on UiImage {
       return null;
     }
     return Color.fromARGB(a, r, g, b).value;
+  }
+
+  /// 枚举图片中的像素值
+  Future eachPixelColor(
+    FutureOr Function(int x, int y, Color color) action,
+  ) async {
+    final pixels = await toPixels(UiImageByteFormat.rawRgba);
+    if (pixels == null) {
+      return;
+    }
+    final w = width;
+    final h = height;
+    int bytesPerPixel = 4; // RGBA
+    for (int i = 0; i < pixels.length; i += bytesPerPixel) {
+      final r = pixels[i];
+      final g = pixels[i + 1];
+      final b = pixels[i + 2];
+      final a = pixels[i + 3];
+      final color = Color.fromARGB(a, r, g, b);
+      await action(i ~/ bytesPerPixel % w, i ~/ bytesPerPixel ~/ w, color);
+    }
   }
 
   /// 保存图片到文件

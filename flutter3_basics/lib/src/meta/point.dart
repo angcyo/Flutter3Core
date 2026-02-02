@@ -37,12 +37,7 @@ final class Point {
           if (c == null) {
             path.lineTo(point.x, point.y);
           } else {
-            path.quadraticBezierTo(
-              c.x,
-              c.y,
-              point.x,
-              point.y,
-            );
+            path.quadraticBezierTo(c.x, c.y, point.x, point.y);
           }
         }
       }
@@ -89,17 +84,21 @@ final class Point {
           pathBuilder.write('L${fv(point.x)} ${fv(point.y)}');
         } else if (lastPoint.c != null && point.c != null) {
           //2个控制点, 则是三次贝塞尔曲线
-          pathBuilder.write('C${fv(lastPoint.c!.x)} ${fv(lastPoint.c!.y)}, '
-              '${fv(point.sc!.x)} ${fv(point.sc!.y)}, '
-              '${fv(point.x)} ${fv(point.y)}');
+          pathBuilder.write(
+            'C${fv(lastPoint.c!.x)} ${fv(lastPoint.c!.y)}, '
+            '${fv(point.sc!.x)} ${fv(point.sc!.y)}, '
+            '${fv(point.x)} ${fv(point.y)}',
+          );
         } else {
           //1个控制点, 则是二次贝塞尔曲线
           final c = lastPoint.c ?? point.sc;
           if (c == null) {
             pathBuilder.write('L${fv(point.x)} ${fv(point.y)}');
           } else {
-            pathBuilder.write('Q${fv(c.x)} ${fv(c.y)}, '
-                '${fv(point.x)} ${fv(point.y)}');
+            pathBuilder.write(
+              'Q${fv(c.x)} ${fv(c.y)}, '
+              '${fv(point.x)} ${fv(point.y)}',
+            );
           }
         }
       }
@@ -128,18 +127,11 @@ final class Point {
 
   Offset get offset => Offset(x, y);
 
-  Point(
-    this.x,
-    this.y,
-    this.a, {
-    this.c,
-  }) : sc = c == null
-            ? null
-            : Point(
-                2 * x - c.x,
-                2 * y - c.y,
-                c.a,
-              );
+  Point(this.x, this.y, this.a, {this.c})
+    : sc = c == null ? null : Point(2 * x - c.x, 2 * y - c.y, c.a);
+
+  /// x y
+  Point.xy(this.x, this.y);
 
   /// 更新控制点[c], 顺带更新第一/第二控制点
   @api
@@ -158,11 +150,7 @@ final class Point {
 
   /// 更新控制点[c], 顺带更新第二控制点
   @api
-  void updateControlPoint(
-    double x,
-    double y, {
-    double? a,
-  }) {
+  void updateControlPoint(double x, double y, {double? a}) {
     c ??= Point(x, y, a);
     c?.a = a;
     c?.x = x;
@@ -175,11 +163,7 @@ final class Point {
 
   /// 更新对撑控制点[sc], 顺带更新第一个控制点
   @api
-  void updateSymmetryControlPoint(
-    double x,
-    double y, {
-    double? a,
-  }) {
+  void updateSymmetryControlPoint(double x, double y, {double? a}) {
     sc ??= Point(x, y, a);
     sc?.a = a;
     sc?.x = x;
@@ -192,13 +176,7 @@ final class Point {
 
   /// toJson
   Map<String, dynamic> toJson() {
-    return {
-      'x': x,
-      'y': y,
-      'a': a,
-      'c': c?.toJson(),
-      'sc': sc?.toJson(),
-    };
+    return {'x': x, 'y': y, 'a': a, 'c': c?.toJson(), 'sc': sc?.toJson()};
   }
 
   /// 短字符串
@@ -209,6 +187,16 @@ final class Point {
   @override
   String toString() {
     return 'Point{x:$x, y:$y a:$a, c:$c, sc:$sc}';
+  }
+
+  //MARK: -
+
+  /// 扩展乘法
+  Point operator *(double value) {
+    return Point(x * value, y * value, null)
+      ..a = a
+      ..c = c
+      ..sc = sc;
   }
 }
 
@@ -280,7 +268,8 @@ extension ListListStringEx on String {
     for (int i = 0; i < points.length; i += 2) {
       try {
         result.add(
-            Point(double.parse(points[i]), double.parse(points[i + 1]), null));
+          Point(double.parse(points[i]), double.parse(points[i + 1]), null),
+        );
       } catch (e, s) {
         assert(() {
           printError(e, s);
