@@ -99,6 +99,7 @@ dependencies:
   # gbk 编码
   # https://pub.dev/packages/charset
   charset: ^2.0.1
+  json_annotation: ^4.9.0
 
 # dependency_overrides:
 
@@ -106,6 +107,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: any
+  json_serializable: ^6.11.2
+  build_runner: ^2.7.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

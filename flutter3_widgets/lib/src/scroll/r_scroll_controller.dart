@@ -403,6 +403,12 @@ class RScrollController extends ScrollController {
                 }
                 return false;
               },
+              onClick: () {
+                if (loadMoreStateValue.value == .empty) {
+                  //点击滚动到顶部
+                  scrollToTop(anim: false);
+                }
+              },
             );
       };
 

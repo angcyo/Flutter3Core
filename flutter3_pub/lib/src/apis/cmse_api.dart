@@ -15,6 +15,7 @@ class CmseApi {
   static const String _host = "https://www.cmse.gov.cn";
 
   /// 获取飞行任务列表
+  @api
   Future<List<CmseFXRWItemBean>?> getFXRWList({RequestPage? page}) async {
     //debugger(when: page != null && !page.isFirstPage);
     final api =

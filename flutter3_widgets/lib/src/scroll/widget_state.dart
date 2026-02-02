@@ -124,12 +124,15 @@ extension WidgetStateEx on Widget {
 
 /// [WidgetBuildState]状态控制
 class WidgetStateBuildWidget extends StatefulWidget {
+  //MARK: build
   /// 当前的状态数据
   /// 不同状态下,携带的数据
   final dynamic stateData;
 
   /// 当前的状态
   final WidgetBuildState widgetState;
+
+  //MARK: callback
 
   /// 无数据/无更多数据时, 显示的字符串
   final GenerateString? noDataStringGenerate;
@@ -140,10 +143,15 @@ class WidgetStateBuildWidget extends StatefulWidget {
   /// 请求改变状态, 拦截器
   final RequestChangeStateFn? requestChangeStateFn;
 
+  /// 点击事件 - 后代和自己都可以命中
+  final GestureTapCallback? onClick;
+
+  //MARK: build
+
   /// 构建不同状态的Widget
   final WidgetStateBuilder? buildWidgetStateWidget;
 
-  //---
+  //--
 
   /// 细分的[WidgetBuildState.loading]状态
   final WidgetStateBuilder? buildLoadingWidgetState;
@@ -165,6 +173,7 @@ class WidgetStateBuildWidget extends StatefulWidget {
     this.buildLoadingWidgetState,
     this.buildEmptyWidgetStateWidget,
     this.buildErrorWidgetStateWidget,
+    this.onClick,
   });
 
   @override
@@ -255,8 +264,9 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
       l.d("[${classHash()}]$buildState/$buildStateData");
       return true;
     }());
-    return buildStateWidget(context, buildState, buildStateData) ??
-        _buildDefaultWidget(context);
+    return (buildStateWidget(context, buildState, buildStateData) ??
+            _buildDefaultWidget(context))
+        .click(widget.onClick);
   }
 
   @override
@@ -286,6 +296,7 @@ class AdapterStateWidget extends WidgetStateBuildWidget {
     super.noDataStringGenerate,
     super.loadErrorStringGenerate,
     super.requestChangeStateFn,
+    super.onClick,
   });
 
   @override
@@ -382,6 +393,7 @@ class LoadMoreStateWidget extends WidgetStateBuildWidget {
     super.noDataStringGenerate,
     super.loadErrorStringGenerate,
     super.requestChangeStateFn,
+    super.onClick,
   });
 
   @override

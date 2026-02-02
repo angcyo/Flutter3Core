@@ -659,7 +659,7 @@ extension WidgetEx on Widget {
     GestureTapCallback? onTap, {
     bool enable = true,
     GestureLongPressCallback? onLongPress,
-    HitTestBehavior? behavior = HitTestBehavior.translucent,
+    HitTestBehavior? behavior = HitTestBehavior.translucent /*后代和自己都可以命中*/,
     //
     MouseCursor? cursor,
   }) => onTap == null || !enable

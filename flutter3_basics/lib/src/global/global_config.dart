@@ -70,7 +70,7 @@ OverlayState? get overlayState => GlobalConfig.def.findOverlayState();
 /// [GlobalConfig.findNavigatorState]
 NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
 
-/// 快速打开url
+/// 快速打开url.一般是跳转到web页面/浏览器
 @dsl
 Future<bool> openWebUrl(
   String? url, [
@@ -538,7 +538,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return Future.value(false);
   };
 
-  /// 注册一个全局的打开url方法, 一般是跳转到web页面
+  /// 注册一个全局的打开url方法, 一般是跳转到web页面/浏览器
   /// 打开url
   ///
   /// ```

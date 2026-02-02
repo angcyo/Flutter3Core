@@ -81,6 +81,7 @@ part 'src/basics/basics_render.dart';
 part 'src/basics/basics_scroll.dart';
 part 'src/basics/basics_ui.dart';
 part 'src/basics/basics_display.dart';
+part 'src/basics/basics_dynamic.dart';
 part 'src/basics/basics_color.dart';
 part 'src/basics/custom_page_route.dart';
 part 'src/basics/matrix_ex.dart';

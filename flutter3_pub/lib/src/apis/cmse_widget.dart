@@ -8,17 +8,17 @@ import 'package:flutter3_pub/flutter3_pub.dart';
 ///
 /// 显示[CmseFXRWItemBean]数据结构的小部件
 ///
-class CmseWidget extends StatefulWidget {
-  /// 显示的成语数据
+class CmseItemWidget extends StatefulWidget {
+  /// 显示的飞天任务数据
   final CmseFXRWItemBean? cmseItemBean;
 
-  const CmseWidget({super.key, required this.cmseItemBean});
+  const CmseItemWidget({super.key, required this.cmseItemBean});
 
   @override
-  State<CmseWidget> createState() => _CmseWidgetState();
+  State<CmseItemWidget> createState() => _CmseItemWidgetState();
 }
 
-class _CmseWidgetState extends State<CmseWidget> {
+class _CmseItemWidgetState extends State<CmseItemWidget> {
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);

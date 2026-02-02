@@ -33,6 +33,8 @@ export 'package:url_launcher/url_launcher.dart';
 
 export 'src/apis/cmse_api.dart';
 export 'src/apis/cmse_widget.dart';
+export 'src/apis/cctv_news_api.dart';
+export 'src/apis/cctv_news_widget.dart';
 export 'src/apis/idiom_api.dart';
 export 'src/apis/idiom_widget.dart';
 
