@@ -31,10 +31,10 @@ export 'package:photo_view/photo_view.dart';
 export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
 
-export 'src/http/cmse_api.dart';
-export 'src/http/cmse_widget.dart';
-export 'src/http/idiom_api.dart';
-export 'src/http/idiom_widget.dart';
+export 'src/apis/cmse_api.dart';
+export 'src/apis/cmse_widget.dart';
+export 'src/apis/idiom_api.dart';
+export 'src/apis/idiom_widget.dart';
 
 part 'src/archive/zip_ex.dart';
 part 'src/http/html_pub.dart';
