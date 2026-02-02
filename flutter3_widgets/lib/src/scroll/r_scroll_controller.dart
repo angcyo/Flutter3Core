@@ -133,7 +133,6 @@ class RScrollController extends ScrollController {
             );
             return true;
           }());
-          loadMoreKey.currentState?.updateWidgetState(.loading);
           updateLoadMoreState(.loading);
         } else {
           assert(() {
@@ -260,6 +259,7 @@ class RScrollController extends ScrollController {
   @updateMark
   bool updateLoadMoreState(WidgetBuildState widgetState, [stateData]) {
     //debugger();
+    //debugger(when: widgetState == .empty);
     final oldLoadMoreState = loadMoreStateValue.value;
     if (oldLoadMoreState != widgetState) {
       _widgetStateData = stateData;
@@ -283,12 +283,12 @@ class RScrollController extends ScrollController {
           l.d("[${tag ?? debugLabel}]未处理的状态[$widgetState]");
           return true;
         }());
-        debugger();
+        debugger(when: widgetState != .error);
       }
       return true;
     } else {
       assert(() {
-        l.d("[${tag ?? debugLabel}][${loadMoreStateValue.value}]已触发加载更多...");
+        l.d("[${tag ?? debugLabel}][$oldLoadMoreState]已是目标状态[$widgetState]!");
         return true;
       }());
     }
@@ -317,7 +317,7 @@ class RScrollController extends ScrollController {
   /// - [notifyRebuildLoadMoreWidget]
   @api
   void notifyRebuildLoadMoreWidget() {
-    final state = loadMoreKey.currentState;
+    final WidgetStateBuildWidgetState? state = loadMoreKey.currentState;
     if (state == null) {
       assert(() {
         l.d("[${classHash()}]无法重建布局!");
@@ -325,7 +325,8 @@ class RScrollController extends ScrollController {
         return true;
       }());
     } else {
-      state.updateState();
+      state.updateWidgetState(loadMoreStateValue.value, _widgetStateData);
+      //state.updateState();
     }
   }
 

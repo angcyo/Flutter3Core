@@ -173,10 +173,26 @@ class WidgetStateBuildWidget extends StatefulWidget {
 
 class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
     with StateWidgetBuildMixin {
+  //MARK: - state
   /// 更新后的状态
   WidgetBuildState? _updateState;
 
-  WidgetBuildState get _buildState => _updateState ?? widget.widgetState;
+  WidgetBuildState get buildState => _updateState ?? widget.widgetState;
+
+  set buildState(WidgetBuildState? state) {
+    _updateState = state;
+  }
+
+  //MARK: - data
+
+  /// 更新后的状态数据
+  dynamic _stateData;
+
+  dynamic get buildStateData => _stateData ?? widget.stateData;
+
+  set buildStateData(dynamic data) {
+    _stateData = data;
+  }
 
   /// [WidgetBuildState.loading]状态
   @override
@@ -187,10 +203,10 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
     Color? color,
   ]) {
     return (widget.buildLoadingWidgetState ?? widget.buildWidgetStateWidget)
-            ?.call(context, _buildState, widget.stateData) ??
+            ?.call(context, buildState, buildStateData) ??
         super.defBuildLoadingWidget(
           context,
-          widget.stateData,
+          buildStateData,
           progressValue,
           color,
         );
@@ -200,15 +216,15 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   @override
   Widget defBuildEmptyWidget(BuildContext context, [dynamic data]) {
     return (widget.buildEmptyWidgetStateWidget ?? widget.buildWidgetStateWidget)
-            ?.call(context, _buildState, widget.stateData) ??
-        super.defBuildEmptyWidget(context, widget.stateData);
+            ?.call(context, buildState, buildStateData) ??
+        super.defBuildEmptyWidget(context, buildStateData);
   }
 
   /// [WidgetBuildState.error]状态
   @override
   Widget defBuildErrorWidget(BuildContext context, [dynamic error]) {
     return (widget.buildErrorWidgetStateWidget ?? widget.buildWidgetStateWidget)
-            ?.call(context, _buildState, widget.stateData) ??
+            ?.call(context, buildState, buildStateData) ??
         super.defBuildErrorWidget(context, error);
   }
 
@@ -216,8 +232,8 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   Widget _buildDefaultWidget(BuildContext context) {
     var result = widget.buildWidgetStateWidget?.call(
       context,
-      _buildState,
-      widget.stateData,
+      buildState,
+      buildStateData,
     );
     if (result != null) {
       return result;
@@ -226,8 +242,9 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   }
 
   @callPoint
-  void updateWidgetState(WidgetBuildState state) {
+  void updateWidgetState(WidgetBuildState state, [dynamic stateData]) {
     _updateState = state;
+    _stateData = stateData;
     updateState();
   }
 
@@ -235,10 +252,10 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   Widget build(BuildContext context) {
     //debugger();
     assert(() {
-      l.d("[${classHash()}]$_buildState/${widget.widgetState}");
+      l.d("[${classHash()}]$buildState/$buildStateData");
       return true;
     }());
-    return buildStateWidget(context, _buildState, widget.stateData) ??
+    return buildStateWidget(context, buildState, buildStateData) ??
         _buildDefaultWidget(context);
   }
 
@@ -345,7 +362,7 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
       //点击重试
       if (widget.requestChangeStateFn?.call(
             context,
-            _buildState,
+            buildState,
             WidgetBuildState.loading,
           ) ==
           false) {
@@ -397,7 +414,7 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
   Widget defBuildEmptyWidget(BuildContext context, [dynamic data]) {
     final globalTheme = GlobalTheme.of(context);
     final stateData =
-        widget.stateData ??
+        buildStateData ??
         widget.noDataStringGenerate?.call(context) ??
         LibRes.of(context).libAdapterNoMoreData;
 
@@ -415,7 +432,7 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
   Widget defBuildErrorWidget(BuildContext context, [dynamic error]) {
     final globalTheme = GlobalTheme.of(context);
     final stateData =
-        widget.stateData ??
+        buildStateData ??
         widget.loadErrorStringGenerate?.call(context) ??
         LibRes.of(context).libAdapterLoadMoreError;
 
@@ -432,11 +449,11 @@ class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
           //点击重试
           if (widget.requestChangeStateFn?.call(
                 context,
-                _buildState,
+                buildState,
                 WidgetBuildState.loading,
               ) ==
               false) {
-            _updateState = WidgetBuildState.loading;
+            buildState = WidgetBuildState.loading;
             updateState();
           }
         });
