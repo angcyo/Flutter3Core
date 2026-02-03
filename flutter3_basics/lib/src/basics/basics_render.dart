@@ -199,31 +199,80 @@ extension RenderBoxEx on RenderBox {
       ? (parentData as BoxParentData).offset
       : Offset.zero;
 
+  //MARK: - debug
+
   /// 调试模式下, 绘制盒子的边界
   /// [debugDrawBoxBounds]
   void debugPaintBoxBounds(
     PaintingContext context,
     Offset offset, {
+    Color? color,
     double? strokeWidth,
-  }) => debugDrawBoxBounds(context, offset, strokeWidth: strokeWidth);
+  }) => debugDrawBoxBounds(
+    context,
+    offset,
+    strokeWidth: strokeWidth,
+    color: color,
+  );
 
   /// 绘制盒子的边界
   void debugDrawBoxBounds(
     PaintingContext context,
     Offset offset, {
+    Color? color,
     double? strokeWidth,
   }) {
     assert(() {
       context.canvas.drawRect(
         offset & size,
         Paint()
-          ..color = Colors.purpleAccent
+          ..color = color ?? Colors.purpleAccent
           ..strokeWidth = strokeWidth ?? 4
           ..style = ui.PaintingStyle.stroke,
       );
       return true;
     }());
   }
+
+  /// 调试模式下, 绘制视图中心点坐标系象限信息
+  /// - 绘制中心十字信息
+  /// - 绘制象限信息
+  void debugPaintBoxQuadrant(
+    PaintingContext context,
+    Offset offset, {
+    Offset? center,
+    bool paintCross = true,
+    Color? color,
+    double? strokeWidth,
+  }) {
+    assert(() {
+      final bounds = offset & size;
+      center ??= bounds.center;
+      final paint = Paint()
+        ..color = color ?? Colors.purpleAccent
+        ..strokeWidth = strokeWidth ?? 1
+        ..style = ui.PaintingStyle.stroke;
+      context.canvas.drawPath(
+        BasicsDebug.generateQuadrantPath(center!.x, center!.y),
+        paint,
+      );
+      if (paintCross) {
+        context.canvas.drawLine(
+          Offset(bounds.left, center!.y),
+          Offset(bounds.right, center!.y),
+          paint,
+        );
+        context.canvas.drawLine(
+          Offset(center!.x, bounds.top),
+          Offset(center!.x, bounds.bottom),
+          paint,
+        );
+      }
+      return true;
+    }());
+  }
+
+  //MARK: - child
 
   /// 获取内部[RenderBox]对应的方向, 如果有
   /// [RenderFlex.direction]
