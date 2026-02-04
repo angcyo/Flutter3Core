@@ -211,12 +211,13 @@ extension MatImageEx on cv.Mat {
   ///   - [cv.CHAIN_APPROX_NONE]: 存储所有边界点。
   ///   - [cv.CHAIN_APPROX_SIMPLE]: （推荐） 压缩水平、垂直和对角线段，仅保留端点。例如，一个矩形只需 4 个点。
   ///
-  /// - [epsilon] 曲线拟合
-  ///   核心参数（阈值）。表示近似精度。它是原始曲线与近似多边形之间的最大距离。
-  ///   值越小： 拟合越精细，顶点越多，越接近原图。
-  ///   值越大： 拟合越粗糙，顶点越少，看起来更像几何形。
+  /// - [epsilon] 曲线拟合使能入参
+  ///   - 核心参数（阈值）。表示近似精度。它是原始曲线与近似多边形之间的最大距离。
+  ///   - 值越小： 拟合越精细，顶点越多，越接近原图。
+  ///   - 值越大： 拟合越粗糙，顶点越少，看起来更像几何形。
   ///
-  Future<UiImage?> findContours({
+  /// @return 轮廓, [debug]下额外返回调试图片
+  Future<(cv.Contours, UiImage?)> findContours({
     //--
     bool enableBlur = true,
     int kSize = 5 /*卷积核的大小, 影响性能*/,
@@ -250,41 +251,52 @@ extension MatImageEx on cv.Mat {
       hierarchy.val3;
       hierarchy.val4;
     }
-    return drawImage(imageSize ?? originImage?.imageSize ?? Size.zero, (
-      canvas,
-    ) {
-      if (originImage != null) {
-        canvas.drawImage(originImage, .zero, Paint());
-      }
-      for (var contour in contours) {
-        final color = randomColor();
-        //拟合轮廓
-        // 计算轮廓周长，True 表示轮廓封闭
-        //final length = cv.arcLength(contour, false);
-        // 通常取周长的 1% 到 5% 作为 epsilon
-        // 0.02 是一个经典的平衡点
-        if (epsilon != null) {
-          contour = cv.approxPolyDP(contour, epsilon /*length * 0.02*/, false);
-        }
-        for (int i = 0; i < contour.length - 1; i++) {
-          final point = contour[i];
-          final nextPoint = contour[i + 1];
-          canvas.drawLine(
-            Offset(point.x.roundToDouble(), point.y.roundToDouble()),
-            Offset(nextPoint.x.roundToDouble(), nextPoint.y.roundToDouble()),
-            Paint()..color = color,
-          );
-        }
-        //--
-        /*for (final point in contour) {
+    if (debug == true) {
+      final debugImage = await drawImage(
+        imageSize ?? originImage?.imageSize ?? Size.zero,
+        (canvas) {
+          if (originImage != null) {
+            canvas.drawImage(originImage, .zero, Paint());
+          }
+          for (var contour in contours) {
+            final color = randomColor();
+            //拟合轮廓
+            // 计算轮廓周长，True 表示轮廓封闭
+            //final length = cv.arcLength(contour, false);
+            // 通常取周长的 1% 到 5% 作为 epsilon
+            // 0.02 是一个经典的平衡点
+            if (epsilon != null) {
+              contour = cv.approxPolyDP(
+                contour,
+                epsilon /*length * 0.02*/,
+                false,
+              );
+            }
+            for (int i = 0; i < contour.length - 1; i++) {
+              final point = contour[i];
+              final nextPoint = contour[i + 1];
+              canvas.drawLine(
+                Offset(point.x.roundToDouble(), point.y.roundToDouble()),
+                Offset(
+                  nextPoint.x.roundToDouble(),
+                  nextPoint.y.roundToDouble(),
+                ),
+                Paint()..color = color,
+              );
+            }
+            //--
+            /*for (final point in contour) {
           canvas.drawCircle(
             Offset(point.x.roundToDouble(), point.y.roundToDouble()),
             1,
             Paint()..color = color,
           );
         }*/
-      }
-    });
+          }
+        },
+      );
+      return (contours, debugImage);
+    }
 
     /*final ret = cv.drawContours(
       mat.gray2rgb,
@@ -296,6 +308,6 @@ extension MatImageEx on cv.Mat {
     //debugger();
     return ret.uiImage;*/
     //debugger();
-    return null;
+    return (contours, null);
   }
 }
