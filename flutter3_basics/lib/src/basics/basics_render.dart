@@ -250,6 +250,7 @@ extension RenderBoxEx on RenderBox {
     //-
     Matrix4? transform,
   }) {
+    //debugger();
     assert(() {
       final boxBounds = bounds ?? offset & size;
       final boxCenter = center ?? boxBounds.center;
@@ -265,14 +266,50 @@ extension RenderBoxEx on RenderBox {
         paint,
       );
       if (paintCross) {
+        final arrowSize = 10.0;
+        final arrowAngle = 30.0;
+        final b = arrowSize;
+        final a = b * tan(arrowAngle.hd);
+
+        //MARK: - 横线
+        Offset hStart = Offset(boxBounds.left, boxCenter.y);
+        hStart = transform?.mapPoint(hStart) ?? hStart;
+        Offset hEnd = Offset(boxBounds.right, boxCenter.y);
+        hEnd = transform?.mapPoint(hEnd) ?? hEnd;
+
+        context.canvas.drawLine(hStart, hEnd, paint);
+        //横线箭头
+        Offset hAS = Offset(boxBounds.right - arrowSize, 0);
+        hAS = transform?.mapPoint(hAS) ?? hAS;
         context.canvas.drawLine(
-          Offset(boxBounds.left, boxCenter.y),
-          Offset(boxBounds.right, boxCenter.y),
+          Offset(hAS.dx, boxCenter.y - a),
+          Offset(hEnd.dx, boxCenter.y),
           paint,
         );
         context.canvas.drawLine(
-          Offset(boxCenter.x, boxBounds.top),
-          Offset(boxCenter.x, boxBounds.bottom),
+          Offset(hEnd.dx, boxCenter.y),
+          Offset(hAS.dx, boxCenter.y + a),
+          paint,
+        );
+
+        //MARK: - 竖线
+        Offset vStart = Offset(boxCenter.x, boxBounds.top);
+        vStart = transform?.mapPoint(vStart) ?? vStart;
+        Offset vEnd = Offset(boxCenter.x, boxBounds.bottom);
+        vEnd = transform?.mapPoint(vEnd) ?? vEnd;
+
+        context.canvas.drawLine(vStart, vEnd, paint);
+        //竖线箭头
+        Offset vAS = Offset(0, boxBounds.bottom - arrowSize);
+        vAS = transform?.mapPoint(vAS) ?? vAS;
+        context.canvas.drawLine(
+          Offset(boxCenter.x + a, vAS.dy),
+          Offset(boxCenter.x, vEnd.dy),
+          paint,
+        );
+        context.canvas.drawLine(
+          Offset(boxCenter.x - a, vAS.dy),
+          Offset(boxCenter.x, vEnd.dy),
           paint,
         );
       }

@@ -2664,10 +2664,12 @@ class PaintProperty with EquatableMixin {
   }
 
   /// 所有属性的矩阵, 矩阵的乘法, 前乘, 后乘.
-  /// final m' = m1 * m2; //前面的矩阵会影响后面矩阵的值.
-  ///  - m1 中的缩放值, 会影响 m2 中的平移值
-  ///  - m2 中的缩放值, 不会影响 m1 中的平移值
-  /// `*` 操作等同于 [Matrix4.multiplied]
+  /// final m' = m1 * m2;
+  /// - 前乘的矩阵会影响后面矩阵的标量.
+  /// - 后乘的矩阵不会影响前面矩阵的标量.
+  /// - m1 中的缩放值, 会影响 m2 中的平移值.
+  /// - m2 中的缩放值, 不会影响 m1 中的平移值.
+  /// - `*` 操作等同于 [Matrix4.multiplied]
   ///
   /// ```
   /// final t = Matrix4.identity()..translate(100.0, 100.0);
