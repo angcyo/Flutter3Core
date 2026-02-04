@@ -132,6 +132,20 @@ extension HexIntEx on int {
   /// - [toHex]
   String toHexDebug([int? length]) =>
       _HEX.encoder.convert(toBytes(length)).connect("($this)");
+
+  /// 转换成二进制字符串
+  String toBinary({
+    String prefix = '0b',
+    //--
+    int? width = 8,
+    String padding = '0',
+  }) {
+    String b = toRadixString(2);
+    if (width != null && width > 0) {
+      b = b.padLeft(width, padding);
+    }
+    return prefix + b;
+  }
 }
 
 extension HexBytesEx on List<int> {
