@@ -237,34 +237,42 @@ extension RenderBoxEx on RenderBox {
   /// 调试模式下, 绘制视图中心点坐标系象限信息
   /// - 绘制中心十字信息
   /// - 绘制象限信息
+  /// - [transform] 数据额外的变换
   void debugPaintBoxQuadrant(
     PaintingContext context,
     Offset offset, {
+    Rect? bounds,
     Offset? center,
     bool paintCross = true,
+    //--
     Color? color,
     double? strokeWidth,
+    //-
+    Matrix4? transform,
   }) {
     assert(() {
-      final bounds = offset & size;
-      center ??= bounds.center;
+      final boxBounds = bounds ?? offset & size;
+      final boxCenter = center ?? boxBounds.center;
       final paint = Paint()
         ..color = color ?? Colors.purpleAccent
         ..strokeWidth = strokeWidth ?? 1
         ..style = ui.PaintingStyle.stroke;
       context.canvas.drawPath(
-        BasicsDebug.generateQuadrantPath(center!.x, center!.y),
+        BasicsDebug.generateQuadrantPath(
+          boxCenter.x,
+          boxCenter.y,
+        ).transformPath(transform),
         paint,
       );
       if (paintCross) {
         context.canvas.drawLine(
-          Offset(bounds.left, center!.y),
-          Offset(bounds.right, center!.y),
+          Offset(boxBounds.left, boxCenter.y),
+          Offset(boxBounds.right, boxCenter.y),
           paint,
         );
         context.canvas.drawLine(
-          Offset(center!.x, bounds.top),
-          Offset(center!.x, bounds.bottom),
+          Offset(boxCenter.x, boxBounds.top),
+          Offset(boxCenter.x, boxBounds.bottom),
           paint,
         );
       }

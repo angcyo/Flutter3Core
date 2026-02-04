@@ -228,7 +228,8 @@ extension PathEx on Path {
     return dest;
   }
 
-  /// 变换路径, 返回新的路径
+  /// 变换路径
+  /// @return 返回新的路径
   Path transformPath([Matrix4? matrix4]) {
     if (matrix4 == null) {
       return ui.Path.from(this);
