@@ -187,6 +187,12 @@ class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
             controller.loadMoreStateValue.value,
             controller._widgetStateData,
           );
+          if (controller.requestPage.isFirstPage) {
+            //如果是第一页, 并且列表数据不足一页, 则检查滚动位置, 触发加载更多
+            postFrameCallback((_) {
+              controller.checkScrollPosition();
+            });
+          }
         }
       }
       if (loadMoreWidget != null) {

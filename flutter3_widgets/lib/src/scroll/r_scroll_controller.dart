@@ -82,7 +82,7 @@ class RScrollController extends ScrollController {
   VoidCallback? onLoadDataCallback;
 
   /// 是否支持加载更多的触发
-  /// [_checkScrollPosition]->[isSupportScrollLoadData]
+  /// [checkScrollPosition]->[isSupportScrollLoadData]
   bool Function()? isSupportScrollLoadDataCallback;
 
   //MARK: - tag
@@ -98,7 +98,8 @@ class RScrollController extends ScrollController {
 
   /// 检查滚动位置
   /// 监听滚动到底部,驱动触发加载更多
-  void _checkScrollPosition() {
+  @api
+  void checkScrollPosition() {
     //debugger();
     if (!position.isScrollingNotifier.value /*没有在滚动*/ &&
         position.hasContentDimensions /*具有内容的尺寸信息*/ &&
@@ -149,16 +150,16 @@ class RScrollController extends ScrollController {
   @override
   void attach(ScrollPosition position) {
     //debugger();
-    addListener(_checkScrollPosition);
-    position.isScrollingNotifier.addListener(_checkScrollPosition);
+    addListener(checkScrollPosition);
+    position.isScrollingNotifier.addListener(checkScrollPosition);
     super.attach(position);
   }
 
   @override
   void detach(ScrollPosition position) {
     //debugger();
-    removeListener(_checkScrollPosition);
-    position.isScrollingNotifier.removeListener(_checkScrollPosition);
+    removeListener(checkScrollPosition);
+    position.isScrollingNotifier.removeListener(checkScrollPosition);
     super.detach(position);
   }
 
