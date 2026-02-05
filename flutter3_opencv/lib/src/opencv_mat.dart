@@ -114,22 +114,16 @@ extension MatEx on cv.Mat {
     final thresh = 10.0; //透明阈值, 灰度<此值视为透明颜色
     if (channels == 1) {
       final gray = this;
-      final alpha = cv
-          .threshold(gray, thresh, 255, cv.THRESH_BINARY)
-          .$2;
+      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
       return cv.merge(cv.VecMat.fromList([gray, gray, gray, alpha]));
     } else if (channels == 3) {
       final gray = cv.cvtColor(this, cv.COLOR_BGR2GRAY);
-      final alpha = cv
-          .threshold(gray, thresh, 255, cv.THRESH_BINARY)
-          .$2;
+      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
       final bgr = cv.split(this);
       return cv.merge(cv.VecMat.fromList([bgr[0], bgr[1], bgr[2], alpha]));
     } else if (channels == 4) {
       final gray = cv.cvtColor(this, cv.COLOR_BGRA2GRAY);
-      final alpha = cv
-          .threshold(gray, thresh, 255, cv.THRESH_BINARY)
-          .$2;
+      final alpha = cv.threshold(gray, thresh, 255, cv.THRESH_BINARY).$2;
       final bgr = cv.split(this);
       return cv.merge(cv.VecMat.fromList([bgr[0], bgr[1], bgr[2], alpha]));
     }
@@ -139,9 +133,7 @@ extension MatEx on cv.Mat {
   /// 将灰度图进行二值化处理
   /// - [thresh] 阈值>这个值的灰度值会被设置为255
   cv.Mat cvThreshold({double thresh = 10}) =>
-      cv
-          .threshold(this, thresh, 255, cv.THRESH_BINARY)
-          .$2;
+      cv.threshold(this, thresh, 255, cv.THRESH_BINARY).$2;
 
   /// 将矩阵转换成字符串
   String flattenString() {
@@ -197,6 +189,26 @@ extension MatEx on cv.Mat {
     final ret = <List<int>>[];
     forEachRow((r, v) => ret.add(v.map((e) => e.round()).toList()));
     return ret;
+  }
+
+  /// 对于细化后的单像素骨架，概率霍夫直线变换（Progressive Probabilistic Hough Transform） 是最直接的方案。
+  /// 1. 假设 img 是你已经细化好的二值图像
+  /// 2. 使用概率霍夫变换提取线段
+  Future<cv.Mat> cvHoughLinesP({
+    double rho = 1 /*距离分辨率（像素）*/,
+    double theta = pi / 180 /*角度分辨率（弧度）*/,
+    int threshold = 20 /*累加平面阈值（票数越多越可能是线）*/,
+    double minLineLength = 2 /*最小线段长度*/,
+    double maxLineGap = 2 /*线段间允许的最大缺口*/,
+  }) async {
+    return cv.HoughLinesP(
+      this,
+      rho,
+      theta,
+      threshold,
+      minLineLength: minLineLength,
+      maxLineGap: maxLineGap,
+    );
   }
 
   //MARK: - other

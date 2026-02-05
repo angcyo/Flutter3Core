@@ -146,7 +146,7 @@ extension ColorEx on Color {
   Color withBrightness(double brightness) =>
       HSLuvColor.fromColor(this).withLightness(brightness).toColor();
 
-  /// 添加一个颜色的亮度
+  /// 添加一个颜色的亮度[0~100]
   Color addBrightness(double add) =>
       HSLuvColor.fromColor(this).addLightness(add).toColor();
 
