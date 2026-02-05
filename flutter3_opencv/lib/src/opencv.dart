@@ -10,6 +10,8 @@ part of "../flutter3_opencv.dart";
 /// - [cv.MatType.CV_8UC3] BGR
 /// - [cv.MatType.CV_8UC4] BGRA
 
+typedef CvMat = cv.Mat;
+
 /// OpenCV版本
 /// - `4.12.0` 2025-07-09 √
 /// - `4.11.0` 2025-02-18

@@ -201,6 +201,7 @@ extension MatEx on cv.Mat {
     double minLineLength = 2 /*最小线段长度*/,
     double maxLineGap = 2 /*线段间允许的最大缺口*/,
   }) async {
+    //cv.HoughLines(this, rho, theta, threshold);
     return cv.HoughLinesP(
       this,
       rho,
