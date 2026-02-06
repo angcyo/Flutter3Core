@@ -311,13 +311,7 @@ String libAssetsStateLoadErrorKey = Assets.png.stateLoadError.keyName;
 /// 情感状态: 没有数据的图片资源key
 String libAssetsStateNoDataKey = Assets.png.stateNoData.keyName;
 
-//--
-
-/// 弹出应用
-@api
-void popApp() {
-  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-}
+//MARK: - app
 
 /// 退出应用
 /// - [code] 0..255 , 退出码,含义,状态,约定使用范围

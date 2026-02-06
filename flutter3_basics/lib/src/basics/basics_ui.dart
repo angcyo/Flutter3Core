@@ -1280,6 +1280,7 @@ extension WidgetEx on Widget {
     bool? alignRight,
     bool? alignBottom,
     bool? match = true,
+    Key? key,
   }) {
     if (alignLeft == true) {
       left ??= 0;
@@ -1316,6 +1317,7 @@ extension WidgetEx on Widget {
       bottom: all ?? bottom,
       width: width,
       height: height,
+      key: key,
       child: this,
     );
   }

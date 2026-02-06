@@ -4,6 +4,9 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/05/21
 ///
+/// 系统相关
+
+//MARK: - orientation
 
 /// 设置屏幕方向
 ///
@@ -65,7 +68,7 @@ extension OrientationEx on Orientation {
   bool get isLandscape => this == Orientation.landscape;
 }
 
-//--
+//MARK: - OverlayStyle
 
 /// 设置ui模式
 /// [SystemChrome.setEnabledSystemUIMode]
@@ -103,7 +106,13 @@ bool get mouseIsConnected =>
 
 bool get isMouseConnected => mouseIsConnected;
 
-//--
+/// 弹出应用
+@api
+void popApp() {
+  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+}
+
+//MARK: - Widget
 
 /// 屏幕方向小部件
 /// - 指定进入页面时的屏幕方向
@@ -220,7 +229,7 @@ class _ScreenOrientationWidgetState extends State<ScreenOrientationWidget>
   }
 }
 
-//--
+//MARK: - extension
 
 /// 系统小部件相关扩展
 extension SystemWidgetEx on Widget {

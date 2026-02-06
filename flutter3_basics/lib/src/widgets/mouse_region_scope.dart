@@ -125,6 +125,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
 
   @override
   Widget build(BuildContext context) {
+    //l.d("build ${classHash()} $isHover");
     final normalChild = widget.normalChild;
     if (normalChild != null) {
       return AnimatedSwitcher(
@@ -146,6 +147,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
   @overridePoint
   void handleMouseHoverMixin() {
     final value = hover?.value ?? isHover;
+    //l.i("handleMouseHoverMixin ${classHash()} $value $isHover");
     if (value != isHover) {
       setState(() {
         isHover = value;
@@ -167,6 +169,7 @@ extension MouseHoverScopeEx on Widget {
   }
 
   /// 悬停时可见的小部件
+  /// - 需要在外层使用[MouseHoverProvider]
   Widget mouseHoverVisibility({
     Key? key,
     Duration duration = kDefaultAnimationDuration,
