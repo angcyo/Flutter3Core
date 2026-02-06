@@ -17,6 +17,14 @@ typedef CvMat = cv.Mat;
 /// Mat数据类型
 typedef CvMatType = cv.MatType;
 
+///   - [cv.RETR_EXTERNAL]: 只提取最外层轮廓。
+const int cvRetrExternal = cv.RETR_EXTERNAL;
+
+///   - [cv.RETR_TREE]: 提取所有轮廓并建立完整的层级家族树。
+const int cvRetrTree = cv.RETR_TREE;
+
+//MARK: -
+
 /// OpenCV版本
 /// - `4.13.0` 2025-12-31 √
 /// - `4.12.0` 2025-07-09
