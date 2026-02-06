@@ -13,8 +13,10 @@ part of "../flutter3_opencv.dart";
 typedef CvMat = cv.Mat;
 
 /// OpenCV版本
-/// - `4.12.0` 2025-07-09 √
+/// - `4.13.0` 2025-12-31 √
+/// - `4.12.0` 2025-07-09
 /// - `4.11.0` 2025-02-18
+/// https://github.com/opencv/opencv/wiki/OpenCV-Change-Logs
 String cvVersion() => cv.openCvVersion();
 
 /// Otsu算法, 获取图片的阈值

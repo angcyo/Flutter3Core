@@ -520,7 +520,7 @@ class FlowLayoutRender extends RenderBox
     }
     if (maxWidth == double.infinity) {
       assert(() {
-        l.w('[${classHash()}]无法确定的 refMaxWidth,[weight]属性失效,并且无法根据宽度换行!');
+        l.v('[${classHash()}]无法确定的 refMaxWidth,[weight]属性失效,并且无法根据宽度换行!');
         return true;
       }());
     }
@@ -559,7 +559,7 @@ class FlowLayoutRender extends RenderBox
     }
     if (maxHeight == double.infinity) {
       assert(() {
-        l.w('[${classHash()}]无法确定的 refMaxHeight!');
+        l.v('[${classHash()}]无法确定的 refMaxHeight!');
         return true;
       }());
     }

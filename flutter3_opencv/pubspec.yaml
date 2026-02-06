@@ -4,9 +4,11 @@ version: 0.0.1
 homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+# The minimum required dart sdk version is 3.10 (Flutter 3.38) that supports hooks (Native-Assets).
+# 最低要求的 Dart SDK 版本为 3.10 （Flutter 3.38 ），支持 hooks（Native-Assets）。
 environment:
   sdk: ^3.10.0
-  flutter: ">=1.17.0"
+  flutter: ">=3.38.0"
 
 # https://dart.dev/tools/pub/workspaces/
 # Support for pub workspaces was introduced in Dart 3.6.0.
@@ -17,11 +19,56 @@ dependencies:
     sdk: flutter
   # https://pub.dev/packages/opencv_dart
   # https://pub.dev/packages/dartcv4
-  opencv_dart: ^1.4.3
+  opencv_dart: ^2.1.0
+  # https://pub.dev/packages/dartcv4
+  # https://pub.dev/packages/code_assets
+  # https://pub.dev/packages/ffi
+  # https://pub.dev/packages/hooks
+  # https://pub.dev/packages/logging
+  # https://pub.dev/packages/native_toolchain_cmake
+
+  #opencv_dart: ^1.4.3
   #dartcv4: ^1.1.8
 
   flutter3_basics:
     path: ../flutter3_basics
+
+dependency_overrides:
+  # https://pub.dev/packages/dartcv4
+  dartcv4: ^2.2.1 # 2.2.0 OpenCV 4.13.0
+
+# 需要在主工程配置
+hooks:
+  user_defines:
+    dartcv4:
+      # debug: true
+      include_modules: # `core` is always included
+        - imgcodecs
+        - imgproc
+        - contrib
+        - ximgproc
+        # ...
+      exclude_modules:
+      # - imgcodecs
+      # - imgproc
+      # - ...
+      # - calib3d
+      # - contrib
+      # - dnn
+      # - features2d
+      # - freetype
+      # - highgui
+      # - objdetect
+      # - photo
+      # - stitching
+      # - video
+      # - videoio
+      # - aruco
+      # - img_hash
+      # - quality
+      # - wechat_qrcode
+      # - ximgproc
+      # - xobjdetect
 
 dev_dependencies:
   flutter_test:
