@@ -10,6 +10,8 @@ part of "../flutter3_opencv.dart";
 /// - [cv.MatType.CV_8UC1] 灰度图
 /// - [cv.MatType.CV_8UC3] BGR
 /// - [cv.MatType.CV_8UC4] BGRA
+///
+//MARK: - type
 
 /// Mat数据结构
 typedef CvMat = cv.Mat;
@@ -17,13 +19,32 @@ typedef CvMat = cv.Mat;
 /// Mat数据类型
 typedef CvMatType = cv.MatType;
 
+//MARK: - contours
+
 ///   - [cv.RETR_EXTERNAL]: 只提取最外层轮廓。
 const int cvRetrExternal = cv.RETR_EXTERNAL;
 
 ///   - [cv.RETR_TREE]: 提取所有轮廓并建立完整的层级家族树。
 const int cvRetrTree = cv.RETR_TREE;
 
-//MARK: -
+//MARK: - morphology
+
+/// 先腐蚀，后膨胀. 去噪：消除亮点、断开细长的连接。
+const int cvMorphOpen = cv.MORPH_OPEN;
+
+/// 先膨胀，后腐蚀. 填洞：填充黑色小孔，连接断开的物体。
+const int cvMorphClose = cv.MORPH_CLOSE;
+
+/// 膨胀图 - 腐蚀图. 提取轮廓：获得物体的边缘。
+const int cvMorphGradient = cv.MORPH_GRADIENT;
+
+/// 原图 - 开运算图. 背景补光：提取比背景亮的细节（如光照不均时的文字）。
+const int cvMorphTopHat = cv.MORPH_TOPHAT;
+
+/// 闭运算图 - 原图. 闭运算差值：提取比背景暗的细节。
+const int cvMorphBlackHat = cv.MORPH_BLACKHAT;
+
+//MARK: - base
 
 /// OpenCV版本
 /// - `4.13.0` 2025-12-31 √
