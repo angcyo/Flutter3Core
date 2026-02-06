@@ -2439,8 +2439,22 @@ extension ListIntEx on List<int> {
   }
 }
 
-/// [ListEx]
-/// [IterableEx]
+/// - [IteratorEx]
+/// - [IterableEx]
+/// - [ListEx]
+extension IteratorEx<E> on Iterator<E> {
+  List<E> toList() {
+    final list = <E>[];
+    while (moveNext()) {
+      list.add(current);
+    }
+    return list;
+  }
+}
+
+/// - [IteratorEx]
+/// - [IterableEx]
+/// - [ListEx]
 extension IterableEx<E> on Iterable<E> {
   /// [length]
   int size() => length;
@@ -2747,8 +2761,9 @@ extension IterableEx<E> on Iterable<E> {
   }
 }
 
-/// [ListEx]
-/// [IterableEx]
+/// - [IteratorEx]
+/// - [IterableEx]
+/// - [ListEx]
 extension ListEx<T> on List<T> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;

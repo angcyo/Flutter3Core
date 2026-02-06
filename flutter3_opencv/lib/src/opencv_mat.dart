@@ -108,7 +108,8 @@ extension MatEx on cv.Mat {
     return cv.cvtColor(this, cv.COLOR_GRAY2RGB);
   }
 
-  /// 将黑色像素变成透明, 并返回透明像素的Mat
+  /// 将黑色像素变成透明, 并返回带有透明像素的Mat
+  /// @return 4通道图片
   cv.Mat get transparentBlack {
     //return cv.cvtColor(this, cv.COLOR_GRAY2RGB);
     final thresh = 10.0; //透明阈值, 灰度<此值视为透明颜色
@@ -194,13 +195,13 @@ extension MatEx on cv.Mat {
   /// 对于细化后的单像素骨架，概率霍夫直线变换（Progressive Probabilistic Hough Transform） 是最直接的方案。
   /// 1. 假设 img 是你已经细化好的二值图像
   /// 2. 使用概率霍夫变换提取线段
-  Future<cv.Mat> cvHoughLinesP({
+  cv.Mat cvHoughLinesP({
     double rho = 1 /*距离分辨率（像素）*/,
     double theta = pi / 180 /*角度分辨率（弧度）*/,
     int threshold = 20 /*累加平面阈值（票数越多越可能是线）*/,
     double minLineLength = 2 /*最小线段长度*/,
     double maxLineGap = 2 /*线段间允许的最大缺口*/,
-  }) async {
+  }) {
     //cv.HoughLines(this, rho, theta, threshold);
     return cv.HoughLinesP(
       this,
@@ -292,4 +293,24 @@ extension MatEx on cv.Mat {
 
     //cv.findHomographyUsac(srcPoints, dstPoints, params)
   }
+}
+
+/// 拟合轮廓
+cv.Contours cvApproxPolyDP(
+  cv.Contours contours, {
+  double epsilon = 0.02 /*近似精度*/,
+  int maxVertices = 1000 /*最大顶点数*/,
+  bool closed = true /*是否闭合*/,
+}) {
+  //拟合轮廓
+  // 计算轮廓周长，True 表示轮廓封闭
+  //final length = cv.arcLength(contour, false);
+  // 通常取周长的 1% 到 5% 作为 epsilon
+  // 0.02 是一个经典的平衡点
+  List<List<cv.Point>> pts = [];
+  for (final contour in contours) {
+    final contour2 = cv.approxPolyDP(contour, epsilon /*length * 0.02*/, false);
+    pts.add(contour2.iterator.toList());
+  }
+  return cv.VecVecPoint.fromList(pts);
 }

@@ -152,7 +152,7 @@ extension MatImageEx on cv.Mat {
 
   //MARK: find
 
-  /// 边缘检测
+  /// 边缘检测, 寻找亮度突变的点
   /// - Canny 算法并不是一个简单的卷积，而是一套完整的流水线：
   ///   - ① 高斯滤波 (Noise Reduction)
   ///   - ② 计算梯度幅值和方向 (Gradient Calculation)
@@ -165,7 +165,8 @@ extension MatImageEx on cv.Mat {
   /// - [threshold2]: maxVal（高阈值）。
   /// - [apertureSize]: Sobel 算子的核大小，默认是 3。
   /// - [l2gradient]: 计算梯度幅值的公式。默认为 False（使用 $L1$ 范数 $|G_x| + |G_y|$），设为 True 则使用更精确的 $L2$ 范数（欧几里得距离）。
-  Future<UiImage?> canny({
+  /// @return 边缘检测结果[CvMatType.CV_8UC1], [debug]下额外返回调试图片
+  Future<(cv.Mat, UiImage?)> canny({
     double threshold1 = 100,
     double threshold2 = 200,
     int apertureSize = 3,
@@ -176,32 +177,33 @@ extension MatImageEx on cv.Mat {
     UiImage? originImage /*原图*/,
   }) async {
     final mat = this;
-    final retMat = cv
-        .canny(
-          mat,
-          threshold1,
-          threshold2,
-          apertureSize: apertureSize,
-          l2gradient: l2gradient,
-        )
-        .transparentBlack;
-    final ret = await retMat.uiImage;
+    final retMat = cv.canny(
+      mat,
+      threshold1,
+      threshold2,
+      apertureSize: apertureSize,
+      l2gradient: l2gradient,
+    );
+    //debugger();
     if (debug == true) {
-      return drawImage(imageSize ?? originImage?.imageSize ?? Size.zero, (
-        canvas,
-      ) {
-        if (originImage != null) {
-          canvas.drawImage(originImage, .zero, Paint());
-        }
-        if (ret != null) {
-          canvas.drawImage(ret, .zero, Paint());
-        }
-      });
+      final ret = await retMat.transparentBlack.uiImage;
+      final image = await drawImage(
+        imageSize ?? originImage?.imageSize ?? Size.zero,
+        (canvas) {
+          if (originImage != null) {
+            canvas.drawImage(originImage, .zero, Paint());
+          }
+          if (ret != null) {
+            canvas.drawImage(ret, .zero, Paint());
+          }
+        },
+      );
+      return (retMat, image);
     }
-    return ret;
+    return (retMat, null);
   }
 
-  /// 查看轮廓, 请先将图片二值化
+  /// 查看轮廓, 寻找物体的整体边界和形状. 请先将图片二值化
   /// - [mode] 检索模式
   ///   - [cv.RETR_EXTERNAL]: 只提取最外层轮廓。
   ///   - [cv.RETR_LIST]: 提取所有轮廓，但不建立等级关系。它们在层级上都是“平级”的（只有 Next 和 Previous）。
@@ -216,7 +218,7 @@ extension MatImageEx on cv.Mat {
   ///   - 值越小： 拟合越精细，顶点越多，越接近原图。
   ///   - 值越大： 拟合越粗糙，顶点越少，看起来更像几何形。
   ///
-  /// @return 轮廓, [debug]下额外返回调试图片
+  /// @return 轮廓坐标数据, [debug]下额外返回调试图片
   Future<(cv.Contours, UiImage?)> findContours({
     //--
     bool enableBlur = true,
@@ -226,7 +228,7 @@ extension MatImageEx on cv.Mat {
     int mode = cv.RETR_TREE,
     int method = cv.CHAIN_APPROX_SIMPLE,
     //--
-    double? epsilon,
+    double? epsilon /*拟合精度阈值*/,
     //--
     bool? debug,
     Size? imageSize,
@@ -240,6 +242,9 @@ extension MatImageEx on cv.Mat {
     }
     //查找轮廓
     final (contours, hierarchy) = cv.findContours(mat, mode, method);
+    final contours2 = epsilon != null
+        ? cvApproxPolyDP(contours, epsilon: epsilon)
+        : contours;
     //debugger();
     for (final hierarchy in hierarchy) {
       //Next (下一个): 与当前轮廓处于同一层级的下一个轮廓的索引。
@@ -258,20 +263,8 @@ extension MatImageEx on cv.Mat {
           if (originImage != null) {
             canvas.drawImage(originImage, .zero, Paint());
           }
-          for (var contour in contours) {
+          for (final contour in contours2) {
             final color = randomColor();
-            //拟合轮廓
-            // 计算轮廓周长，True 表示轮廓封闭
-            //final length = cv.arcLength(contour, false);
-            // 通常取周长的 1% 到 5% 作为 epsilon
-            // 0.02 是一个经典的平衡点
-            if (epsilon != null) {
-              contour = cv.approxPolyDP(
-                contour,
-                epsilon /*length * 0.02*/,
-                false,
-              );
-            }
             for (int i = 0; i < contour.length - 1; i++) {
               final point = contour[i];
               final nextPoint = contour[i + 1];
@@ -295,7 +288,7 @@ extension MatImageEx on cv.Mat {
           }
         },
       );
-      return (contours, debugImage);
+      return (contours2, debugImage);
     }
 
     /*final ret = cv.drawContours(
@@ -308,6 +301,6 @@ extension MatImageEx on cv.Mat {
     //debugger();
     return ret.uiImage;*/
     //debugger();
-    return (contours, null);
+    return (contours2, null);
   }
 }

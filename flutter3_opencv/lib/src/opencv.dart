@@ -7,10 +7,15 @@ part of "../flutter3_opencv.dart";
 /// https://opencv-python-tutorials.readthedocs.io/zh/latest/
 ///
 /// Opencv 默认的颜色通道排序是 BGR
+/// - [cv.MatType.CV_8UC1] 灰度图
 /// - [cv.MatType.CV_8UC3] BGR
 /// - [cv.MatType.CV_8UC4] BGRA
 
+/// Mat数据结构
 typedef CvMat = cv.Mat;
+
+/// Mat数据类型
+typedef CvMatType = cv.MatType;
 
 /// OpenCV版本
 /// - `4.13.0` 2025-12-31 √
