@@ -37,6 +37,8 @@ export 'src/apis/cctv_news_api.dart';
 export 'src/apis/cctv_news_widget.dart';
 export 'src/apis/idiom_api.dart';
 export 'src/apis/idiom_widget.dart';
+export 'src/apis/spp_news_api.dart';
+export 'src/apis/spp_news_widget.dart';
 
 part 'src/archive/zip_ex.dart';
 part 'src/http/html_pub.dart';

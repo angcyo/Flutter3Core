@@ -49,7 +49,7 @@ class CmseApi {
   CmseFXRWItemBean? _buildFXRWItem(Element liElement, {String? baseUrl}) {
     final imgElement = liElement.querySelector("img");
     String? imgUrl = imgElement?.attributes["src"];
-    if (imgUrl != null && imgUrl.startsWith(".")) {
+    if (imgUrl != null && (imgUrl.startsWith(".") || imgUrl.startsWith("/"))) {
       imgUrl = imgUrl.toApi(baseUrl);
     }
     final title = liElement
