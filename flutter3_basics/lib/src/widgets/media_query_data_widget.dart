@@ -157,6 +157,8 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   }
 }
 
+/// 同时实现了2个混入的抽象类
+/// - [WidgetsBindingObserver]
 /// - [MediaQueryDataChangeMixin]
 abstract class MediaQueryDataState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver, MediaQueryDataChangeMixin<T> {}

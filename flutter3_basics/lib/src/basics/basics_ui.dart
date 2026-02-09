@@ -1853,8 +1853,11 @@ extension WidgetEx on Widget {
   );
 
   /// [Card]
-  /// [color] 卡片的颜色
-  /// [elevation] 阴影的高度, 默认1.0
+  /// - [color] 卡片的颜色
+  /// - [elevation] 阴影的高度, 默认1.0
+  /// - [shape] 卡片形状
+  ///   - [CircleBorder] 圆形
+  ///   - [RoundedRectangleBorder] 圆角矩形(默认)
   /// [CardTheme]
   /// [ThemeData.cardTheme]
   Widget card({
@@ -1862,7 +1865,7 @@ extension WidgetEx on Widget {
     @defInjectMark Color? shadowColor,
     Color? surfaceTintColor,
     @defInjectMark double? elevation,
-    ShapeBorder? shape,
+    ShapeBorder? shape /*卡片形状*/,
     EdgeInsetsGeometry? margin,
     Clip? clipBehavior = Clip.antiAlias,
     bool borderOnForeground = true,
