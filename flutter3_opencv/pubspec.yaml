@@ -19,7 +19,7 @@ dependencies:
     sdk: flutter
   # https://pub.dev/packages/opencv_dart
   # https://pub.dev/packages/dartcv4
-  opencv_dart: ^2.1.0
+  opencv_dart: ^2.2.1+4
   # https://pub.dev/packages/dartcv4
   # https://pub.dev/packages/code_assets
   # https://pub.dev/packages/ffi
@@ -36,7 +36,7 @@ dependencies:
 dependency_overrides:
   # https://pub.dev/packages/dartcv4
   # 系统需要安装 CMake
-  dartcv4: ^2.2.1 # 2.2.0 OpenCV 4.13.0
+  #dartcv4: ^2.2.1 # 2.2.0 OpenCV 4.13.0
 
 # 需要在主工程配置
 hooks:
