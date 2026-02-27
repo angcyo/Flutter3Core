@@ -9,7 +9,7 @@ topics:
   - angcyo
 screenshots:
   - description: "angcyo screenshot"
-    # path: png/png.png
+  # path: png/png.png
 
 environment:
   sdk: ^3.10.0
