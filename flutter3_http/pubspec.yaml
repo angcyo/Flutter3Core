@@ -25,13 +25,16 @@ dependencies:
   # https://pub.dev/packages/http_parser
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  dio: ^5.9.0
+  dio: ^5.9.1
   # https://pub.dev/packages/dio_http2_adapter
   # https://pub.dev/packages/http2
   # https://pub.dev/packages/dio
   #dio_http2_adapter: ^2.3.2
   # https://pub.dev/packages/json_annotation
   # https://github.com/google/json_serializable.dart/tree/master/json_annotation
+  # Because flutter3_http depends on json_annotation ^4.11.0 and json_serializable 6.11.2 depends on json_annotation >=4.9.0 <4.10.0, json_serializable 6.11.2 is forbidden.
+  #And because flutter3_http depends on json_serializable ^6.11.2, json_serializable >6.11.2 <7.0.0 is required.
+  #Because json_serializable >=6.11.3 depends on build ^4.0.3 and no versions of json_serializable match >6.11.2 <6.11.3, json_serializable >6.11.2 requires build ^4.0.3.
   json_annotation: ^4.9.0
 
   # https://pub.dev/packages/doh

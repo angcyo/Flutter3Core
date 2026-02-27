@@ -59,28 +59,29 @@ class FontFamilyMeta with EquatableMixin {
     bool? overwrite,
     bool? exportAssetsFont,
   }) : this(
-          displayFontFamily: displayFontFamily,
-          source: source,
-          variantList: [
-            FontFamilyVariantMeta(
-              displayFontFamily: displayFontFamily,
-              fontFamily: fontFamily,
-              uri: uri,
-            )
-          ],
-          savePath: savePath,
-          overwrite: overwrite,
-          exportAssetsFont: exportAssetsFont,
-        );
+         displayFontFamily: displayFontFamily,
+         source: source,
+         variantList: [
+           FontFamilyVariantMeta(
+             displayFontFamily: displayFontFamily,
+             fontFamily: fontFamily,
+             uri: uri,
+           ),
+         ],
+         savePath: savePath,
+         overwrite: overwrite,
+         exportAssetsFont: exportAssetsFont,
+       );
 
   /// 获取字体样式
-  TextStyle textStyle({
-    FontWeight? fontWeight,
-    FontStyle? fontStyle,
-  }) {
+  TextStyle textStyle({FontWeight? fontWeight, FontStyle? fontStyle}) {
     //通过[fontWeight].[fontStyle]查找变体名称, 从而获取真正的字体名称
-    final find = FontFamilyVariantMeta.closestMatch(
-            fontWeight, fontStyle, variantList) ??
+    final find =
+        FontFamilyVariantMeta.closestMatch(
+          fontWeight,
+          fontStyle,
+          variantList,
+        ) ??
         variantList.firstOrNull;
     //debugger();
     if (find != null) {
@@ -125,12 +126,9 @@ class FontFamilyMeta with EquatableMixin {
     }
     bool result = variantList.isNotEmpty;
     for (final variant in variantList) {
-      result = result &&
-          await variant.load(
-            source!,
-            savePath: savePath,
-            overwrite: overwrite,
-          );
+      result =
+          result &&
+          await variant.load(source!, savePath: savePath, overwrite: overwrite);
     }
     return result;
   }
@@ -194,13 +192,10 @@ class FontFamilyVariantMeta with EquatableMixin {
   ) {
     int? bestScore;
     FontFamilyVariantMeta? bestMatch;
-    final sourceVariant = FontFamilyVariantMeta(
-      displayFontFamily: '',
-      fontFamily: '',
-      uri: '',
-    )
-      ..fontWeight = fontWeight ?? FontWeight.normal
-      ..fontStyle = fontStyle ?? FontStyle.normal;
+    final sourceVariant =
+        FontFamilyVariantMeta(displayFontFamily: '', fontFamily: '', uri: '')
+          ..fontWeight = fontWeight ?? FontWeight.normal
+          ..fontStyle = fontStyle ?? FontStyle.normal;
     for (final variantToCompare in variantsToCompare) {
       final score = _computeMatch(sourceVariant, variantToCompare);
       if (bestScore == null || score < bestScore) {
@@ -241,21 +236,20 @@ class FontFamilyVariantMeta with EquatableMixin {
 
     if (fontStyleStr != null) {
       if (_fontStyleList.contains(fontStyleStr)) {
-        fontStyle =
-            fontStyleStr == 'Italic' ? FontStyle.italic : FontStyle.normal;
+        fontStyle = fontStyleStr == 'Italic'
+            ? FontStyle.italic
+            : FontStyle.normal;
       }
     }
   }
 
   /// 从文件名解析
   /// [filename] 文件名, 包含扩展名
-  FontFamilyVariantMeta.fromFilename(
-    String filename, {
-    String? filePath,
-  })  : displayFontFamily = filename,
-        fontFamily = filename,
-        uri = filePath ?? filename,
-        localPath = filePath {
+  FontFamilyVariantMeta.fromFilename(String filename, {String? filePath})
+    : displayFontFamily = filename,
+      fontFamily = filename,
+      uri = filePath ?? filename,
+      localPath = filePath {
     //debugger();
     final filenameParts = filename.split('.');
     fontFamily = filenameParts.first;
@@ -271,8 +265,9 @@ class FontFamilyVariantMeta with EquatableMixin {
       for (final item in _fontStyleList) {
         if (style.contains(item)) {
           fontStyleStr = item;
-          fontStyle =
-              fontStyleStr == 'Italic' ? FontStyle.italic : FontStyle.normal;
+          fontStyle = fontStyleStr == 'Italic'
+              ? FontStyle.italic
+              : FontStyle.normal;
           break;
         }
       }
@@ -319,7 +314,9 @@ class FontFamilyVariantMeta with EquatableMixin {
         if (exportAssetsFont == true && byteData != null) {
           final filePath = "${savePath ?? ''}/${uri.fileName()}";
           await byteData.writeToFile(
-              filePath: filePath, overwrite: overwrite == true);
+            filePath: filePath,
+            overwrite: overwrite == true,
+          );
           localPath = filePath;
           //
         }
@@ -349,18 +346,14 @@ class FontFamilyVariantMeta with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [
-        displayFontFamily,
-        fontFamily,
-        uri,
-      ];
+  List<Object?> get props => [displayFontFamily, fontFamily, uri];
 }
 
 /// 字体样式列表
 const _fontStyleList = ['Italic', 'Normal', 'Regular'];
 
 /// 字宽列表
-const _fontWeightMap = {
+final _fontWeightMap = {
   FontWeight.w100: 'Thin',
   FontWeight.w200: 'ExtraLight',
   FontWeight.w300: 'Light',

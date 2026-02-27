@@ -39,7 +39,7 @@ dependencies:
   # https://pub.dev/packages/xml # collection, meta, petitparser
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/path
-  vector_graphics_compiler: ^1.1.19
+  vector_graphics_compiler: ^1.2.0
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/http
   # https://pub.dev/packages/vector_graphics_codec

@@ -47,7 +47,7 @@ dev_dependencies:
   # https://pub.dev/packages/path
   # https://pub.dev/packages/petitparser
   # https://pub.dev/packages/yaml
-  intl_utils: ^2.8.13
+  intl_utils: ^2.8.14
   # https://pub.dev/packages/yaml
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/source_span

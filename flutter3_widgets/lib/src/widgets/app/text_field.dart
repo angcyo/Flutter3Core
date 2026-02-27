@@ -1530,6 +1530,7 @@ class AutocompleteOptionsWidget<T extends Object> extends StatelessWidget {
     final AlignmentDirectional optionsAlignment = switch (openDirection) {
       OptionsViewOpenDirection.up => AlignmentDirectional.bottomStart,
       OptionsViewOpenDirection.down => AlignmentDirectional.topStart,
+      OptionsViewOpenDirection.mostSpace => AlignmentDirectional.topStart,
     };
 
     Widget body = ListView.builder(
