@@ -46,8 +46,9 @@ hooks:
       include_modules: # `core` is always included
         - imgcodecs
         - imgproc
-        - contrib
+        #- contrib
         - ximgproc
+        - calib3d
         # ...
       exclude_modules:
       # - imgcodecs
