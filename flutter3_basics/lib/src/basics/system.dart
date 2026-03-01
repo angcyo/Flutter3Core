@@ -100,11 +100,16 @@ void setSystemUIDarkStyle() {
 //HapticFeedback.lightImpact();
 //SystemSound.play();
 
-/// 鼠标是否连接
+/// 是否至少有一个鼠标产生了事件
 bool get mouseIsConnected =>
     WidgetsBinding.instance.mouseTracker.mouseIsConnected;
 
-bool get isMouseConnected => mouseIsConnected;
+/// 缓存之前是否鼠标产生过事件
+bool _mouseIsConnected = false;
+
+bool get isMouseConnected => _mouseIsConnected
+    ? _mouseIsConnected
+    : _mouseIsConnected = mouseIsConnected;
 
 /// 弹出应用
 @api

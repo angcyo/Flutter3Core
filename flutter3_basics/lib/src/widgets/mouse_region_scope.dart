@@ -104,7 +104,7 @@ class MouseHoverVisibility extends StatefulWidget {
 }
 
 class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
-  /// 当前是否处于悬停
+  /// 当前是否处于鼠标悬停, 悬停时可见, 非悬停时隐藏
   bool isHover = false;
 
   ValueNotifier<bool>? hover;
@@ -125,7 +125,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
 
   @override
   Widget build(BuildContext context) {
-    //l.d("build ${classHash()} $isHover");
+    //l.d("${classHash()} build isHover:$isHover");
     final normalChild = widget.normalChild;
     if (normalChild != null) {
       return AnimatedSwitcher(
@@ -147,7 +147,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
   @overridePoint
   void handleMouseHoverMixin() {
     final value = hover?.value ?? isHover;
-    //l.i("handleMouseHoverMixin ${classHash()} $value $isHover");
+    //l.i("${classHash()} handleMouseHoverMixin $value isHover:$isHover");
     if (value != isHover) {
       setState(() {
         isHover = value;

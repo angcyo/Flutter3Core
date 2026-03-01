@@ -46,6 +46,9 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
 
 /// 扩展方法
 extension FloatBackActionWidgetEx on Widget {
+  /// 在主体上浮动一个[FloatBackActionWidget]路由返回按键
+  /// - [floatStyle] 是否要强制浮动, 否则一直显示. 在桌面端默认浮动显示
+  /// - [result] 路由pop返回结果
   Widget floatBackActionWidget({Key? key, bool? floatStyle, Object? result}) =>
       [
         this,
