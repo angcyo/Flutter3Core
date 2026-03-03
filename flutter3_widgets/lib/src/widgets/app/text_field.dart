@@ -532,6 +532,8 @@ class TextFieldConfig {
   //endregion Autocomplete
 }
 
+//MARK: - typedef
+
 typedef TextFieldConfigValueChanged<T> =
     void Function(TextFieldConfig config, T value);
 
@@ -558,6 +560,8 @@ const kPrefixIconConstraints = BoxConstraints(
   maxHeight: kSuffixIconConstraintsMaxSize,
 );
 
+//MARK: - TextInputFormatter
+
 /// 数字输入格式化器, 仅支持输入数字
 /// [FilteringTextInputFormatter.digitsOnly]
 FilteringTextInputFormatter get integerTextInputFormatter =>
@@ -570,6 +574,12 @@ FilteringTextInputFormatter get numberTextInputFormatter =>
 /// 仅支持输入正负小数
 FilteringTextInputFormatter get decimalTextInputFormatter =>
     FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*'));
+
+/// 限制输入: ip或域名:端口
+FilteringTextInputFormatter get domainTextInputFormatter =>
+    FilteringTextInputFormatter.allow(r"[0-9.:_A-Za-z\-]+".regex);
+
+//MARK: - ObscureNode
 
 /// 用来控制密码输入控件, 密码的可见性
 class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {

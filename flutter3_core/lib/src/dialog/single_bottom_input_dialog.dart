@@ -170,9 +170,11 @@ class SingleBottomInputDialog extends StatefulWidget
 
 class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
     with InputStateMixin {
+
+  /// [buildInputWidgetMixin]
   @override
   Widget build(BuildContext context) {
-    l.d("input->${textMixin}");
+    //l.d("input->$textMixin");
     final globalTheme = GlobalTheme.of(context);
     //input
     final input = buildInputWidgetMixin(context);
