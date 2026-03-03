@@ -99,6 +99,7 @@ part 'src/component/compliance.dart';
 part 'src/component/custom_painter.dart';
 part 'src/component/debounce.dart';
 part 'src/component/fps.dart';
+part 'src/component/frame_paint.dart';
 part 'src/component/limit.dart';
 part 'src/component/future_cancel.dart';
 part 'src/component/id_gen.dart';
