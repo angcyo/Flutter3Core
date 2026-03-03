@@ -16,6 +16,7 @@ void ensureInitialized() => WidgetsFlutterBinding.ensureInitialized();
 DateTime nowDateTime() => DateTime.now();
 
 /// [nowTimestamp]
+@alias
 int nowTime() => nowTimestamp();
 
 /// 当前时间戳 `1699064019689` 13位毫秒
