@@ -70,7 +70,7 @@ OverlayState? get overlayState => GlobalConfig.def.findOverlayState();
 /// [GlobalConfig.findNavigatorState]
 NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
 
-/// 快速打开url.一般是跳转到web页面/浏览器
+/// 快速打开url.一般是跳转到web页面/平台浏览器
 @dsl
 Future<bool> openWebUrl(
   String? url, [
@@ -491,7 +491,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///   return Future.value(true);
   /// };
   /// ```
-  /// [openFilePath]
+  /// - [openFilePath] 全局方法
+  ///
+  /// - [openUrlFn]
+  /// - [openFileFn]
+  /// - [saveFileFn]
   @allPlatformFlag
   GlobalOpenUrlFn? openFileFn = (context, filePath, meta) {
     l.w("企图打开filePath:$filePath from:$context meta:$meta");
@@ -531,15 +535,20 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///   return filePath.shareFile();
   /// };
   /// ```
-  /// [saveFilePath] - 全局入口方法
+  /// - [saveFilePath] - 全局入口方法
+  ///
+  /// - [openUrlFn]
+  /// - [openFileFn]
+  /// - [saveFileFn]
   @allPlatformFlag
   GlobalOpenUrlFn? saveFileFn = (context, filePath, meta) {
     l.w("企图保存filePath:$filePath from:$context meta:$meta");
     return Future.value(false);
   };
 
-  /// 注册一个全局的打开url方法, 一般是跳转到web页面/浏览器
-  /// 打开url
+  /// 注册一个全局的打开url方法, 一般是跳转到web页面/平台浏览器
+  /// - 打开内嵌web页面
+  /// - 打开平台浏览器
   ///
   /// ```
   /// GlobalConfig.def.openUrlFn = (context, url, meta) {
@@ -551,6 +560,12 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///   return Future.value(true);
   /// };
   /// ```
+  ///
+  /// - [openWebUrl] 全局方法
+  ///
+  /// - [openUrlFn]
+  /// - [openFileFn]
+  /// - [saveFileFn]
   GlobalOpenUrlFn? openUrlFn = (context, url, meta) {
     l.w("企图打开url:$url from:$context meta:$meta");
     if (url != null && isDesktopOrWeb) {
