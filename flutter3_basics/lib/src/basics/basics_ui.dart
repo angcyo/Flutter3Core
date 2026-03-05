@@ -1079,11 +1079,12 @@ extension WidgetEx on Widget {
 
   //MARK: - paint
 
-  /// [CustomPaint]
-  /// [paint] 背景绘制
-  /// [foregroundPaint] 前景绘制
-  /// [isComplex] 是否是复杂的
-  /// [willChange] 是否会在下一帧改变
+  /// [CustomPaint], 更多的时候应该使用[paintWidget]全局方法
+  ///
+  /// - [paint] 背景绘制
+  /// - [foregroundPaint] 前景绘制
+  /// - [isComplex] 是否是复杂的
+  /// - [willChange] 是否会在下一帧改变
   CustomPaint paint(
     PaintFn paint, {
     PaintFn? foregroundPaint,
