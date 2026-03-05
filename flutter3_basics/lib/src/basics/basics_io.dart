@@ -143,6 +143,8 @@ Future<R> run<R>(
 /// 内存隔离, 不共享. 只能传递基础数据类型, 或者可以被`send`的对象
 /// [SendPort.send]
 ///
+/// [TransferableTypedData] 零拷贝（Zero-copy）
+///
 /// 请尽量在静态方法中调用此方法.
 ///
 /// ```
@@ -157,6 +159,7 @@ Future<R> run<R>(
 ///
 /// - [Isolate.run]
 /// - [Isolate.spawn]
+///
 @alias
 Future<R> isolateRun<R>(
   @pragma('vm:entry-point') ResultCallback<R> callback, {

@@ -431,9 +431,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   GlobalConfig._() {
     assert(() {
-      debugPrint('初始化默认的[${classHash()}]');
+      debugPrint('W->初始化默认的[${classHash()}]');
       return true;
     }());
+    //debugger();
   }
 
   /// 全局默认

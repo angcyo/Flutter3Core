@@ -375,6 +375,29 @@ extension FileEx on File {
     return null;
   }
 
+  /// 读取文件内容
+  /// ```dart
+  /// await for (final line in readLinesStream()) {
+  ///   // 在这里处理每一行数据
+  ///   // 此时内存中仅保存当前行及缓冲区内容
+  ///   processLine(line);
+  ///   //break;
+  /// }
+  /// ```
+  /// - [Stream.cancel]
+  Stream<String>? readLinesStream({Encoding encoding = utf8}) {
+    // 1. 打开读取流
+    // 2. 使用 utf8.decoder 将字节转为字符
+    // 3. 使用 LineSplitter 将字符流切分为行
+    final Stream<String> lines = openRead()
+        .transform(encoding.decoder)
+        .transform(const LineSplitter());
+    /*lines
+        .where((line) => line.startsWith('2026-')) // 只看2026年的日志
+        .map((line) => line.toUpperCase()); // 全部转大写*/
+    return lines;
+  }
+
   /// 写入图片到文件
   Future<File?> writeImage(
     UiImage? image, {

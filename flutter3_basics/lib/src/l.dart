@@ -324,6 +324,9 @@ class L {
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}]' : '';
+    final isolateName = Isolate.current.debugName;
+    final isMainIsolate = isNil(isolateName) || isolateName == "main";
+    final isolateLabelStr = isMainIsolate ? '' : '[$isolateName]';
     final msgType = object?.runtimeType == null || object?.runtimeType == String
         ? ''
         : '[${object?.runtimeType}] ';
@@ -348,17 +351,21 @@ class L {
     final methodName = methodNameList.get(-2);
     //debugger();
     final log =
-        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}]$tagStr$levelStr->$msgType$msg';
+        '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}]'
+        '$tagStr$isolateLabelStr$levelStr->'
+        '$msgType$msg';
 
     //MARK: - log panel
-    final controller =
-        LogScope.get(GlobalConfig.def.globalAppContext) ?? $logController;
-    controller.addLogData(
-      LogScopeData.log(
-        log,
-        filterTypeList: [LLevel.fromValue(level).name, ?filterType],
-      ),
-    );
+    if (isMainIsolate) {
+      final controller =
+          LogScope.get(GlobalConfig.def.globalAppContext) ?? $logController;
+      controller.addLogData(
+        LogScopeData.log(
+          log,
+          filterTypeList: [LLevel.fromValue(level).name, ?filterType],
+        ),
+      );
+    }
 
     //MARK: - print
     if ((isDebug && level >= verbose) || level >= logLevel) {

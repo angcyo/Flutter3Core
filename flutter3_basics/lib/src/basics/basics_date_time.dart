@@ -119,20 +119,26 @@ extension TimeEx on int {
     final m = times[2];
     final h = times[3];
     final d = times[4];
+    bool isWrite = false;
     return stringBuilder((builder) {
       if (pattern.getOrNull(4) == 1 || (pattern.getOrNull(4) == 0 && d > 0)) {
         builder.write("${d.to24String(is24Hour)}${unit[4]}");
+        isWrite = true;
       }
       if (pattern.getOrNull(3) == 1 || (pattern.getOrNull(3) == 0 && h > 0)) {
         builder.write("${h.to24String(is24Hour)}${unit[3]}");
+        isWrite = true;
       }
       if (pattern.getOrNull(2) == 1 || (pattern.getOrNull(2) == 0 && m > 0)) {
         builder.write("${m.to24String(is24Hour)}${unit[2]}");
+        isWrite = true;
       }
       if (pattern.getOrNull(1) == 1 || (pattern.getOrNull(1) == 0 && s > 0)) {
         builder.write("${s.to24String(is24Hour)}${unit[1]}");
+        isWrite = true;
       }
-      if (pattern.getOrNull(0) == 1 || (pattern.getOrNull(0) == 0 && ms > 0)) {
+      if (pattern.getOrNull(0) == 1 ||
+          (pattern.getOrNull(0) == 0 && (!isWrite || ms > 0))) {
         builder.write("${ms.to24String(is24Hour)}${unit[0]}");
       }
     });
