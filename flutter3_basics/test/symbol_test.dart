@@ -16,12 +16,18 @@
 /// ```
 void main() {
   //MARK: symbol
+  final abc = "abc";
   final symbol = #abc;
+  print(symbol.runtimeType); // Symbol
   print(symbol.runtimeType.toString()); // Symbol
-  print(#abc == symbol); // true
-  print(#abc == "abc"); // false
+  //print(symbol.name); // Symbol
+  print(Symbol(abc) == symbol); // true
+  print(symbol.hashCode); // 478699127
+  print(abc.hashCode); // 756227931
+  //print(#abc == "abc"); // false
   //print(symbol. == "abc"); // false
-  print(#abc.name); // false
+  print(#abc.name); // Symbol("abc.name")
+  print("... ${#id.name}"); // ... Symbol("id.name")
 
   //MARK: never
 

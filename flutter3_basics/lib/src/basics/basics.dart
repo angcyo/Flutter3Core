@@ -255,7 +255,9 @@ Future<R> scheduleTask<R>(
 
 //error() => Future.error("asynchronous error");
 //debugger(message: "等待调试...");
-//String.fromEnvironment
+/// 环境变量读取
+/// - [Platform.environment] : 访问运行时的环境变量
+/// - [String.fromEnvironment] : 访问 Dart 编译器或运行时设置的变量
 
 /// 报告错误
 /// 上报错误到[FlutterError.onError] 最终会调用此方法

@@ -5,6 +5,14 @@
 /// @author angcyo
 /// @date 2024/06/01
 ///
+/// https://pub.dev/packages/test
+///
+/// - [test] 顶层函数
+/// - [group] 函数将测试分组
+/// - [expect] 测试断言
+///
+/// - [setUp] 调函数会在测试组或测试套件中的每个测试之前运行
+/// - [tearDown] 回调函数会在测试之后运行
 void main() {
   /*test('test', () {
     final list = [1, 2, 3, 4, 5, 6, 7, 8, 9];
