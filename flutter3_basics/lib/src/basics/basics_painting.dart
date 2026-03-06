@@ -796,7 +796,7 @@ extension CanvasEx on Canvas {
   Size drawText(
     String? text, {
     @defInjectMark TextDirection? textDirection,
-    //--
+    //--样式
     TextStyle? textStyle,
     Color? textColor = Colors.black,
     double? fontSize = kDefaultFontSize,
@@ -804,9 +804,8 @@ extension CanvasEx on Canvas {
     bool bold = false,
     List<Shadow>? shadows,
     bool shadow = false,
-    //--
     TextAlign textAlign = TextAlign.start,
-    //--
+    //--位置
     Rect? bounds /*alignment的容器*/,
     Alignment alignment = Alignment.topLeft,
     ui.Offset offset = ui.Offset.zero,
@@ -1068,6 +1067,104 @@ extension CanvasEx on Canvas {
   }
 
   //endregion ---draw---
+
+  //MARK: - debug
+
+  /// 调试模式下, 绘制视图中心点坐标系象限信息
+  /// - 绘制中心十字信息
+  /// - 绘制象限信息
+  /// - [paintQuadrant] 是否绘制中心象限信息
+  /// - [paintCross] 是否绘制中心十字横竖线
+  /// - [paintBounds] 是否绘制边界
+  /// - [transform] 数据额外的变换
+  void debugPaintBoxQuadrant(
+    Size size, {
+    Offset offset = .zero,
+    Rect? bounds,
+    Offset? center,
+    bool paintQuadrant = true,
+    bool paintCross = true,
+    bool paintBounds = false,
+    //--
+    Color? color,
+    double? strokeWidth,
+    //-
+    Matrix4? transform,
+  }) {
+    //debugger();
+    assert(() {
+      final boxBounds = bounds ?? offset & size;
+      final boxCenter = center ?? boxBounds.center;
+      final paint = Paint()
+        ..color = color ?? Colors.purpleAccent
+        ..strokeWidth = strokeWidth ?? 1
+        ..style = ui.PaintingStyle.stroke;
+      if (paintQuadrant) {
+        drawPath(
+          BasicsDebug.generateQuadrantPath(
+            boxCenter.x,
+            boxCenter.y,
+          ).transformPath(transform),
+          paint,
+        );
+      }
+      if (paintCross) {
+        final arrowSize = 10.0;
+        final arrowAngle = 30.0;
+        final b = arrowSize;
+        final a = b * tan(arrowAngle.hd);
+
+        //MARK: - 横线
+        Offset hStart = Offset(boxBounds.left, boxCenter.y);
+        hStart = transform?.mapPoint(hStart) ?? hStart;
+        Offset hEnd = Offset(boxBounds.right, boxCenter.y);
+        hEnd = transform?.mapPoint(hEnd) ?? hEnd;
+
+        drawLine(hStart, hEnd, paint);
+        //横线箭头
+        Offset hAS = Offset(boxBounds.right - arrowSize, 0);
+        hAS = transform?.mapPoint(hAS) ?? hAS;
+        drawLine(
+          Offset(hAS.dx, boxCenter.y - a),
+          Offset(hEnd.dx, boxCenter.y),
+          paint,
+        );
+        drawLine(
+          Offset(hEnd.dx, boxCenter.y),
+          Offset(hAS.dx, boxCenter.y + a),
+          paint,
+        );
+
+        //MARK: - 竖线
+        Offset vStart = Offset(boxCenter.x, boxBounds.top);
+        vStart = transform?.mapPoint(vStart) ?? vStart;
+        Offset vEnd = Offset(boxCenter.x, boxBounds.bottom);
+        vEnd = transform?.mapPoint(vEnd) ?? vEnd;
+
+        drawLine(vStart, vEnd, paint);
+        //竖线箭头
+        Offset vAS = Offset(0, boxBounds.bottom - arrowSize);
+        vAS = transform?.mapPoint(vAS) ?? vAS;
+        drawLine(
+          Offset(boxCenter.x + a, vAS.dy),
+          Offset(boxCenter.x, vEnd.dy),
+          paint,
+        );
+        drawLine(
+          Offset(boxCenter.x - a, vAS.dy),
+          Offset(boxCenter.x, vEnd.dy),
+          paint,
+        );
+
+        //MARK: - 边界
+        if (paintBounds) {
+          paint.strokeWidth = strokeWidth ?? 3;
+          drawRect(boxBounds, paint);
+        }
+      }
+      return true;
+    }());
+  }
 }
 
 extension PaintEx on Paint {

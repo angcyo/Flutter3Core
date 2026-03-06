@@ -234,15 +234,13 @@ extension RenderBoxEx on RenderBox {
     }());
   }
 
-  /// 调试模式下, 绘制视图中心点坐标系象限信息
-  /// - 绘制中心十字信息
-  /// - 绘制象限信息
-  /// - [transform] 数据额外的变换
+  /// - [CanvasEx.debugPaintBoxQuadrant]
   void debugPaintBoxQuadrant(
     PaintingContext context,
     Offset offset, {
     Rect? bounds,
     Offset? center,
+    bool paintQuadrant = true,
     bool paintCross = true,
     //--
     Color? color,
@@ -252,67 +250,17 @@ extension RenderBoxEx on RenderBox {
   }) {
     //debugger();
     assert(() {
-      final boxBounds = bounds ?? offset & size;
-      final boxCenter = center ?? boxBounds.center;
-      final paint = Paint()
-        ..color = color ?? Colors.purpleAccent
-        ..strokeWidth = strokeWidth ?? 1
-        ..style = ui.PaintingStyle.stroke;
-      context.canvas.drawPath(
-        BasicsDebug.generateQuadrantPath(
-          boxCenter.x,
-          boxCenter.y,
-        ).transformPath(transform),
-        paint,
+      context.canvas.debugPaintBoxQuadrant(
+        size,
+        offset: offset,
+        bounds: bounds,
+        center: center,
+        paintQuadrant: paintQuadrant,
+        paintCross: paintCross,
+        color: color,
+        strokeWidth: strokeWidth,
+        transform: transform,
       );
-      if (paintCross) {
-        final arrowSize = 10.0;
-        final arrowAngle = 30.0;
-        final b = arrowSize;
-        final a = b * tan(arrowAngle.hd);
-
-        //MARK: - 横线
-        Offset hStart = Offset(boxBounds.left, boxCenter.y);
-        hStart = transform?.mapPoint(hStart) ?? hStart;
-        Offset hEnd = Offset(boxBounds.right, boxCenter.y);
-        hEnd = transform?.mapPoint(hEnd) ?? hEnd;
-
-        context.canvas.drawLine(hStart, hEnd, paint);
-        //横线箭头
-        Offset hAS = Offset(boxBounds.right - arrowSize, 0);
-        hAS = transform?.mapPoint(hAS) ?? hAS;
-        context.canvas.drawLine(
-          Offset(hAS.dx, boxCenter.y - a),
-          Offset(hEnd.dx, boxCenter.y),
-          paint,
-        );
-        context.canvas.drawLine(
-          Offset(hEnd.dx, boxCenter.y),
-          Offset(hAS.dx, boxCenter.y + a),
-          paint,
-        );
-
-        //MARK: - 竖线
-        Offset vStart = Offset(boxCenter.x, boxBounds.top);
-        vStart = transform?.mapPoint(vStart) ?? vStart;
-        Offset vEnd = Offset(boxCenter.x, boxBounds.bottom);
-        vEnd = transform?.mapPoint(vEnd) ?? vEnd;
-
-        context.canvas.drawLine(vStart, vEnd, paint);
-        //竖线箭头
-        Offset vAS = Offset(0, boxBounds.bottom - arrowSize);
-        vAS = transform?.mapPoint(vAS) ?? vAS;
-        context.canvas.drawLine(
-          Offset(boxCenter.x + a, vAS.dy),
-          Offset(boxCenter.x, vEnd.dy),
-          paint,
-        );
-        context.canvas.drawLine(
-          Offset(boxCenter.x - a, vAS.dy),
-          Offset(boxCenter.x, vEnd.dy),
-          paint,
-        );
-      }
       return true;
     }());
   }
