@@ -222,7 +222,7 @@ extension StringPaintEx on String {
         skipChar = false;
         continue;
       }
-      characters;
+      //characters;
       String c = this[i];
       switch (c) {
         // This ends the parsing, as we are on the next element
