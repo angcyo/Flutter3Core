@@ -15,6 +15,25 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # https://pub.dev/packages/flutter_gemma
+  # https://pub.dev/packages/background_downloader
+  # https://pub.dev/packages/flutter_web_plugins
+  # https://pub.dev/packages/grpc
+  # https://pub.dev/packages/large_file_handler
+  # https://pub.dev/packages/local_hnsw
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/path_provider
+  # https://pub.dev/packages/plugin_platform_interface
+  # https://pub.dev/packages/protobuf
+  # https://pub.dev/packages/shared_preferences
+  flutter_gemma: ^0.12.5
+
+  # https://pub.dev/packages/mediapipe_genai
+  #mediapipe_genai: ^0.0.1
+
+  # https://pub.dev/packages/llama_cpp_dart
+  #llama_cpp_dart: ^0.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

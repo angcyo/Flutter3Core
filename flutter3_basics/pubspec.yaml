@@ -118,6 +118,8 @@ dependencies:
   # https://pub.dev/packages/uuid
   # `flutterCompute`
   flutter_isolate: ^2.1.0
+  # https://pub.dev/packages/typed_isolate
+  #typed_isolate: ^6.0.0
 
   # 重试框架
   # https://pub.dev/packages/retry

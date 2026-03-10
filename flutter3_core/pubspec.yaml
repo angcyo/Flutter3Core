@@ -55,7 +55,7 @@ dependencies:
   # shelf_multipart 2.0.0 depends on mime ^1.0.0
   # Because flutter_oss_aliyun 6.4.2 depends on mime ^1.0.4 and no versions of flutter_oss_aliyun match >6.4.2 <7.0.0, flutter_oss_aliyun ^6.4.2 requires mime ^1.0.4.
   # So, because flutter3_core depends on mime ^2.0.0 and flutter3_oss depends on flutter_oss_aliyun ^6.4.2, version solving failed.
-  mime: ^1.0.6
+  mime: ^2.0.0
 
   # https://pub.dev/packages/filesize
   # https://github.com/synw/filesize
