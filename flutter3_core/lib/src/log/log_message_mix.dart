@@ -118,11 +118,20 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 添加一条记录消息, 并且滚动到底部
+  /// - [isReceived] 是否是接收到的消息, 发送的消息右对齐, 接收的消息左对齐
+  /// - [replaceLast] 是否替换最后一条数据
   @api
-  void addLastMessage(String? message, {bool isReceived = false}) {
+  void addLastMessage(
+    String? message, {
+    bool isReceived = false,
+    bool? replaceLast,
+  }) {
     //debugger(when: isReceived);
     if (message == null) {
       return;
+    }
+    if (replaceLast == true) {
+      logDataList.removeLast();
     }
     logDataList.add(LogScopeData.message(message, isReceived: isReceived));
     updateState();
