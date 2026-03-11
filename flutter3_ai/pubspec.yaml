@@ -31,6 +31,12 @@ dependencies:
   # https://pub.dev/packages/shared_preferences
   flutter_gemma: ^0.12.5
 
+  # https://pub.dev/packages/flutter_onnxruntime
+  # https://pub.dev/packages/path_provider
+  # platform :osx, '14.0'
+  # [!] The 'Pods-Runner' target has transitive dependencies that include statically linked binaries: (onnxruntime-objc and onnxruntime-c) -> use_frameworks! :linkage => :static
+  #flutter_onnxruntime: ^1.6.3
+
   # https://pub.dev/packages/mediapipe_genai
   #mediapipe_genai: ^0.0.1
 
