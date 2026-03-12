@@ -431,7 +431,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   GlobalConfig._() {
     assert(() {
-      debugPrint('W->初始化默认的[${classHash()}]');
+      debugPrint(
+        '${nowTimeString(L.kTimePattern)} [${$currentFileName}]W->初始化默认的[${classHash()}]',
+      );
       return true;
     }());
     //debugger();

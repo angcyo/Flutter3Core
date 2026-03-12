@@ -326,6 +326,7 @@ class L {
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}]' : '';
     final isolateName = Isolate.current.debugName;
     final isMainIsolate = isNil(isolateName) || isolateName == "main";
+    final isTest = Platform.environment.containsKey('FLUTTER_TEST');
     final isolateLabelStr = isMainIsolate ? '' : '[$isolateName]';
     final msgType = object?.runtimeType == null || object?.runtimeType == String
         ? ''
@@ -356,7 +357,7 @@ class L {
         '$msgType$msg';
 
     //MARK: - log panel
-    if (isMainIsolate) {
+    if (isMainIsolate /*&& !isTest*/) {
       final controller =
           LogScope.get(GlobalConfig.def.globalAppContext) ?? $logController;
       controller.addLogData(
