@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+# protobuf
+protoc -I=lib/protobuf --dart_out=lib/src/protobuf test_protobuf.proto
+
+# grpc
+#protoc -I=lib/protobuf --dart_out=grpc:lib/src/protobuf test_protobuf.proto

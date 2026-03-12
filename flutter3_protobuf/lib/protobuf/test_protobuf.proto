@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+/// 2026-03-11
+
+// - [TestEnum]
+enum TestEnum {
+  CORPUS_UNSPECIFIED = 0; //在 proto3 中，enum 定义的第一个值必须为零，且名称应为 ENUM_TYPE_NAME_UNSPECIFIED 或 ENUM_TYPE_NAME_UNKNOWN。
+  CORPUS_UNIVERSAL = 1;
+  CORPUS_WEB = 2;
+  CORPUS_IMAGES = 3;
+  CORPUS_LOCAL = 4;
+  CORPUS_NEWS = 5;
+  CORPUS_PRODUCTS = 6;
+  CORPUS_VIDEO = 7;
+}
+
+// - [TestProtobuf]
+message TestProtobuf {
+  string query = 1;
+
+  // Which page number do we want?
+  int32 page_number = 2;
+
+  // Number of results to return per page.
+  int32 results_per_page = 3;
+
+  TestEnum corpus = 4;
+}
+
+// - [TestProtobuf2]
+message TestProtobuf2 {
+
+  // - [test1]
+  TestProtobuf test1 = 1;
+
+  // - [test2]
+  TestProtobuf test2 = 2;
+
+  // - [test3]
+  TestProtobuf test3 = 3;
+}
