@@ -44,6 +44,7 @@ const TestProtobuf$json = {
     {'1': 'page_number', '3': 2, '4': 1, '5': 5, '10': 'pageNumber'},
     {'1': 'results_per_page', '3': 3, '4': 1, '5': 5, '10': 'resultsPerPage'},
     {'1': 'corpus', '3': 4, '4': 1, '5': 14, '6': '.TestEnum', '10': 'corpus'},
+    {'1': 'data', '3': 5, '4': 1, '5': 12, '10': 'data'},
   ],
 };
 
@@ -51,7 +52,8 @@ const TestProtobuf$json = {
 final $typed_data.Uint8List testProtobufDescriptor = $convert.base64Decode(
     'CgxUZXN0UHJvdG9idWYSFAoFcXVlcnkYASABKAlSBXF1ZXJ5Eh8KC3BhZ2VfbnVtYmVyGAIgAS'
     'gFUgpwYWdlTnVtYmVyEigKEHJlc3VsdHNfcGVyX3BhZ2UYAyABKAVSDnJlc3VsdHNQZXJQYWdl'
-    'EiEKBmNvcnB1cxgEIAEoDjIJLlRlc3RFbnVtUgZjb3JwdXM=');
+    'EiEKBmNvcnB1cxgEIAEoDjIJLlRlc3RFbnVtUgZjb3JwdXMSEgoEZGF0YRgFIAEoDFIEZGF0YQ'
+    '==');
 
 @$core.Deprecated('Use testProtobuf2Descriptor instead')
 const TestProtobuf2$json = {
@@ -67,7 +69,7 @@ const TestProtobuf2$json = {
     },
     {
       '1': 'test2',
-      '3': 2,
+      '3': 6,
       '4': 1,
       '5': 11,
       '6': '.TestProtobuf',
@@ -75,17 +77,20 @@ const TestProtobuf2$json = {
     },
     {
       '1': 'test3',
-      '3': 3,
+      '3': 7,
       '4': 1,
       '5': 11,
       '6': '.TestProtobuf',
       '10': 'test3'
     },
   ],
+  '9': [
+    {'1': 2, '2': 6},
+  ],
 };
 
 /// Descriptor for `TestProtobuf2`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List testProtobuf2Descriptor = $convert.base64Decode(
     'Cg1UZXN0UHJvdG9idWYyEiMKBXRlc3QxGAEgASgLMg0uVGVzdFByb3RvYnVmUgV0ZXN0MRIjCg'
-    'V0ZXN0MhgCIAEoCzINLlRlc3RQcm90b2J1ZlIFdGVzdDISIwoFdGVzdDMYAyABKAsyDS5UZXN0'
-    'UHJvdG9idWZSBXRlc3Qz');
+    'V0ZXN0MhgGIAEoCzINLlRlc3RQcm90b2J1ZlIFdGVzdDISIwoFdGVzdDMYByABKAsyDS5UZXN0'
+    'UHJvdG9idWZSBXRlc3QzSgQIAhAG');

@@ -25,17 +25,21 @@ message TestProtobuf {
   int32 results_per_page = 3;
 
   TestEnum corpus = 4;
+
+  bytes data = 5;
 }
 
 // - [TestProtobuf2]
 message TestProtobuf2 {
 
+  reserved 2 to 5;
+
   // - [test1]
   TestProtobuf test1 = 1;
 
   // - [test2]
-  TestProtobuf test2 = 2;
+  TestProtobuf test2 = 6;
 
   // - [test3]
-  TestProtobuf test3 = 3;
+  TestProtobuf test3 = 7;
 }

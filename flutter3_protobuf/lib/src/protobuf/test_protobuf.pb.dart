@@ -27,12 +27,14 @@ class TestProtobuf extends $pb.GeneratedMessage {
     $core.int? pageNumber,
     $core.int? resultsPerPage,
     TestEnum? corpus,
+    $core.List<$core.int>? data,
   }) {
     final result = create();
     if (query != null) result.query = query;
     if (pageNumber != null) result.pageNumber = pageNumber;
     if (resultsPerPage != null) result.resultsPerPage = resultsPerPage;
     if (corpus != null) result.corpus = corpus;
+    if (data != null) result.data = data;
     return result;
   }
 
@@ -53,6 +55,8 @@ class TestProtobuf extends $pb.GeneratedMessage {
     ..aI(3, _omitFieldNames ? '' : 'resultsPerPage')
     ..aE<TestEnum>(4, _omitFieldNames ? '' : 'corpus',
         enumValues: TestEnum.values)
+    ..a<$core.List<$core.int>>(
+        5, _omitFieldNames ? '' : 'data', $pb.PbFieldType.OY)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -111,6 +115,15 @@ class TestProtobuf extends $pb.GeneratedMessage {
   $core.bool hasCorpus() => $_has(3);
   @$pb.TagNumber(4)
   void clearCorpus() => $_clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.List<$core.int> get data => $_getN(4);
+  @$pb.TagNumber(5)
+  set data($core.List<$core.int> value) => $_setBytes(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasData() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearData() => $_clearField(5);
 }
 
 /// - [TestProtobuf2]
@@ -141,9 +154,9 @@ class TestProtobuf2 extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOM<TestProtobuf>(1, _omitFieldNames ? '' : 'test1',
         subBuilder: TestProtobuf.create)
-    ..aOM<TestProtobuf>(2, _omitFieldNames ? '' : 'test2',
+    ..aOM<TestProtobuf>(6, _omitFieldNames ? '' : 'test2',
         subBuilder: TestProtobuf.create)
-    ..aOM<TestProtobuf>(3, _omitFieldNames ? '' : 'test3',
+    ..aOM<TestProtobuf>(7, _omitFieldNames ? '' : 'test3',
         subBuilder: TestProtobuf.create)
     ..hasRequiredFields = false;
 
@@ -179,27 +192,27 @@ class TestProtobuf2 extends $pb.GeneratedMessage {
   TestProtobuf ensureTest1() => $_ensure(0);
 
   /// - [test2]
-  @$pb.TagNumber(2)
+  @$pb.TagNumber(6)
   TestProtobuf get test2 => $_getN(1);
-  @$pb.TagNumber(2)
-  set test2(TestProtobuf value) => $_setField(2, value);
-  @$pb.TagNumber(2)
+  @$pb.TagNumber(6)
+  set test2(TestProtobuf value) => $_setField(6, value);
+  @$pb.TagNumber(6)
   $core.bool hasTest2() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearTest2() => $_clearField(2);
-  @$pb.TagNumber(2)
+  @$pb.TagNumber(6)
+  void clearTest2() => $_clearField(6);
+  @$pb.TagNumber(6)
   TestProtobuf ensureTest2() => $_ensure(1);
 
   /// - [test3]
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(7)
   TestProtobuf get test3 => $_getN(2);
-  @$pb.TagNumber(3)
-  set test3(TestProtobuf value) => $_setField(3, value);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(7)
+  set test3(TestProtobuf value) => $_setField(7, value);
+  @$pb.TagNumber(7)
   $core.bool hasTest3() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearTest3() => $_clearField(3);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(7)
+  void clearTest3() => $_clearField(7);
+  @$pb.TagNumber(7)
   TestProtobuf ensureTest3() => $_ensure(2);
 }
 
