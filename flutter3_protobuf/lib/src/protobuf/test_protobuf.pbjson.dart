@@ -59,38 +59,34 @@ final $typed_data.Uint8List testProtobufDescriptor = $convert.base64Decode(
 const TestProtobuf2$json = {
   '1': 'TestProtobuf2',
   '2': [
+    {'1': 'test', '3': 1, '4': 3, '5': 11, '6': '.TestProtobuf', '10': 'test'},
     {
-      '1': 'test1',
-      '3': 1,
-      '4': 1,
-      '5': 11,
-      '6': '.TestProtobuf',
-      '10': 'test1'
-    },
-    {
-      '1': 'test2',
+      '1': 'data',
       '3': 6,
-      '4': 1,
+      '4': 3,
       '5': 11,
-      '6': '.TestProtobuf',
-      '10': 'test2'
-    },
-    {
-      '1': 'test3',
-      '3': 7,
-      '4': 1,
-      '5': 11,
-      '6': '.TestProtobuf',
-      '10': 'test3'
+      '6': '.TestProtobuf2.DataEntry',
+      '10': 'data'
     },
   ],
+  '3': [TestProtobuf2_DataEntry$json],
   '9': [
     {'1': 2, '2': 6},
   ],
 };
 
+@$core.Deprecated('Use testProtobuf2Descriptor instead')
+const TestProtobuf2_DataEntry$json = {
+  '1': 'DataEntry',
+  '2': [
+    {'1': 'key', '3': 1, '4': 1, '5': 9, '10': 'key'},
+    {'1': 'value', '3': 2, '4': 1, '5': 9, '10': 'value'},
+  ],
+  '7': {'7': true},
+};
+
 /// Descriptor for `TestProtobuf2`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List testProtobuf2Descriptor = $convert.base64Decode(
-    'Cg1UZXN0UHJvdG9idWYyEiMKBXRlc3QxGAEgASgLMg0uVGVzdFByb3RvYnVmUgV0ZXN0MRIjCg'
-    'V0ZXN0MhgGIAEoCzINLlRlc3RQcm90b2J1ZlIFdGVzdDISIwoFdGVzdDMYByABKAsyDS5UZXN0'
-    'UHJvdG9idWZSBXRlc3QzSgQIAhAG');
+    'Cg1UZXN0UHJvdG9idWYyEiEKBHRlc3QYASADKAsyDS5UZXN0UHJvdG9idWZSBHRlc3QSLAoEZG'
+    'F0YRgGIAMoCzIYLlRlc3RQcm90b2J1ZjIuRGF0YUVudHJ5UgRkYXRhGjcKCURhdGFFbnRyeRIQ'
+    'CgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgBSgQIAhAG');

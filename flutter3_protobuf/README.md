@@ -149,3 +149,13 @@ https://github.com/protocolbuffers/protobuf/releases
 - [protoc-34.0-osx-aarch_64.zip](https://release-assets.githubusercontent.com/github-production-release-asset/23357588/bbb0fc4e-53bb-4c77-9946-fae6d399b314?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-03-11T10%3A42%3A09Z&rscd=attachment%3B+filename%3Dprotoc-34.0-osx-aarch_64.zip&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-03-11T09%3A41%3A15Z&ske=2026-03-11T10%3A42%3A09Z&sks=b&skv=2018-11-09&sig=PDbj%2FtRAkfwqCZchOPOKAo9Ebv24b%2FrPn5EmyUgS1BM%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc3MzIyMjczNiwibmJmIjoxNzczMjIyNDM2LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.8-W-G6GMRtT3dlrVDX1agRCsqoEBO5tA-E9BHoiHxTU&response-content-disposition=attachment%3B%20filename%3Dprotoc-34.0-osx-aarch_64.zip&response-content-type=application%2Foctet-stream)
 - [protoc-34.0-win64.zip](https://release-assets.githubusercontent.com/github-production-release-asset/23357588/59075939-f896-4fd4-a17e-95f87d1d2087?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-03-11T10%3A48%3A49Z&rscd=attachment%3B+filename%3Dprotoc-34.0-win64.zip&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-03-11T09%3A48%3A32Z&ske=2026-03-11T10%3A48%3A49Z&sks=b&skv=2018-11-09&sig=aXf3aa3VJ9b3xOXTwX7VXaRDcD3%2FqFMCqlsQUI0sqAU%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc3MzIyMjgyOCwibmJmIjoxNzczMjIyNTI4LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.fnYJSWBpW6WzyUVJ1TjJX-LlEHYn6zPl9zQNfhskkFE&response-content-disposition=attachment%3B%20filename%3Dprotoc-34.0-win64.zip&response-content-type=application%2Foctet-stream)
 
+# grpc: ^5.1.0
+
+https://pub.dev/packages/grpc
+
+https://grpc.io/
+
+## Dart gRPC
+
+https://grpc.io/docs/languages/dart/quickstart/
+

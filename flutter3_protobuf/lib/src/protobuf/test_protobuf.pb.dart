@@ -129,14 +129,12 @@ class TestProtobuf extends $pb.GeneratedMessage {
 /// - [TestProtobuf2]
 class TestProtobuf2 extends $pb.GeneratedMessage {
   factory TestProtobuf2({
-    TestProtobuf? test1,
-    TestProtobuf? test2,
-    TestProtobuf? test3,
+    $core.Iterable<TestProtobuf>? test,
+    $core.Iterable<$core.MapEntry<$core.String, $core.String>>? data,
   }) {
     final result = create();
-    if (test1 != null) result.test1 = test1;
-    if (test2 != null) result.test2 = test2;
-    if (test3 != null) result.test3 = test3;
+    if (test != null) result.test.addAll(test);
+    if (data != null) result.data.addEntries(data);
     return result;
   }
 
@@ -152,12 +150,12 @@ class TestProtobuf2 extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'TestProtobuf2',
       createEmptyInstance: create)
-    ..aOM<TestProtobuf>(1, _omitFieldNames ? '' : 'test1',
+    ..pPM<TestProtobuf>(1, _omitFieldNames ? '' : 'test',
         subBuilder: TestProtobuf.create)
-    ..aOM<TestProtobuf>(6, _omitFieldNames ? '' : 'test2',
-        subBuilder: TestProtobuf.create)
-    ..aOM<TestProtobuf>(7, _omitFieldNames ? '' : 'test3',
-        subBuilder: TestProtobuf.create)
+    ..m<$core.String, $core.String>(6, _omitFieldNames ? '' : 'data',
+        entryClassName: 'TestProtobuf2.DataEntry',
+        keyFieldType: $pb.PbFieldType.OS,
+        valueFieldType: $pb.PbFieldType.OS)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -179,41 +177,14 @@ class TestProtobuf2 extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<TestProtobuf2>(create);
   static TestProtobuf2? _defaultInstance;
 
-  /// - [test1]
+  /// - [List]
+  /// - [test]
   @$pb.TagNumber(1)
-  TestProtobuf get test1 => $_getN(0);
-  @$pb.TagNumber(1)
-  set test1(TestProtobuf value) => $_setField(1, value);
-  @$pb.TagNumber(1)
-  $core.bool hasTest1() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearTest1() => $_clearField(1);
-  @$pb.TagNumber(1)
-  TestProtobuf ensureTest1() => $_ensure(0);
+  $pb.PbList<TestProtobuf> get test => $_getList(0);
 
-  /// - [test2]
+  /// - [Map]
   @$pb.TagNumber(6)
-  TestProtobuf get test2 => $_getN(1);
-  @$pb.TagNumber(6)
-  set test2(TestProtobuf value) => $_setField(6, value);
-  @$pb.TagNumber(6)
-  $core.bool hasTest2() => $_has(1);
-  @$pb.TagNumber(6)
-  void clearTest2() => $_clearField(6);
-  @$pb.TagNumber(6)
-  TestProtobuf ensureTest2() => $_ensure(1);
-
-  /// - [test3]
-  @$pb.TagNumber(7)
-  TestProtobuf get test3 => $_getN(2);
-  @$pb.TagNumber(7)
-  set test3(TestProtobuf value) => $_setField(7, value);
-  @$pb.TagNumber(7)
-  $core.bool hasTest3() => $_has(2);
-  @$pb.TagNumber(7)
-  void clearTest3() => $_clearField(7);
-  @$pb.TagNumber(7)
-  TestProtobuf ensureTest3() => $_ensure(2);
+  $pb.PbMap<$core.String, $core.String> get data => $_getMap(1);
 }
 
 const $core.bool _omitFieldNames =

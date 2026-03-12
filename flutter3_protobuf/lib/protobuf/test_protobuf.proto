@@ -34,12 +34,18 @@ message TestProtobuf2 {
 
   reserved 2 to 5;
 
-  // - [test1]
-  TestProtobuf test1 = 1;
+  // - [List]
+  // - [test]
+  repeated TestProtobuf test = 1;
 
-  // - [test2]
-  TestProtobuf test2 = 6;
+  // - [Map]
+  map<string, string> data = 6;
+}
 
-  // - [test3]
-  TestProtobuf test3 = 7;
+// grpc
+
+// The greeting service definition.
+service TestRpc {
+  // Sends a greeting
+  rpc testSayHello (TestProtobuf) returns (TestProtobuf2) {}
 }

@@ -16,11 +16,27 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter3_basics:
+    path: ../flutter3_basics
+
   # https://pub.dev/packages/protobuf
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/fixnum
   # https://pub.dev/packages/meta
   #protobuf: ^6.0.0
+
+  # https://pub.dev/packages/grpc
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/clock
+  # https://pub.dev/packages/crypto
+  # https://pub.dev/packages/fixnum
+  # https://pub.dev/packages/googleapis_auth
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/http2
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/protobuf
+  # https://pub.dev/packages/web
+  grpc: ^5.1.0
 
 dev_dependencies:
   flutter_test:
