@@ -3,6 +3,8 @@
 # Turn off echo
 set +x
 
+# dart pub global activate protoc_plugin
+
 # protobuf
 #protoc -I=lib/protobuf --dart_out=lib/src/protobuf test_protobuf.proto
 
