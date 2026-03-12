@@ -2420,7 +2420,7 @@ extension ListIntEx on List<int> {
 
   /// 将字节数组转成对应的整型数字
   /// [length] 需要用几个字节来转换
-  /// [endian] 大小端, 默认大端: 低位在前, 高位在后. 读取的时候先读取来的在高位
+  /// [endian] 大小端, 默认大端:  高位字节存储在低地址。 高位字节在左边. 读取的时候先读取来的在高位
   int toInt([int length = 4, Endian endian = Endian.big]) {
     length = clamp(length, 0, size());
     if (endian == Endian.big) {

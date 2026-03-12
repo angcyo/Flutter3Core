@@ -46,8 +46,8 @@ class BytesWriter {
   /// 限制写入的最大字节长度
   final int? limitMaxLength;
 
-  /// 字节序, 默认大端序, 低位在前, 高位在后
-  /// 小端序, 低位在前, 高位在后
+  /// 字节序, 默认大端序, 高位字节存储在低地址。 高位字节在左边.
+  /// 小端序, 低位字节存储在低地址。低位字节在左边, 和大端相反.
   final Endian endian;
 
   BytesWriter({this.limitMaxLength, Endian? endian})
@@ -121,7 +121,7 @@ class BytesWriter {
   }
 
   /// 写入一个32位的整数, 4个字节, 小端序
-  /// 低字节在高位
+  /// 低位字节存储在低地址.
   void writeIntLittle(int value, [int length = 4]) {
     writeInt(value, length, Endian.little);
   }
@@ -166,7 +166,7 @@ class BytesWriter {
   }
 
   /// 写入一个32位的整数, 4个字节, 小端序
-  /// 低字节在高位
+  /// 低位字节存储在低地址.
   void writeLongLittle(int value, [int length = 8]) {
     writeLong(value, length, Endian.little);
   }
@@ -335,8 +335,8 @@ class ByteReader {
   /// 排除多少个字节不读取
   int excludeLength = 0;
 
-  /// 字节序, 默认大端序, 低位在前, 高位在后
-  /// 小端序, 低位在前, 高位在后
+  /// 字节序, 默认大端序,  高位字节存储在低地址。高位字节在左边.
+  /// 小端序, 低位字节存储在低地址, 低位字节在左边.
   Endian endian;
 
   /// 剩余字节数组
