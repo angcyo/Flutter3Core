@@ -64,6 +64,7 @@ part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_async.dart';
 part 'src/basics/basics_breakpoints.dart';
 part 'src/basics/basics_crypto.dart';
+part 'src/basics/basics_bytes.dart';
 part 'src/basics/basics_date_time.dart';
 part 'src/basics/basics_debug.dart';
 part 'src/basics/basics_decoration.dart';
