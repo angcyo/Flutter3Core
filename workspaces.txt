@@ -1,9 +1,11 @@
-# 2025-12-05 23:36:21.706690
+# 2026-03-16 17:28:11.840626
 # Create by angcyo (dart run Flutter3Core/script/pub_workspace.dart)
 - Flutter3Core/flutter3_oss
+- Flutter3Core/flutter3_ai
 - Flutter3Core/flutter3_ffi
 - Flutter3Core/flutter3_http
 - Flutter3Core/flutter3_basics
+- Flutter3Core/flutter3_protobuf
 - Flutter3Core/flutter3_widgets
 - Flutter3Core/flutter3_pub
 - Flutter3Core/flutter3_three_js
@@ -11,12 +13,15 @@
 - Flutter3Core/flutter3_excel
 - Flutter3Core/flutter3_app
 - Flutter3Core/flutter3_opencv
+- Flutter3Core/flutter3_flame
 - Flutter3Core/flutter3_core
 - Flutter3Core/flutter3_canvas
+- Flutter3Core/flutter3_audio
 - Flutter3Core/flutter3_pub_core
 - Flutter3Core/flutter3_res
 - Flutter3Core/flutter3_webview
 - Flutter3Core/flutter3_notification
+- Flutter3Core/flutter3_mcp
 - Flutter3Core/flutter3_code
 - Flutter3Core/flutter3_shelf
 - Flutter3Core/flutter3_vector
