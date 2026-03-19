@@ -43,6 +43,12 @@ dependencies:
   # https://pub.dev/packages/xml
   xml: ^6.6.1
 
+  # https://pub.dev/packages/json_rpc_2
+  # https://www.jsonrpc.org/specification
+  # https://pub.dev/packages/stack_trace
+  # https://pub.dev/packages/stream_channel
+  #json_rpc_2: ^4.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
