@@ -29,7 +29,7 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/protobuf
   # https://pub.dev/packages/shared_preferences
-  flutter_gemma: ^0.12.5
+  #flutter_gemma: ^0.12.5
 
   # https://pub.dev/packages/flutter_onnxruntime
   # https://pub.dev/packages/path_provider
