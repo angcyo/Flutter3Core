@@ -20,7 +20,11 @@ dependencies:
     path: ../flutter3_basics
 
   # https://pub.dev/packages/audio_decoder
-  audio_decoder: ^0.7.4
+  #audio_decoder: ^0.7.4
+  audio_decoder:
+    git:
+      url: git@github.com:angcyo/audio_decoder.git
+      ref: 0.7.4-1
 
   # https://pub.dev/packages/sonix
   # Sonix 使用 FFmpeg 进行音频解码。对于桌面平台，您必须在系统上安装 FFmpeg。移动平台则不需要单独安装 FFmpeg。
