@@ -626,6 +626,9 @@ class SingleInputWidget extends StatefulWidget {
   /// 是否激活
   final bool enabled;
 
+  /// 是否只读
+  final bool readOnly;
+
   /// 是否一直显示后缀图标, 一般是清除按钮和查看密码按钮
   /// - 不指定则在有焦点时自动显示, 否则隐藏
   final bool? alwaysShowSuffixIcon;
@@ -865,6 +868,8 @@ class SingleInputWidget extends StatefulWidget {
   const SingleInputWidget({
     super.key,
     required this.config,
+    this.enabled = true,
+    this.readOnly = false,
     this.fillColor,
     this.borderColor,
     this.focusBorderColor,
@@ -882,7 +887,6 @@ class SingleInputWidget extends StatefulWidget {
     this.showInputCounter,
     this.keyboardType,
     this.inputFormatters,
-    this.enabled = true,
     this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -931,6 +935,8 @@ class SingleInputWidget extends StatefulWidget {
   const SingleInputWidget.decoration({
     super.key,
     required this.config,
+    this.enabled = true,
+    this.readOnly = false,
     this.fillColor /*整体填充颜色*/,
     this.borderColor = Colors.transparent /*去掉正常边框的颜色*/,
     this.focusBorderColor /*焦点时的边框颜色*/,
@@ -948,7 +954,6 @@ class SingleInputWidget extends StatefulWidget {
     this.showInputCounter,
     this.keyboardType,
     this.inputFormatters,
-    this.enabled = true,
     this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -999,6 +1004,8 @@ class SingleInputWidget extends StatefulWidget {
   const SingleInputWidget.none({
     super.key,
     required this.config,
+    this.enabled = true,
+    this.readOnly = false,
     this.fillColor,
     this.borderColor,
     this.focusBorderColor,
@@ -1016,7 +1023,6 @@ class SingleInputWidget extends StatefulWidget {
     this.showInputCounter = false,
     this.keyboardType,
     this.inputFormatters,
-    this.enabled = true,
     this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -1425,12 +1431,13 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         //mouseCursor: SystemMouseCursors.text,//鼠标的样式
         child: TextField(
           /*groupId: EditableText,*/
+          enabled: widget.enabled,
+          readOnly: widget.readOnly,
           autofocus: widget.config.autofocus ?? widget.config.hasFocus,
           focusNode: widget.config.focusNode,
           canRequestFocus: widget.canRequestFocus,
           decoration: decoration,
           controller: widget.config.controller,
-          enabled: widget.enabled,
           textInputAction:
               widget.textInputAction ?? widget.config.textInputAction,
           onChanged: (value) {
