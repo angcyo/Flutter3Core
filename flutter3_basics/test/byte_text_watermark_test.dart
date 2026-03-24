@@ -37,18 +37,18 @@
 ///
 void main() {
   final t1 = "abcd";
-  print(t1 + "->" + t1.length.toString());
+  print("$t1->${t1.length}");
   final t2 = "ab\u200acd";
-  print(t2 + "->" + t2.length.toString());
+  print("$t2->${t2.length}");
   final t3 = "ab\u200bcd";
-  print(t3 + "->" + t3.length.toString());
+  print("$t3->${t3.length}");
   final t4 = "ab\u200ccd";
-  print(t4 + "->" + t4.length.toString());
+  print("$t4->${t4.length}");
   final t5 = "ab\u200dcd";
-  print(t5 + "->" + t5.length.toString());
+  print("$t5->${t5.length}");
   final t6 = "ab\u200ecd";
-  print(t6 + "->" + t6.length.toString());
+  print("$t6->${t6.length}");
   final t7 = "ab\u200fcd";
-  print(t7 + "->" + t7.length.toString());
+  print("$t7->${t7.length}");
   print("...end!");
 }
