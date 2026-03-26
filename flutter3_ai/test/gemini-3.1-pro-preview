@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent" \
+  -H "x-goog-api-key: $GEMINI_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -X POST \
+  -d '{
+    "contents": [{
+      "parts": [{"text": "Find the race condition in this multi-threaded C++ snippet: [code here]"}]
+    }]
+  }'
