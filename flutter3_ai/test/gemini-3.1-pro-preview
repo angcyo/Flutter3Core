@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# curl https://ascii.live/list
+# {"frames":["bnr","knot","earth","batman","coin","donut","hes","spidyswing","maxwell","kitty","batman-running","dvd","forrest","nyan","torus-knot","purdue","bomb","india","can-you-hear-me","clock","parrot","playstation","rick","as"]}
+#curl https://ascii.live/kitty
+
 curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent" \
   -H "x-goog-api-key: $GEMINI_API_KEY" \
   -H 'Content-Type: application/json' \
