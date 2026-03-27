@@ -1,0 +1,82 @@
+@host=http://127.0.0.1:1234
+
+### LM Studio API
+// https://lmstudio.ai/docs/developer/rest
+
+### List your models
+GET {{host}}/api/v1/models
+
+
+### Chat with a model
+POST {{host}}/api/v1/chat
+Content-Type: application/json
+
+{
+  "model": "google/gemma-3-4b",
+  "system_prompt": "用中文回答用户的问题",
+  "input": "Tell me the top trending model on hugging face and navigate to https://lmstudio.ai."
+}
+
+### Chat with a model (Streaming)
+POST {{host}}/api/v1/chat
+Content-Type: application/json
+
+{
+  "model": "google/gemma-3-4b",
+  "stream": true,
+  "system_prompt": "用中文回答用户的问题",
+  "input": "Tell me the top trending model on hugging face and navigate to https://lmstudio.ai. "
+}
+
+### OpenAI
+// https://lmstudio.ai/docs/developer/openai-compat
+// https://developers.openai.com/api/reference/resources/responses
+
+GET {{host}}/v1/models
+
+### Responses
+POST {{host}}/v1/responses
+Content-Type: application/json
+
+{
+  "model": "google/gemma-3-4b",
+  "instructions": "用中文回答用户的问题",
+  "tools": [
+    {
+      "type": "web_search",
+      "external_web_access": true
+    }
+  ],
+  "tool_choice": "auto",
+  "input": "Tell me the top trending model on hugging face and navigate to https://lmstudio.ai."
+}
+
+### Responses(Streaming)
+POST {{host}}/v1/responses
+Content-Type: application/json
+
+{
+  "model": "google/gemma-3-4b",
+  "instructions": "用中文回答用户的问题",
+  "stream": true,
+  "input": "Tell me the top trending model on hugging face and navigate to https://lmstudio.ai."
+}
+
+### Chat Completions
+// 'role' field that is in [user, assistant, system, tool].
+POST {{host}}/v1/chat/completions
+Content-Type: application/json
+
+{
+  "model": "google/gemma-3-4b",
+  "messages": [
+    {
+      "role": "system",
+      "content": "用中文回答用户的问题"
+    },
+    {
+      "role": "user",
+      "content": "Tell me the top trending model on hugging face and navigate to https://lmstudio.ai."
+    }
+  ]
+}
