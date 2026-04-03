@@ -96,6 +96,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
     this.debugLabel,
   });
 
+  /// 当前组件的大小, 是否受父组件约束的影响
   @override
   bool get sizedByParent => super.sizedByParent;
 

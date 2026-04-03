@@ -55,11 +55,11 @@ class RenderAccurateSizedBox extends RenderProxyBoxWithHitTestBehavior {
   double width;
   double height;
 
-  // 当前组件的大小只取决于父组件传递的约束
+  /// 当前组件的大小, 是否受父组件约束的影响
   @override
   bool get sizedByParent => true;
 
-  // performResize 中会调用
+  /// performResize 中会调用
   @override
   Size computeDryLayout(BoxConstraints constraints) {
     //设置当前元素宽高，遵守父组件的约束
