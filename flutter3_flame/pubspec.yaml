@@ -20,6 +20,16 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
+  flutter3_basics:
+    path: ../flutter3_basics
+
+  # https://pub.dev/packages/flame
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/ordered_set
+  # https://pub.dev/packages/vector_math
+  flame: ^1.36.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
