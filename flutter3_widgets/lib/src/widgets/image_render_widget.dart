@@ -16,7 +16,9 @@ class ImageRenderWidget extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, ImageRenderObject renderObject) {
+    BuildContext context,
+    ImageRenderObject renderObject,
+  ) {
     renderObject
       ..controller = controller
       ..markNeedsPaint();
@@ -58,8 +60,9 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
     if (event.isTouchPointerEvent) {
       if (event.isPointerFinish) {
         if (touchPointer != null) {
-          final imagePointer =
-              controller.operateMatrix.invertedMatrix().mapPoint(touchPointer!);
+          final imagePointer = controller.operateMatrix
+              .invertedMatrix()
+              .mapPoint(touchPointer!);
           if (controller._imageRect.contains(imagePointer)) {
             controller.onPointerUp?.call(imagePointer);
           }
@@ -67,8 +70,9 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
         touchPointer = null;
       } else {
         touchPointer = event.localPosition;
-        final imagePointer =
-            controller.operateMatrix.invertedMatrix().mapPoint(touchPointer!);
+        final imagePointer = controller.operateMatrix.invertedMatrix().mapPoint(
+          touchPointer!,
+        );
         if (controller._imageRect.contains(imagePointer)) {
           controller.onPointerUpdate?.call(imagePointer);
         }
@@ -125,12 +129,9 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
         return true;
       }());*/
       //debugger();
-      canvas.withMatrix(
-        controller.operateMatrix,
-        () {
-          canvas.drawImage(image, offset, Paint());
-        },
-      );
+      canvas.withMatrix(controller.operateMatrix, () {
+        canvas.drawImage(image, offset, Paint());
+      });
 
       if (controller.renderCropOverlay) {
         controller._paintCropOverlay(canvas, offset);
@@ -145,12 +146,14 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
 
   @override
   Ticker createTicker(TickerCallback onTick) {
-    _ticker =
-        Ticker(onTick, debugLabel: 'created by ${describeIdentity(this)}');
+    _ticker = Ticker(
+      onTick,
+      debugLabel: 'created by ${describeIdentity(this)}',
+    );
     return _ticker!;
   }
 
-//endregion ---Ticker---
+  //endregion ---Ticker---
 }
 
 /// 控制器
@@ -201,11 +204,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
   /// 重置图片
   /// [reset] 是否重置矩阵
-  void resetImage(
-    UiImage? image, {
-    bool refresh = false,
-    bool reset = true,
-  }) {
+  void resetImage(UiImage? image, {bool refresh = false, bool reset = true}) {
     this.image = image;
     if (reset) {
       baseMatrix = null;
@@ -221,8 +220,12 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   //region --绘制操作--
 
   /// 图片矩形
-  Rect get _imageRect => Rect.fromLTWH(0.0, 0.0, image?.width.toDouble() ?? 1.0,
-      image?.height.toDouble() ?? 1.0);
+  Rect get _imageRect => Rect.fromLTWH(
+    0.0,
+    0.0,
+    image?.width.toDouble() ?? 1.0,
+    image?.height.toDouble() ?? 1.0,
+  );
 
   /// 图片操作之后的矩形
   Rect get _imageOperateRect => operateMatrix.mapRect(_imageRect);
@@ -236,14 +239,19 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
     //debugger();
     _renderObject = renderObject;
     if (baseMatrix == null) {
-      final Size size = (renderObject.size -
-          Offset(padding.horizontal, padding.vertical)) as Size;
+      final Size size =
+          (renderObject.size - Offset(padding.horizontal, padding.vertical))
+              as Size;
       final rect = _imageRect;
       //默认居中显示图片
       final translate = Matrix4.identity();
       final scale = Matrix4.identity();
-      final dst = applyAlignRect(size, rect.size,
-          fit: BoxFit.contain, alignment: Alignment.center);
+      final dst = applyAlignRect(
+        size,
+        rect.size,
+        fit: BoxFit.contain,
+        alignment: Alignment.center,
+      );
       translate.translate(dst.left + padding.left, dst.top + padding.top);
       scale.scale(dst.width / rect.size.width, dst.height / rect.size.height);
       baseMatrix = translate * scale;
@@ -262,10 +270,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
   /// 图片仅渲染时的矩阵
   Matrix4 get renderMatrix {
-    final rotate = createRotateMatrix(
-      cropRotate.hd,
-      anchor: _imageRect.center,
-    );
+    final rotate = createRotateMatrix(cropRotate.hd, anchor: _imageRect.center);
     final flip = createFlipMatrix(
       flipX: cropFlipX,
       flipY: cropFlipY,
@@ -312,11 +317,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
   /// 最小剪切矩形范围
   Rect get _minCropBounds => Rect.fromLTWH(
-        _imageOperateRect.left,
-        _imageOperateRect.top,
-        cropLineSize * 2,
-        cropLineSize * 2,
-      );
+    _imageOperateRect.left,
+    _imageOperateRect.top,
+    cropLineSize * 2,
+    cropLineSize * 2,
+  );
 
   /// 重置剪切框的位置和大小, 通常在重置图片之后操作
   @api
@@ -341,7 +346,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
       }
       final alignRect = applyAlignRect(rect.size, Size(width, height));
       _cropBounds = Rect.fromLTWH(
-          rect.left + alignRect.left, rect.top + alignRect.top, width, height);
+        rect.left + alignRect.left,
+        rect.top + alignRect.top,
+        width,
+        height,
+      );
     }
     _initCropCorner();
     if (refresh) {
@@ -408,11 +417,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 更新旋转角度
   /// [rotate] 目标要旋转到的角度
   @api
-  void updateRotate(
-    double rotate, {
-    bool refresh = true,
-    bool animate = true,
-  }) {
+  void updateRotate(double rotate, {bool refresh = true, bool animate = true}) {
     if (animate) {
       if (_lastAnimate != null) {
         assert(() {
@@ -493,9 +498,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
         final equalRatio = cropScale != 0;
         if (!equalRatio) {
           //任意比例
-          sx = (movePosition.dx - _downCornerRect!.keepAnchor.dx) /
+          sx =
+              (movePosition.dx - _downCornerRect!.keepAnchor.dx) /
               (_downPosition!.dx - _downCornerRect!.keepAnchor.dx);
-          sy = (movePosition.dy - _downCornerRect!.keepAnchor.dy) /
+          sy =
+              (movePosition.dy - _downCornerRect!.keepAnchor.dy) /
               (_downPosition!.dy - _downCornerRect!.keepAnchor.dy);
           if (_downCornerRect!.alignment == Alignment.centerLeft ||
               _downCornerRect!.alignment == Alignment.centerRight) {
@@ -506,8 +513,8 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
           }
         } else {
           //等比
-          final oldC = distance(_downPosition!, _downCornerRect!.keepAnchor);
-          final newC = distance(movePosition, _downCornerRect!.keepAnchor);
+          final oldC = _downPosition!.d(_downCornerRect!.keepAnchor);
+          final newC = movePosition.d(_downCornerRect!.keepAnchor);
           sx = sy = newC / oldC;
         }
         //l.d('sx:$sx sy:$sy');
@@ -557,12 +564,14 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
     if (_renderObject != null && _cropBounds != null) {
       //绘制覆盖层
       final parentPath = Path()
-        ..addRect(Rect.fromLTWH(
-          offset.dx,
-          offset.dy,
-          _renderObject!.size.width,
-          _renderObject!.size.height,
-        ));
+        ..addRect(
+          Rect.fromLTWH(
+            offset.dx,
+            offset.dy,
+            _renderObject!.size.width,
+            _renderObject!.size.height,
+          ),
+        );
       final cropPath = Path();
       if (cropType == CropType.oval) {
         cropPath.addOval(_cropBounds!);
@@ -637,7 +646,8 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
       final cy = _cropBounds!.center.dy;
 
       //
-      cropCornerList.add(CropCornerRect(
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.rb,
           Alignment.topLeft,
           Rect.fromLTWH(
@@ -645,8 +655,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             top - cropLineWidth,
             cropLineWidth,
             cropLineSize,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.rb,
           Alignment.topLeft,
           Rect.fromLTWH(
@@ -654,8 +667,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             top - cropLineWidth,
             cropLineSize - cropLineWidth,
             cropLineWidth,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.bottomCenter,
           Alignment.topCenter,
           Rect.fromLTWH(
@@ -663,10 +679,13 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             top - cropLineWidth,
             cropLineSize,
             cropLineWidth,
-          )));
+          ),
+        ),
+      );
 
       //
-      cropCornerList.add(CropCornerRect(
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.bottomLeft,
           Alignment.topRight,
           Rect.fromLTWH(
@@ -674,8 +693,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             top - cropLineWidth,
             cropLineSize,
             cropLineWidth,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.bottomLeft,
           Alignment.topRight,
           Rect.fromLTWH(
@@ -683,8 +705,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             top - cropLineWidth,
             cropLineWidth,
             cropLineSize,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.centerLeft,
           Alignment.centerRight,
           Rect.fromLTWH(
@@ -692,10 +717,13 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cy - cropLineSize / 2,
             cropLineWidth,
             cropLineSize,
-          )));
+          ),
+        ),
+      );
 
       //
-      cropCornerList.add(CropCornerRect(
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.lt,
           Alignment.bottomRight,
           Rect.fromLTWH(
@@ -703,8 +731,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             bottom - cropLineSize + cropLineWidth,
             cropLineWidth,
             cropLineSize,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.lt,
           Alignment.bottomRight,
           Rect.fromLTWH(
@@ -712,10 +743,13 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             bottom,
             cropLineSize,
             cropLineWidth,
-          )));
+          ),
+        ),
+      );
 
       //
-      cropCornerList.add(CropCornerRect(
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.topCenter,
           Alignment.bottomCenter,
           Rect.fromLTWH(
@@ -723,8 +757,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             bottom,
             cropLineSize,
             cropLineWidth,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.rt,
           Alignment.bottomLeft,
           Rect.fromLTWH(
@@ -732,8 +769,11 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             bottom,
             cropLineSize,
             cropLineWidth,
-          )));
-      cropCornerList.add(CropCornerRect(
+          ),
+        ),
+      );
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.rt,
           Alignment.bottomLeft,
           Rect.fromLTWH(
@@ -741,10 +781,13 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             bottom - cropLineSize + cropLineWidth,
             cropLineWidth,
             cropLineSize,
-          )));
+          ),
+        ),
+      );
 
       //
-      cropCornerList.add(CropCornerRect(
+      cropCornerList.add(
+        CropCornerRect(
           _cropBounds!.centerRight,
           Alignment.centerLeft,
           Rect.fromLTWH(
@@ -752,17 +795,16 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
             cy - cropLineSize / 2,
             cropLineWidth,
             cropLineSize,
-          )));
+          ),
+        ),
+      );
     }
   }
 
-//endregion --crop---
+  //endregion --crop---
 }
 
-enum CropType {
-  rect,
-  oval,
-}
+enum CropType { rect, oval }
 
 class CropCornerRect {
   /// 操作当前锚点时,需要保持矩形上的什么位置不变

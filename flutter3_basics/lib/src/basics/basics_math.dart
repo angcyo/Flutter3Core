@@ -25,13 +25,26 @@ enum NumType {
   }
 }
 
-/// 求2点之间的距离, 返回值正负数
-double distance(Offset a, Offset b) {
-  return math.sqrt(math.pow(a.dx - b.dx, 2) + math.pow(a.dy - b.dy, 2));
-}
+extension OffsetMathEx on Offset {
+  /// 求2点之间的距离, 返回值正负数
+  double d(Offset b) {
+    return math.sqrt(math.pow(dx - b.dx, 2) + math.pow(dy - b.dy, 2));
+  }
 
-/// 求c边的长度
-double cOffset(Offset a, Offset b) => distance(a, b);
+  /// 求c边的长度
+  double cOffset(Offset b) => d(b);
+
+  /// 获取2个点之间的中心点
+  Offset center(Offset b) {
+    return Offset((dx + b.dx) / 2, (dy + b.dy) / 2);
+  }
+
+  /// 求2点之间的角度,与水平面的夹角, 弧度, 返回值正负弧度数
+  double angle(Offset b) {
+    //return math.atan2((b.dy - a.dy).abs(), (b.dx - a.dx).abs());
+    return math.atan2(b.dy - dy, b.dx - dx);
+  }
+}
 
 /// c边的长度
 double c(double x1, double y1, double x2, double y2) {
@@ -41,17 +54,6 @@ double c(double x1, double y1, double x2, double y2) {
 /// 对角线的长度, c边的长度. 返回值正负数
 double cl(double x, double y) {
   return math.sqrt(math.pow(x, 2) + math.pow(y, 2));
-}
-
-/// 获取2个点之间的中心点
-Offset center(Offset a, Offset b) {
-  return Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
-}
-
-/// 求2点之间的角度,与水平面的夹角, 弧度, 返回值正负弧度数
-double angle(Offset a, Offset b) {
-  //return math.atan2((b.dy - a.dy).abs(), (b.dx - a.dx).abs());
-  return math.atan2(b.dy - a.dy, b.dx - a.dx);
 }
 
 /// 求2根线之间的角度, 夹角, 弧度

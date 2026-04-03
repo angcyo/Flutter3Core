@@ -597,8 +597,8 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       );
 
       //2点之间的距离
-      final c1 = distance(downList.first, downList.last);
-      final c2 = distance(moveList.first, moveList.last);
+      final c1 = downList.first.d(downList.last);
+      final c2 = moveList.first.d(moveList.last);
 
       //l.d('$offsetList');
 
@@ -606,7 +606,7 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
         //缩放
         isFirstEventHandled = true;
         final scale = c2 / c1;
-        final pivot = center(moveList.first, moveList.last);
+        final pivot = moveList.first.center(moveList.last);
         scaleBy(
           scaleX: scale,
           scaleY: scale,

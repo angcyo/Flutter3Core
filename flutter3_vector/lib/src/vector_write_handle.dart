@@ -313,7 +313,7 @@ mixin VectorWriteMixin {
     if (cc == null) {
       return false;
     }
-    final c = distance(circleCenter, cc);
+    final c = circleCenter.d(cc);
     return c.abs() < circleTolerance;
   }
 
@@ -325,7 +325,7 @@ mixin VectorWriteMixin {
     if (beforeAngle == null || angle == null) {
       return false;
     }
-    final c = distance(point.position, beforePoint.position);
+    final c = point.position.d(beforePoint.position);
     final h = tan((angle - beforeAngle).abs() / 4) * c / 2;
     return h.abs() < vectorTolerance;
   }
@@ -427,10 +427,7 @@ class SvgWriteHandle with VectorWriteMixin {
     } else if (point.type.have(VectorWriteMixin.sPointTypeLine)) {
       stringBuffer?.write(' L$x,$y');
     } else if (point.type.have(VectorWriteMixin.sPointTypeArc)) {
-      final c = distance(
-        position,
-        point.circleCenter!,
-      ).toDigits(digits: digits);
+      final c = position.d(point.circleCenter!).toDigits(digits: digits);
       stringBuffer?.write(
         ' A$c,$c 0 ${point.largeArcFlag} ${point.sweepFlag} $x,$y',
       );

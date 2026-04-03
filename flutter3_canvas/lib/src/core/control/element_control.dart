@@ -678,8 +678,8 @@ class ScaleControl extends BaseControl {
             final anchorInvert = _downTargetElementAnchorInvert!;
             if (isLockRatio) {
               //等比缩放
-              final oldC = distance(anchorInvert, _downScenePointInvert);
-              final newC = distance(anchorInvert, moveScenePointInvert);
+              final oldC = anchorInvert.d(_downScenePointInvert);
+              final newC = anchorInvert.d(moveScenePointInvert);
 
               final scale = newC / oldC;
               sx = scale;
