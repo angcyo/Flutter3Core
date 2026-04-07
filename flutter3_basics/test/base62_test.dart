@@ -2,6 +2,8 @@
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2026/03/09
 ///
+/// 62进制转换
+/// - 任意进制转换示例
 class Base62 {
   static const String _chars =
       "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -9,7 +11,7 @@ class Base62 {
   /// 1. 整型数转换成 Base62 字符串
   static String encode(dynamic input) {
     BigInt value;
-    if (input is int) {
+    if (input is num) {
       value = BigInt.from(input);
     } else if (input is BigInt) {
       value = input;
@@ -20,7 +22,7 @@ class Base62 {
     if (value == BigInt.zero) return _chars[0];
 
     String res = "";
-    final BigInt base = BigInt.from(62);
+    final BigInt base = BigInt.from(_chars.length);
 
     while (value > BigInt.zero) {
       int remainder = (value % base).toInt();
@@ -33,7 +35,7 @@ class Base62 {
   /// 2. Base62 字符串反转回整型数
   static BigInt decode(String base62) {
     BigInt result = BigInt.zero;
-    final BigInt base = BigInt.from(62);
+    final BigInt base = BigInt.from(_chars.length);
 
     for (int i = 0; i < base62.length; i++) {
       int digit = _chars.indexOf(base62[i]);
