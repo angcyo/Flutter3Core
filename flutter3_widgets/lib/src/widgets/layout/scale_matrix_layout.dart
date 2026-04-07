@@ -1,7 +1,7 @@
 part of flutter3_widgets;
 
 ///
-/// @author <a href="mailto:angcyo@126.com">angcyo</a> \
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/06/14
 ///
 /// 通过计算出一个[Matrix3], 然后将此[Matrix3]作用到所有child上

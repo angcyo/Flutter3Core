@@ -1,7 +1,7 @@
 part of flutter3_widgets;
 
 ///
-/// @author <a href="mailto:angcyo@126.com">angcyo</a> \
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/06/14
 ///
 /// 滑块验证码

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 ///
-/// @author <a href="mailto:angcyo@126.com">angcyo</a> \
+/// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2026/04/07
 ///
 /// ```

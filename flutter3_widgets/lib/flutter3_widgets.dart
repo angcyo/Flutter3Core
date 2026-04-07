@@ -59,6 +59,7 @@ part 'src/navigation/navigate_ex.dart';
 part 'src/pub/accurate_sized_box.dart';
 part 'src/pub/badges_ex.dart';
 part 'src/pub/expandable_ex.dart';
+part 'src/pub/inset_shadow.dart';
 part 'src/pub/keep_alive.dart';
 part 'src/pub/lifecycle.dart';
 part 'src/pub/pub_widget_ex.dart';
