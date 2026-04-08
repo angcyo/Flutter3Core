@@ -1,0 +1,7 @@
+# extension_config_spec.md
+# https://github.com/flutter/devtools/blob/master/packages/devtools_extensions/extension_config_spec.md
+name: angcyo_devtools
+issueTracker: https://github.com/angcyo/Flutter3Core/issues
+version: 0.0.1
+materialIconCodePoint: '0xe291'
+requiresConnection: false
