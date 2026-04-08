@@ -432,3 +432,32 @@ https://github.com/fluttercommunity/plus_plugins
 - [receive_sharing_intent: ^1.8.0](https://pub.dev/packages/receive_sharing_intent) 一个 Flutter 插件，使 Flutter 应用程序能够从其他应用程序接收共享照片、视频、文本、URL 或任何其他文件类型。
 - [receive_sharing_intent_plus: ^1.0.1](https://pub.dev/packages/receive_sharing_intent_plus) Flutter 插件，可在您的应用程序中使用文本、照片和 URL 解锁无缝内容共享。
 - [audioplayers: ^6.1.0](https://pub.dev/packages/audioplayers) 一个可同时播放多个音频文件的 Flutter 插件，适用于 Android、iOS、Linux、macOS、Windows 和 Web。
+
+## pretty_diff_text: ^2.1.0 
+
+https://pub.dev/packages/pretty_diff_text
+
+PrettyDiffText 是 RichText 的一个封装函数，它以可视化的方式展示两个文本之间的差异。
+
+默认情况下，它使用 Google 的 diff-match-patch 库，该库实现了 Myer 的 diff 算法 。它通常被认为是最好的通用 diff 工具。
+
+- 🔥 纯 Dart 语言 ：完全用 Dart 语言编写。
+- ⭐ 跨平台 ：可在 Android、iOS、macOS、Windows、Linux 和 Web 上运行。
+- 💥 高度可定制 ：几乎所有内容都可以定制：
+  - AddedText、DeletedText、EqualText 的文本样式。
+  - 差异清理类型：语义、效率、无。
+  - 差异算法调优：DiffTimeout、EditCost。
+  - 自带差异：使用你自己的算法计算差异。
+  - Flutter RichText 的所有自定义功能。
+
+- [diff_match_patch: ^0.4.1](https://pub.dev/packages/diff_match_patch)
+
+## diffutil_dart: ^4.0.1
+
+https://pub.dev/packages/diffutil_dart
+
+计算两个列表之间的差异。
+
+该代码深受 Android 的 DiffUtil 类启发，并被移植到 Dart 平台。
+
+内部使用迈尔斯差分算法。关于该算法的内部工作原理，我推荐阅读以下系列文章： https://blog.jcoglan.com/2017/02/12/the-myers-diff-algorithm-part-1/
