@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:devtools_app_shared/ui.dart';
 import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,43 @@ import 'package:flutter/material.dart';
 ///
 /// https://github.com/flutter/flutter/blob/main/packages/flutter/lib/src/material/icons.dart
 /// https://material.io/resources/icons
+///
+/// # 程序中需要注册扩展 [registerExtension]
+///
+/// ```dart
+/// class ComponentTreeConnector extends DevToolsConnector {
+///   @override
+///   void init() {
+///     // Get the component tree of the game.
+///     registerExtension(
+///       'ext.flame_devtools.getComponentTree',
+///       (method, parameters) async {
+///         final componentTree = ComponentTreeNode.fromComponent(game);
+///
+///         return ServiceExtensionResponse.result(
+///           json.encode({
+///             'component_tree': componentTree.toJson(),
+///           }),
+///         );
+///       },
+///     );
+///   }
+/// }
+/// ```
+///
+/// # DevTools 中调用扩展. [ServiceManager.callServiceExtensionOnMainIsolate]
+///
+/// ```dart
+/// static Future<ComponentTreeNode> getComponentTree() async {
+///   final componentTreeResponse = await serviceManager
+///       .callServiceExtensionOnMainIsolate(
+///         'ext.flame_devtools.getComponentTree',
+///       );
+///   return ComponentTreeNode.fromJson(
+///     componentTreeResponse.json!['component_tree'] as Map<String, dynamic>,
+///   );
+/// }
+/// ```
 ///
 void main() {
   runApp(const Flutter3DevToolsExtension());
@@ -31,32 +69,50 @@ class Flutter3DevToolsExtension extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DevToolsExtension(
-      child: LayoutBuilder(
-        builder: (ctx, constraints) {
-          extensionManager.showNotification(
-            "isServiceAvailable:${serviceManager.isServiceAvailable}",
-          );
-          extensionManager.showNotification(
-            "sdkVersion:${serviceManager.sdkVersion}",
-          );
-          extensionManager.showNotification(
-            "connectedState:${serviceManager.connectedState.value}",
-          );
-          extensionManager.showBannerMessage(
-            key: "banner",
-            type: "warning",
-            message: "Layout Banner Message",
-            extensionName: "angcyo",
-          );
-          return Text(
-            dtdManager.uri?.toString() ??
-                serviceManager.connectedApp?.operatingSystem ??
-                serviceManager.connectedApp?.flutterVersionNow?.toString() ??
-                serviceManager.connectedApp?.toString() ??
-                "angcyo devtools",
-          );
-        },
-      ), // Build your extension here
+      child: RoundedOutlinedBorder(
+        // Shared component
+        child: Column(
+          children: [
+            AreaPaneHeader(
+              // Shared component
+              roundedTopBorder: false,
+              includeTopBorder: false,
+              title: Text('[angcyo]This is a section header'),
+            ),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (ctx, constraints) {
+                  extensionManager.showNotification(
+                    "isServiceAvailable:${serviceManager.isServiceAvailable}",
+                  );
+                  extensionManager.showNotification(
+                    "sdkVersion:${serviceManager.sdkVersion}",
+                  );
+                  extensionManager.showNotification(
+                    "connectedState:${serviceManager.connectedState.value}",
+                  );
+                  extensionManager.showBannerMessage(
+                    key: "banner",
+                    type: "warning",
+                    message: "Layout Banner Message",
+                    extensionName: "angcyo",
+                  );
+                  return Center(
+                    child: Text(
+                      dtdManager.uri?.toString() ??
+                          serviceManager.connectedApp?.operatingSystem ??
+                          serviceManager.connectedApp?.flutterVersionNow
+                              ?.toString() ??
+                          serviceManager.connectedApp?.toString() ??
+                          "!angcyo devtools!",
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
