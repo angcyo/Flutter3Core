@@ -878,7 +878,6 @@ extension NavigatorStateEx on NavigatorState {
     TranslationType? type,
     RoutePredicate? predicate,
     String? routeName,
-
     RouteSettings? settings,
   }) {
     final root = ModalRoute.withName('/');

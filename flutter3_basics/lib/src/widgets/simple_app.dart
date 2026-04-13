@@ -17,6 +17,7 @@ class SimpleApp extends StatefulWidget {
 
   /// [WidgetsApp.locale]
   final Locale? locale;
+  /// 如果你定义了 localeListResolutionCallback，Flutter 会把用户当前的语言列表（按优先级排序）和应用支持的语言列表传给你，由你通过代码逻辑决定最终返回哪一个。
   final LocaleListResolutionCallback? localeListResolutionCallback;
   final LocaleResolutionCallback? localeResolutionCallback;
   final Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates;

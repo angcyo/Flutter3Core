@@ -143,8 +143,10 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 构建webview
+  /// - 如果系统时间不对, 会导致webview加载失败.
   @api
   Widget buildInAppWebView(BuildContext context, WebviewConfig config) {
+    //debugger();
     final globalTheme = GlobalTheme.of(context);
     final urlRequest = !isNil(config.url)
         ? URLRequest(url: WebUri(config.url!))
@@ -245,7 +247,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         debugUpdateSignal
             .buildFn(
               () => webViewUserAgentCache?.text(
-                style: globalTheme.textPlaceStyle.copyWith(fontSize: 9),
+                style: globalTheme.textPlaceStyle.copyWith(fontSize: 6),
               ),
             )
             .position(alignBottom: true),
