@@ -70,7 +70,7 @@ dependencies:
     git:
       url: git@github.com:angcyo/wakelock_plus.git
       path: wakelock_plus
-      ref: 1.5.1-fix1
+      ref: 1.5.1-fix3
   # https://pub.dev/packages/keep_screen_on
   # keep_screen_on: ^4.0.0
   # https://pub.dev/packages/desktop_keep_screen_on

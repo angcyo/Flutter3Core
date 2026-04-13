@@ -72,14 +72,13 @@ Future<FilePickerResult?> pickFiles({
   bool lockParentWindow = false,
   bool readSequential = false,
 }) async {
-  final FilePickerResult? result = await FilePicker.platform.pickFiles(
+  final FilePickerResult? result = await FilePicker.pickFiles(
     dialogTitle: dialogTitle,
     initialDirectory: initialDirectory ?? _lastPickDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
-    compressionQuality: allowCompression ? (compressionQuality ?? 30) : 0,
     onFileLoading: onFileLoading,
-    allowCompression: allowCompression,
+    compressionQuality: allowCompression ? (compressionQuality ?? 30) : 0,
     allowMultiple: allowMultiple,
     withData: withData,
     withReadStream: withReadStream,
@@ -116,7 +115,7 @@ Future<String?> pickDirectoryPath({
   bool lockParentWindow = false,
   String? initialDirectory,
 }) async {
-  final path = await FilePicker.platform.getDirectoryPath(
+  final path = await FilePicker.getDirectoryPath(
     dialogTitle: dialogTitle,
     lockParentWindow: lockParentWindow,
     initialDirectory: initialDirectory ?? _lastPickDirectory,
@@ -160,7 +159,7 @@ Future<String?> saveFile({
   List<String>? allowedExtensions,
   bool lockParentWindow = false,
 }) async {
-  final path = await FilePicker.platform.saveFile(
+  final path = await FilePicker.saveFile(
     dialogTitle: dialogTitle,
     fileName: fileName,
     initialDirectory: initialDirectory ?? _lastPickDirectory,

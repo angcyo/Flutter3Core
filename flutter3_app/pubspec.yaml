@@ -35,7 +35,8 @@ dependencies:
   # https://pub.dev/packages/path
   # https://pub.dev/packages/web
   # https://pub.dev/packages/win32
-  package_info_plus: ^10.0.0
+  # 10.0.0 : BREAKING FEAT(package_info_plus): Bump win32 from 5.15.0 to 6.0.0 (#3760). (f0da4b91)
+  package_info_plus: ^9.0.1
 
   # https://pub.dev/packages/device_info_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus/device_info_plus
@@ -46,7 +47,8 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/win32
   # https://pub.dev/packages/win32_registry
-  device_info_plus: ^13.0.0
+  # 13.0.0 : BREAKING FEAT(device_info_plus): Bump win32 from 5.15.0 to 6.0.0 (#3791). (5f93878b)
+  device_info_plus: ^12.4.0
 
   # https://pub.dev/packages/share_plus
   # https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus/share_plus
