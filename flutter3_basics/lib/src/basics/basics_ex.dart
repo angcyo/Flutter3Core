@@ -1268,6 +1268,16 @@ extension StringEx on String {
   /// 将`8000`转换成`8.0.0.0`
   String toVersionString() => split("").join(".");
 
+  /// 首字母大写
+  /// 将字符串首字母大写，其余部分保持不变
+  /// - [titleCase] : 是否其余部分强制小写（Title Case）
+  String capitalize({bool titleCase = false}) {
+    if (isEmpty) return this;
+    final s = this[0].toUpperCase();
+    final e = substring(1);
+    return titleCase ? "$s${e.toLowerCase()}" : "$s$e";
+  }
+
   //endregion 功能
 }
 
