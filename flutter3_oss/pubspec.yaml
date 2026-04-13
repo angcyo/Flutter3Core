@@ -27,11 +27,15 @@ dependencies:
   # https://pub.dev/packages/crypto
   # https://pub.dev/packages/dio
   # https://pub.dev/packages/mime
-  flutter_oss_aliyun: ^6.4.2
+  #flutter_oss_aliyun: ^6.4.2
+  flutter_oss_aliyun:
+    git:
+      url: git@github.com:angcyo/flutter_oss_aliyun.git
+      ref: 6.4.2-fix1
 
 dependency_overrides:
   # in flutter3_core
-  mime: ^2.0.0
+  # mime: ^2.0.0
 
 dev_dependencies:
   flutter_test:

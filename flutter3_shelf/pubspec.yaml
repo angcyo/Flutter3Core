@@ -92,7 +92,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/nm
   # 需要对应的权限
-  network_info_plus: ^7.0.0
+  network_info_plus: ^8.0.0
   #connectivity_plus: ^6.1.4
 
   # https://pub.dev/packages/udp
@@ -107,7 +107,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   # https://pub.dev/packages/shelf_router_generator
-  shelf_router_generator: ^1.1.2
+  shelf_router_generator: ^1.1.4
   # https://pub.dev/packages/build_runner
   build_runner: any
   json_serializable: any

@@ -41,7 +41,7 @@ const TestCollectionSchema = CollectionSchema(
   getId: _testCollectionGetId,
   getLinks: _testCollectionGetLinks,
   attach: _testCollectionAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _testCollectionEstimateSize(

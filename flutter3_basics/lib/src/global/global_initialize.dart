@@ -36,9 +36,10 @@ void $registerGlobalComplianceInitialize(FutureVoidAction action) {
 }
 
 /// 执行全局初始化后的方法
+@api
 @initialize
 @callPoint
-@api
+@CallFrom("runGlobalApp")
 Future<void> executeGlobalInitialize({
   bool? before,
   bool? after,

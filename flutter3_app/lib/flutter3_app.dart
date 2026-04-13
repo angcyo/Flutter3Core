@@ -276,6 +276,7 @@ Future runGlobalApp(
 
     //MARK: - end
     globalAppEndTime = nowTimestamp();
+    //启动完成[294ms] /system/bin/app_process64
     "启动完成[${lTime.time()}] ${Platform.resolvedExecutable}".writeToLog(
       level: L.info,
     );

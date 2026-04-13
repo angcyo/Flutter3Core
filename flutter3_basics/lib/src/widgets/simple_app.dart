@@ -35,8 +35,15 @@ class SimpleApp extends StatefulWidget {
     this.localeResolutionCallback,
     this.localizationsDelegates,
     this.supportedLocales = const <Locale>[
+      //http://www.lingoes.net/en/translator/langcode.htm
       Locale('en', 'US'),
       Locale('zh', 'CN'),
+      /*const Locale.fromSubtags(languageCode: 'zh', countryCode: 'TW'),
+      const Locale.fromSubtags(languageCode: 'zh', countryCode: 'HK'),
+      const Locale.fromSubtags(languageCode: 'en', countryCode: 'US'),
+      const Locale.fromSubtags(languageCode: 'de', countryCode: 'DE'),
+      const Locale.fromSubtags(languageCode: 'ja', countryCode: 'JP'),
+      const Locale.fromSubtags(languageCode: 'es', countryCode: 'ES'),*/
     ],
     //--
     this.clipBehavior = Clip.hardEdge,

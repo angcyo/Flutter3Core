@@ -30,7 +30,7 @@ dependencies:
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/vector_graphics_codec
   # https://pub.dev/packages/vector_graphics_compiler
-  flutter_svg: ^2.2.3
+  flutter_svg: ^2.2.4
   # https://pub.dev/packages/vector_graphics_compiler
   # https://github.com/dnfield/vector_graphics
   # https://pub.dev/packages/args
@@ -43,7 +43,7 @@ dependencies:
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/http
   # https://pub.dev/packages/vector_graphics_codec
-  vector_graphics: ^1.1.19
+  vector_graphics: ^1.1.21
   # https://pub.dev/packages/vector_graphics_codec
   vector_graphics_codec: ^1.1.13
 

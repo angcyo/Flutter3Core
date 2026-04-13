@@ -47,7 +47,7 @@ dependencies:
   # https://pub.dev/packages/async
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
-  async: ^2.13.0
+  async: ^2.13.1
 
   # https://pub.dev/packages/dds
   # https://pub.dev/packages/dap

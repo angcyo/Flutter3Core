@@ -38,7 +38,7 @@ void main(List<String> arguments) {
   final buildConfig = readBuildConfigMap("build_config");
   if (buildConfig == null) {
     colorLog(
-      "未找到自定义的[build_config]]配置:请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.",
+      "未找到自定义的[build_config]]配置,请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.",
     );
   }
   final json = {
