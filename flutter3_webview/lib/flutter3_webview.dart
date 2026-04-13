@@ -7,15 +7,18 @@ import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+// @formatter:off
 part 'src/3d/flutter_3d_page.dart';
 part 'src/single_inappweb_page.dart';
 part 'src/single_web_page.dart';
 part 'src/webview_ex.dart';
+// @formatter:on
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/11/01
 ///
+/// 在App内部使用WebView打开网页
 extension WebViewEx on BuildContext {
   /// 打开一个简单的网页使用WebView
   /// Open a single webview page.
@@ -28,3 +31,6 @@ extension WebViewEx on BuildContext {
     );
   }
 }
+
+/// 自定的UA
+String? $customUserAgent;

@@ -23,6 +23,7 @@ extension MarkdownStringEx on String {
       useScrollView: useScrollView,
       onTapLink: (text, href, title) {
         assert(() {
+          //Link点击[隐私政策]::https://www.laserabc.com/Laserabc%20Light%20privac%20policy.html
           l.d("Link点击[$text]:$title:$href");
           return true;
         }());

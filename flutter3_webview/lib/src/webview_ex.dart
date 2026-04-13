@@ -74,7 +74,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     displayZoomControls: false,
     alwaysBounceVertical: true,
     userAgent: null,
-    applicationNameForUserAgent: "angcyo",
+    applicationNameForUserAgent: $customUserAgent ?? "angcyo",
     supportMultipleWindows: false,
     hardwareAcceleration: false,
     overScrollMode: OverScrollMode.ALWAYS,
