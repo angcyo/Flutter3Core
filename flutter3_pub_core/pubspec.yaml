@@ -1,5 +1,5 @@
 name: flutter3_pub_core
-description: "A new Flutter package project."
+description: "A Flutter pub core packages."
 version: 0.0.1
 homepage: https://github.com/angcyo/Flutter3Core
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -49,7 +49,7 @@ dependencies:
   # https://pub.dev/packages/flutter_web_plugins
   # https://pub.dev/packages/logging
   # https://pub.dev/packages/meta
-  go_router: ^17.2.0
+  go_router: ^17.2.1
   # https://pub.dev/packages/logging
   logging: ^1.3.0
 
@@ -75,6 +75,41 @@ dependencies:
   # keep_screen_on: ^4.0.0
   # https://pub.dev/packages/desktop_keep_screen_on
   # desktop_keep_screen_on: ^0.0.3
+
+  # https://pub.dev/packages/bot_toast
+  #bot_toast: ^4.1.3
+
+  # https://pub.dev/packages/waterfall_flow
+  # 瀑布流布局
+  #waterfall_flow: ^3.1.1
+
+  # https://pub.dev/packages/animated_reorderable_list
+  # 动画列表和网格
+  #animated_reorderable_list: ^1.3.0
+
+  # https://pub.dev/packages/animated_visibility
+  # 动画显示和隐藏
+  #animated_visibility: ^0.0.4
+
+  # https://pub.dev/packages/super_sliver_list
+  # `SliverList` 和 `ListView` 的直接替换组件，性能大幅提升. 支持滚动到指定位置
+  #super_sliver_list: ^0.4.1
+
+  # https://pub.dev/packages/diffutil_sliverlist
+  # https://pub.dev/packages/diffutil_dart
+  #diffutil_sliverlist: ^0.5.1
+
+  # https://pub.dev/packages/list_wheel_scroll_view_nls
+  # 一个扩展 ListWheelScrollView 以支持 scrollDirection Flutter 包，可实现水平滚动。
+  #list_wheel_scroll_view_nls: ^0.0.5
+
+  # https://pub.dev/packages/flutter_reorderable_grid_view
+  # 为每种类型的 GridView 添加动画拖放功能，并在更改 GridView 中子元素的大小时添加动画效果。
+  #flutter_reorderable_grid_view: ^5.6.0
+
+  # https://pub.dev/packages/flutter_scroll_shadow
+  # ScrollShadow 是 Flutter 的一个组件，它为可滚动的子元素添加阴影。支持 ScrollController 和垂直或水平方向。
+  #flutter_scroll_shadow: ^1.2.6
 
 dev_dependencies:
   flutter_test:
