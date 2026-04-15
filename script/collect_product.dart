@@ -54,14 +54,10 @@ void main(List<String> arguments) async {
   final appName = _getAppName();
   final versionName = _getVersionName();
   final versionCode = _getVersionCode();
-  final buildTypeName = _getBuildTypeName();
-  final buildFlavorName = _getBuildFlavorName();
   print(
     "appName: $appName"
     "\nversionName: $versionName"
-    "\nversionCode: $versionCode"
-    "\nbuildTypeName: $buildTypeName"
-    "\nbuildFlavorName: $buildFlavorName",
+    "\nversionCode: $versionCode",
   );
 
   //输出路径
@@ -78,7 +74,7 @@ void main(List<String> arguments) async {
   final androidApkName = config["android_apk_name"];
   if (androidApkName is String) {
     //收集 apk
-    final outputName = formatName(androidApkName);
+    final outputName = formatName(androidApkName, "android");
     final from = "$currentPath/build/app/outputs/flutter-apk/app-release.apk";
     if (File(from).existsSync()) {
       final key = "app-release.apk/${File(from).lastModifiedSync()}";
@@ -100,7 +96,7 @@ void main(List<String> arguments) async {
   final androidAppbundleName = config["android_appbundle_name"];
   if (androidAppbundleName is String) {
     //收集 aab
-    final outputName = formatName(androidAppbundleName);
+    final outputName = formatName(androidAppbundleName, "android");
     final from =
         "$currentPath/build/app/outputs/bundle/release/app-release.aab";
     if (File(from).existsSync()) {
@@ -124,7 +120,7 @@ void main(List<String> arguments) async {
   if (iosIpaName is String) {
     //收集 ipa
     final targetFileName = readIosBundleName();
-    final outputName = formatName(iosIpaName);
+    final outputName = formatName(iosIpaName, "ios");
     final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
     if (File(from).existsSync()) {
       final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
@@ -147,7 +143,7 @@ void main(List<String> arguments) async {
   if (macosAppName is String) {
     //收集 app
     final targetFileName = readMacosProductName();
-    final outputName = formatName(macosAppName);
+    final outputName = formatName(macosAppName, "macos");
     final from =
         "$currentPath/build/macos/Build/Products/Release/$targetFileName.app";
     if (Directory(from).existsSync()) {
@@ -180,7 +176,7 @@ void main(List<String> arguments) async {
   if (windowsExeName is String) {
     //收集 exe
     final targetFileName = readWindowsExeName();
-    final outputName = formatName(windowsExeName);
+    final outputName = formatName(windowsExeName, "windows");
     final from = "$currentPath/build/windows/x64/runner/Release";
     if (Directory(from).existsSync()) {
       final key =
@@ -231,24 +227,34 @@ String? _getVersionCode() {
   return $pubspec?["version"]?.toString().split("+")[1];
 }
 
-String? _getBuildTypeName() {
+String? _getBuildTypeName(String? platformName) {
   final buildConfig = readBuildConfigMap("build_config");
-  return buildConfig?["buildType"];
+  final def = buildConfig?["json"]?["buildType"];
+  if (platformName == null || platformName.isEmpty) {
+    return def;
+  }
+  return buildConfig?["platformMap"]?[platformName]?["json"]?["buildType"] ??
+      def;
 }
 
-String? _getBuildFlavorName() {
+String? _getBuildFlavorName(String? platformName) {
   final buildConfig = readBuildConfigMap("build_config");
-  return buildConfig?["buildFlavor"];
+  final def = buildConfig?["json"]?["buildFlavor"];
+  if (platformName == null || platformName.isEmpty) {
+    return def;
+  }
+  return buildConfig?["platformMap"]?[platformName]?["json"]?["buildFlavor"] ??
+      def;
 }
 
 /// 格式化名称
-String formatName(String pattern) {
+String formatName(String pattern, String? platformName) {
   String output = pattern;
   output = output.replaceAll("#an", _getAppName() ?? "");
   output = output.replaceAll("#vn", _getVersionName() ?? "");
   output = output.replaceAll("#vc", _getVersionCode() ?? "");
-  output = output.replaceAll("#bn", _getBuildTypeName() ?? "");
-  output = output.replaceAll("#fn", _getBuildFlavorName() ?? "");
+  output = output.replaceAll("#bn", _getBuildTypeName(platformName) ?? "");
+  output = output.replaceAll("#fn", _getBuildFlavorName(platformName) ?? "");
   output = output.replaceAll("--", "-");
   output = output.replaceAll("__", "_");
   output = output.replaceAll("-.", ".");
