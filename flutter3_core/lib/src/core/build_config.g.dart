@@ -25,22 +25,6 @@ BuildConfig _$BuildConfigFromJson(Map<String, dynamic> json) => BuildConfig()
       e == null ? null : BuildConfig.fromJson(e as Map<String, dynamic>),
     ),
   )
-  ..buildPackageName = json['buildPackageName'] as String?
-  ..platformPackageNameMap =
-      (json['platformPackageNameMap'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, e as String?),
-      )
-  ..buildType = json['buildType'] as String?
-  ..buildFlavor = json['buildFlavor'] as String?
-  ..buildVersionName = json['buildVersionName'] as String?
-  ..buildVersionCode = (json['buildVersionCode'] as num?)?.toInt()
-  ..buildTime = json['buildTime'] as String?
-  ..buildOperatingSystem = json['buildOperatingSystem'] as String?
-  ..buildOperatingSystemVersion = json['buildOperatingSystemVersion'] as String?
-  ..buildOperatingSystemLocaleName =
-      json['buildOperatingSystemLocaleName'] as String?
-  ..buildOperatingSystemUserName =
-      json['buildOperatingSystemUserName'] as String?
   ..json = json['json'] as Map<String, dynamic>?;
 
 Map<String, dynamic> _$BuildConfigToJson(
@@ -53,16 +37,5 @@ Map<String, dynamic> _$BuildConfigToJson(
   'buildFlavorMap': ?instance.buildFlavorMap?.map(
     (k, e) => MapEntry(k, e?.toJson()),
   ),
-  'buildPackageName': ?instance.buildPackageName,
-  'platformPackageNameMap': ?instance.platformPackageNameMap,
-  'buildType': ?instance.buildType,
-  'buildFlavor': ?instance.buildFlavor,
-  'buildVersionName': ?instance.buildVersionName,
-  'buildVersionCode': ?instance.buildVersionCode,
-  'buildTime': ?instance.buildTime,
-  'buildOperatingSystem': ?instance.buildOperatingSystem,
-  'buildOperatingSystemVersion': ?instance.buildOperatingSystemVersion,
-  'buildOperatingSystemLocaleName': ?instance.buildOperatingSystemLocaleName,
-  'buildOperatingSystemUserName': ?instance.buildOperatingSystemUserName,
   'json': ?instance.json,
 };

@@ -17,6 +17,24 @@ dependencies:
   # https://pub.dev/packages/ffi
   ffi: ^2.2.0
 
+  # https://pub.dev/packages/ffi_leak_tracker
+  # https://pub.dev/packages/ffi
+  #ffi_leak_tracker: ^0.1.2
+
+  # https://pub.dev/packages/code_assets
+  # 构建钩子 `hook/build.dart`
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/hooks
+  #code_assets: ^1.0.0
+  # https://pub.dev/packages/native_toolchain_c
+  # https://pub.dev/packages/code_assets
+  # https://pub.dev/packages/glob
+  # https://pub.dev/packages/hooks
+  # https://pub.dev/packages/logging
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/pub_semver
+  #native_toolchain_c: ^0.17.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

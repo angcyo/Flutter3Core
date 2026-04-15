@@ -284,7 +284,9 @@ extension FileEx on File {
       return await readAsBytes();
     } catch (e) {
       assert(() {
-        l.e(e);
+        if (existsSync()) {
+          l.e(e);
+        }
         return true;
       }());
     }
@@ -297,7 +299,9 @@ extension FileEx on File {
       return readAsBytesSync();
     } catch (e) {
       assert(() {
-        l.e(e);
+        if (existsSync()) {
+          l.e(e);
+        }
         return true;
       }());
     }

@@ -183,7 +183,7 @@ Future runGlobalApp(
     StackTrace? stack;
 
     ensureInitialized();
-    "开始启动[${Platform.operatingSystem}][main]->${platformDispatcher.defaultRouteName}"
+    "开始启动[${Platform.operatingSystem}][main]路由->${platformDispatcher.defaultRouteName}"
         .writeToLog(level: L.info);
 
     //debugger();
@@ -376,7 +376,7 @@ Future _initAppDebugInfo() async {
       );
       //--build信息
       DebugPage.debugLastWidgetBuilderList.add(
-        (_) => $rootBuildConfig?.toString().text(
+        (_) => $bc?.toString().text(
           textAlign: .center,
           style: textStyle,
           selectable: true,

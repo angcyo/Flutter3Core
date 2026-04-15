@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,11 +8,17 @@ part 'build_config.g.dart';
 ///
 /// 构建时的一些参数, 通常情况下, 构建数据构建之后不允许再次动态修改
 /// 构建数据模版`build_config.tl.json`
+///
+/// - 顶层: 兜底配置
+///   - [BuildConfig.platformMap] . [$platformName]
+///     - [BuildConfig.buildTypeMap]
+///       - [BuildConfig.buildFlavorMap]
+///
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class BuildConfig {
   /// 需要在[initBuildConfig]之后才有值
   @tempFlag
-  static BuildConfig? _buildConfig;
+  static BuildConfig? _rootBuildConfig;
 
   /// 从[Asset]资源中解析构建信息
   /// [Asset]需要放到app包中
@@ -23,6 +27,7 @@ class BuildConfig {
   /// [package] 不指定, 就是顶级包
   ///
   @initialize
+  @CallFrom("runGlobalApp")
   static Future<BuildConfig?> initBuildConfig({
     String name = "$kConfigPathName/build_config.json",
     String prefix = kDefAssetsPrefix,
@@ -38,7 +43,7 @@ class BuildConfig {
       final json = string.jsonDecode();
       final bean = BuildConfig.fromJson(json);
       //bean.json = json;
-      _buildConfig = bean;
+      _rootBuildConfig = bean;
       //debugger();
     } catch (e) {
       assert(() {
@@ -48,8 +53,57 @@ class BuildConfig {
         return true;
       }());
     }
-    return _buildConfig;
+    return _rootBuildConfig;
   }
+
+  //MARK: - 固定常量key
+
+  /// 构建类型
+  /// [BuildTypeEnum]
+  static String kBuildTypeKey = "buildType";
+
+  /// 应用程序的风味, 不同风味的app, 可以有不同的配置
+  static String kBuildFlavorKey = "buildFlavor";
+
+  //--build_config脚本生成属性--
+
+  /// 编译时的版本名
+  static String kBuildVersionNameKey = "buildVersionName";
+
+  /// 编译时的版本号
+  /// - [int]
+  static String kBuildVersionCodeKey = "buildVersionCode";
+
+  //--
+
+  /// 构建时的时间
+  /// 2024-06-21 14:27:05.978594
+  static String kBuildTimeKey = "buildTime";
+
+  /// 构建时的操作系统
+  /// windows
+  static String kBuildOperatingSystemKey = "buildOperatingSystem";
+
+  /// 构建时, 操作系统的版本
+  /// "Windows 10 Pro" 10.0 (Build 19045)
+  static String kBuildOperatingSystemVersionKey = "buildOperatingSystemVersion";
+
+  /// 构建时, 操作系统的语言
+  /// zh-CN
+  static String kBuildOperatingSystemLocaleNameKey =
+      "buildOperatingSystemLocaleName";
+
+  /// 构建时, 操作系统的用户名
+  /// angcyo
+  static String kBuildOperatingSystemUserNameKey =
+      "buildOperatingSystemUserName";
+
+  /// 应用程序设置的包名
+  /// 并非真正的包名
+  /// 真正的包名需要通过[BuildConfig.platformPackageNameMap]获取
+  static String kBuildPackageNameKey = "buildPackageName";
+
+  //MARK: - BuildConfig
 
   BuildConfig();
 
@@ -57,6 +111,8 @@ class BuildConfig {
       _$BuildConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$BuildConfigToJson(this);
+
+  //MARK: - 核心映射Map
 
   /// 1. 每个平台单独设置信息, 平台名统一小写
   /// [$platformName] 对应的配置
@@ -71,97 +127,26 @@ class BuildConfig {
   @configProperty
   Map<String, BuildConfig?>? buildFlavorMap;
 
-  //--
-
-  /// 应用程序设置的包名
-  /// 并非真正的包名
-  /// 真正的包名需要通过[platformPackageInfo]获取
-  @configProperty
-  String? buildPackageName;
-
-  /// [$platformName] 对应的[buildPackageName]配置
-  /// - [platformMap]
-  @configProperty
-  Map<String, String?>? platformPackageNameMap;
-
-  /// 构建类型
-  /// [BuildTypeEnum]
-  @configProperty
-  String? buildType;
-
-  /// 应用程序的风味, 不同风味的app, 可以有不同的配置
-  @configProperty
-  String? buildFlavor;
-
-  //--
-
-  /// 编译时的版本名
-  @configProperty
-  String? buildVersionName;
-
-  /// 编译时的版本号
-  @configProperty
-  int? buildVersionCode;
-
-  //--build--
-
-  /// 构建时的时间
-  /// 2024-06-21 14:27:05.978594
-  @autoInjectMark
-  String? buildTime;
-
-  /// 构建时的操作系统
-  /// windows
-  @autoInjectMark
-  String? buildOperatingSystem;
-
-  /// 构建时, 操作系统的版本
-  /// "Windows 10 Pro" 10.0 (Build 19045)
-  @autoInjectMark
-  String? buildOperatingSystemVersion;
-
-  /// 构建时, 操作系统的语言
-  /// zh-CN
-  @autoInjectMark
-  String? buildOperatingSystemLocaleName;
-
-  /// 构建时, 操作系统的用户名
-  /// angcyo
-  @autoInjectMark
-  String? buildOperatingSystemUserName;
-
-  //--
+  //MARK: json数据
 
   /// 全部json对象的数据
   /// 额外的自定义数据放在这里
   Map<String, dynamic>? json;
 
-  /// [json]
+  /// [mergeJson]
   @api
   dynamic operator [](Object? key) {
-    BuildConfig? rootConfig = this;
-    final rootPlatformConfig = rootConfig.platformMap?[$platformName];
-    final rootBuildTypeConfig = rootConfig.buildTypeMap?[rootConfig.buildType];
-    final rootBuildFlavorConfig = (rootBuildTypeConfig ?? rootConfig)
-        .buildFlavorMap?[rootConfig.buildFlavor];
-    return rootBuildFlavorConfig?.json?[key] /*buildFlavor*/ ??
-        rootBuildTypeConfig?.json?[key] /*buildType*/ ??
-        rootPlatformConfig?.json?[key] /*$platformName*/ ??
-        rootConfig.json?[key] /*this*/;
-  }
-
-  /// 从自身中获取数据, 获取不到则从[$rootBuildConfig]中获取
-  /// [json]
-  @api
-  dynamic getOrRoot(Object? key) {
-    if (this == $rootBuildConfig) {
-      return this[key];
+    if (_mergeJson != null) {
+      //debugger();
+      return _mergeJson?[key];
     }
-    return this[key] ?? $rootBuildConfig?[key];
+    return mergeJson?[key];
   }
 
   /// [json]
   void operator []=(String key, dynamic value) {
+    json ??= {};
+    _mergeJson = null;
     json?[key] = value;
   }
 
@@ -173,27 +158,67 @@ class BuildConfig {
   @override
   String toString() => toJson().toString();
 
-  //--
+  //MARK: get
 
-  /// 获取指定构建类型的配置
-  /// - [getBuildTypeConfigOrThis]
-  /// - [getBuildFlavorConfigOrThis]
-  BuildConfig getBuildTypeConfigOrThis(String? buildType, BuildConfig? or) {
-    if (buildType == null) {
-      return this;
-    }
-    return buildTypeMap?[buildType] ?? or ?? this;
+  /// - [mergeJson]
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Map<String, dynamic>? _mergeJson;
+
+  /// 从顶层开始,将所有[json]按照层级规则合并后的json数据
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Map<String, dynamic>? get mergeJson {
+    //1:root
+    final rootConfig = this;
+    //2:platform
+    final platformConfig = platformMap?[$platformName];
+    //3:buildType
+    final buildType =
+        platformConfig?.json?[BuildConfig.kBuildTypeKey] ??
+        rootConfig.json?[BuildConfig.kBuildTypeKey];
+    final buildTypeConfig =
+        platformConfig?.buildTypeMap?[buildType] ??
+        rootConfig.buildTypeMap?[buildType];
+    //4:buildFlavor
+    final buildFlavor =
+        buildTypeConfig?.json?[BuildConfig.kBuildFlavorKey] ??
+        platformConfig?.json?[BuildConfig.kBuildFlavorKey] ??
+        rootConfig.json?[BuildConfig.kBuildFlavorKey];
+    final buildFlavorConfig =
+        buildTypeConfig?.buildFlavorMap?[buildFlavor] ??
+        platformConfig?.buildFlavorMap?[buildFlavor] ??
+        rootConfig.buildFlavorMap?[buildFlavor];
+    return _mergeJson = {
+      ...?rootConfig.json,
+      ...?platformConfig?.json,
+      ...?buildTypeConfig?.json,
+      ...?buildFlavorConfig?.json,
+    };
   }
 
-  /// - [getBuildTypeConfigOrThis]
-  /// - [getBuildFlavorConfigOrThis]
-  /// - [flutterAppFlavor]
-  BuildConfig getBuildFlavorConfigOrThis(String? buildFlavor, BuildConfig? or) {
-    if (buildFlavor == null) {
-      return this;
-    }
-    return buildFlavorMap?[buildFlavor] ?? or ?? this;
-  }
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get buildPackageName => this[BuildConfig.kBuildPackageNameKey];
+
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get buildType => this[BuildConfig.kBuildTypeKey];
+
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get buildFlavor => this[BuildConfig.kBuildFlavorKey];
+
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get buildVersionName => this[BuildConfig.kBuildVersionNameKey];
+
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  int? get buildVersionCode => this[BuildConfig.kBuildVersionCodeKey];
+
+  @api
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get buildTime => this[BuildConfig.kBuildTimeKey];
 }
 
 /// 构建时应用程序的构建类型
@@ -210,52 +235,11 @@ enum BuildTypeEnum {
 
 /// 顶层的[BuildConfig]
 /// - 在获取[BuildConfig.json]中的数据时, 优先使用顶层对象.
-BuildConfig? get $rootBuildConfig => BuildConfig._buildConfig;
+BuildConfig? get $buildConfig => BuildConfig._rootBuildConfig;
 
 /// 获取构建[BuildConfig.json]中断额数据时, 优先使用此对象
 @alias
-BuildConfig? get $bc => $rootBuildConfig;
-
-/// 指定平台配置->构建类型配置->构建风味配置后的[BuildConfig]
-BuildConfig? get $buildConfig {
-  BuildConfig? rootConfig = BuildConfig._buildConfig;
-  debugger(when: rootConfig == null);
-  if (rootConfig == null) {
-    return null;
-  }
-  final rootPlatformConfig = rootConfig.platformMap?[$platformName];
-  final rootBuildTypeConfig = rootConfig.buildTypeMap?[rootConfig.buildType];
-  final rootBuildFlavorConfig = (rootBuildTypeConfig ?? rootConfig)
-      .buildFlavorMap?[rootConfig.buildFlavor];
-  //debugger();
-  // 指定平台配置->构建类型配置->构建风味配置
-  final resultConfig = (rootPlatformConfig ?? rootConfig)
-      .getBuildTypeConfigOrThis(rootConfig.buildType, rootBuildTypeConfig)
-      .getBuildFlavorConfigOrThis(
-        rootConfig.buildFlavor,
-        rootBuildFlavorConfig,
-      );
-
-  // 赋值指定属性
-  if (resultConfig != rootConfig) {
-    resultConfig.buildPackageName = rootConfig.buildPackageName;
-    resultConfig.buildType = rootConfig.buildType;
-    resultConfig.buildFlavor = rootConfig.buildFlavor;
-
-    resultConfig.buildVersionName = rootConfig.buildVersionName;
-    resultConfig.buildVersionCode = rootConfig.buildVersionCode;
-    resultConfig.buildTime = rootConfig.buildTime;
-    resultConfig.buildOperatingSystem = rootConfig.buildOperatingSystem;
-    resultConfig.buildOperatingSystemVersion =
-        rootConfig.buildOperatingSystemVersion;
-    resultConfig.buildOperatingSystemLocaleName =
-        rootConfig.buildOperatingSystemLocaleName;
-    resultConfig.buildOperatingSystemUserName =
-        rootConfig.buildOperatingSystemUserName;
-  }
-
-  return resultConfig;
-}
+BuildConfig? get $bc => $buildConfig;
 
 /// 是否是调试构建类型状态
 bool get isDebugType {
@@ -283,6 +267,4 @@ String? get $buildFlavor =>
 /// 真正的app包名通过以下方法获取↓
 /// [platformPackageInfo]
 /// [appPlatformPackageName]
-String? get $buildPackageName =>
-    $buildConfig?.platformPackageNameMap?[$platformName] ??
-    $buildConfig?.buildPackageName;
+String? get $buildPackageName => $buildConfig?.buildPackageName;

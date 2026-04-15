@@ -13,6 +13,8 @@ import 'package:yaml/yaml.dart';
 /// emoji : https://getemoji.com/
 ///
 
+//MARK: const
+
 /// 当前运行环境是否是Windows
 bool get isWindows => Platform.isWindows;
 
@@ -110,7 +112,7 @@ Future runCommand(String executable, {String? dir, List<String>? args}) async {
   colorLog(result.stdout, 250); //输出标准输出
 }
 
-//---
+//MARK: yaml
 
 /// 优先读取`script.local.yaml`
 dynamic $localYaml;
@@ -122,17 +124,17 @@ dynamic $yaml;
 dynamic $pubspec;
 
 /// 初始化脚本配置
-void initScriptCommon() {
+void initScriptCommon({String scriptName = "script"}) {
   final path = currentPath;
   if ($localYaml == null) {
-    final yamlFile = File("$path/script.local.yaml");
+    final yamlFile = File("$path/$scriptName.local.yaml");
     $localYaml = loadYaml(
       yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
     );
   }
 
   if ($yaml == null) {
-    final yamlFile = File("$path/script.yaml");
+    final yamlFile = File("$path/$scriptName.yaml");
     $yaml = loadYaml(yamlFile.existsSync() ? yamlFile.readAsStringSync() : "");
   }
 
@@ -240,7 +242,7 @@ Map? $mapKeys(String keyPath) {
   return null;
 }
 
-//--
+//MARK: api
 
 /// 发送飞书webhook消息 - 富文本消息
 /// https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot

@@ -16,32 +16,23 @@ void main(List<String> arguments) {
   );
   final currentPath = Directory.current.path;
 
-  final localYamlFile = File("$currentPath/script.local.yaml");
-  final yamlFile = File("$currentPath/script.yaml");
-
-  final localYaml = loadYaml(
-    localYamlFile.existsSync() ? localYamlFile.readAsStringSync() : "",
-  );
-  final yaml = loadYaml(
-    yamlFile.existsSync() ? yamlFile.readAsStringSync() : "",
-  );
-
+  //从`pubspec.yaml`中获取版本信息
   final pubspecFile = File("$currentPath/pubspec.yaml");
   final pubspecYaml = loadYaml(
     pubspecFile.existsSync() ? pubspecFile.readAsStringSync() : "",
   );
-  final version = pubspecYaml["version"];
+  final version = pubspecYaml["version"] ?? "0.0.1+1";
   final buildVersionName = version.split("+")[0];
   final buildVersionCode = version.split("+")[1];
 
-  //1:
+  //MARK: 1.读取自定义的配置
   final buildConfig = readBuildConfigMap("build_config");
   if (buildConfig == null) {
     colorLog(
       "未找到自定义的[build_config]]配置,请在项目根目录中的[script.yaml]文件中加入[build_config]配置信息.",
     );
   }
-  final json = {
+  final buildInfoJson = {
     "buildTime": DateTime.now().toString(),
     "buildOperatingSystem": Platform.operatingSystem,
     "buildOperatingSystemVersion": Platform.operatingSystemVersion,
@@ -50,11 +41,23 @@ void main(List<String> arguments) {
         Platform.environment['USERNAME'] ?? Platform.environment['USER'],
     "buildVersionName": buildVersionName,
     "buildVersionCode": int.tryParse(buildVersionCode?.toString() ?? ""),
-    if (buildConfig is Map) ...buildConfig,
   };
+
+  //MARK: 2.组装配置数据
+  dynamic json;
+  if (buildConfig is Map) {
+    final oldJson = buildConfig["json"];
+    json = {
+      ...buildConfig,
+      "json": {...buildInfoJson, ...?oldJson},
+    };
+  } else {
+    colorErrorLog("不支持的[build_config]数据类[${buildConfig.runtimeType}]");
+    json = {"json": buildInfoJson};
+  }
   //debugger();
 
-  //目标文件
+  //MARK: 3.输出目标文件
   const outputPath = "assets/config";
   final outputFile = File("$currentPath/$outputPath/build_config.json");
   outputFile.parent.createSync(recursive: true);
@@ -66,9 +69,9 @@ void main(List<String> arguments) {
 /// 读取指定key对应的map数据
 Map? readBuildConfigMap(String key) {
   initScriptCommon();
-
   final value = $localYaml?[key] ?? $yaml?[key] ?? $pubspec?[key];
   if (value is Map) {
+    //Map
     return value;
   }
   if (value is String) {
