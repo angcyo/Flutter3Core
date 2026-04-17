@@ -24,11 +24,15 @@ void main() {
     "tr": "土耳其语",*/
   };
   //--
-  final jsonString = json.encoder.convert(map);
+  //final jsonString = json.encoder.convert(map);
+  final jsonString = jsonEncode(map);
   print(jsonString);
   //--
-  final jsonString2 = jsonString.replaceAll("\"", "\\\"");
+  /*final jsonString2 = jsonString.replaceAll("\"", "\\\"");
+  print(jsonString2);*/
+  final jsonString2 = jsonEncode(jsonString);
   print(jsonString2);
   //--
-  print(json.decoder.convert('"$jsonString2"'));
+  //print(json.decoder.convert('"$jsonString2"'));
+  print(jsonDecode(jsonString2));
 }
