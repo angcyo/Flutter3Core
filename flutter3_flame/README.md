@@ -25,3 +25,8 @@ https://docs.flutter.dev/resources/games-toolkit
 
 https://docs.flutter.dev/resources/games-toolkit#other-resources
 
+# bonfire: ^3.17.0
+
+使用 FlameEngine 的强大功能构建角色扮演游戏及类似游戏！
+
+https://pub.dev/packages/bonfire
