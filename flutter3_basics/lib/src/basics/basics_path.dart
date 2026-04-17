@@ -206,6 +206,15 @@ extension PathEx on Path {
   }
 
   /// 从当前路径中创建一个虚线[Path]路径
+  /// Came from [flutter_path_drawing](https://github.com/dnfield/flutter_path_drawing) library.
+  /// Creates a new path that is drawn from the segments of `source`.
+  ///
+  /// Dash intervals are controlled by the `dashArray` - see [CircularIntervalList]
+  /// for examples.
+  ///
+  /// `dashOffset` specifies an initial starting point for the dashing.
+  ///
+  /// Passing a `source` that is an empty path will return an empty path.
   Path dashPath(List<double> dashArray) {
     final Path dest = Path();
     final count = dashArray.length;
