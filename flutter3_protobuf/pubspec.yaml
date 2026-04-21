@@ -38,6 +38,11 @@ dependencies:
   # https://pub.dev/packages/web
   grpc: ^5.1.0
 
+  # https://pub.dev/packages/connectrpc
+  # Connect-Dart 是一个轻量级的库，它使用生成的、类型安全的、符合 Dart 惯用的客户端，
+  # 通过 Protocol Buffers (Protobuf) 与应用程序的服务器进行通信。它支持 Connect 、 gRPC 和 gRPC-Web 协议。
+  #connectrpc: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

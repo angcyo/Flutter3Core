@@ -54,6 +54,33 @@ dependencies:
   # https://pub.dev/packages/meta
   async: ^2.13.1
 
+  # https://pub.dev/packages/http2
+  # 该库在双向字节流之上提供了一个 http/2 接口。
+  #http2: ^2.3.1
+
+  # https://pub.dev/packages/dio_http2_adapter
+  # https://pub.dev/packages/dio
+  # https://pub.dev/packages/http2
+  # https://pub.dev/packages/meta
+  #dio_http2_adapter: ^2.7.0
+
+  # https://pub.dev/packages/rhttp
+  # 使用 Rust 向 Flutter 开发者发送 HTTP 请求。
+  # 这个包是用 Dart 语言封装的 reqwest crate，reqwest 是一个快速可靠的 Rust HTTP 客户端。
+  # https://pub.dev/packages/flutter_rust_bridge
+  # https://pub.dev/packages/freezed_annotation
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/http_profile
+  #rhttp: ^0.16.0
+
+  # https://pub.dev/packages/flutter_quic
+  # 一个为移动和桌面应用程序提供 QUIC 协议支持的 Flutter 插件。
+  # 基于 Quinn Rust 库，使用 flutter_rust_bridge 构建。
+  # QUIC (Quick UDP Internet Connections) （快速 UDP 互联网连接）是 HTTP/3 的传输协议。
+  # https://pub.dev/packages/flutter_rust_bridge
+  # https://pub.dev/packages/freezed_annotation
+  #flutter_quic: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
