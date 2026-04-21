@@ -2678,6 +2678,12 @@ class PaintProperty with EquatableMixin {
   /// final r2 = s * t;
   /// final r3 = t.multiplied(s); //r3 == r1
   /// ```
+  ///
+  /// 在二维空间中，一个仿射变换矩阵（3 x 3）通常由以下顺序的变换组合而成：`M = T · R · K · S`
+  /// - T (Translation): 平移
+  /// - R (Rotation): 旋转
+  /// - K (Skew/Shear): 错切
+  /// - S (Scale): 缩放
   Matrix4 get operateMatrix {
     final matrix =
         translateMatrix * rotateMatrix * scaleMatrix * flipMatrix * skewMatrix;
