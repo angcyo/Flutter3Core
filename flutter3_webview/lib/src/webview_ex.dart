@@ -40,13 +40,48 @@ class WebviewConfig {
 /// [webview_flutter]
 mixin WebViewStateMixin<T extends StatefulWidget> on State<T> {}
 
+/// https://inappwebview.dev/docs/webview/in-app-webview/
 /// ```
 /// if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
 ///   await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
 /// }
 /// ```
+///
+/// # 处理自定义Schemes
+///
+/// https://inappwebview.dev/docs/webview/in-app-webview/#handle-custom-schemes
+///
 /// [flutter_inappwebview]
 mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
+  static WebViewEnvironment? sWebViewEnvironment;
+
+  /// https://inappwebview.dev/docs/webview/in-app-webview/#handle-custom-schemes
+  static Future<void> registerCustomSchemeEnvironment(List<String> schemes) async {
+    if (isWindows) {
+      final availableVersion = await WebViewEnvironment.getAvailableVersion();
+      assert(
+        availableVersion != null,
+        'Failed to find an installed WebView2 Runtime or non-stable Microsoft Edge installation.',
+      );
+      sWebViewEnvironment = await WebViewEnvironment.create(
+        settings: WebViewEnvironmentSettings(
+          userDataFolder: null,
+          customSchemeRegistrations: [
+            for (final scheme in schemes)
+              CustomSchemeRegistration(
+                scheme: scheme,
+                allowedOrigins: ['*'],
+                treatAsSecure: true,
+                hasAuthorityComponent: true,
+              ),
+          ],
+        ),
+      );
+    }
+  }
+
+  //--
+
   final GlobalKey inAppWebViewKey = GlobalKey();
 
   /// 配置属性
@@ -67,6 +102,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     allowsInlineMediaPlayback: true,
     iframeAllow: "camera; microphone",
     iframeAllowFullscreen: true,
+    useShouldInterceptRequest: true,
     useShouldOverrideUrlLoading: true,
     javaScriptEnabled: true,
     shouldPrintBackgrounds: true,
@@ -101,23 +137,36 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   /// AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.107
   /// Mobile Safari/537.36 angcyo
   /// ```
+  /// # Android
+  /// ```
+  /// Mozilla/5.0 (Linux; Android 16; Pixel 7a Build/BP3A.251005.004.B2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/142.0.7444.102 Mobile Safari/537.36 angcyo
+  /// ```
+  /// # Windows 11
+  /// ```
+  /// Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0
+  /// ```
   String? webViewUserAgentCache;
 
   /// 获取UA
   Future<String?> get getWebViewUserAgent async {
     //MissingPluginException(No implementation found for method getDefaultUserAgent on channel com.pichillilorenzo/flutter_inappwebview_manager)
-    try {
-      final defUserAgent = await InAppWebViewController.getDefaultUserAgent();
-    } catch (e) {
-      assert(() {
-        print(e);
-        return true;
-      }());
-    }
+    assert(() {
+      () async {
+        if (!isWindows) {
+          final defUserAgent =
+              await InAppWebViewController.getDefaultUserAgent();
+          l.d(defUserAgent);
+        }
+      }();
+      return true;
+    }());
     final setting = await inAppWebViewController?.getSettings();
-    return (setting?.userAgent ?? "").connect(
-      setting?.applicationNameForUserAgent,
-    );
+    if (isWindows) {
+      return (setting?.userAgent ?? "").connect(
+        setting?.applicationNameForUserAgent,
+      );
+    }
+    return setting?.userAgent;
   }
 
   //--
@@ -126,7 +175,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   void initState() {
     super.initState();
     final globalTheme = GlobalTheme.of(context);
-    webviewPullToRefreshController = isMobile
+    webviewPullToRefreshController =
+        (isMobile && webConfigMixin.buildRefreshWidget)
         ? PullToRefreshController(
             settings: PullToRefreshSettings(color: globalTheme.accentColor),
             onRefresh: () async {
@@ -177,6 +227,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
           ? webviewPullToRefreshController
           : null,
       initialSettings: inAppWebViewSettings,
+      webViewEnvironment: webViewEnvironment ?? sWebViewEnvironment,
       onWebViewCreated: (controller) {
         l.d("onWebViewCreated");
         inAppWebViewController = controller;
@@ -251,6 +302,21 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         /*if (kDebugMode) {
           print(consoleMessage);
         }*/
+      },
+      onLoadResourceWithCustomScheme: (controller, request) async {
+        l.d('onLoadResourceWithCustomScheme:$request');
+        if (request.url.scheme == "angcyo") {
+          /*final bytes = await rootBundle.load(
+            "assets/${request.url.toString().replaceFirst("angcyo://", "", 0)}",
+          );
+          final response = CustomSchemeResponse(
+            data: bytes.buffer.asUint8List(),
+            contentType: "image/svg+xml",
+            contentEncoding: "utf-8",
+          );
+          return response;*/
+        }
+        return null;
       },
     );
 
@@ -366,6 +432,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
+  WebViewEnvironment? webViewEnvironment;
+
   //endregion ---api---
 
   //---
@@ -391,6 +459,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       return;
     }
     if (progress >= 100) {
+      //A AndroidPullToRefreshController was used after being disposed.
+      //Once the AndroidPullToRefreshController has been disposed, it can no longer be used.
       webviewPullToRefreshController?.endRefreshing().ignore();
     }
     webviewLoadProgress = progress;

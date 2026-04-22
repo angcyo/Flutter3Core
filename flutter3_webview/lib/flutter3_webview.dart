@@ -8,6 +8,8 @@ import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+export 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 // @formatter:off
 part 'src/3d/flutter_3d_page.dart';
 part 'src/single_inappweb_page.dart';
