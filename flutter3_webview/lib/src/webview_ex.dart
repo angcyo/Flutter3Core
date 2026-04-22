@@ -56,27 +56,38 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   static WebViewEnvironment? sWebViewEnvironment;
 
   /// https://inappwebview.dev/docs/webview/in-app-webview/#handle-custom-schemes
-  static Future<void> registerCustomSchemeEnvironment(List<String> schemes) async {
+  static Future<void> registerCustomSchemeEnvironment(
+    List<String> schemes,
+  ) async {
     if (isWindows) {
       final availableVersion = await WebViewEnvironment.getAvailableVersion();
       assert(
         availableVersion != null,
         'Failed to find an installed WebView2 Runtime or non-stable Microsoft Edge installation.',
       );
-      sWebViewEnvironment = await WebViewEnvironment.create(
-        settings: WebViewEnvironmentSettings(
-          userDataFolder: null,
-          customSchemeRegistrations: [
-            for (final scheme in schemes)
-              CustomSchemeRegistration(
-                scheme: scheme,
-                allowedOrigins: ['*'],
-                treatAsSecure: true,
-                hasAuthorityComponent: true,
-              ),
-          ],
-        ),
-      );
+      try {
+        //PlatformException(0, Cannot create WebViewEnvironment: 组或资源的状态不是执行请求操作的正确状态。, null, null)
+        //StandardMethodCodec.decodeEnvelope (package:flutter/src/services/message_codecs.dart:653:7)
+        sWebViewEnvironment = await WebViewEnvironment.create(
+          settings: WebViewEnvironmentSettings(
+            userDataFolder: null,
+            customSchemeRegistrations: [
+              for (final scheme in schemes)
+                CustomSchemeRegistration(
+                  scheme: scheme,
+                  allowedOrigins: ['*'],
+                  treatAsSecure: true,
+                  hasAuthorityComponent: true,
+                ),
+            ],
+          ),
+        );
+      } catch (e) {
+        assert(() {
+          print(e);
+          return true;
+        }());
+      }
     }
   }
 
