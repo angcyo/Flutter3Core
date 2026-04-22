@@ -94,6 +94,7 @@ class RDio {
   }
 
   /// 重新请求
+  /// - [DioStringEx]
   Future<Response<T>> reRequest<T>(RequestOptions options) =>
       dio.fetch(options);
 }
