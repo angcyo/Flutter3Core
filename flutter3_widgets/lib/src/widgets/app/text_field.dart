@@ -702,10 +702,12 @@ class SingleInputWidget extends StatefulWidget {
   /// [TextFieldConfig.hintTextBuilder]
   final IntlTextBuilder? hintTextBuilder;
 
-  /// 前缀小部件
+  /// 前缀小部件, 只在有焦点时显示
+  /// - [prefixIcon]
   final Widget? prefix;
 
-  /// 前缀图标小部件
+  /// 前缀图标小部件, 一直显示
+  /// - [prefixIconConstraints]
   final Widget? prefixIcon;
 
   /// 后缀小部件

@@ -57,6 +57,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   @autoInjectMark
   InAppWebViewController? inAppWebViewController;
 
+  /// webview是否创建完成
+  bool get isWebViewCreated => inAppWebViewController != null;
+
   /// webview设置
   InAppWebViewSettings inAppWebViewSettings = InAppWebViewSettings(
     isInspectable: isDebug,
@@ -74,7 +77,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     displayZoomControls: false,
     alwaysBounceVertical: true,
     userAgent: null,
+    //UA
     applicationNameForUserAgent: $customUserAgent ?? "angcyo",
+    //附加的UA
     supportMultipleWindows: false,
     hardwareAcceleration: false,
     overScrollMode: OverScrollMode.ALWAYS,
@@ -99,8 +104,21 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   String? webViewUserAgentCache;
 
   /// 获取UA
-  Future<String?> get getWebViewUserAgent async =>
-      (await inAppWebViewController?.getSettings())?.userAgent;
+  Future<String?> get getWebViewUserAgent async {
+    //MissingPluginException(No implementation found for method getDefaultUserAgent on channel com.pichillilorenzo/flutter_inappwebview_manager)
+    try {
+      final defUserAgent = await InAppWebViewController.getDefaultUserAgent();
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+    }
+    final setting = await inAppWebViewController?.getSettings();
+    return (setting?.userAgent ?? "").connect(
+      setting?.applicationNameForUserAgent,
+    );
+  }
 
   //--
 
@@ -221,7 +239,15 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       },
       onConsoleMessage: (controller, consoleMessage) {
         //onConsoleMessage:ConsoleMessage{message: request send [object Object] [object Object], messageLevel: LOG}
-        l.d('onConsoleMessage:$consoleMessage');
+        if (consoleMessage.messageLevel == ConsoleMessageLevel.ERROR) {
+          l.e('onConsoleMessage:$consoleMessage');
+        } else if (consoleMessage.messageLevel == ConsoleMessageLevel.WARNING) {
+          l.w('onConsoleMessage:$consoleMessage');
+        } else if (consoleMessage.messageLevel == ConsoleMessageLevel.TIP) {
+          l.i('onConsoleMessage:$consoleMessage');
+        } else {
+          l.d('onConsoleMessage:$consoleMessage');
+        }
         /*if (kDebugMode) {
           print(consoleMessage);
         }*/
@@ -260,6 +286,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 按下返回键时, 等待页面back后返回
   /// @return true: webview已无back
+  @api
   Future<bool> onWebviewBackPress() async {
     final canBack = await inAppWebViewController?.canGoBack();
     if (canBack == true) {
@@ -270,10 +297,17 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 加载指定[url]
+  @api
   Future<void> loadWebviewUrl(String url) async {
     return inAppWebViewController?.loadUrl(
       urlRequest: URLRequest(url: WebUri(url)),
     );
+  }
+
+  /// 重新加载
+  @api
+  Future<void> reloadWebview() async {
+    return inAppWebViewController?.reload();
   }
 
   /// 加载指定html数据[data]
@@ -314,6 +348,24 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     });
   }
 
+  /// 更新附加的 User Agent 信息
+  @api
+  Future<void> updateCustomUserAgent(String? userAgent) async {
+    if (isWindows) {
+      inAppWebViewSettings.userAgent =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0${userAgent ?? ""}";
+    }
+    inAppWebViewSettings.applicationNameForUserAgent = userAgent;
+    if (isWebViewCreated) {
+      await inAppWebViewController?.setSettings(settings: inAppWebViewSettings);
+      webViewUserAgentCache = await getWebViewUserAgent;
+      if (webConfigMixin.debug) {
+        debugUpdateSignal.update();
+      }
+      await reloadWebview();
+    }
+  }
+
   //endregion ---api---
 
   //---
@@ -344,7 +396,16 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     webviewLoadProgress = progress;
     webviewTile = await inAppWebViewController?.getTitle();
     webviewUrl = await inAppWebViewController?.getUrl();
-    webviewOriginUrl = await inAppWebViewController?.getOriginalUrl();
+    //MissingPluginException(No implementation found for method getOriginalUrl on channel com.pichillilorenzo/flutter_inappwebview_2854456911840)
+    try {
+      webviewOriginUrl = await inAppWebViewController?.getOriginalUrl();
+    } catch (e) {
+      assert(() {
+        print(e);
+        return true;
+      }());
+      webviewOriginUrl ??= webviewUrl;
+    }
     updateState();
   }
 
