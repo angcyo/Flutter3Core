@@ -77,7 +77,7 @@ class LogScopeController {
 
   /// 日志数据最大数量
   @configProperty
-  int logMaxCount = 1024;
+  int logMaxCount = isDebug ? 1024 : 24;
 
   /// 是否显示日志面板
   @configProperty
@@ -192,12 +192,22 @@ class LogScope extends InheritedWidget {
   /// - 通道类型
   static const String kChannel = "channel";
 
+  /// 获取当前树上的[LogScopeController]控制器
   @api
   static LogScopeController? get(BuildContext? context, {bool depend = false}) {
     if (depend) {
       return context?.dependOnInheritedWidgetOfExactType<LogScope>()?.control;
     } else {
-      return context?.getInheritedWidgetOfExactType<LogScope>()?.control;
+      //Unhandled Exception: Looking up a deactivated widget's ancestor is unsafe.
+      try {
+        return context?.getInheritedWidgetOfExactType<LogScope>()?.control;
+      } catch (e) {
+        assert(() {
+          print(e);
+          return true;
+        }());
+        return null;
+      }
     }
   }
 
