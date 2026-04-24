@@ -1009,6 +1009,27 @@ extension StringEx on String {
         return previousValue.replaceRange(element.start, element.end, replace);
       });
 
+  /// 使用正则替换字符串中的{xxx}字符
+  /// ```
+  /// "你好，{name}！你的积分是 {score}".replaceAllVariable({
+  ///     "name": "angcyo",
+  ///     "score": "100",
+  ///   });
+  /// //你好，angcyo！你的积分是 100
+  /// ```
+  String replaceAllVariable(
+    Map<String, dynamic>? params, {
+    String? regex,
+    String Function(Match)? replace,
+  }) => replaceAllMapped(
+    regex ?? RegExp(r'\{(\w+)\}'),
+    (match) =>
+        replace?.call(match) ??
+        params?[match.group(1)!]?.toString() ??
+        match.group(0) ??
+        "",
+  );
+
   /// [Match]
   /// [RegExpMatch]
   /// [Match.start]
