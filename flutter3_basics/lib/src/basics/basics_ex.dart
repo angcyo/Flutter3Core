@@ -1027,6 +1027,7 @@ extension StringEx on String {
         replace?.call(match) ??
         params?[match.group(1)!]?.toString() ??
         match.group(0) ??
+        match.group(1) ??
         "",
   );
 
