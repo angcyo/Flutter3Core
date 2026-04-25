@@ -19,19 +19,16 @@ class DebugCommand {
   final String type;
   final String value;
 
-  DebugCommand(
-    this.command,
-    this.key,
-    this.type,
-    this.value,
-  );
+  DebugCommand(this.command, this.key, this.type, this.value);
 }
 
 class CoreDebug {
   static List<DebugCommandAction> debugCommandActionList =
       <DebugCommandAction>[];
 
-  /// 解析 @key#type=value 格式
+  /// 解析 @key#type=value 格式返回对应的数据
+  /// - [parseHiveKey]
+  /// - [parseHiveKeys]
   static (String? key, String? type, dynamic value) parseHiveKey(String line) {
     final keyIndex = line.indexOf("@");
     final typeIndex = line.indexOf("#");
@@ -95,9 +92,12 @@ class CoreDebug {
 
   /// [HiveEx]
   /// [HiveStringEx]
+  ///
+  /// - [parseHiveKey]
+  /// - [parseHiveKeys]
   static void parseHiveKeys(List<String?>? lines, [BuildContext? context]) {
     context ??= GlobalConfig.def.globalContext;
-    if (lines == null) {
+    if (lines == null || lines.isEmpty) {
       return;
     }
     bool match = false;
@@ -120,7 +120,8 @@ class CoreDebug {
           bool intercept = false;
           try {
             for (var action in debugCommandActionList) {
-              intercept = intercept ||
+              intercept =
+                  intercept ||
                   action.call(DebugCommand(line, key, type, valueString));
             }
             if (intercept) {
