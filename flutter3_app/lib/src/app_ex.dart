@@ -190,6 +190,10 @@ Future<int?> get $androidSdkInt async => isAndroid
     ? ((await $platformDeviceInfo) as AndroidDeviceInfo?)?.version.sdkInt
     : null;
 
+int? get $androidSdkIntCache => isAndroid
+    ? (_platformDeviceInfoCache as AndroidDeviceInfo?)?.version.sdkInt
+    : null;
+
 /// 手机型号
 Future<String?> get $platformDeviceModel async => isAndroid
     //product: T33_7863_U254_V11_FHD_1095_Natv
