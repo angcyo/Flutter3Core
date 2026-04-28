@@ -490,7 +490,7 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考宽度, weight属性的参考值
   double get refMaxWidth {
-    //debugger();
+    debugger(when: debugLabel != null);
     double maxWidth;
     final constraints = this.constraints;
     if (constraints.hasTightWidth) {
@@ -499,7 +499,7 @@ class FlowLayoutRender extends RenderBox
         selfConstraints?.maxWidth != double.infinity) {
       maxWidth = selfConstraints!.maxWidth;
     } else if (constraints.maxWidth != double.infinity) {
-      if (selfConstraints?.heightType == .wrapContent) {
+      if (selfConstraints?.widthType == .wrapContent) {
         maxWidth = hasSize ? size.width : double.infinity;
       } else if (selfConstraints == null ||
           selfConstraints?.widthType == ConstraintsType.matchParent ||
@@ -529,7 +529,7 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考高度, 用来垂直对齐参考
   double get refMaxHeight {
-    //debugger();
+    debugger(when: debugLabel != null);
     double maxHeight;
     final constraints = this.constraints;
     if (constraints.hasTightHeight) {
