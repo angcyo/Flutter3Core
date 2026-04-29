@@ -223,7 +223,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
     _routeStack.remove(route.settings);
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidPop(route, previousRoute);
@@ -241,7 +241,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
     _routeStack.add(route.settings);
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidPush(route, previousRoute);
@@ -259,7 +259,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   void didRemove(Route route, Route? previousRoute) {
     super.didRemove(route, previousRoute);
     _routeStack.remove(route.settings);
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidRemove(route, previousRoute);
@@ -276,7 +276,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidReplace(newRoute: newRoute, oldRoute: oldRoute);
@@ -292,7 +292,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
     super.didStartUserGesture(route, previousRoute);
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidStartUserGesture(route, previousRoute);
@@ -308,7 +308,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didStopUserGesture() {
     super.didStopUserGesture();
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
         element.onRouteDidStopUserGesture();
@@ -323,7 +323,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 
   @override
   void didChangeTop(Route topRoute, Route? previousTopRoute) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     super.didChangeTop(topRoute, previousTopRoute);
   }
 

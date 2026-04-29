@@ -464,7 +464,7 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
     stream: stream,
     initialData: allowBackward ? latestValue : null,
     builder: (_, _) {
-      debugger(when: debugLabel != null);
+      debugger(when: !isIos && debugLabel != null);
       return builder() ?? empty;
     },
   );

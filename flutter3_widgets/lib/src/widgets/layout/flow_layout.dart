@@ -442,7 +442,7 @@ class FlowLayoutRender extends RenderBox
 
   @override
   void detach() {
-    //debugger(when: debugLabel != null);
+    //debugger(when: !isIos && debugLabel != null);
     _childUsedWidth = 0;
     _childUsedHeight = 0;
     super.detach();
@@ -450,7 +450,7 @@ class FlowLayoutRender extends RenderBox
 
   @override
   void markNeedsLayout() {
-    //debugger(when: debugLabel != null);
+    //debugger(when: !isIos && debugLabel != null);
     _childUsedWidth = 0;
     _childUsedHeight = 0;
     super.markNeedsLayout();
@@ -469,7 +469,7 @@ class FlowLayoutRender extends RenderBox
   @override
   void performLayout() {
     final constraints = this.constraints;
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     measureChild(/*debugLabel: debugLabel*/);
     layoutChild(/*debugLabel: debugLabel*/);
 
@@ -479,7 +479,7 @@ class FlowLayoutRender extends RenderBox
         constraints.constrain(
           childSize + UiOffset(paddingHorizontal, paddingVertical),
         );
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     /*assert(() {
       l.i(
         "size:$size _childUsedWidth:$_childUsedWidth _childUsedHeight:$_childUsedHeight",
@@ -490,7 +490,7 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考宽度, weight属性的参考值
   double get refMaxWidth {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     double maxWidth;
     final constraints = this.constraints;
     if (constraints.hasTightWidth) {
@@ -529,7 +529,7 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考高度, 用来垂直对齐参考
   double get refMaxHeight {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     double maxHeight;
     final constraints = this.constraints;
     if (constraints.hasTightHeight) {
@@ -709,7 +709,7 @@ class FlowLayoutRender extends RenderBox
         }
       }
       //--
-      debugger(when: debugLabel != null);
+      debugger(when: !isIos && debugLabel != null);
       ChildLayoutHelper.layoutChild(child, childConstraints);
       final childSize = child.size;
       /*if (maxWidth != double.infinity && childSize.width > refMaxWidth) {
@@ -728,7 +728,7 @@ class FlowLayoutRender extends RenderBox
   /// 然后按照分组的规则, 依次布局child的位置
   /// [performLayout] 驱动
   void layoutChild({String? debugLabel}) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     final children = getChildren();
     //堆叠的child
     final stackChildren = <RenderBox>[];
@@ -800,7 +800,7 @@ class FlowLayoutRender extends RenderBox
 
     //matchLineHeight 功能适配
     childrenLineList.forEachIndexed((index, lineChildList) {
-      /*debugger(when: debugLabel != null);*/
+      /*debugger(when: !isIos && debugLabel != null);*/
       double lineHeight = getLineUsedHeight(lineChildList);
       for (final child in lineChildList) {
         final childParentData = child.parentData! as FlowLayoutParentData;
@@ -835,14 +835,14 @@ class FlowLayoutRender extends RenderBox
     final childUsedHeight = getAllLineHeight(childrenLineList);
     _childUsedHeight = childUsedHeight;
 
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
 
     final paddingTop = padding?.top ?? 0;
     final paddingBottom = padding?.bottom ?? 0;
     final paddingLeft = padding?.left ?? 0;
     final paddingRight = padding?.right ?? 0;
     double top = paddingTop;
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
 
     if (maxHeight != double.infinity) {
       //获取child总行的高度/整体对齐偏移
@@ -855,7 +855,7 @@ class FlowLayoutRender extends RenderBox
     double left = paddingLeft;
     //遍历一行一行
     childrenLineList.forEachIndexed((index, lineChildList) {
-      /*debugger(when: debugLabel != null);*/
+      /*debugger(when: !isIos && debugLabel != null);*/
       double lineMaxWidth = getLineUsedWidth(lineChildList);
       double lineMaxHeight = getLineUsedHeight(lineChildList);
       double lineUsedHeight = 0;
@@ -874,7 +874,7 @@ class FlowLayoutRender extends RenderBox
         final childParentData = child.parentData! as FlowLayoutParentData;
 
         //行内对齐偏移
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         double lineTop = top;
         if (lineMainAxisAlignment == MainAxisAlignment.center) {
           lineTop = top + (lineMaxHeight - child.size.height) / 2;
@@ -884,7 +884,7 @@ class FlowLayoutRender extends RenderBox
 
         //child 位置
         childParentData.offset = Offset(lineLeft, lineTop);
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
 
         final childSize = child.size;
         lineLeft += childSize.width + horizontalGap;

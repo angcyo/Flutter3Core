@@ -129,7 +129,7 @@ Future<void> initHive() async {
   try {
     await Hive.initHive();
   } catch (e, s) {
-    debugger(when: isDebug);
+    debugger(when: !isIos && isDebug);
     final log = "初始化Hive数据库失败->$e";
     l.e(log);
     if (e is FileSystemException) {
@@ -159,7 +159,7 @@ Future<void> initIsar() async {
   try {
     await openIsar();
   } catch (e, s) {
-    debugger(when: isDebug);
+    debugger(when: !isIos && isDebug);
     final log = "初始化Isar数据库失败->$e";
     l.e(log);
     if (e is FileSystemException) {

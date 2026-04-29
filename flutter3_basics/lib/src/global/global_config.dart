@@ -1078,6 +1078,9 @@ class PlaceholderBuildContext extends BuildContext {
 
 /// 混入一个主题改变回调
 /// [GlobalConfig]
+///
+///  - [MediaQueryDataState]
+///  - [MediaQueryDataChangeMixin]
 mixin GlobalAppStateMixin<T extends StatefulWidget> on State<T> {
   /// 订阅全局主题改变
   StreamSubscription<GlobalConfig?>? _subscription;

@@ -177,14 +177,14 @@ Matrix4 applyAlignMatrix(
   Offset? anchorOffset,
   String? debugLabel,
 }) {
-  //debugger(when: debugLabel != null);
+  //debugger(when: !isIos && debugLabel != null);
   final rect = applyAlignRect(
     parentSize,
     childSize,
     fit: fit,
     alignment: alignment,
   );
-  //debugger(when: debugLabel != null);
+  //debugger(when: !isIos && debugLabel != null);
   return Matrix4.identity()
     ..scaleBy(
       sx: rect.width / childSize.width,

@@ -44,7 +44,7 @@ class ProgressBoxDecoration extends BoxDecoration {
   /// 此方法会在[RenderDecoratedBox.paint]方法中创建一次并缓存
   @override
   BoxPainter createBoxPainter([ui.VoidCallback? onChanged]) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     final parent = super.createBoxPainter(onChanged);
     return ProgressBoxPainter(parent, onChanged, progress: progress);
   }

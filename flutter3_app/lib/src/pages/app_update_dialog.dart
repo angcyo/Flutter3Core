@@ -46,7 +46,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
     bool? forceForbiddenShow,
     String? debugLabel,
   }) async {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     NavigatorState? navigator;
     LibRes? libRes;
     if (context == null || context.isMounted != true) {

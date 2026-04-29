@@ -64,7 +64,7 @@ class LibAppVersionBean {
       httpUrl: url,
       debugLabel: debugLabel,
       onHttpAction: (data) async {
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         if (data is String) {
           appVersionUrl = url;
           final bean = LibAppVersionBean.fromJson(data.jsonDecode());

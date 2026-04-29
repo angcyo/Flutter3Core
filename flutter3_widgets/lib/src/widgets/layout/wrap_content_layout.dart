@@ -159,7 +159,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
 
   @override
   void performLayout() {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     final child = this.child;
     if (child == null) {
       size = constraints.smallest;
@@ -205,7 +205,7 @@ class WrapContentBox extends RenderAligningShiftedBox {
         //关键布局
         child.layout(BoxConstraints(), parentUsesSize: true);
         final childSize = child.size;
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         if (childSize.width <= maxWidth && childSize.height <= maxHeight) {
           _setSize(childSize);
           return;

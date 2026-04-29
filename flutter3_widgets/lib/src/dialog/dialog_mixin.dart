@@ -491,7 +491,7 @@ mixin DialogMixin implements TranslationTypeImpl {
               physics: enablePullBack ? null : kScrollPhysics,
             );
       /*if (debugLabel != null) {
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         scrollBody = scrollBody?.wrapContentHeight(debugLabel: debugLabel);
       }*/
       //约束高度

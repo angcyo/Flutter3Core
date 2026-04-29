@@ -448,7 +448,7 @@ class ElementPainter extends IElementPainter {
   void applyPaintTransform(IPainter child, Matrix4 transform) {
     final operateMatrix = paintProperty?.operateMatrix;
     if (operateMatrix != null) {
-      debugger(when: debugLabel != null);
+      debugger(when: !isIos && debugLabel != null);
       transform.multiply(operateMatrix);
     }
     super.applyPaintTransform(child, transform);
@@ -941,7 +941,7 @@ class ElementPainter extends IElementPainter {
   void paintPropertyRect(Canvas canvas, PaintMeta paintMeta, Paint paint) {
     paintProperty?.let((it) {
       paint.withSavePaint(() {
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         paint
           //边框的颜色
           ..color = boundsColor ?? paint.color
@@ -1225,7 +1225,7 @@ class ElementPainter extends IElementPainter {
       l.w("[${classHash()}]...dispatchSelfPaintPropertyChanged");
       return true;
     }());*/
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     if (propertyType == PainterPropertyType.paint) {
       painterTouchSpotHandler?.parentMatrix = paintProperty?.operateMatrix;
     }
@@ -2232,7 +2232,7 @@ class ElementGroupPainter extends ElementPainter {
     UndoType? fromUndoType, {
     String? debugLabel,
   }) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     /*assert(() {
       l.w("[${classHash()}]...updatePaintPropertyFromChildren");
       return true;

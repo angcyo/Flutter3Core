@@ -226,7 +226,7 @@ Future wrapLoading(
     }, timeout);
   }
   return future.get((value, error) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     //l.w("future end");
     if (isTimeout) {
       assert(() {

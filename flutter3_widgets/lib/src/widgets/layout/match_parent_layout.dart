@@ -91,7 +91,7 @@ class MatchParentBox extends WrapContentBox {
 
   @override
   void performLayout() {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     BoxConstraints constraints = this.constraints;
     BoxConstraints? parentConstraints = parentBoxConstraints;
     if (constraints.isUnconstrained) {
@@ -121,7 +121,7 @@ class MatchParentBox extends WrapContentBox {
         //优先使用子节点自身的宽高, 超过后再使用约束的宽高
         child!.layout(BoxConstraints(), parentUsesSize: true);
         final childSize = child!.size;
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         if (constraints.isConstraintsSize(childSize)) {
           size = childConstraints.constrain(childSize);
           _alignChild();
@@ -131,7 +131,7 @@ class MatchParentBox extends WrapContentBox {
       //final parentConstraints = parent?.constraints;
       //debugger();
       child!.layout(childConstraints, parentUsesSize: true);
-      //debugger(when: debugLabel != null);
+      //debugger(when: !isIos && debugLabel != null);
       size = constraints.constrain(child!.size);
       _alignChild();
     }

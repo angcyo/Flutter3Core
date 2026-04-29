@@ -25,9 +25,9 @@ class NavigatorRouteOverlay extends StatefulWidget {
     }
     _isShow = true;
     postFrameCallback((_) {
-      //debugger(when: debugLabel != null);
+      //debugger(when: !isIos && debugLabel != null);
       showOverlay((entry, state, context, progress) {
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         return NavigatorRouteOverlay(entry);
       }, context: context);
     });

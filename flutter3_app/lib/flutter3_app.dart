@@ -196,7 +196,7 @@ Future runGlobalApp(
       error = e;
       stack = s;
       printError(e, s);
-      debugger(when: isDebug);
+      debugger(when: !isIos && isDebug);
       if (!isDebug && e is ROccupiedException) {
         crashApp(e);
       }
@@ -211,7 +211,7 @@ Future runGlobalApp(
       error = e;
       stack = s;
       printError(e, s);
-      debugger(when: isDebug);
+      debugger(when: !isIos && isDebug);
       if (!isDebug && e is ROccupiedException) {
         crashApp(e);
       }
@@ -229,7 +229,7 @@ Future runGlobalApp(
       error = e;
       stack = s;
       printError(e, s);
-      debugger(when: isDebug);
+      debugger(when: !isIos && isDebug);
       if (!isDebug && e is ROccupiedException) {
         crashApp(e);
       }
@@ -241,7 +241,7 @@ Future runGlobalApp(
       error = e;
       stack = s;
       printError(e, s);
-      debugger(when: isDebug);
+      debugger(when: !isIos && isDebug);
       if (!isDebug && e is ROccupiedException) {
         crashApp(e);
       }
@@ -268,7 +268,7 @@ Future runGlobalApp(
       await executeGlobalInitialize(after: true);
     } catch (e, s) {
       printError(e, s);
-      debugger(when: isDebug);
+      debugger(when: !isIos && isDebug);
       if (!isDebug && error is RCoreException) {
         exitApp();
       }
@@ -409,7 +409,7 @@ Future _initAppDebugInfo() async {
         await executeGlobalInitialize(compliance: true);
       } catch (e, s) {
         printError(e, s);
-        debugger(when: isDebug);
+        debugger(when: !isIos && isDebug);
       }
     }
   });

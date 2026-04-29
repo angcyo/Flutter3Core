@@ -427,7 +427,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     handle.isSuccessCode = isSuccessCode ?? handle.isSuccessCode;
     return get(
       (response, error) {
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         if (error != null) {
           //有错误
           final err = handle.handleError(error);

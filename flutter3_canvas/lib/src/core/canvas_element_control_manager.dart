@@ -569,7 +569,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     String? debugLabel,
   }) {
     //debugger();
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     if (enableResetElementAngle) {
       if (isControlElement) {
         //no op
@@ -1500,7 +1500,7 @@ class ElementSelectComponent extends ElementGroupPainter
     UndoType? fromUndoType, {
     String? debugLabel,
   }) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     canvasElementControlManager.updateControlBounds();
     super.dispatchSelfPaintPropertyChanged(
       old,

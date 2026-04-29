@@ -32,7 +32,7 @@ class PainterTouchSpotHandler extends IPainter {
   @override
   void applyPaintTransform(IPainter child, Matrix4 transform) {
     if (isRelativeParent && this.parent == null && parentMatrix != null) {
-      debugger(when: debugLabel != null);
+      debugger(when: !isIos && debugLabel != null);
       transform.multiply(parentMatrix!);
     }
     super.applyPaintTransform(child, transform);

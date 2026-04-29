@@ -275,7 +275,7 @@ extension WidgetListEx on WidgetNullList {
     String? debugLabel,
   }) {
     WidgetList children = filterAndFillGap(gapWidget: gapWidget);
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     if (isNullOrEmpty(children)) {
       return null;
     }

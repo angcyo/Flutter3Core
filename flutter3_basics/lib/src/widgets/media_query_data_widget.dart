@@ -66,6 +66,9 @@ typedef MediaQueryDataWidgetBuilder =
 /// - 使用[animatedContainer]动画改变大小
 mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     on State<T>, WidgetsBindingObserver {
+  /// 调试标签
+  String? debugLabel;
+
   /// 只要媒体数据改变, 就更新界面
   @configProperty
   bool updateByAny = true;
@@ -90,6 +93,7 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
 
   @override
   void initState() {
+    debugger(when: !isIos && debugLabel != null);
     viewMixin =
         WidgetsBinding.instance.platformDispatcher.views.firstOrNull ??
         flutterViews.firstOrNull ??
@@ -110,6 +114,7 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   @override
   void didChangeMetrics() {
     //super.didChangeMetrics();
+    debugger(when: !isIos && debugLabel != null);
     if (viewMixin != null) {
       final mediaQueryData = MediaQueryData.fromView(viewMixin!);
       if (mediaQueryDataMixin != mediaQueryData) {

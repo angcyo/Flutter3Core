@@ -607,7 +607,7 @@ extension CanvasEx on Canvas {
         dst.left - src.left + offsetLeft,
         dst.top - src.top + offsetTop,
       );
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     final scaleMatrix = applyAlignMatrix(
       Size(dst.width - offsetWidth, dst.height - offsetHeight),
       src.size,
@@ -670,7 +670,7 @@ extension CanvasEx on Canvas {
     if (drawHeight < 0) {
       drawHeight = dst.height;
     }
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
 
     //平移到目标
     final translateMatrix = Matrix4.identity()
@@ -816,7 +816,7 @@ extension CanvasEx on Canvas {
     void Function(TextPainter painter, Offset offset)? onBeforeAction,
     String? debugLabel,
   }) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     final painter = TextPainter(
       text: TextSpan(
         text: text,

@@ -421,7 +421,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     if (elementsBounds == null) {
       return false;
     }
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     if (contentRect.containsRect(elementsBounds, epsilon)) {
       if (exact == true) {
         final contentPath =

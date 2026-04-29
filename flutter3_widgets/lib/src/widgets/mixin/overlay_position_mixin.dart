@@ -71,7 +71,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
         ],
       ),
       afterLayoutAction: (ctx, child) {
-        debugger(when: debugLabel != null);
+        debugger(when: !isIos && debugLabel != null);
         final size = child.size;
         _overlayContainerSize = child.size;
         if (positionOffset.x > size.width || positionOffset.y > size.height) {
@@ -102,7 +102,7 @@ mixin OverlayPositionMixin<T extends StatefulWidget>
         onTap: onTapBody,
       ),
       afterLayoutAction: (ctx, child) {
-        //debugger(when: debugLabel != null);
+        //debugger(when: !isIos && debugLabel != null);
         _overlayBodySize = child.size;
       },
     );

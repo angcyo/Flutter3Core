@@ -320,7 +320,7 @@ class L {
     String? debugLabel,
     String? filterType,
   }) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     final time = showTime ?? kShowTime ? '${nowTimeString(kTimePattern)} ' : '';
     final levelStr = showLevel ?? kShowLevel ? _levelStr(level) : '';
     final tagStr = showTag ?? kShowTag ? '[${tag ?? kTag}]' : '';

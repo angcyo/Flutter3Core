@@ -138,16 +138,16 @@ Future<HttpServer> startWebSocketServer(
       webSocket.stream.listen((message) {
         webSocket.sink.add("[debug] echo->$message");
       });
-      debugger(when: debugLabel != null);
+      debugger(when: !isIos && debugLabel != null);
     }
     onConnection?.call(webSocket, subProtocol);
   });
-  debugger(when: debugLabel != null);
+  debugger(when: !isIos && debugLabel != null);
   //启动一个服务/支持WebSocket服务
   return await shelf_io.serve(handler, host ?? 'localhost', port).then((
     server,
   ) {
-    debugger(when: debugLabel != null);
+    debugger(when: !isIos && debugLabel != null);
     assert(() {
       l.d(
         '${debugLabel?.wsb}Serving at ws://${server.address.host}:${server.port}',
