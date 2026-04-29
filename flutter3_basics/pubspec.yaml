@@ -132,7 +132,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   # https://pub.dev/packages/flutter_gen
-  flutter_gen: ^5.13.0+1
+  flutter_gen: ^5.14.1
   # https://pub.dev/packages/build_runner
   # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
   # https://pub.dev/packages/stream_channel

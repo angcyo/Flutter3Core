@@ -43,7 +43,7 @@ dependencies:
   # https://pub.dev/packages/vector_graphics
   # https://pub.dev/packages/http
   # https://pub.dev/packages/vector_graphics_codec
-  vector_graphics: ^1.1.21
+  vector_graphics: ^1.2.0
   # https://pub.dev/packages/vector_graphics_codec
   vector_graphics_codec: ^1.1.13
 

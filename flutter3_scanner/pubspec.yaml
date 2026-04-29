@@ -34,7 +34,7 @@ dependencies:
   #          |Android | iOS     | Linux   | macOS   |Web      |Windows
   # --------|---------|---------|---------|---------|---------|---------
   # Support |SDK 24+  |iOS 12+  |Any      |10.14+   |See image_picker_for_web | Windows 10+
-  image_picker: ^1.2.1
+  image_picker: ^1.2.2
   #image_picker_for_web: ^3.0.4
 
 # mobile_scanner ^5.1.1 requires web ^0.5.1.

@@ -64,7 +64,7 @@ dependencies:
   # https://pub.dev/packages/url_launcher_windows
   # https://pub.dev/packages/web
   # https://pub.dev/packages/win32
-  share_plus: ^13.0.0
+  share_plus: ^13.1.0
 
   # https://pub.dev/packages/flutter_animate
   # https://github.com/gskinner/flutter_animate
