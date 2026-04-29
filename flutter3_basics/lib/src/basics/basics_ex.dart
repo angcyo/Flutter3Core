@@ -1825,18 +1825,13 @@ extension BoolEx on bool {
   String get dc => toDC();
 
   /// 转换成对错字符显示
-  /// 对错字符
+  /// 对错字符  ✅ / ❎
   /// https://manual.toulan.fun/posts/macos-type-right-wrong-symbol/
-  ///
-  /// ✅
-  /// ❎
-  /// ❌
-  /// ✖
+  /// ❌ / ✖
   /// 红色
-  /// ✘
-  /// ✔︎
-  /// ✓
-  /// ✗
+  /// ✘ / ✔︎
+  /// ✓ / ✗
+  /// ✔️ / ❌
   ///
   String toDC() => this ? "✔︎" : "✘"; //if (this == true) "√" else "×"
 }
