@@ -3023,14 +3023,16 @@ extension ListEx<T> on List<T> {
   List<T> subListCount(int start, int count) => subList(start, start + count);
 
   /// 获取指定元素的下一个元素
-  T? nextOf(T element) {
+  /// - [defIndex] 未找到时返回索引对应的数据
+  /// - [overflowIndex] 索引越界时返回索引对应的数据
+  T? nextOf(T element, {int? defIndex, int? overflowIndex}) {
     var index = indexOf(element);
     if (index == -1) {
-      return null;
+      return getOrNull(defIndex);
     }
     index++;
     if (index >= length) {
-      return null;
+      return getOrNull(overflowIndex);
     }
     return this[index];
   }
