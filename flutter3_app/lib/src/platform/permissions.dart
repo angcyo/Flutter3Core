@@ -9,23 +9,26 @@ abstract class Permissions {
   //region 蓝牙相关权限
 
   /// 蓝牙的基础权限
-  static final bluetoothPermissions = [
-    Permission.location,
-    Permission.bluetooth,
-    Permission.bluetoothScan,
-    Permission.bluetoothConnect,
-    Permission.bluetoothAdvertise,
-  ];
+  static final bluetoothPermissions = isIos
+      ? [Permission.bluetooth] // iOS 只需要申请通用蓝牙权限
+      : [
+          // 如果 Android 版本低于 12，或者需要精确定位，请加上这一行
+          Permission.location,
+          Permission.bluetooth,
+          Permission.bluetoothScan,
+          Permission.bluetoothConnect,
+          Permission.bluetoothAdvertise,
+        ];
 
   /// 是否有蓝牙权限
   @PlatformFlag("Android iOS web Windows")
   static Future<bool> hasBluetoothPermissions() async {
-    if (isMacOS) {
+    if (isDesktopOrWeb) {
       return true;
     }
     final list = await Future.wait(bluetoothPermissions.map((e) => e.status));
     assert(() {
-      l.d('权限状态:$list');
+      l.d('[Bluetooth]权限状态:$list');
       return true;
     }());
     return list.all((element) => element.isGranted);
@@ -44,9 +47,10 @@ abstract class Permissions {
   /// [openAppSettings]打开应用设置页面
   static Future<Map<Permission, PermissionStatus>>
   requestBluetoothPermissions() async {
+    //debugger();
     final result = await bluetoothPermissions.request();
     assert(() {
-      l.d('请求权限返回:$result');
+      l.d('[Bluetooth]请求权限返回:$result');
       return true;
     }());
     return result;
@@ -61,9 +65,12 @@ abstract class Permissions {
 
   /// 是否有Wifi权限
   static Future<bool> hasWifiPermissions() async {
+    if (isDesktopOrWeb) {
+      return true;
+    }
     final list = await Future.wait(wifiPermissions.map((e) => e.status));
     assert(() {
-      l.d('权限状态:$list');
+      l.d('[Wifi]权限状态:$list');
       return true;
     }());
     return list.all((element) => element.isGranted);
@@ -74,7 +81,7 @@ abstract class Permissions {
   requestWifiPermissions() async {
     final result = await wifiPermissions.request();
     assert(() {
-      l.d('请求权限返回:$result');
+      l.d('[Wifi]请求权限返回:$result');
       return true;
     }());
     return result;
@@ -98,7 +105,7 @@ abstract class Permissions {
     }
     final result = await Permission.ignoreBatteryOptimizations.request();
     assert(() {
-      l.d('请求权限返回:$result');
+      l.d('[IgnoreBattery]请求权限返回:$result');
       return true;
     }());
     return result;
