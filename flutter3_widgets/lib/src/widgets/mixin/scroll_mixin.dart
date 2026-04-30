@@ -162,6 +162,7 @@ abstract class ScrollContainerRenderBox<
     this.gap = 0,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.selfConstraints,
+    this.debugLabel,
   }) : _axisDirection = axisDirection,
        _crossAxisDirection = crossAxisDirection,
        _clipBehavior = clipBehavior,
@@ -206,6 +207,8 @@ abstract class ScrollContainerRenderBox<
 
   /// 子节点之间的间隙
   double gap = 0;
+
+  String? debugLabel;
 
   //---
 
@@ -543,6 +546,7 @@ abstract class ScrollContainerRenderBox<
     }
     //debugger();
     size = constraints.constrain(Size(width, height));
+    debugger(when: debugLabel != null);
     //size = Size(width * 3, height);
 
     //--
@@ -553,7 +557,9 @@ abstract class ScrollContainerRenderBox<
       parentSize: size,
       parentPadding: padding,
       gap: gap,
+      debugLabel: debugLabel,
     );
+    debugger(when: debugLabel != null);
 
     //---
     final controller = scrollContainerController;

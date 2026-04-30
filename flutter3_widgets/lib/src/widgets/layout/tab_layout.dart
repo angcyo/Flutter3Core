@@ -89,6 +89,8 @@ class TabLayout extends ScrollContainerWidget {
   /// 子节点之间的间隙
   final double gap;
 
+  final String? debugLabel;
+
   /// 当子元素的数量在这个范围时, 开启等宽
   /// [min~max]
   final String? autoEqualWidthRange;
@@ -114,6 +116,7 @@ class TabLayout extends ScrollContainerWidget {
     ScrollController? scrollController,
     required this.tabLayoutController,
     this.gap = 0,
+    this.debugLabel,
     this.autoEqualWidthRange,
     this.autoEqualWidth = false,
     this.bgDecoration,
@@ -190,6 +193,7 @@ class _TabLayoutState extends ScrollContainerState<TabLayout> {
         selfConstraints: widget.selfConstraints,
         tabController: widget.tabLayoutController,
         gap: widget.gap,
+        debugLabel: widget.debugLabel,
         autoEqualWidth: widget.autoEqualWidth,
         autoEqualWidthRange: widget.autoEqualWidthRange,
         bgDecoration: widget.bgDecoration,
@@ -225,6 +229,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
     this.scrollController,
     this.tabController,
     this.gap = 0,
+    this.debugLabel,
     this.clipBehavior = Clip.hardEdge,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.autoEqualWidthRange,
@@ -250,6 +255,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
   final LayoutBoxConstraints? selfConstraints;
   final TabLayoutController? tabController;
   final double gap;
+  final String? debugLabel;
 
   /// 当子元素的数量在这个范围时, 开启等宽
   /// [min~max]
@@ -278,6 +284,7 @@ class TabLayoutViewport extends MultiChildRenderObjectWidget {
       tabController: tabController,
       padding: padding,
       gap: gap,
+      debugLabel: debugLabel,
       bgDecoration: bgDecoration,
       contentBgDecoration: contentBgDecoration,
       autoEqualWidth: autoEqualWidth,
@@ -349,6 +356,7 @@ class TabLayoutRender extends ScrollContainerRenderBox {
     super.crossAxisAlignment = CrossAxisAlignment.center,
     super.padding,
     super.gap = 0,
+    super.debugLabel,
     super.selfConstraints,
     this.tabController,
     this.autoEqualWidthRange,

@@ -147,17 +147,14 @@ class LayoutBoxConstraints extends BoxConstraints {
   });
 
   /// 固定大小约束
-  LayoutBoxConstraints.fixedSize(
-    double width,
-    double height,
-  ) : this.tight(Size(width, height));
+  LayoutBoxConstraints.fixedSize(double width, double height)
+    : this.tight(Size(width, height));
 
   /// 固定大小约束
-  LayoutBoxConstraints.tight(
-    super.size,
-  )   : widthType = ConstraintsType.fixedSize,
-        heightType = ConstraintsType.fixedSize,
-        super.tight();
+  LayoutBoxConstraints.tight(super.size)
+    : widthType = ConstraintsType.fixedSize,
+      heightType = ConstraintsType.fixedSize,
+      super.tight();
 
   /// 固定高度的约束
   const LayoutBoxConstraints.fixedHeight({
@@ -208,8 +205,9 @@ class LayoutBoxConstraints extends BoxConstraints {
     final childHeight = childSize.height + paddingVertical;
 
     double width = parentConstraints.constrainWidth(constrainWidth(childWidth));
-    double height =
-        parentConstraints.constrainHeight(constrainHeight(childHeight));
+    double height = parentConstraints.constrainHeight(
+      constrainHeight(childHeight),
+    );
 
     if (widthType == ConstraintsType.wrapContent) {
       width = constrainWidth(childWidth);
@@ -221,7 +219,8 @@ class LayoutBoxConstraints extends BoxConstraints {
       } else {
         assert(() {
           debugPrint(
-              'matchParentWidth is true, but parentConstraints.maxWidth is double.infinity');
+            'matchParentWidth is true, but parentConstraints.maxWidth is double.infinity',
+          );
           return true;
         }());
       }
@@ -237,7 +236,8 @@ class LayoutBoxConstraints extends BoxConstraints {
       } else {
         assert(() {
           debugPrint(
-              'matchParentHeight is true, but parentConstraints.maxHeight is double.infinity');
+            'matchParentHeight is true, but parentConstraints.maxHeight is double.infinity',
+          );
           return true;
         }());
       }
@@ -256,8 +256,10 @@ class LayoutBoxConstraints extends BoxConstraints {
   }
 }
 
-mixin LayoutMixin<ChildType extends RenderObject,
-        ParentDataType extends ContainerParentDataMixin<ChildType>>
+mixin LayoutMixin<
+  ChildType extends RenderObject,
+  ParentDataType extends ContainerParentDataMixin<ChildType>
+>
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
   //---
 
@@ -331,10 +333,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
   }
 
   /// 获取所有子节点的宽度, 包含间隙
-  double getAllLinearChildWidth(
-    List<ChildType> children, {
-    double gap = 0,
-  }) {
+  double getAllLinearChildWidth(List<ChildType> children, {double gap = 0}) {
     double width = 0;
     for (final child in children) {
       if (child is RenderBox) {
@@ -346,10 +345,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
   }
 
   /// 获取所有子节点的高度, 包含间隙
-  double getAllLinearChildHeight(
-    List<ChildType> children, {
-    double gap = 0,
-  }) {
+  double getAllLinearChildHeight(List<ChildType> children, {double gap = 0}) {
     double height = 0;
     for (final child in children) {
       if (child is RenderBox) {
@@ -438,6 +434,7 @@ mixin LayoutMixin<ChildType extends RenderObject,
     Size? parentSize,
     EdgeInsets? parentPadding,
     double gap = 0,
+    String? debugLabel,
   }) {
     double parentPaddingLeft = parentPadding?.left ?? 0;
     double parentPaddingTop = parentPadding?.top ?? 0;
@@ -467,7 +464,8 @@ mixin LayoutMixin<ChildType extends RenderObject,
           if (axis == Axis.horizontal) {
             //水平布局, 上下的对齐方式
             if (crossAxisAlignment == CrossAxisAlignment.center) {
-              alignOffsetY = parentPaddingTop +
+              alignOffsetY =
+                  parentPaddingTop +
                   (parentValidHeight - child.size.height) / 2;
             } else if (crossAxisAlignment == CrossAxisAlignment.end) {
               alignOffsetY =
@@ -489,16 +487,19 @@ mixin LayoutMixin<ChildType extends RenderObject,
           offsetX + alignOffsetX + parentData.layoutMarginLeft,
           offsetY + alignOffsetY + parentData.layoutMarginTop,
         );
+        debugger(when: debugLabel != null);
         parentData.offset = offset;
         //end
         if (child is RenderBox) {
           if (axis == Axis.horizontal) {
-            offsetX = offset.dx +
+            offsetX =
+                offset.dx +
                 child.size.width +
                 gap +
                 parentData.layoutMarginRight;
           } else {
-            offsetY = offset.dy +
+            offsetY =
+                offset.dy +
                 child.size.height +
                 gap +
                 parentData.layoutMarginBottom;

@@ -277,6 +277,8 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         contentBgDecoration: contentBgDecoration,
         padding: padding,
         firstIndexNotify: firstIndexNotify,
+        /*crossAxisAlignment: .start,*/
+        /*debugLabel: "test",*/
         onIndexChanged: (from, to) {
           onSelfTabIndexChanged(context, from, to);
           onIndexChangedAction?.call(from, to);
