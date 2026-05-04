@@ -1,0 +1,22 @@
+# 豆包聊天模型
+# curl https://ark.cn-beijing.volces.com/api/v3/chat/completions
+#  -H "Content-Type: application/json"
+#  -H "Authorization: Bearer ark-2f709f98-3949-4f4a-8ce5-a66a79421c99-3fe58"
+#  -d '{
+#    "model": "doubao-1-5-pro-256k-250115",
+#    "messages": [
+#      {"role": "system","content": "你是人工智能助手."},
+#      {"role": "user","content": "你好"}
+#    ]
+#  }'
+POST https://ark.cn-beijing.volces.com/api/v3/chat/completions
+Authorization: Bearer {{$env.doubao_key}}
+Content-Type: application/json
+
+{
+    "model": "doubao-seed-character-251128",
+    "messages": [
+      {"role": "system","content": "你是科技领域国际化语言翻译的人工智能助手."},
+      {"role": "user","content": "翻译 开始学习 开始考试"}
+    ]
+}
