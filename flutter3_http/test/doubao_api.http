@@ -14,9 +14,9 @@ Authorization: Bearer {{$env.doubao_key}}
 Content-Type: application/json
 
 {
-    "model": "doubao-seed-character-251128",
+    "model": "doubao-seed-2-0-pro-260215",
     "messages": [
-      {"role": "system","content": "你是科技领域国际化语言翻译的人工智能助手."},
+      {"role": "system","content": "你是科技领域国际化语言翻译的人工智能助手,如果没有指定语言,则默认中译英.输出结果需要仅包含一行原文下一行译文即可."},
       {"role": "user","content": "翻译 开始学习 开始考试"}
     ]
 }
