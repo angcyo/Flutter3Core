@@ -22,7 +22,7 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 ///
 void main() async {
   const api = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send";
-  const accessToken = "";
+  final accessToken = Platform.environment['google_access_token'];
   const message =
       "From: no-reply@laserabc.com\r\n"
       "To: angcyo@126.com\r\n"
