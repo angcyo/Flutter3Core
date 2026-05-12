@@ -104,7 +104,20 @@ dev_dependencies:
   #So, because flutter3_http depends on json_serializable ^6.9.4 which depends on source_gen ^2.0.0, version solving failed.
   #...
   # source_gen: ^4.1.1 / isar_generator
-  json_serializable: ^6.13.1
+  json_serializable: ^6.13.2
+
+  # https://pub.dev/packages/googleapis
+  # https://pub.dev/packages/_discoveryapis_commons
+  # https://pub.dev/packages/http
+  googleapis: ^16.0.0
+  # https://pub.dev/packages/googleapis_auth
+  # https://pub.dev/packages/crypto
+  # https://pub.dev/packages/google_cloud
+  # https://pub.dev/packages/google_identity_services_web
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/meta
+  googleapis_auth: ^2.3.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
