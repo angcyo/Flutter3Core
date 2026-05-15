@@ -1,0 +1,46 @@
+### brevoSendEmail
+POST https://api.brevo.com/v3/smtp/email
+Content-Type: application/json
+api-key: 
+
+{
+  "htmlContent": "<p>htmlContent</p>",
+  "sender": {
+    "email": "no-reply@laserabc.com",
+    "name": "no-reply"
+  },
+  "subject": "Verification Code",
+  "to": [
+    {
+      "email": "angcyo@126.com"
+    }
+  ]
+}
+
+>>! .log
+
+## 201
+#{
+#"messageId": "<202605121006.54750620548@smtp-relay.mailin.fr>"
+#}
+
+### resendSendEmail
+POST https://api.resend.com/emails
+Content-Type: application/json
+Authorization:
+
+{
+  "html": "<p>htmlContent</p>",
+  "from": "no-reply<no-reply@laserabc.com>",
+  "subject": "Verification Code",
+  "to": [
+    "angcyo@126.com"
+  ]
+}
+
+>>! .log
+
+## 200
+#{
+#  "id": "f514608a-88df-47a6-819c-198df40da142"
+#}
