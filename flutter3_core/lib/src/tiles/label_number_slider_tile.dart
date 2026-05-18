@@ -239,7 +239,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       activeTrackColor:
           widget.activeTrackColor ??
           (widget.inactiveTrackGradientColors == null
-              ? globalTheme.primaryColor
+              ? globalTheme.accentColor
               : Colors.transparent),
       inactiveTrackColor: widget.inactiveTrackColor,
       inactiveTrackGradientColors: widget.inactiveTrackGradientColors,

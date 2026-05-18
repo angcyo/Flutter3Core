@@ -36,11 +36,13 @@ part 'intl_ex.dart';
 /// }
 /// ```
 
+/// 库中的En国际化资源
 Map<String, dynamic> get libResEnMessages => messages_en.messages.messages;
 
+/// 库中的Zh国际化资源
 Map<String, dynamic> get libResZhMessages => messages_zh.messages.messages;
 
-/// 合并[libResZhMessages] [libResEnMessages]中的资源到[messages]中
+/// 合并[libResZhMessages].[libResEnMessages]中的资源到[messages]中
 @callPoint
 void mergeLibResMessages({
   Map<String, dynamic>? zhMessages,

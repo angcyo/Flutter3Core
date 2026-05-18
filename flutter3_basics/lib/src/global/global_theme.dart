@@ -362,7 +362,7 @@ class GlobalThemeDark extends GlobalTheme {
 
   /*const Color(0xfffcfbfc)*/
   @override
-  Color get themeWhiteColor => primaryColor;
+  Color get themeWhiteColor => const Color(0xff333333);
 
   /// [AppBar]的前景颜色
   @override
@@ -370,7 +370,7 @@ class GlobalThemeDark extends GlobalTheme {
       textTitleStyle.color ?? const Color(0xfffcfbfc);
 
   @override
-  Color get whiteBgColor => primaryColorDark;
+  Color get whiteBgColor => const Color(0xff2a2a2a);
 
   @override
   Color get lineColor => const Color(0xff595450);
@@ -411,20 +411,20 @@ class GlobalThemeDark extends GlobalTheme {
 
   ///
   @override
-  ui.Color get iconWhiteDisableBgColor => super.iconWhiteDisableBgColor;
+  Color get iconWhiteDisableBgColor => super.iconWhiteDisableBgColor;
 
   @override
-  ui.Color get surfaceSubBgColor => super.surfaceBgColor;
+  Color get surfaceSubBgColor => super.surfaceBgColor;
 
   @override
-  ui.Color get dialogSurfaceBgColor => whiteBgColor;
+  Color get dialogSurfaceBgColor => whiteBgColor;
 
   @override
   Color get icoDisableColor => const Color(0xffb0b0b0);
 
   ///
   @override
-  ui.Color get borderColor => super.borderColor;
+  Color get borderColor => const Color(0xff3e3e3e);
 
   @override
   Color get fillColor => const Color(0xff3e3e3e);

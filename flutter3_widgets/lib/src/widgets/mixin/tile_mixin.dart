@@ -472,6 +472,7 @@ mixin TileMixin {
     double? additionalActiveTrackHeight /*激活时滑块的额外高度*/,
     EdgeInsetsGeometry? sliderPadding /*填充*/,
   }) {
+    //debugger();
     if (trackShape == null) {
       //渐变进度在渐变颜色中的颜色值
       Color? gradientColor;
@@ -538,7 +539,7 @@ mixin TileMixin {
         activeTrackColor: activeTrackColor ?? darkAccentColor,
         overlayColor: overlayColor ?? darkAccentColor.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
-        inactiveTrackColor: inactiveTrackColor,
+        inactiveTrackColor: inactiveTrackColor ?? darkAccentColor.withAlpha(10),
         thumbShape:
             thumbShape ??
             (thumbRadius == null

@@ -3055,7 +3055,7 @@ extension WidgetEx on Widget {
     Key? key,
     required bool visible,
     bool maintainSize = false /*是否占据空间*/,
-    bool maintainState = false /*是否维护状态*/,
+    bool? maintainState /*是否维护状态*/,
     bool? maintainFocusability /*是否维护焦点状态*/,
     bool anim = false,
   }) {
@@ -3063,9 +3063,11 @@ extension WidgetEx on Widget {
       key: anim ? null : key,
       visible: visible,
       maintainSize: maintainSize,
-      maintainState: maintainFocusability == true || maintainState,
-      maintainAnimation: maintainState,
-      maintainFocusability: maintainFocusability ?? maintainState,
+      maintainState:
+          maintainFocusability == true || (maintainState ?? maintainSize),
+      maintainAnimation: maintainState ?? maintainSize,
+      maintainFocusability:
+          maintainFocusability ?? maintainState ?? maintainSize,
       child: this,
     );
     if (anim) {

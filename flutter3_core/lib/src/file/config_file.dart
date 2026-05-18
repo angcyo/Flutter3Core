@@ -49,7 +49,7 @@ class ConfigFile {
                 : p.join(configFolder.path, subFolder, key))
             .file();
     try {
-      if (!forceAssetToFile && file.existsSync()) {
+      if (!isDebug && !forceAssetToFile && file.existsSync()) {
         //磁盘上的文件已经存在, 则直接读取
         result = await file.readAsString();
       } else {

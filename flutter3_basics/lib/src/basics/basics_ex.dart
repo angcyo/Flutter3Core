@@ -3203,6 +3203,15 @@ extension ListListEx<T> on List<List<T>> {
 //region Map 扩展
 
 extension MapEx<K, V> on Map<K, V> {
+
+  /// [addAll]
+  void addAllOrNull(Map<K, V>? other) {
+    if (other == null) {
+      return;
+    }
+    addAll(other);
+  }
+
   /// 查找元素
   ({K key, V value})? find(bool Function(K key, V value) test) {
     ({K key, V value})? result;
