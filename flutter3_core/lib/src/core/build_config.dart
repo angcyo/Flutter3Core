@@ -29,7 +29,7 @@ class BuildConfig {
   @initialize
   @CallFrom("runGlobalApp")
   static Future<BuildConfig?> initBuildConfig({
-    String name = "$kConfigPathName/build_config.json",
+    String name = "$kConfigPathName/$kBuildConfig",
     String prefix = kDefAssetsPrefix,
     String? package, //flutter3_app,
   }) async {
@@ -58,50 +58,53 @@ class BuildConfig {
 
   //MARK: - 固定常量key
 
+  static const String kBuildConfig = "build_config.json";
+
   /// 构建类型
   /// [BuildTypeEnum]
-  static String kBuildTypeKey = "buildType";
+  static const String kBuildTypeKey = "buildType";
 
   /// 应用程序的风味, 不同风味的app, 可以有不同的配置
-  static String kBuildFlavorKey = "buildFlavor";
+  static const String kBuildFlavorKey = "buildFlavor";
 
   //--build_config脚本生成属性--
 
   /// 编译时的版本名
-  static String kBuildVersionNameKey = "buildVersionName";
+  static const String kBuildVersionNameKey = "buildVersionName";
 
   /// 编译时的版本号
   /// - [int]
-  static String kBuildVersionCodeKey = "buildVersionCode";
+  static const String kBuildVersionCodeKey = "buildVersionCode";
 
   //--
 
   /// 构建时的时间
   /// 2024-06-21 14:27:05.978594
-  static String kBuildTimeKey = "buildTime";
+  static const String kBuildTimeKey = "buildTime";
 
   /// 构建时的操作系统
   /// windows
-  static String kBuildOperatingSystemKey = "buildOperatingSystem";
+  static const String kBuildOperatingSystemKey = "buildOperatingSystem";
 
   /// 构建时, 操作系统的版本
   /// "Windows 10 Pro" 10.0 (Build 19045)
-  static String kBuildOperatingSystemVersionKey = "buildOperatingSystemVersion";
+  static const String kBuildOperatingSystemVersionKey =
+      "buildOperatingSystemVersion";
 
   /// 构建时, 操作系统的语言
   /// zh-CN
-  static String kBuildOperatingSystemLocaleNameKey =
+  static const String kBuildOperatingSystemLocaleNameKey =
       "buildOperatingSystemLocaleName";
 
   /// 构建时, 操作系统的用户名
   /// angcyo
-  static String kBuildOperatingSystemUserNameKey =
+  static const String kBuildOperatingSystemUserNameKey =
       "buildOperatingSystemUserName";
 
   /// 应用程序设置的包名
   /// 并非真正的包名
   /// 真正的包名需要通过[BuildConfig.platformPackageNameMap]获取
-  static String kBuildPackageNameKey = "buildPackageName";
+  static const String kBuildPackageNameKey = "buildPackageName";
 
   //MARK: - BuildConfig
 
