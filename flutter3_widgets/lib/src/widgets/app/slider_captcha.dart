@@ -65,7 +65,6 @@ enum SliderCaptchaState {
 
   /// 验证失败
   fail,
-  ;
 }
 
 class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
@@ -140,9 +139,9 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               ScaleMatrixParentDataWidget(
                 ignoreTransform: true,
                 childConstraints: LayoutBoxConstraints.matchParent(),
-                child: buildLoadingWidget(context)
-                    .size(size: 50)
-                    .backgroundColor(globalTheme.lineDarkColor),
+                child: buildLoadingWidget(
+                  context,
+                ).size(size: 50).backgroundColor(globalTheme.lineDarkColor),
               ),
             if (_sliderState != SliderCaptchaState.loading &&
                 widget.backgroundImageUrl != null)
@@ -158,15 +157,16 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
             if (_sliderState != SliderCaptchaState.loading &&
                 widget.activeImageUrl != null)
               ScaleMatrixParentDataWidget(
-                  childOffset: Offset(0, widget.activeImageOffsetY),
-                  childOffsetRadio: Offset(leftMoveRadio, 0),
-                  childConstraints: widget.activeImageSize == null
-                      ? null
-                      : LayoutBoxConstraints.fixedSize(
-                          widget.activeImageSize!.width,
-                          widget.activeImageSize!.height,
-                        ),
-                  child: Image.network(widget.activeImageUrl!)),
+                childOffset: Offset(0, widget.activeImageOffsetY),
+                childOffsetRadio: Offset(leftMoveRadio, 0),
+                childConstraints: widget.activeImageSize == null
+                    ? null
+                    : LayoutBoxConstraints.fixedSize(
+                        widget.activeImageSize!.width,
+                        widget.activeImageSize!.height,
+                      ),
+                child: Image.network(widget.activeImageUrl!),
+              ),
           ],
         ).stackOf(widget.action, alignment: Alignment.topRight),
         //滑块
@@ -199,8 +199,11 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               }
             }
             if (_isMoving) {
-              _leftMoveRadio =
-                  clampDouble(tx / (render.size.width - _trackHeight), 0, 1);
+              _leftMoveRadio = clampDouble(
+                tx / (render.size.width - _trackHeight),
+                0,
+                1,
+              );
               _moveRadio = clampDouble(tx / render.size.width, 0, 1);
               //l.d("tx:$tx ${render.size.width} _moveRadio: $_moveRadio");
               updateState();
@@ -214,27 +217,41 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
 
               //--
               final rect2 = Rect.fromLTWH(
-                  0,
-                  0,
-                  (size.width - _trackHeight) * leftMoveRadio + _trackHeight,
-                  size.height);
+                0,
+                0,
+                (size.width - _trackHeight) * leftMoveRadio + _trackHeight,
+                size.height,
+              );
               _drawTrackRect(canvas, rect2, getThumbStateColor(context));
             }),
             ScaleMatrixParentDataWidget(
               tag: thumbTag,
               childOffsetRadio: Offset(leftMoveRadio, 0),
-              child: Icon(
-                getThumbStateIcon(context),
-                size: 16,
-                color: globalTheme.textPrimaryStyle.color,
-              ).backgroundDecoration(paintDecoration((canvas, size) {
-                final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-                canvas.drawRRect(
-                    rect.inflate(-1).toRRect(_radius),
-                    Paint()
-                      ..color = getThumbStateColor(context) ?? Colors.white
-                      ..style = PaintingStyle.fill);
-              })).size(size: _trackHeight),
+              child:
+                  Icon(
+                        getThumbStateIcon(context),
+                        size: 16,
+                        color: globalTheme.textPrimaryStyle.color,
+                      )
+                      .backgroundDecoration(
+                        paintDecoration((canvas, size) {
+                          final rect = Rect.fromLTWH(
+                            0,
+                            0,
+                            size.width,
+                            size.height,
+                          );
+                          canvas.drawRRect(
+                            rect.inflate(-1).toRRect(_radius),
+                            Paint()
+                              ..color =
+                                  getThumbStateColor(context) ??
+                                  context.darkOr(Colors.black26, Colors.white)!
+                              ..style = PaintingStyle.fill,
+                          );
+                        }),
+                      )
+                      .size(size: _trackHeight),
             ),
             if (_sliderState == SliderCaptchaState.loading)
               ScaleMatrixParentDataWidget(
@@ -243,7 +260,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                 child: lRes?.libLoading.text().center() ?? empty,
               ),
           ],
-        ).size(height: _trackHeight)
+        ).size(height: _trackHeight),
       ],
     ).paddingOnly(all: kX);
   }
@@ -264,15 +281,17 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
       return;
     }
     canvas.drawRRect(
-        rect.toRRect(_radius),
-        Paint()
-          ..color = color.withOpacityRatio(0.2)
-          ..style = PaintingStyle.fill);
+      rect.toRRect(_radius),
+      Paint()
+        ..color = color.withOpacityRatio(0.2)
+        ..style = PaintingStyle.fill,
+    );
     canvas.drawRRect(
-        rect.toRRect(_radius),
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke);
+      rect.toRRect(_radius),
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke,
+    );
   }
 
   /// 动画的方式移动滑块

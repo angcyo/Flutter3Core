@@ -302,7 +302,7 @@ class TextFieldConfig {
   /// 请求焦点
   @api
   void requestFocus([BuildContext? context]) {
-    debugger();
+    //debugger();
     final node = focusNode;
     if (node == null) {
       return;

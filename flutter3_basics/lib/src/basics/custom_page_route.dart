@@ -282,6 +282,7 @@ class SlidePageRoute<T> extends MaterialPageRoute<T>
     _enableSecondaryAnimation = enableSecondaryAnimation;
   }
 
+  ///
   @override
   Widget buildPage(
     BuildContext context,

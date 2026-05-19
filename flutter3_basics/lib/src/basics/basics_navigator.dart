@@ -247,23 +247,23 @@ mixin TranslationTypeMixin implements TranslationTypeImpl {
 /// - [RouteWidgetEx]
 /// - [NavigatorWidgetEx]
 extension RouteWidgetEx on Widget {
-  /// 获取[Widget]的指定的过渡动画类型
-  TranslationType? getWidgetTranslationType({int depth = 3}) {
+  /// 获取[Widget]的指定的过渡类型对象
+  TranslationTypeImpl? getWidgetTranslationTypeImpl({int depth = 3}) {
     if (depth <= 0) {
       return null;
     }
     if (this is TranslationTypeImpl) {
-      return (this as TranslationTypeImpl).translationType;
+      return (this as TranslationTypeImpl);
     } else if (this is SingleChildRenderObjectWidget) {
       final child = (this as SingleChildRenderObjectWidget).child;
       if (child != null) {
-        return child.getWidgetTranslationType(depth: depth - 1);
+        return child.getWidgetTranslationTypeImpl(depth: depth - 1);
       }
     } else {
       try {
         final child = (this as dynamic).child;
         if (child is Widget) {
-          return child.getWidgetTranslationType(depth: depth - 1);
+          return child.getWidgetTranslationTypeImpl(depth: depth - 1);
         }
       } catch (e, s) {
         /*assert(() {
@@ -274,118 +274,26 @@ extension RouteWidgetEx on Widget {
     }
     return null;
   }
+
+  /// 获取[Widget]的指定的过渡动画类型
+  TranslationType? getWidgetTranslationType({int depth = 3}) =>
+      getWidgetTranslationTypeImpl(depth: depth)?.translationType;
 
   /// 获取[Widget]的指定的障碍区域点击可销毁
-  bool? getWidgetDialogBarrierDismissible({int depth = 3}) {
-    if (depth <= 0) {
-      return null;
-    }
-    if (this is TranslationTypeImpl) {
-      return (this as TranslationTypeImpl).dialogBarrierDismissible;
-    } else if (this is SingleChildRenderObjectWidget) {
-      final child = (this as SingleChildRenderObjectWidget).child;
-      if (child != null) {
-        return child.getWidgetDialogBarrierDismissible(depth: depth - 1);
-      }
-    } else {
-      try {
-        final child = (this as dynamic).child;
-        if (child is Widget) {
-          return child.getWidgetDialogBarrierDismissible(depth: depth - 1);
-        }
-      } catch (e, s) {
-        /*assert(() {
-          printError(e, s);
-          return true;
-        }());*/
-      }
-    }
-    return null;
-  }
+  bool? getWidgetDialogBarrierDismissible({int depth = 3}) =>
+      getWidgetTranslationTypeImpl(depth: depth)?.dialogBarrierDismissible;
 
   /// 获取[Widget]的指定的障碍区域颜色
-  Color? getWidgetDialogBarrierColor({int depth = 3}) {
-    if (depth <= 0) {
-      return null;
-    }
-    if (this is TranslationTypeImpl) {
-      return (this as TranslationTypeImpl).dialogBarrierColor;
-    } else if (this is SingleChildRenderObjectWidget) {
-      final child = (this as SingleChildRenderObjectWidget).child;
-      if (child != null) {
-        return child.getWidgetDialogBarrierColor(depth: depth - 1);
-      }
-    } else {
-      try {
-        final child = (this as dynamic).child;
-        if (child is Widget) {
-          return child.getWidgetDialogBarrierColor(depth: depth - 1);
-        }
-      } catch (e, s) {
-        /*assert(() {
-          printError(e, s);
-          return true;
-        }());*/
-      }
-    }
-    return null;
-  }
+  Color? getWidgetDialogBarrierColor({int depth = 3}) =>
+      getWidgetTranslationTypeImpl(depth: depth)?.dialogBarrierColor;
 
   /// 获取[Widget]的路由使用情况
-  bool? getWidgetDialogUseRootNavigator({int depth = 3}) {
-    if (depth <= 0) {
-      return null;
-    }
-    if (this is TranslationTypeImpl) {
-      return (this as TranslationTypeImpl).dialogUseRootNavigator;
-    } else if (this is SingleChildRenderObjectWidget) {
-      final child = (this as SingleChildRenderObjectWidget).child;
-      if (child != null) {
-        return child.getWidgetDialogUseRootNavigator(depth: depth - 1);
-      }
-    } else {
-      try {
-        final child = (this as dynamic).child;
-        if (child is Widget) {
-          return child.getWidgetDialogUseRootNavigator(depth: depth - 1);
-        }
-      } catch (e, s) {
-        /*assert(() {
-          printError(e, s);
-          return true;
-        }());*/
-      }
-    }
-    return null;
-  }
+  bool? getWidgetDialogUseRootNavigator({int depth = 3}) =>
+      getWidgetTranslationTypeImpl(depth: depth)?.dialogUseRootNavigator;
 
   /// 获取[Widget]的指定的过渡动画类型
-  Alignment? getWidgetPopupPreferredAlignment({int depth = 3}) {
-    if (depth <= 0) {
-      return null;
-    }
-    if (this is TranslationTypeImpl) {
-      return (this as TranslationTypeImpl).popupPreferredAlignment;
-    } else if (this is SingleChildRenderObjectWidget) {
-      final child = (this as SingleChildRenderObjectWidget).child;
-      if (child != null) {
-        return child.getWidgetPopupPreferredAlignment(depth: depth - 1);
-      }
-    } else {
-      try {
-        final child = (this as dynamic).child;
-        if (child is Widget) {
-          return child.getWidgetPopupPreferredAlignment(depth: depth - 1);
-        }
-      } catch (e, s) {
-        /*assert(() {
-          printError(e, s);
-          return true;
-        }());*/
-      }
-    }
-    return null;
-  }
+  Alignment? getWidgetPopupPreferredAlignment({int depth = 3}) =>
+      getWidgetTranslationTypeImpl(depth: depth)?.popupPreferredAlignment;
 
   /// [MaterialPageRoute]
   /// [CupertinoPageRoute]
