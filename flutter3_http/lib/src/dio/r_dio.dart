@@ -98,3 +98,45 @@ class RDio {
   Future<Response<T>> reRequest<T>(RequestOptions options) =>
       dio.fetch(options);
 }
+
+/// [Interceptor]
+class InterceptorAction extends Interceptor {
+  final bool Function(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  )?
+  onRequestAction;
+
+  final bool Function(Response response, ResponseInterceptorHandler handler)?
+  onResponseAction;
+
+  final bool Function(DioException err, ErrorInterceptorHandler handler)?
+  onErrorAction;
+
+  InterceptorAction({
+    this.onRequestAction,
+    this.onResponseAction,
+    this.onErrorAction,
+  });
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (onRequestAction?.call(options, handler) != true) {
+      super.onRequest(options, handler);
+    }
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (onResponseAction?.call(response, handler) != true) {
+      super.onResponse(response, handler);
+    }
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (onErrorAction?.call(err, handler) != true) {
+      super.onError(err, handler);
+    }
+  }
+}
