@@ -22,6 +22,9 @@ class HiveLiveStream<T> extends LiveStreamController<T> {
   @configProperty
   final ValueCallback<T>? onInitValueAction;
 
+  /// 调试标签
+  final String? debugLabel;
+
   /// [autoInitHiveValue] 是否自动初始化数据
   HiveLiveStream(
     this.hiveKey,
@@ -31,11 +34,13 @@ class HiveLiveStream<T> extends LiveStreamController<T> {
     bool autoInitHiveValue = true,
     super.autoClearValue = false,
     super.onUpdateValueAction,
+    this.debugLabel,
   }) {
     final key = hiveKey;
     //debugger();
     if (autoInitHiveValue && key != null) {
       final value = readHiveValue();
+      debugger(when: debugLabel != null);
       if (value != null) {
         latestValue = value;
         controller.add(value);
@@ -49,6 +54,7 @@ class HiveLiveStream<T> extends LiveStreamController<T> {
     super.onValueChanged(value);
     //debugger();
     final key = hiveKey;
+    debugger(when: debugLabel != null);
     if (key != null) {
       assert(() {
         l.v("[$runtimeType]更新[$key]->$value");
@@ -120,13 +126,15 @@ HiveLiveStream<T?> $hiveLive<T>(
   //--
   ValueCallback<T?>? onUpdateValueAction,
   bool autoClearValue = false,
-}) =>
-    HiveLiveStream<T?>(
-      hiveKey,
-      initialValue,
-      autoInitHiveValue: autoInitHiveValue,
-      onInitValueAction: onInitValueAction,
-      onConvertJsonToObj: onConvertJsonToObj,
-      onUpdateValueAction: onUpdateValueAction,
-      autoClearValue: autoClearValue,
-    );
+  //--
+  String? debugLabel,
+}) => HiveLiveStream<T?>(
+  hiveKey,
+  initialValue,
+  autoInitHiveValue: autoInitHiveValue,
+  onInitValueAction: onInitValueAction,
+  onConvertJsonToObj: onConvertJsonToObj,
+  onUpdateValueAction: onUpdateValueAction,
+  autoClearValue: autoClearValue,
+  debugLabel: debugLabel,
+);

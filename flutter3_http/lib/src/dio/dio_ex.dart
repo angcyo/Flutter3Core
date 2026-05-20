@@ -27,6 +27,15 @@ class DioScope extends InheritedWidget {
   bool updateShouldNotify(DioScope oldWidget) => rDio != oldWidget.rDio;
 }
 
+/// 合并请求选项
+Options? _mergeOptions(Options? options, Map<String, dynamic>? headers) {
+  if (options == null && headers == null) {
+    return null;
+  }
+  final res = options ?? Options();
+  return res.copyWith(headers: headers);
+}
+
 extension DioMapEx on Map<String, dynamic> {
   /// 转换为[FormData]
   /// 通过 [FormData] 上传多个文件:
@@ -107,6 +116,7 @@ extension DioStringEx on String {
     Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
@@ -115,7 +125,7 @@ extension DioStringEx on String {
       transformUrl(),
       data: body,
       queryParameters: queryParameters,
-      options: options,
+      options: _mergeOptions(options, headers),
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
@@ -129,6 +139,7 @@ extension DioStringEx on String {
   Future<String?> dioGetString({
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
@@ -136,7 +147,8 @@ extension DioStringEx on String {
     final response = await RDio.get(context: context).dio.get<String>(
       transformUrl(),
       queryParameters: queryParameters,
-      options: (options ?? Options())..responseType = ResponseType.plain,
+      options: _mergeOptions(options ?? Options(), headers)!
+        ..responseType = ResponseType.plain,
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
@@ -149,6 +161,7 @@ extension DioStringEx on String {
   Future<Uint8List?> dioGetBytes({
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
@@ -156,7 +169,8 @@ extension DioStringEx on String {
     final response = await RDio.get(context: context).dio.get(
       transformUrl(),
       queryParameters: queryParameters,
-      options: (options ?? Options())..responseType = ResponseType.bytes,
+      options: _mergeOptions(options ?? Options(), headers)!
+        ..responseType = ResponseType.bytes,
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
@@ -169,13 +183,14 @@ extension DioStringEx on String {
   Future<UiImage?> dioGetImage({
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
   }) async {
     final bytes = await dioGetBytes(
       queryParameters: queryParameters,
-      options: options,
+      options: _mergeOptions(options, headers),
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
       context: context,
@@ -194,6 +209,7 @@ extension DioStringEx on String {
     Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
@@ -203,7 +219,7 @@ extension DioStringEx on String {
       transformUrl(),
       data: body,
       queryParameters: queryParameters,
-      options: options,
+      options: _mergeOptions(options, headers),
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
@@ -218,6 +234,7 @@ extension DioStringEx on String {
     Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
@@ -227,7 +244,7 @@ extension DioStringEx on String {
       transformUrl(),
       data: body,
       queryParameters: queryParameters,
-      options: options,
+      options: _mergeOptions(options, headers),
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
@@ -251,6 +268,7 @@ extension DioStringEx on String {
     Map<String, dynamic>? formMap,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
@@ -279,7 +297,7 @@ extension DioStringEx on String {
     return post<T>(
       body: formData,
       queryParameters: queryParameters,
-      options: options,
+      options: _mergeOptions(options, headers),
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
@@ -337,6 +355,7 @@ extension DioStringEx on String {
     String lengthHeader = Headers.contentLengthHeader,
     Object? data,
     Options? options,
+    Map<String, dynamic>? headers,
     bool debugLog = false, //debug模式下, 是否打印日志
   }) async {
     final url = transformUrl();
@@ -381,7 +400,7 @@ extension DioStringEx on String {
       queryParameters: queryParameters,
       cancelToken: cancelToken,
       data: data,
-      options: options,
+      options: _mergeOptions(options, headers),
     );
     //debugger();
     return response;

@@ -4,9 +4,12 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/04/09
 ///
-/// 支持存储最后一个值的[StreamController], 广播流
-/// 支持自动清理
-/// 支持错误状态存储
+/// - 支持存储最后一个值的[StreamController], 广播流
+/// - 支持自动清理
+/// - 支持错误状态存储
+///
+/// - [<<] 赋值并通知操作符
+/// - [<=] 赋值操作符, 数据改变后才通知
 class LiveStreamController<T> {
   /// 是否自动清空最后一个值
   @configProperty

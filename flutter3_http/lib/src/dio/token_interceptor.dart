@@ -11,6 +11,10 @@ part of '../../flutter3_http.dart';
 /// dio 拦截器实现 token 失效刷新
 /// https://juejin.cn/post/6844903785823731726
 class TokenInterceptor extends Interceptor {
+  /// 当前接口不需要传Token
+  /// String:String
+  static const String kNoTokenHeader = 'noTokenHeader';
+
   /// 当前接口禁止验证Token
   /// String:String
   static const String kNoTokenVerify = 'noTokenVerify';
@@ -37,10 +41,12 @@ class TokenInterceptor extends Interceptor {
     isTokenInvalid ??= (response) {
       if (response.statusCode == 401 && response.isSameOrigin()) {
         assert(() {
-          l.w("token失效, 请重新登录!");
+          final uri = response.requestOptions.uri;
+          final token = response.requestOptions.headers['Authorization'];
+          l.w("[$uri]请求token失效, 请重新登录!");
+          debugger();
           return true;
         }());
-        debugger();
         return true;
       }
       return false;
