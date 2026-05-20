@@ -25,7 +25,8 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
     PointerEvent event,
     double tx,
     double ty,
-  )? onHandlePointerEvent;
+  )?
+  onHandlePointerEvent;
 
   const ScaleMatrixContainerLayout({
     super.key,
@@ -42,7 +43,9 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, ScaleMatrixContainerRenderObject renderObject) {
+    BuildContext context,
+    ScaleMatrixContainerRenderObject renderObject,
+  ) {
     renderObject
       ..config = this
       .._effectiveTransform = null
@@ -305,15 +308,9 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     final aspectRatio = config.aspectRatio;
     if (aspectRatio != null) {
       if (parentSize.width == double.infinity) {
-        parentSize = Size(
-          parentSize.height * aspectRatio,
-          parentSize.height,
-        );
+        parentSize = Size(parentSize.height * aspectRatio, parentSize.height);
       } else {
-        parentSize = Size(
-          parentSize.width,
-          parentSize.width / aspectRatio,
-        );
+        parentSize = Size(parentSize.width, parentSize.width / aspectRatio);
       }
       constraints = constraints.tighten(
         width: parentSize.width,
@@ -326,7 +323,8 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     int childIndex = 0;
     for (final child in childrenList) {
       final parentData = child.parentData as ScaleMatrixParentData;
-      BoxConstraints childConstraints = parentData.childConstraints ??
+      BoxConstraints childConstraints =
+          parentData.childConstraints ??
           config.refChildConstraints ??
           BoxConstraints();
 
@@ -439,7 +437,8 @@ class ScaleMatrixContainerRenderObject extends RenderBox
   Offset getChildOffset(RenderBox child) {
     final childParentData = child.parentData! as ScaleMatrixParentData;
     final transform = _effectiveTransform?.invertedMatrix();
-    final childOffset = childParentData.offset +
+    final childOffset =
+        childParentData.offset +
         childParentData.childOffset +
         childParentData.getChildRadioOffset(
           transform == null ? size : transform.mapSize(size),

@@ -116,7 +116,7 @@ OverlayEntry? toastBlur({
   LoadingValueNotifier? loadingInfoNotifier,
   bool maintainBottomViewPadding = true /*是否保持底部的Padding(键盘/导航)*/,
 }) => toast(
-  msg ?? text?.toString().text(),
+  msg ?? text?.toString().text(useDefStyle: false),
   bgBlurSigma: bgBlurSigma,
   position: position,
   loadingInfoNotifier: loadingInfoNotifier,

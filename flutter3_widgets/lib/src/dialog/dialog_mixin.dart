@@ -54,8 +54,10 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 对话框外边距
   /// 系统默认的对话框内边距[_defaultInsetPadding]
-  EdgeInsets get dialogMargin =>
-      const EdgeInsets.symmetric(horizontal: 60, vertical: kToolbarHeight);
+  EdgeInsets get dialogMargin => const EdgeInsets.symmetric(
+    horizontal: kXxx /*60*/,
+    vertical: kToolbarHeight,
+  );
 
   /// 对话框内容内边距
   EdgeInsets get dialogContentPadding =>
@@ -73,9 +75,9 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// 系统[Dialog]最小宽度280.0
   BoxConstraints get dialogConstraints => BoxConstraints(
     minWidth: dialogMinWidth,
-    maxWidth: min(screenWidth, screenHeight),
+    maxWidth: max(dialogMinWidth, min(screenWidth, screenHeight)),
     minHeight: dialogMinHeight,
-    maxHeight: min(screenWidth, screenHeight),
+    maxHeight: max(dialogMinHeight, min(screenWidth, screenHeight)),
   );
 
   /// 是否背景模糊处理
@@ -111,6 +113,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     padding ??= dialogContentPadding;
     constraints ??= dialogConstraints;
     blur ??= dialogBlur;
+    //debugger();
     return Padding(
       padding: margin,
       child:
