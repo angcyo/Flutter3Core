@@ -41,6 +41,7 @@ class HttpResultHandle {
       code is int && code >= 200 && code < 300;
 
   /// 处理网络请求返回的数据
+  /// - 清除模式数据, 仅返回内部的`data`有效数据
   late dynamic Function(dynamic response) handleResponse = (response) {
     //debugger();
 
