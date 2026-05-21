@@ -35,8 +35,12 @@ mixin AbsScrollPage {
   //region Page
 
   /// 构建脚手架[Scaffold]
-  /// [buildAppBar]
-  /// [buildBody]
+  ///
+  /// - [getResizeToAvoidBottomInset] 键盘适配
+  ///
+  /// - [buildAppBar]
+  /// - [buildBody]
+  ///
   @api
   @entryPoint
   Widget buildScaffold(

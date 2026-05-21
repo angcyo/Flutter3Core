@@ -199,10 +199,11 @@ Timer countdownCallback(
     duration -= step!;
     final result = callback(duration);
     if (result is bool && !result) {
-      //阻止计时
+      //拦截 / 阻止计时
       duration += step!;
     }
-    if (duration.inSeconds <= 0) {
+    if ((just && duration.inSeconds < 0) ||
+        (!just && duration.inSeconds <= 0)) {
       timer.cancel();
     }
   });
