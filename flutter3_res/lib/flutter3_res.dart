@@ -52,10 +52,18 @@ void mergeLibResMessages({
   enMessages?.addAll(libResEnMessages);
 }
 
+/// 扩展[BuildContext]
+extension LibResContextEx on BuildContext {
+  LibRes? get libRes => _libRes(this);
+}
+
+/// [_libRes]
+LibRes? libRes([BuildContext? context]) => _libRes(context);
+
 /// 2025-04-05
 /// 获取当前语言的资源
 /// [LibRes]
-LibRes? libRes([BuildContext? context]) {
+LibRes? _libRes([BuildContext? context]) {
   context ??= GlobalConfig.def.globalContext;
   if (context == null) {
     return null;

@@ -102,6 +102,12 @@ mixin InputMixin {
   /// 确认输入后的字符串返回
   ValueCallback<String?>? get onInputTextResult => null;
 
+  /// 是否拦截确认输入的结果
+  /// - true 拦截默认处理
+  /// - [onSelfInputTextResult]
+  Future<bool> Function(BuildContext context, String? value)?
+  get onInputTextResultConfirm => null;
+
   /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
   /// 按回车键之后会触发此回调
   ValueChanged<String>? get onInputSubmitted => null;
@@ -272,7 +278,21 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
   /// 输入结果回调
   @overridePoint
   void onSelfInputTextResult(BuildContext context, {String? result}) {
-    buildContext?.pop(result: result ?? currentInputText);
-    inputMixin.onInputTextResult?.call(result ?? currentInputText);
+    void run() {
+      buildContext?.pop(result: result ?? currentInputText);
+      inputMixin.onInputTextResult?.call(result ?? currentInputText);
+    }
+
+    if (inputMixin.onInputTextResultConfirm != null) {
+      inputMixin.onInputTextResultConfirm!(context, result ?? currentInputText)
+          .then((value) {
+            if (value == true) {
+              return;
+            }
+            run();
+          });
+    } else {
+      run();
+    }
   }
 }

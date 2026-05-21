@@ -57,6 +57,10 @@ class SingleBottomInputDialog extends StatefulWidget
   @override
   final ValueCallback<String?>? onInputTextResult;
 
+  @override
+  final Future<bool> Function(BuildContext context, String? value)?
+  onInputTextResultConfirm;
+
   /// 在改变时, 需要进行的确认回调
   /// 返回false, 则不进行改变
   @override
@@ -113,6 +117,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.autofocus = true,
     this.onInputTextChanged,
     this.onInputTextResult,
+    this.onInputTextResultConfirm,
     this.onInputTextConfirmChange,
     this.inputBorderType = InputBorderType.underline,
     this.inputTextAlign = TextAlign.start,
@@ -147,6 +152,7 @@ class SingleBottomInputDialog extends StatefulWidget
     this.autofocus = true,
     this.onInputTextChanged,
     this.onInputTextResult,
+    this.onInputTextResultConfirm,
     this.onInputTextConfirmChange,
     this.inputBorderType = InputBorderType.none,
     this.inputTextAlign = TextAlign.start,
@@ -170,7 +176,6 @@ class SingleBottomInputDialog extends StatefulWidget
 
 class _SingleBottomInputDialogState extends State<SingleBottomInputDialog>
     with InputStateMixin {
-
   /// [buildInputWidgetMixin]
   @override
   Widget build(BuildContext context) {

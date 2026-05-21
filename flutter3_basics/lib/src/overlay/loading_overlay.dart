@@ -149,6 +149,8 @@ void hideLoading() {
 ///
 /// - [wrapLoading]
 /// - [wrapLoadingTimeout]
+///
+/// @return future 的返回值
 Future wrapLoading(
   Future future, {
   Duration? delay,
