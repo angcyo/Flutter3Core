@@ -26,6 +26,8 @@ part of '../../flutter3_http.dart';
 /// 全局单例
 /// [DioScope]
 final RDio rDio = RDio();
+
+/// 日志拦截器
 final LogFileInterceptor _logFileInterceptor = LogFileInterceptor();
 
 /// 默认的超时时长, s
@@ -78,7 +80,7 @@ class RDio {
   /// [LogFileInterceptor]
   /// [TokenInterceptor]
   Dio get dio => _dio
-    ..options.baseUrl = Http.getBaseUrl?.call() ?? ""
+    ..options.baseUrl = $host ?? ""
     ..interceptors.remove(_logFileInterceptor)
     ..interceptors.add(_logFileInterceptor) //日志拦截器需要放在最后
     ;

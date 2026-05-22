@@ -8,15 +8,33 @@ part of '../flutter3_http.dart';
 /// [HttpClient].[HttpClientRequest].[HttpClientResponse]
 /// [HttpStatus] http状态码
 class Http {
-  /// api host, 不需要/结尾
+  /// api host, 不需要/结尾, 内存临时修改的接口地址
   static final baseUrlData = $live<String?>();
 
-  /// 获取一个[baseUrl]
+  /// 获取一个[baseUrl], 最基础的接口地址
   static String? Function()? getBaseUrl = () => baseUrlData.value;
+
+  /// 支持配置的接口地址列表
+  static List<HttpHostData> hostListData = [];
 }
 
+/// 接口请求地址
 /// api host, 不需要`/`结尾
-String? get $host => Http.getBaseUrl?.call() ?? Http.baseUrlData.value;
+/// - [RDio.dio]
+String? get $host => Http.baseUrlData.value ?? Http.getBaseUrl?.call();
+
+set $host(String? value) {
+  Http.baseUrlData <= value;
+}
+
+/// 接口地址
+class HttpHostData {
+  final String? name;
+  final String? des;
+  final String? host;
+
+  HttpHostData({this.name, this.des, this.host});
+}
 
 extension HttpUriEx on Uri {
   /// 从Uri中获取字节数据
@@ -118,6 +136,7 @@ extension HttpStringEx on String {
 
   /// this == path
   /// [api]服务器忌口地址, 不指定则默认是[Http.getBaseUrl]
+  /// - [$host]
   @callPoint
   String toApi([
     String? api,
@@ -130,11 +149,12 @@ extension HttpStringEx on String {
     }
 
     //主机
-    api ??= Http.getBaseUrl?.call() ?? '';
+    api ??= $host ?? '';
     if (api.startsWith('$protocol://') || api.startsWith('${protocol}s://')) {
     } else {
-      api =
-          isSecureProtocol == true ? "${protocol}s://$api" : "$protocol://$api";
+      api = isSecureProtocol == true
+          ? "${protocol}s://$api"
+          : "$protocol://$api";
     }
 
     //开始拼接
@@ -157,11 +177,9 @@ extension HttpStringEx on String {
   Future<String?> httpGetContent({
     Encoding defaultEncoding = utf8,
     Map<String, String>? headers,
-  }) async =>
-      Uri.parse(this).httpGetContent(
-        defaultEncoding: defaultEncoding,
-        headers: headers,
-      );
+  }) async => Uri.parse(
+    this,
+  ).httpGetContent(defaultEncoding: defaultEncoding, headers: headers);
 
   /// [HttpUriEx.httpGetBytes]
   Future<Uint8List?> httpGetBytes({Map<String, String>? headers}) async =>
