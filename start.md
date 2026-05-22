@@ -17,6 +17,8 @@ dev_dependencies:
 ```shell
 dart run flutter_launcher_icons -f Flutter3Core/flutter_launcher_icons.yaml
 flutter clean # 清除之后生效
+
+dart run flutter_launcher_icons -f ../../Flutter3Core/flutter_launcher_icons.yaml
 ```
 
 # 修改产品名称
