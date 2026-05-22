@@ -287,6 +287,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ThemeMode themeMode = ThemeMode.system;
 
   /// 当前语言, 不指定则使用系统语言
+  /// - [Locale.languageCode]
+  ///   - zh
+  /// - [Locale.countryCode]
+  ///   - cn
+  ///   - sg
   /// ```
   /// [List<Locale>][zh_Hans_CN, en_US, zh_Hant_TW, ja_JP, zh_Hant_MO, zh_Hant_HK, zh_Hans_SG, yue_HK]
   /// ```

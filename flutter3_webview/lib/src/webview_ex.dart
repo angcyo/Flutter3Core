@@ -588,6 +588,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// 拦截url
+  /// ```
+  /// laserabc://region/complete?payload=xxx
+  /// ```
   @overridePoint
   Future<NavigationActionPolicy?> onSelfShouldOverrideUrlLoading(
     InAppWebViewController controller,
@@ -622,6 +625,9 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
   /// @return true:拦截[uri]的加载, false:不拦截
   @overridePoint
   Future<bool> onSelfInterceptUri(Uri uri) async {
+    if ($shouldOverrideInterceptUri != null) {
+      return $shouldOverrideInterceptUri!(uri);
+    }
     return false;
   }
 

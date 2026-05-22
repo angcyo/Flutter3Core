@@ -1300,6 +1300,24 @@ extension StringEx on String {
     return titleCase ? "$s${e.toLowerCase()}" : "$s$e";
   }
 
+  /// 从指定的参数中查找符合国际化的字符串, 如果没有则返回当前字符串
+  /// ```
+  /// "name": "Other Countries/Regions",
+  /// "i18nName": "{\"zh\":\"其他国家/地区\"}",
+  /// ````
+  String orI18n(String? i18nString, {String? lang}) {
+    if (i18nString == null || i18nString.isEmpty) {
+      return this;
+    }
+    final i18nMap = json.decode(i18nString);
+    if (i18nMap is Map) {
+      //globalConfig.locale
+      lang = lang ?? GlobalConfig.def.locale?.languageCode;
+      return i18nMap[lang] ?? this;
+    }
+    return this;
+  }
+
   //endregion 功能
 }
 
@@ -3203,7 +3221,6 @@ extension ListListEx<T> on List<List<T>> {
 //region Map 扩展
 
 extension MapEx<K, V> on Map<K, V> {
-
   /// [addAll]
   void addAllOrNull(Map<K, V>? other) {
     if (other == null) {

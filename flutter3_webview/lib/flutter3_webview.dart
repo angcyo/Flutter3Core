@@ -37,3 +37,7 @@ extension WebViewEx on BuildContext {
 
 /// 自定的UA
 String? $customUserAgent;
+
+/// 是否需要拦截浏览器加载[uri]
+/// @return true:拦截[uri]的加载, false:不拦截
+Future<bool> Function(Uri uri)? $shouldOverrideInterceptUri;

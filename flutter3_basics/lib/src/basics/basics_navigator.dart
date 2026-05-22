@@ -229,12 +229,14 @@ mixin TranslationTypeMixin implements TranslationTypeImpl {
   /// 对话框路径过度动画
   @override
   TranslationType get translationType {
-    final type = runtimeType.toString().toLowerCase();
+    //默认页面过渡动画
+    return .def;
+    /*final type = runtimeType.toString().toLowerCase();
     //debugger();
     if (type.isScreenName) {
       return TranslationType.translation;
     }
-    return TranslationType.translationFade;
+    return TranslationType.translationFade;*/
   }
 
   @override
