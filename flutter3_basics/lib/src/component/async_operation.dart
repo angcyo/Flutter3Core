@@ -141,9 +141,9 @@ Future<T> awaitFor<T>(Function(Function(T) action) doOperation,
 /// 使用[Completer]返回一个[Future]
 /// 这种方式, 只能返回一个[Future], 对性能上没有提升.
 /// 想要不阻塞ui, 还是需要使用`isolate`, 但是使用`isolate`会有数据传输上的性能消耗.
-/// [callback] 返回方法即返回
-/// [futureDelay]
-/// [flutterCompute]
+/// - [callback] 返回方法即返回
+/// - [futureDelay]
+/// - [flutterCompute]
 Future<R> future<R>(FutureOr<R> Function() callback) async {
   final completer = Completer<R>();
   completer.complete(callback());
@@ -151,10 +151,10 @@ Future<R> future<R>(FutureOr<R> Function() callback) async {
 }
 
 /// 等待一个异步的请求结果, 需要手动通过[completer]控制返回
-/// [Completer.completeError]
-/// [Completer.completeError]
-/// [future]
-/// [IterableEx.asyncForEach]
+/// - [Completer.completeError]
+/// - [Completer.completeError]
+/// - [future]
+/// - [IterableEx.asyncForEach]
 Future<R> asyncFuture<R>(void Function(Completer<R> completer) callback) {
   final completer = Completer<R>();
   try {
