@@ -47,9 +47,8 @@ class CoreDebug {
       //---
 
       if (key.isNotEmpty) {
-        key = key.toLowerCase();
         resultKey = key;
-        switch (key) {
+        switch (key.toLowerCase()) {
           default:
             //@key#int=value
             switch (type) {
@@ -90,17 +89,30 @@ class CoreDebug {
     return (resultKey, resultType, resultValue);
   }
 
+  /// hive key 调试处理 @key#type=value
+  ///
+  /// - @cmd#clear=key : 清除指定键对应的值
+  /// - @cmd#show=key : 显示指定键对应的值
+  /// - @key#int=value : 设置指定键对应的值
+  ///
   /// [HiveEx]
   /// [HiveStringEx]
   ///
+  /// - [feedback] 匹配成功是否震动反馈
+  ///
   /// - [parseHiveKey]
   /// - [parseHiveKeys]
-  static void parseHiveKeys(List<String?>? lines, [BuildContext? context]) {
+  static void parseHiveKeys(
+    List<String?>? lines, {
+    BuildContext? context,
+    bool? feedback,
+  }) {
     context ??= GlobalConfig.def.globalContext;
     if (lines == null || lines.isEmpty) {
       return;
     }
     bool match = false;
+    String? lastValueString;
     try {
       for (var line in lines) {
         if (line == null) {
@@ -116,6 +128,7 @@ class CoreDebug {
           String key = line.substring(keyIndex + 1, typeIndex);
           final type = line.substring(typeIndex + 1, valueIndex);
           final valueString = line.substring(valueIndex + 1, line.length);
+          lastValueString = valueString;
 
           bool intercept = false;
           try {
@@ -137,8 +150,7 @@ class CoreDebug {
           //---
 
           if (!intercept && key.isNotEmpty) {
-            key = key.toLowerCase();
-            switch (key) {
+            switch (key.toLowerCase()) {
               case "cmd":
                 switch (type) {
                   case "clear":
@@ -146,6 +158,13 @@ class CoreDebug {
                     //@cmd#clear=key
                     valueString.hiveDelete();
                     match = true;
+                    break;
+                  case "show":
+                    //显示hawk的键值
+                    //@cmd#show=key
+                    final value = valueString.hiveGet();
+                    toastBlur(text: value);
+                    match = false;
                     break;
                 }
                 break;
@@ -205,11 +224,12 @@ class CoreDebug {
       }());
     }
 
-    if (match) {
+    if (match && feedback == true) {
       //震动反馈
       if (context != null) {
         Feedback.forLongPress(context);
       }
+      toastBlur(text: lastValueString);
     }
   }
 }

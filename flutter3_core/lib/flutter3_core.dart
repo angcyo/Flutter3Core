@@ -105,7 +105,7 @@ Future<void> initFlutter3Core() async {
 
   // 调试输入配置系统
   registerDebugInputValueChanged((value) {
-    CoreDebug.parseHiveKeys(value.lines());
+    CoreDebug.parseHiveKeys(value.lines(), feedback: true);
   });
 
   //--
