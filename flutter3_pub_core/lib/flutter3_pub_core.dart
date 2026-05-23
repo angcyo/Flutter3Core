@@ -19,9 +19,13 @@ export 'package:go_router/go_router.dart' hide GoRouterHelper;
 export 'package:rxdart/rxdart.dart';
 export 'package:watch_it/watch_it.dart';
 
+// @formatter:off
+
 part 'src/go_router_ex.dart';
 part 'src/refresh/easy_refresh_ex.dart';
 part 'src/tooltip/el_tooltip_ex.dart';
+
+// @formatter:on
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -65,15 +69,21 @@ final $di = di;
 /// 保持屏幕常亮
 void keepScreenOn([bool enable = true]) {
   if (enable) {
-    WakelockPlus.enable();
+    WakelockPlus.enable().get((data, error) {
+      debugger(when: error != null);
+    });
   } else {
-    WakelockPlus.disable();
+    WakelockPlus.disable().get((data, error) {
+      debugger(when: error != null);
+    });
   }
 }
 
 /// 关闭屏幕亮
 void closeScreenOn() {
-  WakelockPlus.disable();
+  WakelockPlus.disable().get((data, error) {
+    debugger(when: error != null);
+  });
 }
 
 @testPoint
