@@ -2,6 +2,7 @@
 
 # Turn off echo
 set +x
+set -e
 
 # shellcheck disable=SC2103
 cd ..
