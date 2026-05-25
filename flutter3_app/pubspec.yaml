@@ -92,6 +92,9 @@ dependencies:
   flutter_android_package_installer: ^0.0.3+2
 
   # https://pub.dev/packages/receive_sharing_intent_plus
+  # 需要配置:
+  # https://pub.dev/packages/receive_sharing_intent_plus#setup-android
+  # https://pub.dev/packages/receive_sharing_intent_plus#setup-ios
   receive_sharing_intent_plus: #^1.0.1 #ANDROID IOS
     git: git@github.com:angcyo/receive_sharing_intent_plus.git
   # https://pub.dev/packages/uri_to_file
