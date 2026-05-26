@@ -192,7 +192,10 @@ OverlayEntry? toastInfo(
               style:
                   textStyle ??
                   GlobalConfig.def.globalTheme.textGeneralStyle.copyWith(
-                    color: GlobalConfig.def.globalTheme.themeWhiteColor,
+                    color: $darkOr(
+                      GlobalConfig.def.globalTheme.whiteColor,
+                      GlobalConfig.def.globalTheme.themeWhiteColor,
+                    ),
                   ),
             ),
             /*Text(

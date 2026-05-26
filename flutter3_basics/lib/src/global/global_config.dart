@@ -1122,4 +1122,9 @@ extension ThemeModeEx on ThemeMode {
       : Brightness.dark;
 }
 
+/// 如果当前是暗色主题, 则返回[dark]否则返回[light]
+@globalApi
+T? $darkOr<T>([T? dark, T? light]) =>
+    GlobalConfig.def.isThemeDark ? dark : light;
+
 //endregion Mixin
