@@ -223,6 +223,7 @@ const configProperty = AnnotationMeta('当前属性用来配置');
 const flagProperty = AnnotationMeta('标记属性, 不参与底层的逻辑运算');
 const indirectProperty = AnnotationMeta('标记间接属性, 间接属性不参与直接计算,而是创建确实的直接属性');
 const initialize = Initialize();
+const cacheProperty = Initialize("标记是一个缓存属性");
 const streamMark = AnnotationMeta('当前操作会触发流的通知, 包含流的操作');
 const observeFlag = AnnotationMeta('可被观察的对象');
 const updateSignalMark = AnnotationMeta('一个更新信号通知,监听此通知实现界面更新');
