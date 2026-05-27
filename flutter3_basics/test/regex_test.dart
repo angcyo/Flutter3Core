@@ -16,6 +16,8 @@ void main() {
   print("...");
   print("account".isValidAccount());
   print("acco unt".isValidAccount());
+  print("123456".isValidPassword());
+  print("password".isValidPassword());
   print("account!!_!@#%TY&U".isValidPassword());
   print("!!account!!_!@#%^TY&U".isValidPassword());
 }

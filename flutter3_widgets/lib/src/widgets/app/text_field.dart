@@ -7,8 +7,9 @@ part of '../../../flutter3_widgets.dart';
 /// icons图标, m3图标列表
 /// https://fonts.google.com/icons
 /// 输入框控制配置
-/// - [SingleInputWidget]
-/// - [TextField]
+/// - [SingleInputWidget] 自定义输入框
+/// - [TextField] 系统输入框
+/// - [TextFormField] 支持错误提示
 class TextFieldConfig {
   /// 输入控制, 用于获取输入内容
   final TextEditingController controller;
@@ -84,6 +85,8 @@ class TextFieldConfig {
   /// [SingleInputWidget.textStyle]
   TextStyle? textStyle;
 
+  //MARK: - label
+
   /// 浮动在输入框上方的提示文字, 单独指定[labelText]也会[hintText]的效果
   /// [SingleInputWidget.labelText]
   String? labelText;
@@ -94,6 +97,8 @@ class TextFieldConfig {
   /// [labelText]的回调版本
   IntlTextBuilder? labelTextBuilder;
 
+  //MARK: - hint
+
   /// 输入框内的提示文字, 占位提示文本
   /// [SingleInputWidget.hintText]
   String? hintText;
@@ -103,6 +108,14 @@ class TextFieldConfig {
 
   /// [hintText]的回调版本
   IntlTextBuilder? hintTextBuilder;
+
+  //MARK: - error
+
+  /// [SingleInputWidget.errorText]
+  String? errorText;
+
+  /// [SingleInputWidget.errorStyle]
+  TextStyle? errorStyle;
 
   /// 前缀图标小部件
   /// [SingleInputWidget.prefixIcon]
@@ -673,6 +686,8 @@ class SingleInputWidget extends StatefulWidget {
 
   final double gapPadding;
 
+  //MARK: - label
+
   /// [labelText]
   final Widget? label;
 
@@ -690,17 +705,30 @@ class SingleInputWidget extends StatefulWidget {
   /// [TextFieldConfig.labelTextBuilder]
   final IntlTextBuilder? labelTextBuilder;
 
+  //MARK: - hintText
+
   /// 输入框内的提示文字, 占位提示文本
   /// [InputDecoration.hintText]
   /// [TextFieldConfig.hintText]
   final String? hintText;
 
   /// [InputDecoration.hintStyle]
+  /// [TextFieldConfig.hintStyle]
   final TextStyle? hintStyle;
 
   /// [hintText]的回调版本
   /// [TextFieldConfig.hintTextBuilder]
   final IntlTextBuilder? hintTextBuilder;
+
+  //MARK: - errorText
+
+  /// [InputDecoration.errorText]
+  /// [TextFieldConfig.errorText]
+  final String? errorText;
+
+  /// [InputDecoration.errorStyle]
+  /// [TextFieldConfig.errorStyle]
+  final TextStyle? errorStyle;
 
   /// 前缀小部件, 只在有焦点时显示
   /// - [prefixIcon]
@@ -838,7 +866,7 @@ class SingleInputWidget extends StatefulWidget {
   /// [onSubmitted] 配合此方法, 请求下一个输入框的焦点.
   final TextInputAction? textInputAction;
 
-  /// 回调
+  /// 文本改变就回调
   /// https://blog.csdn.net/yuzhiqiang_1993/article/details/88204031
   final ValueChanged<String>? onChanged;
   final ContextValueChanged<String>? onContextValueChanged;
@@ -902,6 +930,8 @@ class SingleInputWidget extends StatefulWidget {
     this.hintText,
     this.hintStyle,
     this.hintTextBuilder,
+    this.errorText,
+    this.errorStyle,
     this.suffix,
     this.prefix,
     this.prefixIcon,
@@ -969,6 +999,8 @@ class SingleInputWidget extends StatefulWidget {
     this.hintText,
     this.hintStyle,
     this.hintTextBuilder,
+    this.errorText,
+    this.errorStyle,
     this.suffix,
     this.prefix,
     this.prefixIcon,
@@ -1038,6 +1070,8 @@ class SingleInputWidget extends StatefulWidget {
     this.hintText,
     this.hintStyle,
     this.hintTextBuilder,
+    this.errorText,
+    this.errorStyle,
     this.suffix,
     this.prefix,
     this.prefixIcon,
@@ -1352,6 +1386,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         (widget.inputBorderType == InputBorderType.fillOutline
             ? globalTheme.itemWhiteSubBgColor
             : null);
+    debugger(when: widget.debugLabel != null);
     final decoration =
         widget.decoration ??
         InputDecoration(
@@ -1399,6 +1434,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               widget.hintStyle ??
               widget.config.hintTextStyle ??
               globalTheme.textPlaceStyle,
+          errorText: widget.errorText ?? widget.config.errorText,
+          errorStyle: widget.errorStyle ?? widget.config.errorStyle,
           //floatingLabel
           //floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelStyle:
