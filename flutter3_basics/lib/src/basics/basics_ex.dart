@@ -746,6 +746,23 @@ extension StringEx on String {
     }
   }
 
+  /// 是否是有效的账号
+  /// ```
+  /// ^[a-zA-Z][a-zA-Z0-9_-]{6,30}$
+  /// ^(?:[a-zA-Z0-9_-]+@\w+(?:\.\w+)+|1[3-9]\d{9}|[a-zA-Z0-9_-]{6,30})$
+  /// ```
+  bool isValidAccount({int minLength = 6, int? maxLength = 30}) =>
+      isMatch('^[a-zA-Z][a-zA-Z0-9_-]{$minLength,${maxLength ?? ""}}\$');
+
+  /// 是否是有效的密码
+  /// ```
+  /// ^[a-zA-Z0-9_@#$!%*?&-]{6,30}$
+  /// ?=(.*[a-zA-Z])(?=.*\d).{6,}$
+  /// ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,30}$
+  /// ```
+  bool isValidPassword({int minLength = 6, int? maxLength = 30}) =>
+      isMatch('^[a-zA-Z0-9_@#\$!%*?&-]{$minLength,${maxLength ?? ""}\$');
+
   /// 判断当前字符串是否是邮箱
   bool get isEmail => isMatch(r'^.+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$');
 

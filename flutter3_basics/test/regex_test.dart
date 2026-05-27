@@ -14,4 +14,8 @@ void main() {
   );
   //你好，angcyo！你的积分是 100
   print("...");
+  print("account".isValidAccount());
+  print("acco unt".isValidAccount());
+  print("account!!_!@#%TY&U".isValidPassword());
+  print("!!account!!_!@#%^TY&U".isValidPassword());
 }
