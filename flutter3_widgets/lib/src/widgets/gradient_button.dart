@@ -19,6 +19,9 @@ class GradientButton extends StatefulWidget {
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
+    this.loadingColor,
+    this.loadingWidth,
+    this.loadingHeight,
     this.enable,
     this.padding,
     this.textStyle,
@@ -48,6 +51,9 @@ class GradientButton extends StatefulWidget {
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
+    this.loadingColor,
+    this.loadingWidth,
+    this.loadingHeight,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kS, horizontal: kM),
@@ -78,6 +84,9 @@ class GradientButton extends StatefulWidget {
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
+    this.loadingColor,
+    this.loadingWidth,
+    this.loadingHeight,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -109,6 +118,9 @@ class GradientButton extends StatefulWidget {
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
+    this.loadingColor,
+    this.loadingWidth,
+    this.loadingHeight,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -140,6 +152,9 @@ class GradientButton extends StatefulWidget {
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
+    this.loadingColor,
+    this.loadingWidth,
+    this.loadingHeight,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
@@ -173,6 +188,9 @@ class GradientButton extends StatefulWidget {
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
+    this.loadingColor,
+    this.loadingWidth,
+    this.loadingHeight,
     required this.child,
     this.enable,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
@@ -249,8 +267,17 @@ class GradientButton extends StatefulWidget {
   final AsyncGestureContextTapCallback? onAsyncContextTap;
 
   /// [onAsyncContextTap]加载中显示的小部件, 不指定用默认
+  /// - [wrapLoadingIfNeed]
   @defInjectMark
   final Widget? loadingWidget;
+
+  /// 加载中的颜色, 宽高
+  @defInjectMark
+  final Color? loadingColor;
+  @defInjectMark
+  final double? loadingWidth;
+  @defInjectMark
+  final double? loadingHeight;
 
   final ValueChanged<bool>? onHighlightChanged;
 
@@ -413,10 +440,15 @@ class _GradientButtonState extends State<GradientButton> {
         ? widget.loadingWidget ??
               CircularProgressIndicator(
                 value: null,
-                color: colors.firstOrNull?.isLight == true
-                    ? globalTheme.accentColor
-                    : globalTheme.themeWhiteColor,
-                constraints: BoxConstraints.tightFor(width: 20, height: 20),
+                color:
+                    widget.loadingColor ??
+                    (colors.firstOrNull?.isLight == true
+                        ? globalTheme.accentColor
+                        : globalTheme.themeWhiteColor),
+                constraints: BoxConstraints.tightFor(
+                  width: widget.loadingWidth ?? 20,
+                  height: widget.loadingHeight ?? 20,
+                ),
                 strokeWidth: 2,
               )
         /*.center()*/
