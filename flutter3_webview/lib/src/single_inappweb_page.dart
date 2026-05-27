@@ -19,7 +19,7 @@ class SingleInAppWebPage extends StatefulWidget with TranslationTypeMixin {
   final String? baseUrl;
 
   @override
-  TranslationType get translationType => TranslationType.def;
+  TranslationType get translationType => .none /*.def*/;
 
   const SingleInAppWebPage({super.key, this.url, this.html, this.baseUrl});
 
