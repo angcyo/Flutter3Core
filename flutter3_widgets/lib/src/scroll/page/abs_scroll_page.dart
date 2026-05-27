@@ -339,7 +339,8 @@ mixin AbsScrollPage {
   /// - [getAppBarScrolledUnderElevation]
   /// - [getAppBarShadowColor]
   @property
-  double? getAppBarElevation(BuildContext context) => null;
+  double? getAppBarElevation(BuildContext context) =>
+      GlobalTheme.of(context).appBarElevation;
 
   /// 获取标题栏滚动时的阴影高度
   /// - [getAppBarElevation]
@@ -353,20 +354,23 @@ mixin AbsScrollPage {
   /// - [getAppBarScrolledUnderElevation]
   /// - [getAppBarShadowColor]
   @property
-  Color? getAppBarShadowColor(BuildContext context) => null;
+  Color? getAppBarShadowColor(BuildContext context) =>
+      GlobalTheme.of(context).appBarShadowColor;
 
   /// 获取标题栏前景色
   /// - [getAppBarForegroundColor]
   /// - [getAppBarBackgroundColor]
   @property
-  Color? getAppBarForegroundColor(BuildContext context) => null;
+  Color? getAppBarForegroundColor(BuildContext context) =>
+      GlobalTheme.of(context).appBarForegroundColor;
 
   /// 获取标题栏背景色
   /// 要实现渐变效果请使用[buildAppBarFlexibleSpace]
   /// - [getAppBarForegroundColor]
   /// - [getAppBarBackgroundColor]
   @property
-  Color? getAppBarBackgroundColor(BuildContext context) => null;
+  Color? getAppBarBackgroundColor(BuildContext context) =>
+      GlobalTheme.of(context).appBarBackgroundColor;
 
   /// 构建渐变背景
   /// [FlexibleSpaceBar]
