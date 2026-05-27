@@ -270,6 +270,10 @@ class GlobalTheme {
   TextStyle get textPrimaryBoldStyle =>
       textPrimaryStyle.copyWith(fontWeight: FontWeight.bold);
 
+  /// 正常默认的文本颜色
+  TextStyle get textNormalStyle =>
+      const TextStyle(fontSize: 14, color: Color(0xff182334));
+
   /// 常规文本颜色
   TextStyle get textGeneralStyle =>
       const TextStyle(fontSize: 14, color: Color(0xff182334));
@@ -432,6 +436,11 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   TextStyle get textPrimaryStyle =>
       super.textPrimaryStyle.copyWith(color: const Color(0xfff6f6f6));
+
+  /// 正常默认的文本颜色
+  @override
+  TextStyle get textNormalStyle =>
+      super.textNormalStyle.copyWith(color: const Color(0xfff6f6f6));
 
   @override
   TextStyle get textGeneralStyle =>
