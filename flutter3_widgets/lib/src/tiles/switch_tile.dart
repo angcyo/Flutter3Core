@@ -9,6 +9,7 @@ part of '../../flutter3_widgets.dart';
 class SwitchTile extends StatefulWidget {
   /// 文本
   final String? text;
+  final double? textFontSize;
   final TextStyle? textStyle;
   final EdgeInsets? textPadding;
   final Widget? textWidget;
@@ -48,6 +49,7 @@ class SwitchTile extends StatefulWidget {
     super.key,
     //--
     this.text,
+    this.textFontSize,
     this.textStyle,
     this.textWidget,
     this.textPadding = const EdgeInsets.only(right: kH),
@@ -81,6 +83,7 @@ class _SwitchTileState extends State<SwitchTile>
       context,
       textWidget: widget.textWidget,
       text: widget.text,
+      textFontSize: widget.textFontSize,
       textAlign: isVertical ? TextAlign.center : null,
       textStyle: widget.textStyle,
       textPadding: isVertical ? null : widget.textPadding,
@@ -155,6 +158,7 @@ class _SwitchTileState extends State<SwitchTile>
 class LabelSwitchTile extends StatefulWidget {
   /// 标签
   final String? label;
+  final double? labelFontSize;
   final TextStyle? labelTextStyle;
   final EdgeInsets? labelPadding;
   final Widget? labelWidget;
@@ -200,6 +204,7 @@ class LabelSwitchTile extends StatefulWidget {
     super.key,
     //--
     this.label,
+    this.labelFontSize,
     this.labelTextStyle,
     this.labelWidget,
     this.labelPadding = kLabelPadding,
@@ -235,6 +240,7 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
       context,
       labelWidget: widget.labelWidget,
       label: widget.label,
+      labelFontSize: widget.labelFontSize,
       labelStyle: widget.labelTextStyle,
       labelPadding: widget.labelPadding,
       constraints: null,

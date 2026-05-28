@@ -39,6 +39,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
 
   /// 标签
   final String? label;
+  final double? labelFontSize;
   final int? labelMaxLength;
   final TextStyle? labelStyle;
   final Widget? labelWidget;
@@ -88,6 +89,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
     //--
     this.minHeight,
     this.label,
+    this.labelFontSize,
     this.labelStyle,
     this.labelMaxLength,
     this.labelWidget,
@@ -147,6 +149,7 @@ class SingleGridTile extends StatelessWidget with TileMixin {
                     ?.ellipsis(labelMaxLength)
                     .text(
                       style: labelStyle ?? globalTheme.textBodyStyle,
+                      fontSize: labelFontSize,
                       textAlign: ui.TextAlign.center,
                       softWrap: false,
                       overflow: labelOverflow,

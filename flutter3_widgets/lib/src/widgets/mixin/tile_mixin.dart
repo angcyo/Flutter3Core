@@ -147,6 +147,7 @@ mixin TileMixin {
     BuildContext context, {
     Widget? textWidget,
     String? text,
+    double? textFontSize,
     TextSpan? textSpan,
     TextAlign? textAlign,
     TextStyle? textStyle,
@@ -161,6 +162,7 @@ mixin TileMixin {
         ((textSpan != null ? "" : text)
             ?.text(
               textSpan: textSpan,
+              fontSize: textFontSize,
               //--
               textAlign: textAlign,
               style:
@@ -180,6 +182,7 @@ mixin TileMixin {
     BuildContext context, {
     Widget? labelWidget,
     String? label,
+    double? labelFontSize,
     TextStyle? labelStyle,
     TextAlign? labelTextAlign,
     bool themeStyle = true,
@@ -199,6 +202,7 @@ mixin TileMixin {
                   labelStyle ??
                   (themeStyle ? globalTheme.textLabelStyle : null),
               textAlign: labelTextAlign,
+              fontSize: labelFontSize,
             )
             .rowOf(
               isRequired ? " *".text(textColor: Colors.redAccent) : null,
@@ -217,6 +221,7 @@ mixin TileMixin {
     BuildContext context, {
     Widget? desWidget,
     String? des,
+    double? desFontSize,
     TextStyle? desStyle,
     bool themeStyle = true,
     EdgeInsets? desPadding = kDesPadding,
@@ -229,6 +234,7 @@ mixin TileMixin {
         (des
             ?.text(
               style: desStyle ?? (themeStyle ? globalTheme.textDesStyle : null),
+              fontSize: desFontSize,
             )
             .constrainedBox(constraints)
             .paddingInsets(desPadding));
