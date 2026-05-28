@@ -221,6 +221,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     if (value >= minValue && value <= maxValue) {
     } else {
       assert(() {
+        final msg = widget.label;
         debugger();
         return true;
       }());

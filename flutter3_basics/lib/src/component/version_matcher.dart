@@ -41,14 +41,13 @@ class VersionMatcher {
   /// [defOrNull] 默认值, 当版本号[version]未指定时, 或者匹配范围未指定时, 返回的默认值
   /// [defOrEmpty] 当匹配范围为空时的默认值
   ///
-  static bool matches(
-    dynamic version,
-    String? config, {
-    /*未配置[config]规则时返回*/
-    bool defOrNull = false,
-    /*[config]规则为空时*/
-    bool defOrEmpty = true,
-  }) {
+  static bool matches(dynamic version,
+      String? config, {
+        /*未配置[config]规则时返回*/
+        bool defOrNull = false,
+        /*[config]规则为空时*/
+        bool defOrEmpty = true,
+      }) {
     if (version == null) {
       return false;
     }
@@ -116,10 +115,10 @@ class VersionMatcher {
         continue;
       }
       final v =
-          (version is num
-                  ? version.toDouble()
-                  : double.tryParse(version.toString()) ?? 0.0)
-              .round();
+      (version is num
+          ? version.toDouble()
+          : double.tryParse(version.toString()) ?? 0.0)
+          .round();
       if (v >= range.minInt && v <= range.maxInt) {
         return true;
       }
@@ -169,24 +168,25 @@ class ValueRange {
   /// 是否是语义化版本号
   bool get isSemver =>
       minMinor != null ||
-      maxMinor != null ||
-      minPatch != null ||
-      maxPatch != null;
+          maxMinor != null ||
+          minPatch != null ||
+          maxPatch != null;
 
-  ValueRange(
-    this.min,
-    this.max, {
-    this.minMinor,
-    this.maxMinor,
-    this.minPatch,
-    this.maxPatch,
-  });
+  ValueRange(this.min,
+      this.max, {
+        this.minMinor,
+        this.maxMinor,
+        this.minPatch,
+        this.maxPatch,
+      });
 
   @override
   String toString() {
     if (isSemver) {
-      return '[min:${minMajor.round()}.${minMinor?.round() ?? 0}.${minPatch?.round() ?? 0} '
-          'max:${maxMajor.round()}.${maxMinor?.round() ?? 0}.${maxPatch?.round() ?? 0}]';
+      return '[min:${minMajor.round()}.${minMinor?.round() ?? 0}.${minPatch
+          ?.round() ?? 0} '
+          'max:${maxMajor.round()}.${maxMinor?.round() ?? 0}.${maxPatch
+          ?.round() ?? 0}]';
     }
     return '[min:$min max:$max]';
   }
@@ -195,8 +195,7 @@ class ValueRange {
 /// [VersionStringEx]
 extension VersionIntEx on int {
   /// 当前的版本是否配置指定的规则
-  bool matchVersion(
-    String? config, {
+  bool matchVersion(String? config, {
     /*未配置[config]规则时返回*/
     bool defOrNull = false,
     /*[config]规则为空时*/
@@ -222,10 +221,20 @@ extension VersionStringEx on String {
         intMaxValue.roundToDouble(),
       );
     } else {
-      final rangeString = split(VersionMatcher.kVS);
+      final rangeString = split(VersionMatcher.kVS).filter((e) => e.isNotEmpty);
       if (rangeString.length == 1) {
         final value = rangeString[0];
-        if (contains(".")) {
+        if (contains("~")) {
+          final value = double.tryParse(rangeString[0]) ?? 0.0;
+          if (startsWith(VersionMatcher.kVS)) {
+            //[~x] 的格式
+            return ValueRange(intMinValue.roundToDouble(), value);
+          } else if (endsWith(VersionMatcher.kVS)) {
+            //[x~] 的格式
+            return ValueRange(value, intMaxValue.roundToDouble());
+          }
+          return ValueRange(value, value);
+        } else if (contains(".")) {
           //[x.x.x] 的格式, 固定版本
           final valueList = value.split(".");
           double? major = double.tryParse(valueList.getOrNull(0) ?? "");
@@ -264,35 +273,34 @@ extension VersionStringEx on String {
             maxPatch: maxPatch,
           );
         } else {
-          final min = double.tryParse(rangeString[0]) ?? 0.0;
+          final min =
+              double.tryParse(rangeString[0]) ?? intMinValue.roundToDouble();
           final max =
               double.tryParse(rangeString[1]) ?? intMax32Value.roundToDouble();
-          if (startsWith(VersionMatcher.kVS)) {
-            //[~x] 的格式
-            return ValueRange(intMinValue.roundToDouble(), min);
-          } else if (endsWith(VersionMatcher.kVS)) {
-            //[x~] 的格式
-            return ValueRange(min, intMaxValue.roundToDouble());
-          }
           return ValueRange(min, max);
         }
+      } else {
+        assert(() {
+          debugger();
+          return true;
+        }());
       }
     }
     return null;
   }
 
   /// 当前的版本范围是否配置指定的版本
-  bool matchVersion(
-    int? version, {
+  bool matchVersion(int? version, {
     /*未配置[config]规则时返回*/
     bool defOrNull = false,
     /*[config]规则为空时*/
     bool defOrEmpty = true,
-  }) => version == null
-      ? false
-      : version.matchVersion(
-          this,
-          defOrNull: defOrNull,
-          defOrEmpty: defOrEmpty,
-        );
+  }) =>
+      version == null
+          ? false
+          : version.matchVersion(
+        this,
+        defOrNull: defOrNull,
+        defOrEmpty: defOrEmpty,
+      );
 }

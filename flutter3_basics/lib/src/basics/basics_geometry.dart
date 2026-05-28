@@ -43,7 +43,6 @@ extension GeometryWidgetEx on Widget {
   }
 
   /// 对称, 左右大一点, 上下小一点
-  @Deprecated("请使用[paddingOnly]")
   Widget paddingSym({
     double? vertical,
     double? horizontal,
@@ -60,7 +59,6 @@ extension GeometryWidgetEx on Widget {
       );
 
   /// 对称, 左右上下一样大
-  @Deprecated("请使用[paddingOnly]")
   Widget paddingSymmetric({
     double? vertical,
     double? horizontal,
