@@ -14,6 +14,7 @@ class GradientButton extends StatefulWidget {
     this.color /*指定单一颜色, 无渐变*/,
     this.colors /*指定渐变颜色*/,
     this.onLongPress,
+    this.onLongPressUp,
     this.onTap,
     required this.child,
     this.onContextTap,
@@ -47,6 +48,7 @@ class GradientButton extends StatefulWidget {
     this.color,
     this.colors,
     this.onLongPress,
+    this.onLongPressUp,
     this.onTap,
     this.onContextTap,
     this.onAsyncContextTap,
@@ -81,6 +83,7 @@ class GradientButton extends StatefulWidget {
     this.colors,
     required this.child,
     this.onLongPress,
+    this.onLongPressUp,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -115,6 +118,7 @@ class GradientButton extends StatefulWidget {
     this.splashColor = const Color(0x20ffffff),
     required this.child,
     this.onLongPress,
+    this.onLongPressUp,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -149,6 +153,7 @@ class GradientButton extends StatefulWidget {
     this.splashColor = const Color(0x20000000),
     this.textColor = const Color(0xff000000),
     this.onLongPress,
+    this.onLongPressUp,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -185,6 +190,7 @@ class GradientButton extends StatefulWidget {
     this.colors,
     this.onTap,
     this.onLongPress,
+    this.onLongPressUp,
     this.onContextTap,
     this.onAsyncContextTap,
     this.loadingWidget,
@@ -255,6 +261,9 @@ class GradientButton extends StatefulWidget {
 
   /// 长按事件
   final GestureLongPressCallback? onLongPress;
+
+  /// 长按抬起事件
+  final GestureLongPressUpCallback? onLongPressUp;
 
   /// 带[BuildContext]参数的点击事件
   final GestureContextTapCallback? onContextTap;
@@ -368,6 +377,7 @@ class _GradientButtonState extends State<GradientButton> {
             highlightColor: Colors.transparent,
             onHighlightChanged: widget.onHighlightChanged,
             onLongPress: widget.onLongPress,
+            onLongPressUp: widget.onLongPressUp,
             onTap: disabled
                 ? null
                 : () async {

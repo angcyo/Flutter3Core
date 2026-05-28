@@ -70,6 +70,12 @@ const kLabelConstraints = BoxConstraints(
   maxWidth: kLabelMaxWidth,
 );
 
+/// [kLabelConstraints] 紧凑
+const kLabelConstraintsCompact = BoxConstraints(
+  minWidth: 0,
+  maxWidth: kLabelMaxWidth,
+);
+
 /// number数字输入默认的约束
 const kNumberConstraints = BoxConstraints(
   minWidth: kNumberMinWidth,
@@ -792,6 +798,7 @@ mixin TileMixin {
     Decoration? decoration,
     Color? backgroundColor,
     BoxConstraints? constraints = kNumberConstraints,
+    double? radius = kDefaultBorderRadiusL,
   }) {
     final globalTheme = GlobalTheme.of(context);
     if (onTap == null) {
@@ -817,7 +824,7 @@ mixin TileMixin {
                 globalTheme.lineDarkColor,
                 globalTheme.whiteSubBgColor,
               ),
-          radius: kDefaultBorderRadiusL,
+          radius: radius,
         )
         .paddingInsets(margin);
   }
@@ -840,6 +847,7 @@ mixin TileMixin {
     num? maxValue,
     num? minValue,
     int maxDigits = 2,
+    double? radius = kDefaultBorderRadiusL,
     ValueChanged<dynamic>? onChanged,
     ValueChanged<dynamic>? onSubmitted,
   }) {
@@ -886,7 +894,7 @@ mixin TileMixin {
             onTap?.call();
           },
           backgroundColor: backgroundColor ?? globalTheme.whiteSubBgColor,
-          radius: kDefaultBorderRadiusL,
+          radius: radius,
         )
         .paddingInsets(margin);
   }

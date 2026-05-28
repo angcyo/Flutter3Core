@@ -415,6 +415,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     void Function(BuildContext context)? onPullBack,
     bool useScroll = false,
     bool useRScroll = false,
+    bool shrinkWrap = false,
     bool animatedSize = false,
     int scrollChildIndex = 1,
     double? height /*固定高度*/,
@@ -488,6 +489,7 @@ mixin DialogMixin implements TranslationTypeImpl {
               physics: enablePullBack ? null : kScrollPhysics,
               childrenBuilder: scrollContentBuilder,
               updateSignal: contentUpdateSignal,
+              shrinkWrap: shrinkWrap,
             )
           : scrollChildren.scroll(
               axis: Axis.vertical,

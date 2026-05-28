@@ -41,6 +41,9 @@ class LabelNumberSliderTile extends StatefulWidget {
   /// 回调, 值更新就触发的回调. (拖动过程中也触发)
   final NumCallback? onValueUpdated;
 
+  /// 圆角
+  final double? radius;
+
   //MARK: -
 
   /// 活跃/不活跃的轨道渐变颜色
@@ -101,6 +104,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.onValueChanged,
     this.showNumber = true,
     this.showSlider = true,
+    this.radius = kDefaultBorderRadiusL,
     NumType? numType,
     //--
     this.trackHeight,
@@ -180,6 +184,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                   maxValue: widget.maxValue,
                   maxDigits: widget.maxDigits,
                   numType: widget._numType,
+                  radius: widget.radius,
                   onChanged: (value) {
                     if (value is num) {
                       _currentValue = value;
@@ -191,6 +196,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
               : buildNumberWidget(
                   context,
                   numberStr,
+                  radius: widget.radius,
                   onTap: () async {
                     final value = await context.showWidgetDialog(
                       NumberKeyboardDialog(

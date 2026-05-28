@@ -2753,7 +2753,7 @@ extension WidgetEx on Widget {
     GestureTapCallback? onTap, {
     bool enable = true,
     //--
-    double radius = 0,
+    double? radius = 0,
     Color? backgroundColor,
     BorderRadius? borderRadius,
     BoxShape shape = BoxShape.rectangle,
@@ -2777,7 +2777,8 @@ extension WidgetEx on Widget {
     if (isCircle) {
       radius = Material.defaultSplashRadius;
     }
-    final bRadius = borderRadius ?? BorderRadius.all(Radius.circular(radius));
+    final bRadius =
+        borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 0));
     decoration ??= backgroundColor == null
         ? null
         : BoxDecoration(
