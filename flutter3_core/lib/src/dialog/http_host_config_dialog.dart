@@ -19,7 +19,7 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
     return widget.buildAdaptiveCenterDialog(
       context,
       [
-        "服务器地址切换".text(style: globalTheme.textTitleStyle).insets(all: kX),
+        "Api服务器地址切换".text(style: globalTheme.textTitleStyle).insets(all: kX),
         hLine(context),
         _buildItemTile(globalTheme, "当前服务器", $host, selected: true),
         hLine(context),
@@ -34,7 +34,7 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
               updateState();
             },
           ),
-      ].rScroll(),
+      ].rScroll(shrinkWrap: true),
     );
   }
 
