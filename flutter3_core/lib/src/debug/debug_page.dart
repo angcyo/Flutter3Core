@@ -210,20 +210,32 @@ class DebugPage extends StatefulWidget {
     //当前语言
     final currentLocale = Localizations.localeOf(context);
     DebugPage._currentLocale = currentLocale;
+    final space = 4.0;
     return [
       //--
-      for (final builder in DebugPage.debugLastWidgetBuilderList)
+      for (final builder in DebugPage.debugLastWidgetBuilderList) ...[
         builder(context),
+        Empty.height(space),
+      ],
       //--本机信息
       "$currentLocale ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr"
-          .text(style: globalTheme.textPlaceStyle, selectable: true),
+          .text(
+            style: globalTheme.textPlaceStyle.copyWith(
+              color: globalTheme.accentColor,
+            ),
+            selectable: true,
+          ),
       //--本机媒体信息
-      "$platformMediaQueryDataList".text(
-        style: globalTheme.textPlaceStyle,
-        textAlign: .center,
-        selectable: true,
-      ),
+      Empty.height(space),
+      platformMediaQueryDataList
+          .join('\n')
+          .text(
+            style: globalTheme.textPlaceStyle,
+            textAlign: .center,
+            selectable: true,
+          ),
       //--设备id
+      Empty.height(space),
       $coreKeys.deviceUuid.text(
         selectable: true,
         style: globalTheme.textPlaceStyle.copyWith(
