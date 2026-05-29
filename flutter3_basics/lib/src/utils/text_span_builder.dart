@@ -35,6 +35,9 @@ class TextSpanBuilder {
     double? fontSize,
     double? letterSpacing,
   }) {
+    if (text == null) {
+      return this;
+    }
     _textSpans.add(
       TextSpan(
         text: text,
@@ -88,11 +91,14 @@ class TextSpanBuilder {
 
   /// 添加一个[widget]可以是图片,也可以是点击事件的小部件等
   TextSpanBuilder addWidget(
-    Widget widget, {
+    Widget? widget, {
     TextStyle? style,
     ui.PlaceholderAlignment alignment = ui.PlaceholderAlignment.middle,
     TextBaseline? baseline,
   }) {
+    if (widget == null) {
+      return this;
+    }
     _textSpans.add(
       WidgetSpan(
         child: widget,
