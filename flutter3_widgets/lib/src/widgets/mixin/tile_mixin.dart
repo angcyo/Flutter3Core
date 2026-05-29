@@ -76,6 +76,9 @@ const kLabelConstraintsCompact = BoxConstraints(
   maxWidth: kLabelMaxWidth,
 );
 
+/// number数字输入小部件的边距
+const kNumberPadding = EdgeInsets.symmetric(horizontal: kH, vertical: kL);
+
 /// number数字输入默认的约束
 const kNumberConstraints = BoxConstraints(
   minWidth: kNumberMinWidth,
@@ -790,10 +793,7 @@ mixin TileMixin {
     dynamic number, {
     Widget? numberWidget,
     GestureTapCallback? onTap,
-    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(
-      horizontal: kH,
-      vertical: kM,
-    ),
+    EdgeInsetsGeometry? padding = kNumberPadding,
     EdgeInsetsGeometry? margin,
     Decoration? decoration,
     Color? backgroundColor,

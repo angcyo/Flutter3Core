@@ -20,4 +20,16 @@ void main() {
   print("password".isValidPassword());
   print("account!!_!@#%TY&U".isValidPassword());
   print("!!account!!_!@#%^TY&U".isValidPassword());
+  //RegExp
+  testRegExp();
+}
+
+/// 测试正则
+void testRegExp() {
+  final regExp = RegExp(r'[-_]');
+  print("Laserabc_G01-38754E".split(r'[-_]'));
+  print("Laserabc_G01-38754E".split(regExp));
+  print("Laserabc_G01".split(regExp));
+  print("G01".split(regExp));
+  print("G01-38754E".split(regExp));
 }

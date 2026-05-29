@@ -2128,14 +2128,18 @@ extension WidgetEx on Widget {
     Color? darkColor,
     BlendMode blendMode = BlendMode.srcIn,
     bool enable = true,
-  }) => colorFiltered(
-    colorFilter: darkColorFilter,
-    color: (context ?? GlobalConfig.def.globalContext)?.isThemeDark == true
-        ? (darkColor ?? GlobalTheme.of(context).icoNormalColor)
-        : null,
-    blendMode: blendMode,
-    enable: enable,
-  );
+    String? debugLabel,
+  }) {
+    debugger(when: debugLabel != null);
+    return colorFiltered(
+      colorFilter: darkColorFilter,
+      color: (context ?? GlobalConfig.def.globalContext)?.isThemeDark == true
+          ? (darkColor ?? GlobalTheme.of(context).icoNormalColor)
+          : null,
+      blendMode: blendMode,
+      enable: enable,
+    );
+  }
 
   /// 绘制边界
   /// https://docs.flutter.dev/tools/devtools/inspector#highlight-repaints
