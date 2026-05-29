@@ -213,7 +213,7 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
     return widget.buildBottomChildrenDialog(context, [
       rebuild(
         _titleUpdateNotifier,
-        (_, __) => CoreDialogTitle(
+        (_, _) => CoreDialogTitle(
           title: widget.title,
           titleWidget: widget.titleWidget,
           enableTrailing: currentValueMixin != initialValueMixin,
@@ -234,27 +234,27 @@ class _WheelDateTimeDialogState extends State<WheelDateTimeDialog>
             if (widget.dateTimeType.getOrNull(1) != null)
               rebuild(
                 _monthUpdateNotifier,
-                (_, __) => buildMonthWheel(context).expanded(),
+                (_, _) => buildMonthWheel(context).expanded(),
               ),
             if (widget.dateTimeType.getOrNull(2) != null)
               rebuild(
                 _dayUpdateNotifier,
-                (_, __) => buildDayWheel(context).expanded(),
+                (_, _) => buildDayWheel(context).expanded(),
               ),
             if (widget.dateTimeType.getOrNull(3) != null)
               rebuild(
                 _hourUpdateNotifier,
-                (_, __) => buildHourWheel(context).expanded(),
+                (_, _) => buildHourWheel(context).expanded(),
               ),
             if (widget.dateTimeType.getOrNull(4) != null)
               rebuild(
                 _minuteUpdateNotifier,
-                (_, __) => buildMinuteWheel(context).expanded(),
+                (_, _) => buildMinuteWheel(context).expanded(),
               ),
             if (widget.dateTimeType.getOrNull(5) != null)
               rebuild(
                 _secondUpdateNotifier,
-                (_, __) => buildSecondWheel(context).expanded(),
+                (_, _) => buildSecondWheel(context).expanded(),
               ),
           ].row(mainAxisSize: MainAxisSize.max)!,
         ],

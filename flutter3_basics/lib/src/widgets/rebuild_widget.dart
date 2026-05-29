@@ -212,7 +212,7 @@ extension RebuildEx<T> on ValueNotifier<T> {
   ///
   /// [LiveStreamControllerEx.buildFn]
   Widget buildFn(Widget? Function() builder) =>
-      rebuild(this, (_, __) => builder());
+      rebuild(this, (_, _) => builder());
 
   /// [LiveStreamControllerEx.buildDataFn]
   Widget buildDataFn(Widget? Function(T? data) builder) =>
@@ -230,7 +230,7 @@ extension RebuildIterableEx<T extends Listenable> on Iterable<T> {
   /// [RebuildIterableEx.buildFn]
   /// [LiveStreamControllerIterableEx.buildFn]
   Widget buildFn(Widget? Function() builder) =>
-      rebuildList(this, (_, __) => builder());
+      rebuildList(this, (_, _) => builder());
 }
 
 extension RebuildFunctionEx on Function {

@@ -499,7 +499,7 @@ extension LiveStreamControllerIterableEx<T>
   Widget buildFn(Widget? Function() builder) => StreamBuilder(
     stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
     initialData: null,
-    builder: (_, __) {
+    builder: (_, _) {
       return builder() ?? empty;
     },
   );

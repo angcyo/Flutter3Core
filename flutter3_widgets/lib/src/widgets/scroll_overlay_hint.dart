@@ -27,11 +27,16 @@ class ScrollOverlayHintWidget extends StatefulWidget {
   @defInjectMark
   final List<Color>? colors;
 
+  /// 对应的方向是否溢出覆盖提示了
+  final Function(bool left, bool top, bool right, bool bottom)?
+  onOverlayHintAction;
+
   const ScrollOverlayHintWidget({
     super.key,
     required this.child,
     this.hintSize = 30,
     this.colors,
+    this.onOverlayHintAction,
   });
 
   @override
@@ -74,14 +79,15 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
         _checkOverlayHint(notification.metrics);
         return false;
       },
-      child: rebuild(_signalNotifier, (_, __) {
+      child: rebuild(_signalNotifier, (_, _) {
         return ScrollOverlayHintRender(
           drawLeft: drawLeft,
           drawRight: drawRight,
           drawTop: drawTop,
           drawBottom: drawBottom,
           hintSize: widget.hintSize,
-          colors: widget.colors ??
+          colors:
+              widget.colors ??
               [
                 globalTheme.themeBlackColor.withOpacityRatio(0.15),
                 Colors.transparent,
@@ -115,6 +121,7 @@ class _ScrollOverlayHintWidgetState extends State<ScrollOverlayHintWidget> {
       drawRight = metrics.maxScrollExtent > metrics.pixels;
     }
     _signalNotifier.update();
+    widget.onOverlayHintAction?.call(drawLeft, drawTop, drawRight, drawBottom);
   }
 }
 
@@ -185,10 +192,14 @@ class RenderScrollOverlayHint extends RenderProxyBox {
         config.hintSize,
       );
       canvas.drawRect(
-          rect,
-          Paint()
-            ..shader = linearGradientShader(colors,
-                from: rect.topLeft, to: rect.bottomLeft));
+        rect,
+        Paint()
+          ..shader = linearGradientShader(
+            colors,
+            from: rect.topLeft,
+            to: rect.bottomLeft,
+          ),
+      );
     }
     if (config.drawBottom) {
       //debugger();
@@ -199,10 +210,14 @@ class RenderScrollOverlayHint extends RenderProxyBox {
         config.hintSize,
       );
       canvas.drawRect(
-          rect,
-          Paint()
-            ..shader = linearGradientShader(colors,
-                from: rect.bottomLeft, to: rect.topLeft));
+        rect,
+        Paint()
+          ..shader = linearGradientShader(
+            colors,
+            from: rect.bottomLeft,
+            to: rect.topLeft,
+          ),
+      );
     }
     //left
     if (config.drawLeft) {
@@ -213,10 +228,14 @@ class RenderScrollOverlayHint extends RenderProxyBox {
         paintBounds.height,
       );
       canvas.drawRect(
-          rect,
-          Paint()
-            ..shader = linearGradientShader(colors,
-                from: rect.topLeft, to: rect.topRight));
+        rect,
+        Paint()
+          ..shader = linearGradientShader(
+            colors,
+            from: rect.topLeft,
+            to: rect.topRight,
+          ),
+      );
     }
     if (config.drawRight) {
       final rect = Rect.fromLTWH(
@@ -226,16 +245,19 @@ class RenderScrollOverlayHint extends RenderProxyBox {
         paintBounds.height,
       );
       canvas.drawRect(
-          rect,
-          Paint()
-            ..shader = linearGradientShader(colors,
-                from: rect.topRight, to: rect.topLeft));
+        rect,
+        Paint()
+          ..shader = linearGradientShader(
+            colors,
+            from: rect.topRight,
+            to: rect.topLeft,
+          ),
+      );
     }
   }
 }
 
 extension ScrollOverlayHintWidgetEx on Widget {
-
   /// 滚动溢出提示
   /// [ScrollOverlayHintWidget]
   Widget overlayHint({
@@ -245,10 +267,11 @@ extension ScrollOverlayHintWidgetEx on Widget {
     bool drawRight = false,
     double hintSize = 30,
     List<Color>? colors,
-  }) =>
-      ScrollOverlayHintWidget(
-        hintSize: hintSize,
-        colors: colors,
-        child: this,
-      );
+    Function(bool left, bool top, bool right, bool bottom)? onOverlayHintAction,
+  }) => ScrollOverlayHintWidget(
+    hintSize: hintSize,
+    colors: colors,
+    onOverlayHintAction: onOverlayHintAction,
+    child: this,
+  );
 }

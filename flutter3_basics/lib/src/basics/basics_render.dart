@@ -271,7 +271,7 @@ extension RenderBoxEx on RenderBox {
   /// [RenderFlex.direction]
   Axis? findChildAxis() {
     Axis? axis;
-    eachVisitChildRenderObject((child, _, __) {
+    eachVisitChildRenderObject((child, _, _) {
       if (child is RenderFlex) {
         axis = child.direction;
         return false;
