@@ -1525,8 +1525,9 @@ extension WidgetEx on Widget {
 
   /// 状态栏亮色模式
   /// 背景白色, 状态栏图标/文本为黑色
-  Widget lightStatusBar() => systemUiOverlay(
-    style: const SystemUiOverlayStyle(
+  Widget lightStatusBar({Color? statusBarColor}) => systemUiOverlay(
+    style: SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ),
@@ -1534,8 +1535,9 @@ extension WidgetEx on Widget {
 
   /// 状态栏暗色模式
   /// 背景黑色, 状态栏图标/文本为白色
-  Widget darkStatusBar() => systemUiOverlay(
-    style: const SystemUiOverlayStyle(
+  Widget darkStatusBar({Color? statusBarColor}) => systemUiOverlay(
+    style: SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.dark,
     ),
