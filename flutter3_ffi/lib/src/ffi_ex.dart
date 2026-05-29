@@ -37,7 +37,8 @@ extension FfiListIntEx on List<int> {
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
     Stopwatch? watch;
     if (kDebugMode) {
-      watch = Stopwatch()..start();
+      watch = Stopwatch()
+        ..start();
     }
     final bytes = this;
     //创建一个指针, 用来ffi传递
@@ -59,7 +60,8 @@ extension FfiListIntEx on List<int> {
       }
       Stopwatch? watch2;
       if (kDebugMode) {
-        watch2 = Stopwatch()..start();
+        watch2 = Stopwatch()
+          ..start();
       }
       //执行耗时: 4688ms
       final result = action(ptr);
@@ -96,18 +98,14 @@ extension FfiVecUint8Ex on Vec_uint8_t {
   }
 
   /// rgba像素字节数据转成图片
-  Future<ui.Image> toImageFromPixels(int width, int height,
-      [ui.PixelFormat format = ui.PixelFormat.rgba8888]) {
+  Future<ui.Image> toImageFromPixels(int width,
+      int height, [
+        ui.PixelFormat format = ui.PixelFormat.rgba8888,
+      ]) {
     final bytes = toBytes();
     //debugger();
     final Completer<ui.Image> completer = Completer<ui.Image>();
-    ui.decodeImageFromPixels(
-      bytes,
-      width,
-      height,
-      format,
-      completer.complete,
-    );
+    ui.decodeImageFromPixels(bytes, width, height, format, completer.complete);
     return completer.future;
   }
 
@@ -235,13 +233,16 @@ extension FfiListListDoubleEx on List<List<double>> {
   ffi.Pointer<Vec_Vec_double_t> toVecVecDouble() {
     final bytes = this;
     //创建一个指针, 用来ffi传递
-    final ffi.Pointer<Vec_double_t> bytesPtr =
-        calloc<Vec_double_t>(bytes.length);
+    final ffi.Pointer<Vec_double_t> bytesPtr = calloc<Vec_double_t>(
+      bytes.length,
+    );
 
     for (var i = 0; i < bytes.length; i++) {
       final list = bytes[i];
       //list.toVecDouble()
-      final ref = list.toVecDouble().ref;
+      final ref = list
+          .toVecDouble()
+          .ref;
       bytesPtr[i] = ref;
       //bytesPtr.elementAt(i);
       //bytesPtr += ref;
@@ -292,7 +293,7 @@ extension FfiListListDoubleEx on List<List<double>> {
 
   /// 自动释放内存
   R? withVecVecDouble<R>(
-      R? Function(ffi.Pointer<Vec_Vec_double_t> ptr) action) {
+      R? Function(ffi.Pointer<Vec_Vec_double_t> ptr) action,) {
     final ptr = toVecVecDouble();
     try {
       return action(ptr);
@@ -326,7 +327,6 @@ extension FfiVecVecDoubleEx on Vec_Vec_double_t {
 }
 
 extension FfiStringEx on String {
-
   /// 转成[Vec_uint8_t]
   Vec_uint8_t toVecUint8() {
     final bytes = utf8.encode(this);
@@ -340,7 +340,7 @@ extension FfiStringEx on String {
     ptr.ref.cap = bytes.length;
     return ptr.ref;
   }
-  
+
   /// [FfiListIntEx.withVecUint8]
   /// [nullptr]
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
@@ -357,14 +357,14 @@ extension FfiPixelsImageEx on PixelsImage {
 }
 
 /// 批量创建[Vec_uint8_t]指针
-R? ffiPtrList<R>(
-  R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
-  List<dynamic> args,
-) {
+R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
+    List<dynamic> args,) {
   final ptrList = <ffi.Pointer<Vec_uint8_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
-    if (arg is String) {
+    if (arg == null) {
+      ptrList.add(ffi.nullptr);
+    } else if (arg is String) {
       ptrList.add(utf8.encode(arg).toVecUint8());
     } else if (arg is List<int>) {
       ptrList.add(arg.toVecUint8());
@@ -382,10 +382,7 @@ R? ffiPtrList<R>(
   } catch (e, s) {
     assert(() {
       FlutterError.dumpErrorToConsole(
-        FlutterErrorDetails(
-          exception: e,
-          stack: s /*?? StackTrace.current*/,
-        ),
+        FlutterErrorDetails(exception: e, stack: s /*?? StackTrace.current*/),
         forceReport: true,
       );
       return true;
@@ -401,9 +398,8 @@ R? ffiPtrList<R>(
 
 /// 批量创建[Vec_double_t]指针
 R? ffiPtrDoubleList<R>(
-  R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
-  List<dynamic> args,
-) {
+    R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
+    List<dynamic> args,) {
   final ptrList = <ffi.Pointer<Vec_double_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -423,10 +419,7 @@ R? ffiPtrDoubleList<R>(
   } catch (e, s) {
     assert(() {
       FlutterError.dumpErrorToConsole(
-        FlutterErrorDetails(
-          exception: e,
-          stack: s /*?? StackTrace.current*/,
-        ),
+        FlutterErrorDetails(exception: e, stack: s /*?? StackTrace.current*/),
         forceReport: true,
       );
       return true;
