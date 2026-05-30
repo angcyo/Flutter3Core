@@ -70,6 +70,7 @@ extension TimeEx on int {
   /// 13位时间戳转换成时间字符串, 短时间格式
   /// 转换成刚刚, 几秒前, 几分钟前, 几小时前, 昨天, 前天, 几天前, 几月前, 几年前, 具体时间.
   ///
+  /// # timeago: ^3.7.1
   /// https://pub.dev/packages/timeago
   ///
   /// moment
