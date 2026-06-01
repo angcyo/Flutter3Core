@@ -49,7 +49,7 @@ dependencies:
   # https://pub.dev/packages/flutter_web_plugins
   # https://pub.dev/packages/logging
   # https://pub.dev/packages/meta
-  go_router: ^17.2.2
+  go_router: ^17.2.3
   # https://pub.dev/packages/logging
   logging: ^1.3.0
 
@@ -110,6 +110,16 @@ dependencies:
   # https://pub.dev/packages/flutter_scroll_shadow
   # ScrollShadow 是 Flutter 的一个组件，它为可滚动的子元素添加阴影。支持 ScrollController 和垂直或水平方向。
   #flutter_scroll_shadow: ^1.2.6
+
+  # https://pub.dev/packages/marqueer
+  # 跑马灯
+  marqueer: ^2.5.0
+  # https://pub.dev/packages/text_scroll
+  #text_scroll: ^0.2.1
+  # https://pub.dev/packages/marquee_list
+  #marquee_list: ^1.0.0
+  # https://pub.dev/packages/flutter_infinite_marquee
+  #flutter_infinite_marquee: ^2.0.1
 
 dev_dependencies:
   flutter_test:

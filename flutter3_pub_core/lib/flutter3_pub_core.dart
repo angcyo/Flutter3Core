@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:marqueer/marqueer.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -21,6 +22,7 @@ export 'package:watch_it/watch_it.dart';
 
 // @formatter:off
 
+part 'src/marquee/marquee_ex.dart';
 part 'src/go_router_ex.dart';
 part 'src/refresh/easy_refresh_ex.dart';
 part 'src/tooltip/el_tooltip_ex.dart';

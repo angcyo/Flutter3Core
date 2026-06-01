@@ -2970,6 +2970,8 @@ extension WidgetEx on Widget {
   Widget rowOf(
     Widget? other, {
     Key? key,
+    Widget? before,
+    Widget? after,
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize, //MainAxisSize.max
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -2980,9 +2982,9 @@ extension WidgetEx on Widget {
     Widget? gapWidget,
     //--
     bool lastExtend = false,
-  }) => other == null
+  }) => other == null && before == null && after == null
       ? this
-      : [this, other].row(
+      : [before, this, after, other].row(
           key: key,
           mainAxisAlignment: mainAxisAlignment,
           mainAxisSize: mainAxisSize,
