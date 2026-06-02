@@ -155,6 +155,9 @@ class AppLifecycleObserver extends AppLifecycleListener
   /// 刚启动的时候, 不会有这个值
   static LiveStream<AppLifecycleState?> appLifecycleStateStream = $live();
 
+  /// 屏幕上被挡住的部分内容
+  static LiveStream<EdgeInsets?> appViewInsetStream = $live();
+
   /// 底部键盘的高度监听
   /// - [MediaQueryData]
   /// - [MediaQueryData.viewInsets]
@@ -184,6 +187,7 @@ class AppLifecycleObserver extends AppLifecycleListener
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
+    appViewInsetStream <= platformMediaQueryData.viewInsets;
     appBottomInsetHeightStream <= platformMediaQueryData.viewInsets.bottom;
   }
 
@@ -191,6 +195,82 @@ class AppLifecycleObserver extends AppLifecycleListener
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     appLifecycleStateStream <= state;
+  }
+}
+
+/// 监听[MediaQueryData.viewInsets]
+/// - 变化有可能是一个动画过程
+class ViewInsetsCallbackWidget extends StatefulWidget {
+  final Widget child;
+
+  /// 需要监听的边
+  final bool? left;
+  final bool? top;
+  final bool? right;
+  final bool? bottom;
+
+  /// 边框变化回调, 不监听的边为null
+  final Function(double? left, double? top, double? right, double? bottom)?
+  onChanged;
+
+  const ViewInsetsCallbackWidget({
+    super.key,
+    required this.child,
+    this.left,
+    this.top,
+    this.right,
+    this.bottom,
+    this.onChanged,
+  });
+
+  @override
+  State<ViewInsetsCallbackWidget> createState() =>
+      _ViewInsetsCallbackWidgetState();
+}
+
+class _ViewInsetsCallbackWidgetState
+    extends HookState<ViewInsetsCallbackWidget> {
+  @override
+  void initState() {
+    super.initState();
+    hookAny(
+      AppLifecycleObserver.appViewInsetStream.listen((data) {
+        //debugger();
+        if (data != null && widget.onChanged != null) {
+          final left = widget.left == true ? data.left : null;
+          final top = widget.top == true ? data.top : null;
+          final right = widget.right == true ? data.right : null;
+          final bottom = widget.bottom == true ? data.bottom : null;
+          widget.onChanged!(left, top, right, bottom);
+        }
+      }),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
+extension ViewInsetsCallbackWidgetEx on Widget {
+  /// 监听屏幕上被挡住的部分内容
+  Widget viewInsetsCallback({
+    bool? left,
+    bool? top,
+    final bool? right,
+    bool? bottom,
+    Function(double? left, double? top, double? right, double? bottom)?
+    onChanged,
+  }) {
+    return ViewInsetsCallbackWidget(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
+      onChanged: onChanged,
+      child: this,
+    );
   }
 }
 
@@ -204,6 +284,9 @@ bool get $isAppResumed =>
     AppLifecycleObserver.appLifecycleStateStream.value ==
     AppLifecycleState.resumed;
 
+/// 底部插入的高度
+double get $appBottomInsetHeight =>
+    AppLifecycleObserver.appBottomInsetHeightStream.value ?? 0;
+
 /// 判断App键盘是否显示
-bool get $isAppKeyboardShow =>
-    (AppLifecycleObserver.appBottomInsetHeightStream.value ?? 0) > 0;
+bool get $isAppKeyboardShow => $appBottomInsetHeight > 0;
