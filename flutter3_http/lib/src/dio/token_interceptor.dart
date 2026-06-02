@@ -28,21 +28,27 @@ class TokenInterceptor extends Interceptor {
   /// 配置token
   /// [options] 请求配置
   /// [RequestOptions.headers] 配置token的回调
-  void Function(RequestOptions options)? configToken;
+  void Function(RequestOptions options)? configTokenAction;
 
-  /// token是否失效
-  bool Function(Response response)? isTokenInvalid;
+  /// token是否失效/无效
+  bool Function(Response response)? isTokenInvalidAction;
 
   /// 刷新token
   /// @return true:表示刷新成功, false/null: 默认处理
-  Future<bool> Function(Response response)? refreshToken;
+  Future<bool> Function(Response response)? refreshTokenAction;
 
-  TokenInterceptor({this.configToken, this.isTokenInvalid, this.refreshToken}) {
-    isTokenInvalid ??= (response) {
+  TokenInterceptor({
+    this.configTokenAction,
+    this.isTokenInvalidAction,
+    this.refreshTokenAction,
+  }) {
+    isTokenInvalidAction ??= (response) {
       if (response.statusCode == 401 && response.isSameOrigin()) {
         assert(() {
-          final uri = response.requestOptions.uri;
-          final token = response.requestOptions.headers['Authorization'];
+          final options = response.requestOptions;
+          final uri = options.uri;
+          final token = options.headers['Authorization'];
+          final isRefreshToken = options.headers['refresh_token'] == "true";
           l.w("[$uri]请求token失效, 请重新登录!");
           debugger();
           return true;
@@ -57,7 +63,7 @@ class TokenInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     super.onRequest(options, handler);
     try {
-      configToken?.call(options);
+      configTokenAction?.call(options);
     } catch (e, s) {
       debugger();
       l.w('配置token失败[${options.uri}]:$e↓');
@@ -96,17 +102,25 @@ class TokenInterceptor extends Interceptor {
   }
 
   /// 检查或者请求刷新token
-  /// @return true token刷新成功
+  /// @return true token刷新成功, 重新请求
   Future<bool?> checkOrRefreshToken(
     RequestOptions requestOptions,
     Response? response,
   ) async {
-    if (response == null || !response.isSameOrigin() || refreshToken == null) {
+    if (response == null ||
+        !response.isSameOrigin() ||
+        refreshTokenAction == null) {
       return null;
     }
+    final options = requestOptions;
+    final uri = options.uri;
+    final token = options.headers['Authorization'];
+    final isRefreshToken = options.headers['refresh_token'] == "true";
     final noTokenVerify =
-        requestOptions.getQuery(kNoTokenVerify)?.toBoolOrNull() == true;
-    if (!noTokenVerify && isTokenInvalid?.call(response) == true) {
+        options.getQuery(kNoTokenVerify)?.toBoolOrNull() == true;
+    if (!isRefreshToken &&
+        !noTokenVerify &&
+        isTokenInvalidAction?.call(response) == true) {
       debugger();
       //token失效, 请求新的token, 刷新token请求
       final value = response.getQuery(kNoRefreshTokenKey);
@@ -114,7 +128,7 @@ class TokenInterceptor extends Interceptor {
         //不重新请求token
         return null;
       }
-      return await refreshToken?.call(response);
+      return await refreshTokenAction?.call(response);
     } else {
       //token有效
       return null;
