@@ -752,7 +752,7 @@ extension StringEx on String {
   /// ^(?:[a-zA-Z0-9_-]+@\w+(?:\.\w+)+|1[3-9]\d{9}|[a-zA-Z0-9_-]{6,30})$
   /// ```
   bool isValidAccount({int minLength = 6, int? maxLength = 30}) =>
-      isMatch('^[a-zA-Z][a-zA-Z0-9_-]{$minLength,${maxLength ?? ""}}\$');
+      isMatch('^[a-zA-Z][a-zA-Z0-9_-]{${minLength - 1},${maxLength ?? ""}}\$');
 
   /// 是否是有效的密码
   /// ```

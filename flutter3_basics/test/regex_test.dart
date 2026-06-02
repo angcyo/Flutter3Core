@@ -14,14 +14,29 @@ void main() {
   );
   //你好，angcyo！你的积分是 100
   print("...");
-  print("account".isValidAccount());
-  print("acco unt".isValidAccount());
-  print("123456".isValidPassword());
-  print("password".isValidPassword());
-  print("account!!_!@#%TY&U".isValidPassword());
-  print("!!account!!_!@#%^TY&U".isValidPassword());
+  testAccountRegExp("123456");
+  testAccountRegExp("1234567");
+  testAccountRegExp("a12345");
+  testAccountRegExp("a123456");
+  testAccountRegExp("A1234567");
+  testAccountRegExp("abcdef");
+  testAccountRegExp("abcde6");
+  testAccountRegExp("account");
+  testAccountRegExp("acco unt");
+  testPasswordRegExp("123456");
+  testPasswordRegExp("password");
+  testPasswordRegExp("account!!_!@#%TY&U");
+  testPasswordRegExp("!!account!!_!@#%^TY&U");
   //RegExp
   testRegExp();
+}
+
+void testAccountRegExp(String account) {
+  print("$account -> ${account.isValidAccount()}");
+}
+
+void testPasswordRegExp(String password) {
+  print("$password -> ${password.isValidPassword()}");
 }
 
 /// 测试正则
