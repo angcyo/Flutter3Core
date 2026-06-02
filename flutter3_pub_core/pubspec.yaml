@@ -113,7 +113,7 @@ dependencies:
 
   # https://pub.dev/packages/marqueer
   # 跑马灯
-  marqueer: ^2.5.0
+  #marqueer: ^2.5.0
   # https://pub.dev/packages/text_scroll
   #text_scroll: ^0.2.1
   # https://pub.dev/packages/marquee_list
