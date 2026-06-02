@@ -14,7 +14,16 @@ class FloatBackActionWidget extends StatefulWidget {
   /// 返回结果
   final Object? result;
 
-  const FloatBackActionWidget({super.key, this.floatStyle, this.result});
+  /// 指定返回按键
+  @defInjectMark
+  final Widget? child;
+
+  const FloatBackActionWidget({
+    super.key,
+    this.floatStyle,
+    this.result,
+    this.child,
+  });
 
   @override
   State<FloatBackActionWidget> createState() => _FloatBackActionWidgetState();
@@ -25,13 +34,13 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
     Widget body =
+        widget.child ??
         globalConfig.appBarDismissalBuilder(context, widget) ??
         Icon(
           Icons.arrow_back_ios_new,
           color: globalConfig.globalTheme.icoNormalColor,
-        );
+        ).insets(all: kX);
     body = body
-        .insets(all: kX)
         .inkWellCircle(() {
           buildContext?.maybePop(result: widget.result);
         })
@@ -49,9 +58,18 @@ extension FloatBackActionWidgetEx on Widget {
   /// 在主体上浮动一个[FloatBackActionWidget]路由返回按键
   /// - [floatStyle] 是否要强制浮动, 否则一直显示. 在桌面端默认浮动显示
   /// - [result] 路由pop返回结果
-  Widget floatBackActionWidget({Key? key, bool? floatStyle, Object? result}) =>
-      [
-        this,
-        FloatBackActionWidget(key: key, floatStyle: floatStyle, result: result),
-      ].stack()!;
+  Widget floatBackActionWidget({
+    Key? key,
+    bool? floatStyle,
+    Object? result,
+    Widget? child,
+  }) => [
+    this,
+    FloatBackActionWidget(
+      key: key,
+      floatStyle: floatStyle,
+      result: result,
+      child: child,
+    ),
+  ].stack()!;
 }
