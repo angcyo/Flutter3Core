@@ -54,6 +54,7 @@ typedef AppBarBuilderFn =
       Widget? flexibleSpace,
       bool? centerTitle,
       double? titleSpacing,
+      SystemUiOverlayStyle? systemOverlayStyle,
     });
 
 /// [AppBar]左边构建器函数, 在可以back的时候调用
@@ -773,6 +774,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
         flexibleSpace,
         centerTitle,
         titleSpacing,
+        systemOverlayStyle,
       }) {
         //debugger();
         final globalConfig = GlobalConfig.of(context);
@@ -811,6 +813,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
                     : null),
             centerTitle: centerTitle,
             titleSpacing: titleSpacing,
+            systemOverlayStyle: systemOverlayStyle,
             floating: true,
             pinned: false,
           );
@@ -843,6 +846,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
                   : null),
           centerTitle: centerTitle,
           titleSpacing: titleSpacing,
+          systemOverlayStyle: systemOverlayStyle,
         );
       };
 

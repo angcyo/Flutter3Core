@@ -306,6 +306,11 @@ mixin AbsScrollPage {
   @property
   bool? enableAppBar(BuildContext context) => context.isInRootNavigator;
 
+  /// 状态栏是否是暗色模式
+  /// 背景黑色, 状态栏图标/文本为白色
+  @property
+  bool? isDarkStatusBar(BuildContext context) => null;
+
   /// 是否使用[SliverAppBar], 否则使用[buildAppBar]
   @property
   bool? useSliverAppBar(BuildContext context) => null;
@@ -414,6 +419,7 @@ mixin AbsScrollPage {
         actions = [trailing];
       }
     }
+    final darkStatusBar = isDarkStatusBar(context);
     return globalConfig.appBarBuilder(
       context,
       this,
@@ -433,7 +439,19 @@ mixin AbsScrollPage {
       shadowColor: getAppBarShadowColor(context),
       foregroundColor: foregroundColor ?? getAppBarForegroundColor(context),
       backgroundColor: backgroundColor ?? getAppBarBackgroundColor(context),
-      flexibleSpace: buildAppBarFlexibleSpace(context), //渐变背景
+      flexibleSpace: buildAppBarFlexibleSpace(context),
+      //渐变背景
+      systemOverlayStyle: darkStatusBar == null
+          ? null
+          : (darkStatusBar
+                ? SystemUiOverlayStyle(
+                    statusBarIconBrightness: Brightness.light,
+                    statusBarBrightness: Brightness.dark,
+                  )
+                : SystemUiOverlayStyle(
+                    statusBarIconBrightness: Brightness.dark,
+                    statusBarBrightness: Brightness.light,
+                  )),
     );
   }
 
