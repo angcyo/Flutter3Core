@@ -74,7 +74,7 @@ class TextFieldConfig {
   /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldText]
   /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldValue]
   @autoInjectMark
-  void Function(TextEditingValue value, bool? notify)? updateFieldValueFn;
+  void Function(TextEditingValue? value, bool? notify)? updateFieldValueFn;
 
   /// 是否保持选择范围
   @configProperty
@@ -390,6 +390,12 @@ class TextFieldConfig {
       inputFormatters: inputFormatters,
       notify: notify,
     );
+  }
+
+  /// 仅更新输入框的状态
+  @api
+  void updateFieldState() {
+    updateFieldValueFn?.call(null, null);
   }
 
   /// 更新输入框的值
@@ -1195,14 +1201,18 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   }
 
   /// 更新输入框的值
-  void _updateFieldValue(TextEditingValue value, bool? notify) {
+  void _updateFieldValue(TextEditingValue? value, bool? notify) {
     //debugger();
     //clear 不会触发onChanged回调
     //widget.config.controller.clear();
     //setText 也不会触发onChanged回调
-    widget.config.controller.value = value;
-    _onSelfValueChanged(value, notify: notify);
-    //setState(() {});
+    if (value != null) {
+      widget.config.controller.value = value;
+      _onSelfValueChanged(value, notify: notify);
+    } else {
+      //仅更新界面
+      setState(() {});
+    }
   }
 
   /// 输入框的值改变
