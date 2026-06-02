@@ -363,18 +363,19 @@ String get $debugAppInfo => stringBuilder((builder) {
   final packageInfo = $platformPackageInfoCache;
   final deviceInfo = $platformDeviceInfoCache;
   final mediaData = platformMediaQueryData;
+  final mediaSize = mediaData.size;
   builder
     ..write("${deviceInfo?.platformDeviceName} - $currentPlatformName") //设备名称
     ..writeln(
       " - ${Platform.operatingSystemVersion}/${Platform.numberOfProcessors}",
     ) //平台信息
     ..writeln(
-      "${Platform.localHostname} - ${Platform.localeName}/$platformLocale",
+      "${Platform.localHostname}/${Platform.version} - ${Platform.localeName}/$platformLocale",
     ) //平台信息
     ..write(packageInfo?.packageName.connect(" ")) //包名
     ..writeln(packageInfo?.debugVersionString) //版本信息
     ..writeln(
-      "${mediaData.size}/${mediaData.devicePixelRatio} - ${mediaData.platformBrightness}",
+      "${mediaSize.width.toStringAsFixed(1)}x${mediaSize.height.toStringAsFixed(1)}/${mediaData.devicePixelRatio} - ${mediaData.platformBrightness}",
     ) //屏幕信息
     ..writeln($deviceUuid) //设备id
     ;
