@@ -111,6 +111,7 @@ extension HiveStringEx on String {
     return hivePut(list.toJsonString(null), notifyChanged);
   }
 
+  /// 在列表中删除一个值
   /// [hivePutList]
   /// [hiveGetList]
   Future<dynamic> hiveDeleteList(String value, {bool notifyChanged = true}) {
