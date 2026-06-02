@@ -444,14 +444,8 @@ mixin AbsScrollPage {
       systemOverlayStyle: darkStatusBar == null
           ? null
           : (darkStatusBar
-                ? SystemUiOverlayStyle(
-                    statusBarIconBrightness: Brightness.light,
-                    statusBarBrightness: Brightness.dark,
-                  )
-                : SystemUiOverlayStyle(
-                    statusBarIconBrightness: Brightness.dark,
-                    statusBarBrightness: Brightness.light,
-                  )),
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark),
     );
   }
 
