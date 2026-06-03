@@ -197,6 +197,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
     EdgeInsetsGeometry? suffixIconPadding,
     BoxConstraints? prefixIconConstraints = kPrefixIconConstraints,
     BoxConstraints? suffixIconConstraints = kSuffixIconConstraints,
+    TextInputAction? textInputAction,
   }) {
     final Widget input = SingleInputWidget(
       config: _inputMixinConfig,
@@ -220,6 +221,7 @@ mixin InputStateMixin<T extends StatefulWidget> on State<T> {
       prefixIconConstraints: prefixIconConstraints,
       suffixIconConstraints: suffixIconConstraints,
       onSubmitted: inputMixin.onInputSubmitted,
+      textInputAction: textInputAction,
       /*autoShowSuffixIcon: false,*/
     );
     return input;

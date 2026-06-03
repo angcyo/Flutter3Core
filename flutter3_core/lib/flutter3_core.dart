@@ -55,6 +55,7 @@ part 'src/dialog/shortcut_dialog.dart';
 part 'src/dialog/single_bottom_input_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
+part 'src/dialog/single_field_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
 part 'src/dialog/http_host_config_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';

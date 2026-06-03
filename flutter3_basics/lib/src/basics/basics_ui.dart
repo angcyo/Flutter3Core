@@ -1029,6 +1029,7 @@ extension WidgetEx on Widget {
     Key? key,
     //--
     dynamic result,
+    dynamic Function()? onResultAction,
     //--
     bool autofocus = true,
     //--
@@ -1056,7 +1057,7 @@ extension WidgetEx on Widget {
                   }());
                   context?.maybePop(
                     rootNavigator: rootNavigator,
-                    result: result,
+                    result: onResultAction?.call() ?? result,
                   );
                 }
                 return KeyEventResult.handled;

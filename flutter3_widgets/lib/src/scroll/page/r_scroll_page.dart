@@ -129,7 +129,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @override
   void reassemble() {
     //debugger();
-    onSelfLoadDataWrap();
+    //onSelfLoadDataWrap();
+    startRefresh();
     super.reassemble();
   }
 
@@ -212,6 +213,21 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 通过[RequestPage]实现页面分页
   /// 加载数据完成后, 调用[loadDataEnd]刷新界面
   ///
+  /// ```
+  /// final beanList = await $activityApi.fetchPromotionList(
+  ///   type: null,
+  ///   status: null,
+  ///   current: requestPage.requestPageIndex,
+  ///   size: requestPage.requestPageSize,
+  /// );
+  /// loadBeanEnd(
+  ///   beanList,
+  ///   null,
+  ///   (ctx, bean, index, isSelected) => YDTableRowTile());
+  /// ```
+  ///
+  /// - [loadBeanEnd] -> [loadDataEnd]
+  ///
   /// - [onSelfLoadDataWrap]
   /// - [RScrollController.requestPage]
   @overridePoint
@@ -287,10 +303,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   ///   - [updateTileList]
   ///   - [updateAllTile]
   @api
-  void loadBeanEnd(
-    Iterable? beanList, [
+  void loadBeanEnd<T>(
+    Iterable<T>? beanList, [
     dynamic stateData /*不同的状态, 附加的任意数据*/,
-    WidgetValueIndexBuilder? builder,
+    WidgetValueIndexBuilder<T>? builder,
     bool enableRebuild = false,
   ]) {
     final widgetList = beanList?.mapIndex((bean, index) {

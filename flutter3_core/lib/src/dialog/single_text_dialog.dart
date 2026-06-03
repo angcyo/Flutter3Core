@@ -5,6 +5,10 @@ part of '../../flutter3_core.dart';
 /// @date 2024/03/26
 ///
 /// 简单的查看文本对话框
+///
+/// - [SingleTextDialog]
+/// - [SingleFieldDialog]
+/// - [SingleImageDialog]
 class SingleTextDialog extends StatelessWidget {
   /// 指定文件路径
   final String? filePath;

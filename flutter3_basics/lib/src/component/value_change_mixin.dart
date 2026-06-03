@@ -176,7 +176,8 @@ mixin ValueMixin {
     TransformDataWidgetBuilder? transformValueWidget,
     //--
     int? selectedIndex,
-    bool selectedBold = true,
+    bool selectedBold = true, //选中时文本是否变粗
+    bool selectable = false, //文本是否支持选择
     TextStyle? textStyle,
     TextAlign? textAlign,
     TextStyle? selectedTextStyle,
@@ -236,6 +237,7 @@ mixin ValueMixin {
               ? selectedTextStyle ?? style
               : textStyle ?? style,
           textAlign: textAlign,
+          selectable: selectable,
         );
         return transformValueWidget?.call(
               context,
