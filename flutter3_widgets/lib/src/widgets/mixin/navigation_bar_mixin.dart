@@ -60,11 +60,15 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     Widget normal, {
     Widget? active,
     String? label,
+    String? tooltip,
+    Color? backgroundColor,
   }) {
     return BottomNavigationBarItem(
       icon: normal,
       activeIcon: active,
       label: label ?? "",
+      tooltip: tooltip,
+      backgroundColor: backgroundColor,
     );
   }
 
