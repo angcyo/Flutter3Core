@@ -78,14 +78,17 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
   /// 圆角
   final _radius = 2.0;
 
-  /// 当前滑块左边移动的比例
-  double _leftMoveRadio = 0.0;
-
   /// 手势移动在整体范围中的比例
+  /// 拖动浮子在整体范围中移动的比例
+  @output
   double _moveRadio = 0.0;
 
   /// 是否正在移动滑块
+  @tempFlag
   bool _isMoving = false;
+
+  @tempFlag
+  double _trackWidth = 0.0;
 
   /// 当前滑块的状态
   SliderCaptchaState get _sliderState => widget.state;
@@ -126,7 +129,18 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
     final lRes = libRes(context);
     final globalTheme = GlobalTheme.of(context);
     //debugger();
-    final leftMoveRadio = _leftMoveRadio;
+    final bgWidth = widget.backgroundImageSize?.width;
+    final bgHeight = widget.backgroundImageSize?.height;
+    final activeWidth = widget.activeImageSize?.width;
+    final activeHeight = widget.activeImageSize?.height;
+    final maxActiveMoveRadio = bgWidth == null || activeWidth == null
+        ? 1.0
+        : (bgWidth - activeWidth) / bgWidth;
+    final activeMoveRadio = clampDouble(_moveRadio, 0, maxActiveMoveRadio);
+    double maxTrackMoveRadio = _trackWidth > 0
+        ? (_trackWidth - _trackHeight) / _trackWidth
+        : 1.0;
+    double trackMoveRadio = clampDouble(_moveRadio, 0, maxTrackMoveRadio);
     return Column(
       spacing: kX,
       children: [
@@ -134,6 +148,10 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
         ScaleMatrixContainerLayout(
           aspectRatio: widget.aspectRatio,
           refChildIndex: _sliderState == SliderCaptchaState.loading ? null : 0,
+          onLayoutAction: (render, transform) {
+            final scaleX = transform.scaleX;
+            //debugger();
+          },
           children: [
             if (_sliderState == SliderCaptchaState.loading)
               ScaleMatrixParentDataWidget(
@@ -158,7 +176,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
                 widget.activeImageUrl != null)
               ScaleMatrixParentDataWidget(
                 childOffset: Offset(0, widget.activeImageOffsetY),
-                childOffsetRadio: Offset(leftMoveRadio, 0),
+                childOffsetRadio: Offset(activeMoveRadio, 0),
                 childConstraints: widget.activeImageSize == null
                     ? null
                     : LayoutBoxConstraints.fixedSize(
@@ -172,6 +190,7 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
         //滑块
         ScaleMatrixContainerLayout(
           onHandlePointerEvent: (render, event, tx, ty) {
+            final localPosition = event.localPosition;
             if (event.isPointerDown &&
                 _sliderState == SliderCaptchaState.normal) {
               if (render.hitTestChild(thumbTag, event.localPosition)) {
@@ -199,13 +218,19 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
               }
             }
             if (_isMoving) {
-              _leftMoveRadio = clampDouble(
-                tx / (render.size.width - _trackHeight),
-                0,
-                1,
-              );
-              _moveRadio = clampDouble(tx / render.size.width, 0, 1);
-              //l.d("tx:$tx ${render.size.width} _moveRadio: $_moveRadio");
+              final rw = render.size.width;
+              _moveRadio = clampDouble(tx / rw, 0, 1);
+              /*assert(() {
+                l.d(
+                  "tx:$tx width:$rw "
+                  "moveRadio: ${_moveRadio.toStringAsFixed(2)}",
+                );
+                return true;
+              }());*/
+              updateState();
+            }
+            if (event.isPointerFinish) {
+              _isMoving = false;
               updateState();
             }
           },
@@ -213,20 +238,25 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
             paintWidget((canvas, size) {
               final rect = Rect.fromLTWH(0, 0, size.width, size.height);
               final color = Color(0xffe5e7eb);
+              _trackWidth = size.width;
+              maxTrackMoveRadio = (_trackWidth - _trackHeight) / _trackWidth;
+              trackMoveRadio = clampDouble(_moveRadio, 0, maxTrackMoveRadio);
+
               _drawTrackRect(canvas, rect, color);
 
-              //--
+              //滑动进度矩形
               final rect2 = Rect.fromLTWH(
                 0,
                 0,
-                (size.width - _trackHeight) * leftMoveRadio + _trackHeight,
+                /*(size.width - _trackHeight) * trackMoveRadio + _trackHeight*/
+                size.width * trackMoveRadio + _trackHeight,
                 size.height,
               );
               _drawTrackRect(canvas, rect2, getThumbStateColor(context));
             }),
             ScaleMatrixParentDataWidget(
               tag: thumbTag,
-              childOffsetRadio: Offset(leftMoveRadio, 0),
+              childOffsetRadio: Offset(trackMoveRadio, 0),
               child:
                   Icon(
                         getThumbStateIcon(context),
@@ -296,8 +326,8 @@ class _SliderCaptchaWidgetState extends State<SliderCaptchaWidget>
 
   /// 动画的方式移动滑块
   void _animateThumbTo(double value) {
-    startValueAnimation(_leftMoveRadio, value, this, (value, isCompleted) {
-      _leftMoveRadio = value;
+    startValueAnimation(_moveRadio, value, this, (value, isCompleted) {
+      _moveRadio = value;
       if (isCompleted) {
         //_sliderState = SliderCaptchaState.normal;
       }

@@ -28,6 +28,13 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
   )?
   onHandlePointerEvent;
 
+  /// 布局完成后的回调
+  final void Function(
+    ScaleMatrixContainerRenderObject render,
+    Matrix4 transform,
+  )?
+  onLayoutAction;
+
   const ScaleMatrixContainerLayout({
     super.key,
     super.children,
@@ -35,6 +42,7 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
     this.refChildIndex = 0,
     this.aspectRatio,
     this.onHandlePointerEvent,
+    this.onLayoutAction,
   });
 
   @override
@@ -86,10 +94,15 @@ class ScaleMatrixParentData extends ContainerBoxParentData<RenderBox> {
   /// [childOffset]
   /// [childOffsetRadio]
   Offset getChildRadioOffset(Size parentSize, Size childSize) {
-    if (childOffsetRadio != null) {
+    final offsetRadio = childOffsetRadio;
+    if (offsetRadio != null) {
+      /*return Offset(
+        (parentSize.width - childSize.width) * offsetRadio!.dx,
+        (parentSize.height - childSize.height) * offsetRadio!.dy,
+      );*/
       return Offset(
-        (parentSize.width - childSize.width) * childOffsetRadio!.dx,
-        (parentSize.height - childSize.height) * childOffsetRadio!.dy,
+        parentSize.width * offsetRadio.dx,
+        parentSize.height * offsetRadio.dy,
       );
     }
     return Offset.zero;
@@ -226,6 +239,8 @@ class ScaleMatrixContainerRenderObject extends RenderBox
   /// 计算出来的矩阵
   Matrix4? _effectiveTransform;
 
+  Matrix4? get effectiveTransform => _effectiveTransform;
+
   @override
   void setupParentData(covariant RenderObject child) {
     if (child.parentData is! ScaleMatrixParentData) {
@@ -285,6 +300,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     final position = event.localPosition;
     if (event.isPointerDown) {
       _downPosition = event.localPosition;
+      //l.w("downPosition:$_downPosition size:$size");
     }
     config.onHandlePointerEvent?.call(
       this,
@@ -389,6 +405,10 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     }
 
     size = parentSize;
+
+    if (_effectiveTransform != null) {
+      config.onLayoutAction?.call(this, _effectiveTransform!);
+    }
   }
 
   /// [defaultPaint]

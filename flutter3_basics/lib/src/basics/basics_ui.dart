@@ -655,24 +655,49 @@ extension WidgetEx on Widget {
   /// 鼠标监听
   /// - [Listener.onPointerSignal]
   /// - [cursor] 设置鼠标样式, 需要使用[MouseRegion]
+  ///   - [WidgetStateMouseCursor.clickable] 手形
+  ///   - [WidgetStateMouseCursor.adaptiveClickable] 自适应 Web端:手形 其它端:basic
+  ///     - [SystemMouseCursors.basic]
   Widget click(
     GestureTapCallback? onTap, {
     bool enable = true,
     GestureLongPressCallback? onLongPress,
     HitTestBehavior? behavior = HitTestBehavior.translucent /*后代和自己都可以命中*/,
-    //
+    //--
     MouseCursor? cursor,
-  }) => onTap == null || !enable
-      ? this
-      : GestureDetector(
-          onTap: onTap,
-          behavior: behavior,
-          onLongPress: onLongPress,
-          child: this,
-        ).mouse(
-          cursor: cursor ?? WidgetStateMouseCursor.clickable,
-          enable: enable && cursor != null,
-        );
+    GestureContextTapCallback? onContextTap /*具有上下文的点击事件回调*/,
+  }) {
+    if ((onTap == null && onContextTap == null) || !enable) {
+      return this;
+    }
+    if (onContextTap != null) {
+      return Builder(
+        builder: (ctx) {
+          return GestureDetector(
+            onTap: () {
+              onContextTap(ctx);
+            },
+            behavior: behavior,
+            onLongPress: onLongPress,
+            child: this,
+          ).mouse(
+            cursor: cursor ?? WidgetStateMouseCursor.clickable,
+            enable: enable && cursor != null,
+          );
+        },
+      );
+    } else {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: behavior,
+        onLongPress: onLongPress,
+        child: this,
+      ).mouse(
+        cursor: cursor ?? WidgetStateMouseCursor.clickable,
+        enable: enable && cursor != null,
+      );
+    }
+  }
 
   /// 双击事件
   /// [RenderProxyBoxWithHitTestBehavior]
@@ -2436,6 +2461,7 @@ extension WidgetEx on Widget {
   /// [constrainedBox]
   /// [ConstrainedBox]
   Widget constrainedMin({
+    BoxConstraints? constraints,
     //
     double? minSize,
     double? minWidth,
@@ -2449,19 +2475,21 @@ extension WidgetEx on Widget {
     minHeight ??= minSize;
     maxWidth ??= maxSize;
     maxHeight ??= maxSize;
-    if (maxWidth == null &&
+    if (constraints == null &&
+        maxWidth == null &&
         maxHeight == null &&
         minWidth == null &&
         minHeight == null) {
       return this;
     }
     return constrainedBox(
-      BoxConstraints(
-        minWidth: minWidth ?? 0,
-        minHeight: minHeight ?? 0,
-        maxWidth: maxWidth ?? double.infinity,
-        maxHeight: maxHeight ?? double.infinity,
-      ),
+      constraints ??
+          BoxConstraints(
+            minWidth: minWidth ?? 0,
+            minHeight: minHeight ?? 0,
+            maxWidth: maxWidth ?? double.infinity,
+            maxHeight: maxHeight ?? double.infinity,
+          ),
     );
   }
 
@@ -2470,24 +2498,27 @@ extension WidgetEx on Widget {
   /// [ConstrainedBox]
   Widget constrainedMax({
     Key? key,
+    BoxConstraints? constraints,
     double? minWidth,
     double? minHeight,
     double? maxWidth = double.infinity,
     double? maxHeight = double.infinity,
   }) {
-    if (maxWidth == null &&
+    if (constraints == null &&
+        maxWidth == null &&
         maxHeight == null &&
         minWidth == null &&
         minHeight == null) {
       return this;
     }
     return constrainedBox(
-      BoxConstraints(
-        minWidth: minWidth ?? 0.0,
-        minHeight: minHeight ?? 0.0,
-        maxWidth: maxWidth ?? double.infinity,
-        maxHeight: maxHeight ?? double.infinity,
-      ),
+      constraints ??
+          BoxConstraints(
+            minWidth: minWidth ?? 0.0,
+            minHeight: minHeight ?? 0.0,
+            maxWidth: maxWidth ?? double.infinity,
+            maxHeight: maxHeight ?? double.infinity,
+          ),
     );
   }
 
@@ -2880,6 +2911,7 @@ extension WidgetEx on Widget {
               periodicTimer = null;
             }
           : null,
+      mouseCursor: null,
       radius: radius,
       splashColor: splashColor,
       hoverColor: hoverColor,

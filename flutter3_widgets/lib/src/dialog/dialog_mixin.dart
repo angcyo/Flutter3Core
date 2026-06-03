@@ -421,6 +421,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     double? height /*固定高度*/,
     double? contentMinHeight,
     double? contentMaxHeight = 0.8,
+    BoxConstraints? contentConstraints /*内容约束*/,
     bool? blur,
     //--clip--↓
     double? clipRadius,
@@ -446,13 +447,22 @@ mixin DialogMixin implements TranslationTypeImpl {
     /*需要[useRScroll]支持*/
     Listenable? contentUpdateSignal /*内容更新信号, 需要[useRScroll]支持*/,
     String? debugLabel,
+    //--
+    bool? adaptiveDesktop /*适配桌面居中布局*/,
   }) {
+    final useDesktopLayout = adaptiveDesktop == true && isDesktopOrWeb;
+    if (useDesktopLayout) {
+      clipRadius ??= clipTopRadius ?? clipBottomRadius;
+      clipTopRadius ??= clipRadius;
+      clipBottomRadius ??= clipRadius;
+    }
+
     blur ??= dialogBlur;
 
     Widget body;
     children = children.filterNull();
 
-    //debugger();
+    debugger(when: debugLabel != null);
     if (height != null) {
       if (height < 1) {
         height = screenHeight * height;
@@ -501,6 +511,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       }*/
       //约束高度
       scrollBody = scrollBody?.constrainedMax(
+        constraints: contentConstraints,
         minWidth: null,
         maxWidth: null,
         minHeight: contentMinHeight,
@@ -521,6 +532,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                     stackAfterWidget ??
                     stackBeforeWidget)
                 ?.constrainedMax(
+                  constraints: contentConstraints,
                   minWidth: null,
                   maxWidth: null,
                   minHeight: contentMinHeight,
@@ -534,7 +546,8 @@ mixin DialogMixin implements TranslationTypeImpl {
       }
 
       body = [
-        if (enablePullBack && showDragHandle) buildDragHandle(context),
+        if (enablePullBack && showDragHandle && !useDesktopLayout)
+          buildDragHandle(context),
         ...fixedChildren,
         scrollBody?.expanded(
           enable: height != null || fullScreen /*固定高度时, 滚动布局需要撑满底部*/,
@@ -545,7 +558,8 @@ mixin DialogMixin implements TranslationTypeImpl {
       //普通布局, 不使用滚动布局
       body =
           [
-                if (enablePullBack && showDragHandle) buildDragHandle(context),
+                if (enablePullBack && showDragHandle && !useDesktopLayout)
+                  buildDragHandle(context),
                 ...children,
                 bottomWidget,
               ]
@@ -554,6 +568,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                 crossAxisAlignment: crossAxisAlignment,
               )!
               .constrainedMax(
+                constraints: contentConstraints,
                 minWidth: null,
                 maxWidth: null,
                 minHeight: contentMinHeight,
@@ -580,7 +595,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     final globalTheme = GlobalTheme.of(context);
     final navigator = context.navigatorOf();
     final route = context.modalRoute;
-    return body
+    final align = useDesktopLayout ? Alignment.center : Alignment.bottomCenter;
+
+    Widget result = body
         .size(height: height)
         .safeArea(
           useSafeArea: useSafeArea,
@@ -597,36 +614,45 @@ mixin DialogMixin implements TranslationTypeImpl {
           radius: clipTopRadius == null ? 8 : clipTopRadius / 2,
           decorationColor: Colors.transparent,
           shadowOffset: const Offset(0, -4),
-        )
-        .pullBack(
-          enablePullBack: enablePullBack,
-          useScrollConsume: useScrollConsume,
-          pullMaxBound: pullMaxBound,
-          useMaybePop: maybePop,
-          onPullBack:
-              onPullBack ??
-              (context) {
+        );
+    if (useDesktopLayout) {
+      //no op
+      result = result.align(align);
+    } else {
+      result = result.pullBack(
+        enablePullBack: enablePullBack,
+        useScrollConsume: useScrollConsume,
+        pullMaxBound: pullMaxBound,
+        useMaybePop: maybePop,
+        onPullBack:
+            onPullBack ??
+            (context) {
+              //debugger();
+              if (pullMaxBound == null) {
                 //debugger();
-                if (pullMaxBound == null) {
-                  //debugger();
-                  /*if (route?.isCurrent == true) {
+                /*if (route?.isCurrent == true) {
                     closeDialogIf(context, true, maybePop);
                   } else {*/
-                  /*}*/
-                  if (maybePop) {
-                    navigator.maybePop();
-                  } else {
-                    navigator.removeRouteIf(route);
-                  }
+                /*}*/
+                if (maybePop) {
+                  navigator.maybePop();
+                } else {
+                  navigator.removeRouteIf(route);
                 }
-              },
-        )
+              }
+            },
+      );
+    }
+
+    result
         .matchParent(matchHeight: fullScreen)
-        .align(Alignment.bottomCenter)
+        .align(align)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .adaptiveTablet(context)
+        .adaptiveTablet(context, align)
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(context, enable: dialogBarrierDismissible);
+
+    return result;
   }
 
   /// 构建桌面端右边侧滑全屏高度显示的对话框布局
@@ -957,8 +983,11 @@ extension DialogExtension on BuildContext {
     );
   }
 
-  /// [showMenus] - 支持[PopupMenuEntry]list
-  /// [showWidgetMenu] - 支持[Widget]
+  /// - [menuPosition] 菜单显示在锚点的什么位置
+  ///    - [PopupMenuPosition.over] 覆盖显示
+  ///    - [PopupMenuPosition.under] 在锚点下方显示
+  /// - [showMenus] - 支持[PopupMenuEntry]list
+  /// - [showWidgetMenu] - 支持[Widget]
   Future<T?> showWidgetMenu<T>(
     Widget menu, {
     PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,
@@ -1012,12 +1041,11 @@ extension DialogExtension on BuildContext {
     //位置信息
     final RelativeRect relativePosition;
     if (position == null) {
-      final PopupMenuPosition popupMenuPosition =
-          menuPosition ?? PopupMenuPosition.over;
+      final popupMenuPosition = menuPosition ?? .over;
       switch (popupMenuPosition) {
-        case PopupMenuPosition.over:
+        case .over:
           offset = offset;
-        case PopupMenuPosition.under:
+        case .under:
           offset = Offset(0.0, anchor.size.height) + offset;
       }
       relativePosition = RelativeRect.fromRect(
