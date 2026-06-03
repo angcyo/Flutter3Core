@@ -153,7 +153,28 @@ class RScrollView extends StatefulWidget {
   State<RScrollView> createState() => _RScrollViewState();
 }
 
-class _RScrollViewState extends State<RScrollView> with FrameSplitLoad {
+class _RScrollViewState extends State<RScrollView>
+    with WidgetsBindingObserver, MediaQueryDataChangeMixin, FrameSplitLoad {
+  @override
+  bool get updateByAny => false;
+
+  /// 在桌面端, 动态修改了尺寸
+  @override
+  bool get updateBySize => true;
+
+  /// [widget.tag]
+  @override
+  void onSelfPlatformSizeChanged(ui.Size? from, ui.Size to) {
+    //debugger();
+    if (from != null) {
+      postFrameCallback((_) {
+        widget.controller?.checkScrollPosition();
+      });
+    }
+  }
+
+  //--
+
   /// 列表过滤转换入口点
   /// 构建[RItemTile]的列表
   /// [children] 入参

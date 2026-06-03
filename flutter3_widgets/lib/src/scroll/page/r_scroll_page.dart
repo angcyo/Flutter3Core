@@ -297,11 +297,12 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 处理[onLoadData]加载了的数据
   /// - [loadDataEnd]
   /// - [enableRebuild] 是否支持通过[beanList]中的数据动态更新[Widget]
-  ///   - [deleteTile]
-  ///   - [removeTile]
-  ///   - [updateTile]
+  ///   - [deleteTile] 删除满足条件的[RItemTile]
+  ///   - [removeTile] 通过数据删除[RItemTile]
+  ///   - [updateTile] 通过数据更新[RItemTile]
   ///   - [updateTileList]
   ///   - [updateAllTile]
+  /// - [enableRebuild] 是否支持动态更新数据
   @api
   void loadBeanEnd<T>(
     Iterable<T>? beanList, [
@@ -555,33 +556,41 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 更新满足条件的tile, 前提是需要配置[RItemTile.updateSignal]更新信号
   /// [test] 测试是否需要更新, 返回true, 表示需要rebuild
   @api
-  void rebuildTile(
-    bool Function(RItemTile tile, UpdateValueNotifier signal) test,
-  ) {
+  void rebuildTile(bool Function(Widget tile, Listenable signal) test) {
     for (final element in pageWidgetList) {
       //debugger();
+      Listenable? updateSignal;
       if (element is RItemTile) {
         //element.updateTile();
-        final updateSignal = element.updateSignal;
-        if (updateSignal != null) {
-          try {
-            if (test(element, updateSignal)) {
-              //debugger();
+        updateSignal = element.updateSignal;
+      } else if (element is RebuildWidget) {
+        updateSignal = element.updateSignal;
+      }
+      if (updateSignal != null) {
+        try {
+          if (test(element, updateSignal)) {
+            //debugger();
+            if (updateSignal is UpdateSignalNotifier) {
               updateSignal.updateValue();
+            } else if (updateSignal is ChangeNotifier) {
+              updateSignal.notifyListeners();
+            } else {
+              debugger();
             }
-          } catch (e) {
-            //中断循环
-            assert(() {
-              printError(e);
-              return true;
-            }());
-            break;
           }
+        } catch (e) {
+          //中断循环
+          assert(() {
+            printError(e);
+            return true;
+          }());
+          break;
         }
       }
     }
   }
 
+  /// 支持使用数据结构[value]删除对应的tile
   /// - [deleteTile]
   /// - [removeTile]
   @api
@@ -599,29 +608,30 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   ///
   /// [pageWidgetList]
   @api
-  void deleteTile(
-    bool Function(RItemTile tile, UpdateValueNotifier signal) test,
-  ) {
+  void deleteTile(bool Function(Widget tile, Listenable signal) test) {
     final WidgetList removeList = [];
     for (final element in pageWidgetList) {
       //debugger();
+      Listenable? updateSignal;
       if (element is RItemTile) {
         //element.updateTile();
-        final updateSignal = element.updateSignal;
-        if (updateSignal != null) {
-          try {
-            if (test(element, updateSignal)) {
-              //debugger();
-              removeList.add(element);
-            }
-          } catch (e) {
-            //中断循环
-            assert(() {
-              printError(e);
-              return true;
-            }());
-            break;
+        updateSignal = element.updateSignal;
+      } else if (element is RebuildWidget) {
+        updateSignal = element.updateSignal;
+      }
+      if (updateSignal != null) {
+        try {
+          if (test(element, updateSignal)) {
+            //debugger();
+            removeList.add(element);
           }
+        } catch (e) {
+          //中断循环
+          assert(() {
+            printError(e);
+            return true;
+          }());
+          break;
         }
       }
     }
@@ -633,6 +643,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         //显示空页面
         updateAdapterState(WidgetBuildState.empty);
       }
+    } else {
+      assert(() {
+        l.w("没有找到需要删除的的tile");
+        return true;
+      }());
     }
   }
 
