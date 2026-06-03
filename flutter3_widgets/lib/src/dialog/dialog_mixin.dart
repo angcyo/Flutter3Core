@@ -984,7 +984,7 @@ extension DialogExtension on BuildContext {
   }
 
   /// - [menuPosition] 菜单显示在锚点的什么位置
-  ///    - [PopupMenuPosition.over] 覆盖显示
+  ///    - [PopupMenuPosition.over] 覆盖显示(默认)
   ///    - [PopupMenuPosition.under] 在锚点下方显示
   /// - [showMenus] - 支持[PopupMenuEntry]list
   /// - [showWidgetMenu] - 支持[Widget]
