@@ -62,10 +62,29 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     String? label,
     String? tooltip,
     Color? backgroundColor,
+    //--
+    Axis axis = .horizontal,
+    Widget? before,
+    Widget? after,
+    double? gap = kH,
   }) {
+    if (axis == .horizontal) {
+      return BottomNavigationBarItem(
+        icon: normal.rowOf(null, before: before, after: after, gap: gap),
+        activeIcon: active?.rowOf(null, before: before, after: after, gap: gap),
+        label: label ?? "",
+        tooltip: tooltip,
+        backgroundColor: backgroundColor,
+      );
+    }
     return BottomNavigationBarItem(
-      icon: normal,
-      activeIcon: active,
+      icon: normal.columnOf(null, before: before, after: after, gap: gap),
+      activeIcon: active?.columnOf(
+        null,
+        before: before,
+        after: after,
+        gap: gap,
+      ),
       label: label ?? "",
       tooltip: tooltip,
       backgroundColor: backgroundColor,

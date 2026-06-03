@@ -2978,6 +2978,8 @@ extension WidgetEx on Widget {
   Widget columnOf(
     Widget? other, {
     Key? key,
+    Widget? before,
+    Widget? after,
     MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
     MainAxisSize? mainAxisSize, //MainAxisSize.min
     CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
@@ -2986,9 +2988,9 @@ extension WidgetEx on Widget {
     TextBaseline? textBaseline,
     double? gap,
     Widget? gapWidget,
-  }) => other == null
+  }) => other == null && before == null && after == null
       ? this
-      : [this, other].column(
+      : [before, this, after, other].column(
           key: key,
           mainAxisAlignment: mainAxisAlignment,
           mainAxisSize: mainAxisSize,
