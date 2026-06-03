@@ -988,8 +988,30 @@ extension DialogExtension on BuildContext {
   ///    - [PopupMenuPosition.under] 在锚点下方显示
   /// - [showMenus] - 支持[PopupMenuEntry]list
   /// - [showWidgetMenu] - 支持[Widget]
+  ///
+  /// ```
+  /// ctx.showWidgetMenu(
+  ///   [
+  ///     LabelMenuTile(
+  ///       label: "退出登录",
+  ///       onTap: () {
+  ///         ctx.popMenu();
+  ///       },
+  ///     ),
+  ///     DesktopTextMenuTile(
+  ///       text: "退出登录",
+  ///       onTap: () {
+  ///         ctx.popMenu();
+  ///       },
+  ///     ),
+  ///   ].column()?.constrainedMax(maxWidth: kMenuMinWidth),
+  ///   menuPosition: .over,
+  /// );
+  /// ```
+  ///
+  /// - [NavigatorEx.popMenu] 关闭菜单
   Future<T?> showWidgetMenu<T>(
-    Widget menu, {
+    Widget? menu, {
     PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,
     //--
     Offset? position /*强行指定在overlay中的位置, 此位置会自动偏移anchor的左上角偏移*/,
@@ -1012,6 +1034,14 @@ extension DialogExtension on BuildContext {
     RouteSettings? routeSettings,
     bool? requestFocus,
   }) async {
+    if (menu == null) {
+      assert(() {
+        l.w('menu is null');
+        return true;
+      }());
+      return null;
+    }
+
     if (!mounted) {
       assert(() {
         l.w('context is not mounted');

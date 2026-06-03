@@ -72,6 +72,7 @@ extension MouseRightMenuWidgetEx on Widget {
   Widget mouseRightMenu({
     List<Widget>? menus,
     List<VoidCallback>? onMenusTap /*菜单对应的点击事件*/,
+    //--菜单整体
     Widget? menu,
   }) {
     return MouseRightMenuWidget(
