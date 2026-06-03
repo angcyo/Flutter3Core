@@ -22,7 +22,8 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   void _updateNavigationIndexFromPageView() {
     if (this is PageViewMixin) {
       final pageViewController = (this as PageViewMixin).pageViewController;
-      currentNavigateIndexMixin = (this as PageViewMixin).currentPageIndex ??
+      currentNavigateIndexMixin =
+          (this as PageViewMixin).currentPageIndex ??
           pageViewController?.initialPage ??
           currentNavigateIndexMixin;
     }
@@ -34,6 +35,7 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   /// ```
   /// constraints: BoxConstraints(minHeight: kBottomNavigationBarHeight + additionalBottomPadding)
   /// ```
+  @api
   double getNavigationBarMinHeight(BuildContext context) {
     /*final double additionalBottomPadding =
         MediaQuery.viewPaddingOf(context).bottom;
@@ -48,10 +50,26 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   @callPoint
   @overridePoint
   List<BottomNavigationBarItem> buildBottomNavigationBarItems(
-          BuildContext context) =>
-      [];
+    BuildContext context,
+  ) => [];
+
+  /// - [normal] 默认时的小部件
+  /// - [active] 选中时的小部件
+  @api
+  BottomNavigationBarItem buildBottomNavigationBarItem(
+    Widget normal, {
+    Widget? active,
+    String? label,
+  }) {
+    return BottomNavigationBarItem(
+      icon: normal,
+      activeIcon: active,
+      label: label ?? "",
+    );
+  }
 
   /// [kBottomNavigationBarHeight] 固定高度 56.0
+  @api
   @callPoint
   Widget buildBottomNavigationBar(
     BuildContext context, {
@@ -73,15 +91,19 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     selectedItemColor ??= globalTheme.icoSelectedColor;
     unselectedItemColor ??= globalTheme.icoNormalColor;
     //--
-    final unselectedIconTheme =
-        IconTheme.of(context).copyWith(color: unselectedItemColor);
-    final selectedIconTheme =
-        unselectedIconTheme.copyWith(color: selectedItemColor);
+    final unselectedIconTheme = IconTheme.of(
+      context,
+    ).copyWith(color: unselectedItemColor);
+    final selectedIconTheme = unselectedIconTheme.copyWith(
+      color: selectedItemColor,
+    );
 
-    final unselectedLabelStyle =
-        globalTheme.textBodyStyle.copyWith(color: unselectedItemColor);
-    final selectedLabelStyle =
-        unselectedLabelStyle.copyWith(color: selectedItemColor);
+    final unselectedLabelStyle = globalTheme.textBodyStyle.copyWith(
+      color: unselectedItemColor,
+    );
+    final selectedLabelStyle = unselectedLabelStyle.copyWith(
+      color: selectedItemColor,
+    );
 
     return BottomNavigationBar(
       items: items,
@@ -125,5 +147,5 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     context.tryUpdateState();
   }
 
-//endregion --BottomNavigationBar--
+  //endregion --BottomNavigationBar--
 }
