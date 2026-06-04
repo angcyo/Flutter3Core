@@ -295,6 +295,33 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     scrollController.finishRefresh(loadData, stateData);
   }
 
+  /// 插入数据
+  ///  - [index] 插入数据的索引, 支持负数(倒序索引)
+  @api
+  void insertData(Iterable? loadData, int index) {
+    if (loadData == null || loadData.isEmpty) {
+      return;
+    }
+    if (pageWidgetList.isEmpty) {
+      loadDataEnd(loadData, null, true);
+      return;
+    }
+    final insertIndex = index < 0 ? pageWidgetList.length + index : index;
+    if (loadData is Iterable<Widget>) {
+      pageWidgetList.insertAll(insertIndex, loadData);
+    } else if (loadData.firstOrNull is Widget) {
+      pageWidgetList.insertAll(insertIndex, loadData.cast<Widget>());
+    } else if (loadData.isNotEmpty) {
+      assert(() {
+        l.w('无法处理的数据类型:${loadData.runtimeType}');
+        debugger();
+        return true;
+      }());
+    }
+    //重建界面
+    scrollController.notifyRebuildScrollViewWidget();
+  }
+
   /// 处理[onLoadData]加载了的数据
   /// - [loadDataEnd]
   /// - [enableRebuild] 是否支持通过[beanList]中的数据动态更新[Widget]
@@ -304,12 +331,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   ///   - [updateTileList]
   ///   - [updateAllTile]
   /// - [enableRebuild] 是否支持动态更新数据
+  /// - [insetIndex] 是否是插入数据
   @api
   void loadBeanEnd<T>(
     Iterable<T>? beanList, [
     dynamic stateData /*不同的状态, 附加的任意数据*/,
     WidgetValueIndexBuilder<T>? builder,
     bool enableRebuild = false,
+    int? insetIndex,
   ]) {
     final widgetList = beanList?.mapIndex((bean, index) {
       final widget = builder?.call(context, bean, index, null);
@@ -319,7 +348,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         return widget;
       }
     }).filterNull();
-    loadDataEnd(widgetList, stateData, true);
+    if (insetIndex == null) {
+      loadDataEnd(widgetList, stateData, true);
+    } else {
+      insertData(widgetList, insetIndex);
+    }
   }
 
   /// 设置首次的加载状态
