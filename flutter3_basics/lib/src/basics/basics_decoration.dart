@@ -6,6 +6,7 @@ part of '../../flutter3_basics.dart';
 
 //region BoxDecoration
 
+/// 自定义绘制装饰器
 /// [BoxDecoration] 装饰
 /// [PaintFn]
 class PaintDecoration extends Decoration {
@@ -108,6 +109,108 @@ class PaintBoxPainter extends BoxPainter {
       });
     }
   }
+}
+
+/// 虚线装饰器
+class DashedBorderDecoration extends Decoration {
+  final Color color;
+  final double strokeWidth;
+  final double dashWidth;
+  final double dashSpace;
+  final double borderRadius;
+
+  const DashedBorderDecoration({
+    this.color = Colors.black,
+    this.strokeWidth = 1,
+    this.dashWidth = 5,
+    this.dashSpace = 3,
+    this.borderRadius = 0,
+  });
+
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return DashedBorderPainter(this, onChanged);
+  }
+}
+
+class DashedBorderPainter extends BoxPainter {
+  final DashedBorderDecoration config;
+
+  DashedBorderPainter(this.config, super.onChanged);
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    assert(configuration.size != null);
+    final rect = offset & configuration.size!;
+
+    final paint = Paint()
+      ..color = config.color
+      ..strokeWidth = config.strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    // 使用 Path 创建一个矩形（或圆角矩形）
+    final Path targetPath = Path();
+    if (config.borderRadius > 0) {
+      targetPath.addRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(config.borderRadius)),
+      );
+    } else {
+      targetPath.addRect(rect);
+    }
+
+    // 将连续的 Path 转化为虚线 Path
+    final Path dashedPath = Path();
+
+    // 核心算法：遍历整个路径，分段截取
+    for (PathMetric pathMetric in targetPath.computeMetrics()) {
+      double distance = 0.0;
+      bool draw = true;
+      while (distance < pathMetric.length) {
+        double len = draw ? config.dashWidth : config.dashSpace;
+        // 防止最后一段溢出
+        if (distance + len > pathMetric.length) {
+          len = pathMetric.length - distance;
+        }
+
+        if (draw) {
+          dashedPath.addPath(
+            pathMetric.extractPath(distance, distance + len),
+            Offset.zero,
+          );
+        }
+        distance += len;
+        draw = !draw; // 切换“绘制”与“空白”状态
+      }
+    }
+
+    // 真正绘制到画布上
+    canvas.drawPath(dashedPath, paint);
+  }
+}
+
+//MARK: - METHOD
+
+/// 虚线装饰
+/// [color] 描边颜色
+/// [strokeWidth] 描边宽度
+/// [fillDecoration]
+DashedBorderDecoration dashedDecoration({
+  Color? color,
+  BuildContext? context,
+  double? strokeWidth,
+  double? dashWidth,
+  double? dashSpace,
+  double? radius = kDefaultBorderRadiusXX,
+}) {
+  //globalTheme.borderColor
+  final strokeColor = color ?? GlobalTheme.of(context).accentColor;
+  return DashedBorderDecoration(
+    color: strokeColor,
+    strokeWidth: strokeWidth ?? 1,
+    dashWidth: dashWidth ?? 5,
+    dashSpace: dashSpace ?? 3,
+    borderRadius: radius ?? 0,
+  );
 }
 
 /// 描边装饰
