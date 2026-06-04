@@ -1396,6 +1396,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
         (widget.inputBorderType == InputBorderType.fillOutline
             ? globalTheme.itemWhiteSubBgColor
             : null);
+    final floatingLabelStyle =
+        widget.floatingLabelStyle ??
+        widget.labelStyle ??
+        globalTheme.textLabelStyle;
     debugger(when: widget.debugLabel != null);
     final decoration =
         widget.decoration ??
@@ -1448,12 +1452,11 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           errorStyle: widget.errorStyle ?? widget.config.errorStyle,
           //floatingLabel
           //floatingLabelAlignment: FloatingLabelAlignment.center,
-          floatingLabelStyle:
-              widget.floatingLabelStyle ??
-              widget.labelStyle ??
-              TextStyle(
-                color: widget.focusBorderColor ?? globalTheme.accentColor,
-              ),
+          floatingLabelStyle: widget.config.hasFocus
+              ? floatingLabelStyle.copyWith(
+                  color: widget.focusBorderColor ?? globalTheme.accentColor,
+                )
+              : floatingLabelStyle,
           //控制label的行为
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           suffix: widget.suffix,

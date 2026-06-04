@@ -107,6 +107,7 @@ part 'src/tiles/desktop_mix.dart';
 part 'src/tiles/multi_value_change_mixin.dart';
 part 'src/widgets/layout/after_layout.dart';
 part 'src/widgets/app/button.dart';
+part 'src/widgets/app/input_decoration_mixin.dart';
 part 'src/widgets/app/search.dart';
 part 'src/widgets/app/tab.dart';
 part 'src/widgets/app/text_field.dart';

@@ -9,6 +9,12 @@ const kItemPadding = EdgeInsets.only(left: kX, right: kX, top: kH, bottom: kH);
 
 /// input输入框默认的填充
 const kInputPadding = EdgeInsets.only(left: kH, right: kH, top: kX, bottom: kX);
+const kInputPaddingMin = EdgeInsets.only(
+  left: kM,
+  right: kM,
+  top: kH,
+  bottom: kH,
+);
 
 ///
 const kInputSubPadding = EdgeInsets.fromLTRB(kH, kL, kH, kL);
