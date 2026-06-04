@@ -17,8 +17,9 @@ part of '../flutter3_oss.dart';
 /// 上传文件
 /// - [bucketName] 不指定则使用默认的
 /// - [prefixKey] 前缀, 会拼上文件名然后当做[key]
-/// - [key] 上传文件的key, 不指定就是文件名
+/// - [key] 上传文件的key(全路径), 不指定就是文件名
 /// - [baseUrl] 下载拼接使用的地址
+/// - [override] 是否覆盖源文件, 否则如果文件存在会报409错误
 ///
 /// ```
 /// DioException [connection error]: The connection errored: Failed host lookup: 'laserpecker-prod.https' This indicates an error which most likely cannot be solved by the library.
@@ -26,10 +27,16 @@ part of '../flutter3_oss.dart';
 /// https://laserpecker-prod.oss-cn-hongkong.aliyuncs.com/6e44b305d1c94182a83fbf0846348fcd.lp2
 /// ```
 ///
-/// - @return 返回文件可以下载的url地址
+/// # 409 The object you specified already exists and can not be overwritten.
+///
+/// ```
+/// DioException [bad response]: This exception was thrown because the response has a status code of 409 and RequestOptions.validateStatus was configured to throw for this status code.
+/// ```
 ///
 /// - [uploadAliyunOssBytes]
 /// - [uploadAliyunOssFile]
+///
+/// @return 返回文件可以下载的url地址
 Future<String?> uploadAliyunOssFile(
   String filepath, {
   String? prefixKey,
@@ -44,11 +51,12 @@ Future<String?> uploadAliyunOssFile(
   //--
   ProgressDataAction? onSendAction,
   ProgressDataAction? onReceiveAction,
+  //--
 }) async {
   //--
   key ??= prefixKey == null
       ? filepath.fileName()
-      : "$prefixKey/${filepath.fileName()}";
+      : prefixKey.connectUrl(filepath.fileName());
   baseUrl ??= OssClient.ossBaseUrl;
   await OssClient.aliyunOssClient!.putObjectFile(
     filepath,

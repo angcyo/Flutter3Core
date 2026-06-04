@@ -228,6 +228,12 @@ Future wrapLoading(
     }, timeout);
   }
   return future.get((value, error) {
+    assert(() {
+      if (error != null) {
+        l.e('wrapLoading error->$error');
+      }
+      return true;
+    }());
     debugger(when: !isIos && debugLabel != null);
     //l.w("future end");
     if (isTimeout) {
