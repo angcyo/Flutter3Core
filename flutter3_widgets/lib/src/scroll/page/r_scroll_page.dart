@@ -19,7 +19,7 @@ part of '../../../flutter3_widgets.dart';
 /// [RScrollView]
 /// [AbsScrollPage] 基础[RScrollView]页面
 /// [RScrollPage]   全功能[RScrollView]页面
-/// [RStatusScrollPage]
+/// [RStatusScrollPage] 支持切换不同状态的页面
 ///
 /// ## 分页信息
 ///
@@ -652,4 +652,36 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   //endregion 页面更新
+}
+
+/// F5 刷新界面混入
+mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
+  /// [build]->[buildScrollPage]->[pageRScrollView]->[RScrollView]
+  @override
+  Widget build(BuildContext context) {
+    return super.build(context);
+  }
+
+  @override
+  Widget pageRScrollView({
+    WidgetList? children,
+    bool? enableRefresh,
+    bool? enableLoadMore,
+  }) {
+    return super
+        .pageRScrollView(
+          children: children,
+          enableRefresh: enableRefresh,
+          enableLoadMore: enableLoadMore,
+        )
+        .keyEvent(
+          isMacOS
+              ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyR]
+              : [LogicalKeyboardKey.f5],
+          (event) {
+            startRefresh();
+            return .handled;
+          },
+        );
+  }
 }
