@@ -19,6 +19,9 @@ const double kXx = 24;
 const double kXxh = 32;
 const double kXxx = 48;
 
+/// Not Applicable / Not Available
+const String kNA = "N/A";
+
 /// 高度模糊, 图像就越模糊。影响性能
 /// （Sigma）：标准差。这是高斯模糊的“灵魂”。$\sigma$ 越大，正态分布的曲线越矮胖，
 /// 意味着更远处的像素也会对中心点产生较大影响，图像就越模糊。

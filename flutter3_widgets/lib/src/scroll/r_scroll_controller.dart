@@ -430,7 +430,7 @@ class RScrollController extends ScrollController {
 
   /// 内部刷新处理开始处理
   /// 如果[_onRefreshStart]内部有异步方法
-  /// [updateAdapterState]
+  /// [updateAdapterState] -> [_onRefreshStart]
   /// [buildAdapterStateWidget]
   /// [_onRefresh]
   @property

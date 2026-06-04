@@ -926,6 +926,9 @@ extension WidgetEx on Widget {
         )
       : this;
 
+  /// 监听按键事件
+  /// - [keys] 一组按键, 全部匹配则通过
+  /// - [eventGroupKeys] N组按键, 匹配任意一个则通过
   /// [KeyEventWidget]
   Widget keyEvent(
     List<KeyboardKey> keys,
