@@ -6,8 +6,8 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 下拉按钮菜单tile, 系统内部使用[PopupRoute]实现
 ///
-/// - [DropdownButton] 系统
-/// - [DropdownMenu] 系统
+/// - [DropdownButton] 系统, 下划线样式, 下拉样式
+/// - [DropdownMenu] 系统, 边框样式, 还可输入
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
@@ -26,6 +26,7 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
 
   //--Item
 
+  /// 下拉菜单中, item的对齐方式
   /// [DropdownMenuItem]
   final AlignmentGeometry itemAlignment;
 
@@ -37,16 +38,38 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
   /// Dropdown
   final dynamic dropdownValue;
   final List<dynamic>? dropdownValueList;
+
+  /// [dropdownValue]也会被回调
   final ValueChanged<dynamic>? onChanged;
 
+  /// 填充边距
+  @defInjectMark
+  final EdgeInsetsGeometry? padding;
+
   /// Dropdown2
+  /// 右边箭头的小部件, 系统有默认
   final Widget? icon;
   final double iconSize;
 
+  /// 文本样式
+  final TextStyle? style;
+
   final AlignmentGeometry alignment;
 
+  /// 下拉背景颜色
+  final Color? dropdownColor;
+
+  //--
+
+  /// 紧凑
   final bool isDense;
-  final bool isExpanded;
+
+  /// 扩展宽度, 箭头就会被顶到最后面
+  /// 不指定时, 当[labelWidget]为空时. 自动撑满
+  @defInjectMark
+  final bool? isExpanded;
+
+  /// 下划线, 系统有默认
   final Widget? underline;
 
   const DropdownButtonTile({
@@ -63,11 +86,14 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
     this.onChanged,
     this.icon,
     this.iconSize = 24.0,
+    this.style,
     this.alignment = AlignmentDirectional.center,
     this.mainAxisSize,
     this.isDense = false,
-    this.isExpanded = false,
+    this.isExpanded,
     this.underline,
+    this.dropdownColor,
+    this.padding,
   });
 
   @override
@@ -89,39 +115,41 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
           textPadding: widget.labelPadding,
         )
         ?.expanded(enable: widget.mainAxisSize != MainAxisSize.min);
-    return [
-      labelWidget,
-      DropdownButton(
-        items: _buildDropdownMenuItems(context),
-        value: currentValueMixin,
-        //文本样式
-        style: null,
-        icon: widget.icon,
-        iconSize: widget.iconSize,
-        itemHeight: kMinInteractiveDimension,
-        menuMaxHeight: null,
-        //紧凑的高度
-        isDense: widget.isDense,
-        isExpanded: widget.isExpanded,
-        //下划线
-        underline: widget.underline,
-        //下拉菜单的背景颜色
-        //[ThemeData.canvasColor]
-        dropdownColor: null,
-        enableFeedback: true,
-        alignment: widget.alignment,
-        onChanged: (value) {
-          /*initialValue = value;
+    final dropdown = DropdownButton(
+      items: _buildDropdownMenuItems(context),
+      value: currentValueMixin,
+      //文本样式
+      style: widget.style,
+      icon: widget.icon,
+      iconSize: widget.iconSize,
+      itemHeight: kMinInteractiveDimension,
+      menuMaxHeight: null,
+      //紧凑的高度
+      isDense: widget.isDense,
+      isExpanded: widget.isExpanded ?? labelWidget == null,
+      //下划线
+      underline: widget.underline,
+      //下拉菜单的背景颜色
+      //[ThemeData.canvasColor]
+      dropdownColor: widget.dropdownColor,
+      enableFeedback: true,
+      alignment: widget.alignment,
+      padding: widget.padding ?? insets(h: kH),
+      onChanged: (value) {
+        /*initialValue = value;
             updateState();*/
-          assert(() {
-            l.w("DropdownButtonTile.onChanged[${value.runtimeType}]: $value");
-            return true;
-          }());
-          updateValueMixin(value);
-          widget.onChanged?.call(value);
-        },
-      ),
-    ].row(mainAxisSize: widget.mainAxisSize)!;
+        assert(() {
+          l.w("DropdownButtonTile.onChanged[${value.runtimeType}]: $value");
+          return true;
+        }());
+        updateValueMixin(value);
+        widget.onChanged?.call(value);
+      },
+    );
+    if (labelWidget == null) {
+      return dropdown;
+    }
+    return [labelWidget, dropdown].row(mainAxisSize: widget.mainAxisSize)!;
   }
 
   /// [DropdownMenuItem]
@@ -164,8 +192,8 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
 
 /// 下拉输入框菜单tile, 系统内部使用[Overlay]实现
 ///
-/// - [DropdownButton] 系统
-/// - [DropdownMenu] 系统
+/// - [DropdownButton] 系统, 下划线样式, 下拉样式
+/// - [DropdownMenu] 系统, 边框样式, 还可输入
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
@@ -258,8 +286,8 @@ class DropdownMenuTile extends StatelessWidget with TileMixin {
 /// 锚点菜单tile, 使用[MenuAnchor]实现
 /// 内部使用[Overlay]实现
 ///
-/// - [DropdownButton] 系统
-/// - [DropdownMenu] 系统
+/// - [DropdownButton] 系统, 下划线样式, 下拉样式
+/// - [DropdownMenu] 系统, 边框样式, 还可输入
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
@@ -372,12 +400,18 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
 }
 
 /// 使用 `dropdown_flutter: ^1.0.3` 实现的下拉菜单tile
+/// # https://pub.dev/packages/dropdown_flutter
+/// - 样式更现代
+/// - 有箭头
+/// - 支持多选
+/// - 支持搜索骨哦绿
+///
 /// 内部使用[OverlayPortal]实现
 /// - [CompositedTransformTarget]
 /// - [CompositedTransformFollower]
 ///
-/// - [DropdownButton] 系统
-/// - [DropdownMenu] 系统
+/// - [DropdownButton] 系统, 下划线样式, 下拉样式
+/// - [DropdownMenu] 系统, 边框样式, 还可输入
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
@@ -455,6 +489,35 @@ class _DropdownTileState extends State<DropdownTile> {
         }());
         widget.onChanged?.call(value);
       },
+    );
+  }
+}
+
+//MARK: - ex
+
+extension DropdownMenuValueListEx on List {
+  /// - [dropdownValue] 默认值
+  Widget dropdownMenu(
+    dynamic dropdownValue, {
+    Key? key,
+    ValueChanged<dynamic>? onChanged,
+    //--
+    bool isDense = false,
+    bool? isExpanded,
+  }) {
+    List values;
+    if (dropdownValue != null && !contains(dropdownValue)) {
+      values = [dropdownValue, ...this];
+    } else {
+      values = this;
+    }
+    return DropdownButtonTile(
+      key: key,
+      dropdownValue: dropdownValue,
+      dropdownValueList: values,
+      onChanged: onChanged,
+      isExpanded: isExpanded,
+      isDense: isDense,
     );
   }
 }
