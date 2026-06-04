@@ -57,6 +57,7 @@ part 'src/oss_upload.dart';
 class OssClient {
   OssClient._();
 
+  /// 阿里云OSS的Client
   static Client? aliyunOssClient;
 
   //--
@@ -81,8 +82,8 @@ class OssClient {
     if (url != null) {
       return url;
     }
-    String? ossBucket = $bc?["ossBucket"];
-    String? ossEndpoint = $bc?["ossEndpoint"];
+    String? ossBucket = OssClient._ossBucket ?? $bc?["ossBucket"];
+    String? ossEndpoint = OssClient._ossEndpoint ?? $bc?["ossEndpoint"];
     if (ossBucket != null && ossEndpoint != null) {
       if (ossEndpoint.startsWith("^https?://")) {
         return "$ossBucket.$ossEndpoint";
