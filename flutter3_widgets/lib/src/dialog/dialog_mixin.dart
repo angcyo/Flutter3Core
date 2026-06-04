@@ -617,7 +617,9 @@ mixin DialogMixin implements TranslationTypeImpl {
         );
     if (useDesktopLayout) {
       //no op
-      result = result.align(align);
+      result = result
+          .adaptiveTablet(context, alignment: align, disable: fullScreen)
+          .align(align);
     } else {
       result = result.pullBack(
         enablePullBack: enablePullBack,
@@ -648,7 +650,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .matchParent(matchHeight: fullScreen)
         .align(align)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .adaptiveTablet(context, align)
+        .adaptiveTablet(context, alignment: align, disable: fullScreen)
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(context, enable: dialogBarrierDismissible);
 

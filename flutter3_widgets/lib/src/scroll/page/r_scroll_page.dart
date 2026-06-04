@@ -203,6 +203,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       l.e(e);
       assert(() {
         printError(e);
+        debugger();
         return true;
       }());
       loadDataEnd(null, e);

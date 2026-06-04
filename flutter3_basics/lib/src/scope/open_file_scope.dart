@@ -13,6 +13,8 @@ part of '../../flutter3_basics.dart';
 /// 等待被打开的数据
 class OpenFileScopeData {
   /// Uri
+  ///
+  /// - [FileUriEx.filePath]
   final List<Uri>? uriList;
 
   /// 图片
@@ -55,6 +57,7 @@ class OpenFileScope extends InheritedWidget {
 extension OpenFileScopeEx on Widget {
   /// 提供一个需要打开的数据[OpenFileScopeData]
   /// - 监听这个值, 并且处理对应的数据
+  /// 配合[OpenFileScopeStateMixin]使用
   Widget provideOpenFileData(
     UpdateValueNotifier<OpenFileScopeData?>? data, {
     Key? key,

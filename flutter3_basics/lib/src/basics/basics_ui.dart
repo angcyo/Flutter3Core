@@ -2740,6 +2740,7 @@ extension WidgetEx on Widget {
     ButtonStyle? style,
     bool? isSelected,
     Widget? selectedIcon,
+    MouseCursor? mouseCursor,
   }) {
     Widget child = this;
     if (minSize == true) {
@@ -2778,6 +2779,7 @@ extension WidgetEx on Widget {
       style: style,
       isSelected: isSelected,
       selectedIcon: selectedIcon,
+      mouseCursor: mouseCursor,
     );
   }
 
@@ -3206,17 +3208,19 @@ extension WidgetEx on Widget {
   //endregion ---Button Theme---
 
   /// 平板适配
-  Widget adaptiveTablet([
-    BuildContext? context,
+  Widget adaptiveTablet(
+    BuildContext? context, {
     AlignmentGeometry alignment = Alignment.bottomCenter,
-  ]) {
+    BoxConstraints? constraints,
+    bool disable = false,
+  }) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
-    if (globalConfig.isInTabletModel || isDesktopOrWeb) {
+    if (!disable && (globalConfig.isInTabletModel || isDesktopOrWeb)) {
       //平板模式
       final globalTheme = GlobalTheme.of(context);
       return constrainedBox(
-        globalTheme.tabletDialogConstraints,
+        constraints ?? globalTheme.tabletDialogConstraints,
       ).align(alignment);
       //return size(size: 200);
     }
