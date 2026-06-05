@@ -1694,6 +1694,8 @@ extension WidgetEx on Widget {
   /// [bottomRadius] 如果配置了, 则只有底部有圆角
   ///
   /// [clipRadius]无效果的时候, 可能需要在包裹一层[material]
+  ///
+  ///  - [clipOval]
   Widget clipRadius({
     bool enable = true,
     double? radius = kDefaultBorderRadiusXX,
@@ -1729,7 +1731,7 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 椭圆形
+  /// 椭圆形/圆
   Widget clipOval({
     CustomClipper<Rect>? clipper,
     Clip clipBehavior = Clip.antiAlias,

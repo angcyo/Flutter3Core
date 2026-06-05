@@ -684,15 +684,14 @@ mixin DialogMixin implements TranslationTypeImpl {
             },
       );
     }
-    result
+    //--
+    return result
         .matchParent(matchHeight: fullScreen)
         .align(align)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context, alignment: align, disable: fullScreen)
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(context, enable: dialogBarrierDismissible);
-
-    return result;
   }
 
   /// 构建桌面端右边侧滑全屏高度显示的对话框布局
