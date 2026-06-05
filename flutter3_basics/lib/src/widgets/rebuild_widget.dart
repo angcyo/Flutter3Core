@@ -52,10 +52,11 @@ class RebuildWidgetState extends State<RebuildWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final value = widget.updateSignal?.value;
+    //l.e("RebuildWidget->$value");
     return widget.builder(
           context,
-          widget.updateSignal?.value ??
-              widget.updateSignalList?.map((element) => element.value),
+          value ?? widget.updateSignalList?.map((element) => element.value),
         ) ??
         empty;
   }

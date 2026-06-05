@@ -162,7 +162,7 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
           alignment: widget.itemAlignment,
           child: _transformItemWidget(
             context,
-            widgetOf(context, value) ?? textOf(value, context)!.text(),
+            widgetOf(context, value, tryTextWidget: true) ?? empty,
             index,
             value,
             value == currentValueMixin,

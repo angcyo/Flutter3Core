@@ -79,7 +79,7 @@ Widget? widgetOf(
   BuildContext context,
   dynamic data, {
   //--
-  bool tryTextWidget = false,
+  bool? tryTextWidget,
   TextStyle? textStyle,
   TextAlign? textAlign,
   bool textSelectable = false,
@@ -105,7 +105,7 @@ Widget? widgetOf(
     }
   }
 
-  if (tryTextWidget) {
+  if (tryTextWidget == true) {
     final text = textOf(data, context);
     if (text != null) {
       final globalTheme = GlobalTheme.of(context);
@@ -116,10 +116,18 @@ Widget? widgetOf(
       );
     }
   }
-  assert(() {
-    l.v('${tag?.wsb ?? ""}当前类型[${data.runtimeType}]不支持[$IWidgetProvider]操作.');
-    return true;
-  }());
+
+  if (tryTextWidget != null && data is String) {
+    //明确了返回值~
+  } else {
+    //debugger();
+    assert(() {
+      l.v(
+        '${tag?.wsb ?? ""}当前类型[${data.runtimeType}]不支持[$IWidgetProvider]操作->$data',
+      );
+      return true;
+    }());
+  }
   return null;
 }
 

@@ -43,6 +43,11 @@ class TextFieldConfig {
   /// - [text]
   String get text => controller.text;
 
+  /// [updateText]
+  set text(String? text) {
+    updateText(text);
+  }
+
   /// 输入框选中的文本范围
   TextSelection get selection => controller.selection;
 
@@ -55,10 +60,7 @@ class TextFieldConfig {
   /// - [TextRange.isCollapsed] 未选中文本
   String get selectedText => controller.selection.textInside(text);
 
-  /// [updateText]
-  set text(String? text) {
-    updateText(text);
-  }
+
 
   /// 输入的文本
   /// - [value]
@@ -300,12 +302,18 @@ class TextFieldConfig {
   /// 更新输入框的值, 如果值是json格式的话
   /// @return 格式化后的json字符串, 失败则返回原来的字符串
   @api
-  String formatIfJson({String? text}) {
+  String formatIfJson({
+    String? text,
+    String? indent = '  ',
+    bool update = true,
+  }) {
     text ??= this.text;
     try {
       final json = jsonDecode(text);
-      final jsonString = JsonEncoder.withIndent('  ').convert(json);
-      updateText(jsonString, restoreSelection: true);
+      final jsonString = JsonEncoder.withIndent(indent).convert(json);
+      if (update) {
+        updateText(jsonString, restoreSelection: true);
+      }
       return jsonString;
     } catch (e) {
       return text;
