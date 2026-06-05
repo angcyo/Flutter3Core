@@ -60,8 +60,6 @@ class TextFieldConfig {
   /// - [TextRange.isCollapsed] 未选中文本
   String get selectedText => controller.selection.textInside(text);
 
-
-
   /// 输入的文本
   /// - [value]
   /// - [text]
@@ -362,12 +360,15 @@ class TextFieldConfig {
   /// [inputFormatters] 限制输入的字符
   /// [restoreSelection] 是否恢复选中位置
   /// [notify] 是否要通知改变, 默认true
+  /// [updateEmpty] 空字符是否更新, 默认false
   @api
   void updateText(
     String? text, {
     List<TextInputFormatter>? inputFormatters,
     bool? restoreSelection = false,
     bool? notify,
+    //--
+    bool? updateEmpty = false,
   }) {
     if (this.text == text) {
       //debugger();
@@ -380,6 +381,13 @@ class TextFieldConfig {
       return;
     }
     text ??= '';
+    if (updateEmpty != true && text.isEmpty) {
+      assert(() {
+        l.v('${classHash()} 忽略更新空字符');
+        return true;
+      }());
+      return;
+    }
     final selection = value.selection;
     updateValue(
       //TextEditingValue(text: text),
