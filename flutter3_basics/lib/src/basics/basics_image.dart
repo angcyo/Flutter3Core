@@ -537,7 +537,8 @@ extension ImageStringEx on String {
   /// 从文件路径中读取图片
   /// [FileImage._loadAsync]
   /// [FileEx.toImage]
-  Future<ui.Image> toImageFromFile() => File(this).toImage();
+  Future<ui.Image> toImageFromFile() =>
+      isHttpScheme ? toImageFromHttp() : File(this).toImage();
 
   /// 从网络路径中读取图片
   Future<ui.Image> toImageFromHttp() async {

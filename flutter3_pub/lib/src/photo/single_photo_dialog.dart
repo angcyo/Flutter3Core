@@ -65,8 +65,13 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
     if (widget.content != null) {
       _imageProvider = widget.content!.toImageProvider();
     }
-    if (widget.filePath != null) {
-      _imageProvider = FileImage(File(widget.filePath!));
+    final filePath = widget.filePath;
+    if (filePath != null) {
+      if (filePath.isHttpScheme) {
+        _imageProvider = NetworkImage(filePath);
+      } else {
+        _imageProvider = FileImage(File(filePath));
+      }
     }
     if (isDebug) {
       _imageProvider?.toImage().then((image) {
@@ -100,8 +105,10 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
           : "${image.width}*${image.height} (${(image.width * image.height * 4).toSizeStr()})";
       result = result.stackOf(
         isDebug
-            ? "$imageLog ${widget.filePath == null ? '' : '\n$filePath'}"
+            ? "$imageLog ${widget.filePath == null ? '' : '\n${widget.filePath}'}"
                   .text(textColor: Colors.white, fontSize: 8)
+                  .padding(4, 2)
+                  .shadowDecorated(radius: 4, decorationColor: Colors.black26)
                   .paddingAll(kH)
                   .position(left: 0, top: 0)
             : null,

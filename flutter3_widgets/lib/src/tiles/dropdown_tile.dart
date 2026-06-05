@@ -494,6 +494,9 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
           return true;
         }());
         widget.onChanged?.call(value);
+        if (widget.selectOnly) {
+          widget.onTextChanged?.call(value);
+        }
       },
     );
     if (labelWidget == null) {
@@ -737,7 +740,7 @@ extension DropdownMenuValueListEx on List {
   ///
   /// - [DropdownButtonTile]
   /// - [DropdownMenuTile]
-  ///   - [enableFilter] 是否启用过滤
+  ///   - [enableInputFilter] 是否启用过滤
   Widget dropdownMenu(
     dynamic dropdownValue, {
     Key? key,
@@ -748,11 +751,13 @@ extension DropdownMenuValueListEx on List {
     bool? isExpanded,
     //--input style
     bool? useOverlayStyle,
-    bool enableFilter = true,
+    bool enableInputFilter = true,
     bool showInputTrailingIcon = true,
     InputBorderType? inputBorderType,
     String? inputLabel,
     Widget? inputLabelWidget,
+    //--
+    bool? notifyFirst,
   }) {
     List values;
     if (dropdownValue != null && !contains(dropdownValue)) {
@@ -760,7 +765,14 @@ extension DropdownMenuValueListEx on List {
     } else {
       values = this;
     }
-    dropdownValue ??= values.firstOrNull;
+    if (notifyFirst == true || dropdownValue == null) {
+      //debugger();
+      dropdownValue ??= values.firstOrNull;
+      if (notifyFirst == true || dropdownValue != null) {
+        onChanged?.call(dropdownValue);
+        onTextChanged?.call("$dropdownValue");
+      }
+    }
     if (useOverlayStyle == true) {
       return DropdownMenuTile(
         key: key,
@@ -770,8 +782,8 @@ extension DropdownMenuValueListEx on List {
         onTextChanged: onTextChanged,
         isExpanded: isExpanded,
         isDense: isDense,
-        selectOnly: !enableFilter,
-        enableFilter: enableFilter,
+        selectOnly: !enableInputFilter,
+        enableFilter: enableInputFilter,
         showTrailingIcon: showInputTrailingIcon,
         inputBorderType: inputBorderType ?? InputBorderType.outline,
         inputLabel: inputLabel,
