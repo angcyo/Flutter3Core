@@ -37,6 +37,16 @@ mixin DialogMixin implements TranslationTypeImpl {
     if (type.contains("bottom")) {
       return TranslationType.translationFade;
     }
+    if (isDesktopOrWeb) {
+      //桌面从右到左滑动
+      if (adaptiveDialogDesktopSlideStyle == null && type.contains("slide")) {
+        return TranslationType.slide;
+      }
+      if (adaptiveDialogDesktopSlideStyle != null &&
+          adaptiveDialogDesktopSlideStyle == true) {
+        return TranslationType.slide;
+      }
+    }
     return isDesktopOrWeb
         ? TranslationType.scaleFade
         : TranslationType.translationFade;
@@ -45,7 +55,10 @@ mixin DialogMixin implements TranslationTypeImpl {
   @override
   Alignment? get popupPreferredAlignment => .bottomCenter;
 
-  //MARK: -
+  //MARK: - dialog
+
+  /// 在桌面平台是否适配对话框的[TranslationType.slide]样式
+  bool? get adaptiveDialogDesktopSlideStyle => null;
 
   /// 弹出对话框时, 返回对话框的结果
   dynamic get popDialogResult => null;
@@ -449,12 +462,23 @@ mixin DialogMixin implements TranslationTypeImpl {
     String? debugLabel,
     //--
     bool? adaptiveDesktop /*适配桌面居中布局*/,
+    bool? adaptiveDesktopSlideStyle /*桌面布局使用右边全屏RTL滑动样式布局?*/,
+    double? contentMaxWidth /*内容最大宽度, 不指定自适应*/,
   }) {
     final useDesktopLayout = adaptiveDesktop == true && isDesktopOrWeb;
     if (useDesktopLayout) {
       clipRadius ??= clipTopRadius ?? clipBottomRadius;
       clipTopRadius ??= clipRadius;
       clipBottomRadius ??= clipRadius;
+      if (adaptiveDesktopSlideStyle == true) {
+        clipRadius = 0;
+        clipTopRadius = 0;
+        clipBottomRadius = 0;
+        fullScreen = true;
+        if (useRScroll) {
+          contentMaxWidth ??= kDesktopDialogMinWidth;
+        }
+      }
     }
 
     blur ??= dialogBlur;
@@ -474,7 +498,10 @@ mixin DialogMixin implements TranslationTypeImpl {
       contentMaxHeight = null;
     }
 
-    //滚动内容的最小最大高度
+    //滚动内容的最小最大宽高
+    if (contentMaxWidth != null && contentMaxWidth < 1) {
+      contentMaxWidth = screenWidth * contentMaxWidth;
+    }
     if (contentMinHeight != null && contentMinHeight < 1) {
       contentMinHeight = screenHeight * contentMinHeight;
     }
@@ -617,9 +644,21 @@ mixin DialogMixin implements TranslationTypeImpl {
         );
     if (useDesktopLayout) {
       //no op
-      result = result
-          .adaptiveTablet(context, alignment: align, disable: fullScreen)
-          .align(align);
+      if (adaptiveDesktopSlideStyle == true) {
+        if (contentMaxWidth != null) {
+          result = result.constrainedMax(
+            maxWidth: contentMaxWidth,
+            minHeight: double.infinity,
+          );
+        } else {
+          result = result.iw().constrainedMax(minHeight: double.infinity);
+        }
+        result = result.align(.topRight);
+      } else {
+        result = result
+            .adaptiveTablet(context, alignment: align, disable: fullScreen)
+            .align(align);
+      }
     } else {
       result = result.pullBack(
         enablePullBack: enablePullBack,
@@ -645,7 +684,6 @@ mixin DialogMixin implements TranslationTypeImpl {
             },
       );
     }
-
     result
         .matchParent(matchHeight: fullScreen)
         .align(align)
