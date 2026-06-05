@@ -79,13 +79,7 @@ mixin RTileRebuildMixin {
   void rebuildTile(bool Function(Widget tile, Listenable signal) test) {
     for (final element in tileWidgetList) {
       //debugger();
-      Listenable? updateSignal;
-      if (element is RItemTile) {
-        //element.updateTile();
-        updateSignal = element.updateSignal;
-      } else if (element is RebuildWidget) {
-        updateSignal = element.updateSignal;
-      }
+      Listenable? updateSignal = element.tileUpdateSignal;
       if (updateSignal != null) {
         try {
           if (test(element, updateSignal)) {
@@ -127,13 +121,7 @@ mixin RTileRebuildMixin {
     final WidgetList removeList = [];
     for (final element in tileWidgetList) {
       //debugger();
-      Listenable? updateSignal;
-      if (element is RItemTile) {
-        //element.updateTile();
-        updateSignal = element.updateSignal;
-      } else if (element is RebuildWidget) {
-        updateSignal = element.updateSignal;
-      }
+      Listenable? updateSignal = element.tileUpdateSignal;
       if (updateSignal != null) {
         try {
           if (test(element, updateSignal)) {

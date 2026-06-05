@@ -7,6 +7,10 @@ part of '../../flutter3_basics.dart';
 ///
 /// 分页请求参数
 /// 分页加载信息
+///
+/// - 排序信息
+///   - asc = Ascending → 升序（正序）
+///   - desc = Descending → 降序（倒序）
 class RequestPage {
   /// 默认一页请求的数量
   static var kPageSize = 20;
@@ -113,6 +117,8 @@ class RequestPage {
     return "首页[$firstPageIndex],当前页[$_currentPageIndex],请求页[$requestPageIndex],请求数量[$requestPageSize].";
   }
 
+  //MARK: - method
+
   /// 请求体重中的参数
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
@@ -135,5 +141,114 @@ class RequestPage {
       ..requestPageSize = requestPageSize ?? this.requestPageSize
       ..keyPageIndex = keyPageIndex ?? this.keyPageIndex
       ..keyPageSize = keyPageSize ?? this.keyPageSize;
+  }
+
+  //MARK: - sort 排序
+
+  /// 排序方式是否发生改变的通知
+  final sortLive = $liveOnce<bool>();
+
+  /// 是否有排序规则
+  bool get hasSort => sortField != null;
+
+  /// 排序字段
+  String? sortField;
+
+  /// 排序方式: 是否倒序
+  /// - 默认升序
+  bool? reversed;
+
+  /// 更新排序字段
+  /// @return true: 排序字段发生改变
+  @api
+  bool updateSort(String? field, {bool? reversed}) {
+    if (reversed != null) {
+      //更新当前字段的升降序
+      sortField = field ?? sortField;
+      if (this.reversed != reversed) {
+        this.reversed = reversed;
+        sortLive << true;
+        return true;
+      }
+    } else if (field != null) {
+      if (sortField != field) {
+        //更新新的字段
+        this.reversed = reversed ?? false;
+        sortField = field;
+        sortLive << true;
+      } else {
+        //切换相同的字段升降序
+        this.reversed = !(this.reversed ?? false);
+        sortLive << true;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /// 构建排序小部件
+  /// - [child] 默认的子部件
+  /// - [sortField] 当前子部件的排序字段, 不指定则不激活
+  /// - [ascIcon] 升序图标, 默认
+  /// - [descIcon] 降序图标, 默认
+  ///
+  /// - [onSort] 排序成功后的回调
+  ///
+  /// @return 带排序提示的小部件
+  @api
+  WidgetOf buildSortWidget(
+    BuildContext context,
+    WidgetOf child,
+    String? sortField, {
+    Widget? ascIcon,
+    Widget? descIcon,
+    VoidAction? onSortAction,
+    //--row
+    MainAxisSize? mainAxisSize,
+    MainAxisAlignment? mainAxisAlignment = .center,
+    double? gap = kM,
+  }) {
+    //debugger();
+
+    if (sortField == null) {
+      return child;
+    }
+    if (ascIcon == null && descIcon == null) {
+      return child;
+    }
+
+    //--
+    Widget? result = widgetOf(
+      context,
+      child,
+      tryTextWidget: true,
+      textAlign: switch (mainAxisAlignment) {
+        MainAxisAlignment.start => TextAlign.start,
+        MainAxisAlignment.end => TextAlign.end,
+        MainAxisAlignment.center => TextAlign.center,
+        _ => null,
+      },
+    );
+    if (this.sortField != sortField) {
+      //非当前的排序字段, 不显示图标
+    } else if (reversed == true) {
+      result = [result, descIcon].row(
+        mainAxisSize: mainAxisSize,
+        mainAxisAlignment: mainAxisAlignment,
+        gap: gap,
+      );
+    } else {
+      result = [result, ascIcon].row(
+        mainAxisSize: mainAxisSize,
+        mainAxisAlignment: mainAxisAlignment,
+        gap: gap,
+      );
+    }
+
+    return result?.click(() {
+      if (updateSort(sortField)) {
+        onSortAction?.call();
+      }
+    });
   }
 }

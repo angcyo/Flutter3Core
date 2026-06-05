@@ -34,6 +34,7 @@ class RScrollView extends StatefulWidget {
     this.center,
     this.anchor = 0.0,
     this.cacheExtent,
+    this.scrollCacheExtent,
     this.semanticChildCount,
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
@@ -112,7 +113,11 @@ class RScrollView extends StatefulWidget {
   final double anchor;
 
   /// [ScrollView.cacheExtent]
+  @Deprecated('Use scrollCacheExtent instead.')
   final double? cacheExtent;
+
+  /// [ScrollView.scrollCacheExtent]
+  final ScrollCacheExtent? scrollCacheExtent;
 
   /// [ScrollView.semanticChildCount]
   final int? semanticChildCount;
@@ -311,6 +316,7 @@ class _RScrollViewState extends State<RScrollView>
       center: widget.center,
       anchor: widget.anchor,
       cacheExtent: widget.cacheExtent,
+      scrollCacheExtent: widget.scrollCacheExtent,
       semanticChildCount: widget.semanticChildCount,
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,

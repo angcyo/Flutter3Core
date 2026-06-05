@@ -6,12 +6,13 @@ part of '../../flutter3_widgets.dart';
 ///
 
 /// 用来实现[RItemTile]包裹, 比如添加边距等
-typedef ItemTileWrapBuilder = Widget Function(
-  BuildContext context,
-  List<Widget> list,
-  Widget child,
-  int index,
-);
+typedef ItemTileWrapBuilder =
+    Widget Function(
+      BuildContext context,
+      List<Widget> list,
+      Widget child,
+      int index,
+    );
 
 /// 标识当前的元素, 不是[Sliver]布局
 /// [RScrollView.ensureSliver]
@@ -441,7 +442,8 @@ class RItemTile extends StatefulWidget {
     }
 
     if (length > 1 && index < length - 1) {
-      bottomWidget = _buildBottomWidget(context) ??
+      bottomWidget =
+          _buildBottomWidget(context) ??
           (first as RItemTile?)?._buildBottomWidget(context);
     }
 
@@ -478,16 +480,18 @@ class RItemTile extends StatefulWidget {
         } else if (borderRadius is BorderRadius) {
           if (index == 0) {
             result = result.clip(
-                borderRadius: BorderRadius.only(
-              topLeft: borderRadius.topLeft,
-              topRight: borderRadius.topRight,
-            ));
+              borderRadius: BorderRadius.only(
+                topLeft: borderRadius.topLeft,
+                topRight: borderRadius.topRight,
+              ),
+            );
           } else if (index == length - 1) {
             result = result.clip(
-                borderRadius: BorderRadius.only(
-              bottomLeft: borderRadius.bottomLeft,
-              bottomRight: borderRadius.bottomRight,
-            ));
+              borderRadius: BorderRadius.only(
+                bottomLeft: borderRadius.bottomLeft,
+                bottomRight: borderRadius.bottomRight,
+              ),
+            );
           }
         }
       }
@@ -520,14 +524,18 @@ class RItemTile extends StatefulWidget {
       final isEdge = isEdgeLeft || isEdgeRight || isEdgeTop || isEdgeBottom;
       if (isEdge) {
         //需要padding
-        final double left =
-            isEdgeLeft ? first.edgePaddingLeft ?? first.crossAxisSpacing : 0;
-        final double top =
-            isEdgeTop ? first.edgePaddingTop ?? first.mainAxisSpacing : 0;
-        final double right =
-            isEdgeRight ? first.edgePaddingRight ?? first.crossAxisSpacing : 0;
-        final double bottom =
-            isEdgeBottom ? first.edgePaddingBottom ?? first.mainAxisSpacing : 0;
+        final double left = isEdgeLeft
+            ? first.edgePaddingLeft ?? first.crossAxisSpacing
+            : 0;
+        final double top = isEdgeTop
+            ? first.edgePaddingTop ?? first.mainAxisSpacing
+            : 0;
+        final double right = isEdgeRight
+            ? first.edgePaddingRight ?? first.crossAxisSpacing
+            : 0;
+        final double bottom = isEdgeBottom
+            ? first.edgePaddingBottom ?? first.mainAxisSpacing
+            : 0;
 
         // 有值
         if (left != 0 || top != 0 || right != 0 || bottom != 0) {
@@ -583,48 +591,81 @@ class RItemTile extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>('isSliverItem', isSliverItem));
 
     properties.add(
-        DiagnosticsProperty<UpdateValueNotifier>('updateSignal', updateSignal));
+      DiagnosticsProperty<UpdateValueNotifier>('updateSignal', updateSignal),
+    );
 
     properties
       ..add(DiagnosticsProperty<Color?>('bottomLineColor', bottomLineColor))
       ..add(DiagnosticsProperty<double?>('bottomLineHeight', bottomLineHeight))
-      ..add(DiagnosticsProperty<EdgeInsets?>(
-          'bottomLineMargin', bottomLineMargin))
+      ..add(
+        DiagnosticsProperty<EdgeInsets?>('bottomLineMargin', bottomLineMargin),
+      )
       ..add(DiagnosticsProperty<Widget?>('bottomLeading', bottomLeading));
 
-    properties.add(DiagnosticsProperty<EdgeInsetsGeometry?>(
-        'sliverPadding', sliverPadding));
+    properties.add(
+      DiagnosticsProperty<EdgeInsetsGeometry?>('sliverPadding', sliverPadding),
+    );
 
     properties
-      ..add(DiagnosticsProperty<Decoration?>(
-          'sliverDecoration', sliverDecoration))
-      ..add(DiagnosticsProperty<DecorationPosition>(
-          'sliverDecorationPosition', sliverDecorationPosition));
-
-    properties
-      ..add(DiagnosticsProperty<SliverPersistentHeaderWidgetBuilder?>(
-          'headerChildBuilder', headerChildBuilder))
       ..add(
-          DiagnosticsProperty<double?>('headerFixedHeight', headerFixedHeight))
+        DiagnosticsProperty<Decoration?>('sliverDecoration', sliverDecoration),
+      )
+      ..add(
+        DiagnosticsProperty<DecorationPosition>(
+          'sliverDecorationPosition',
+          sliverDecorationPosition,
+        ),
+      );
+
+    properties
+      ..add(
+        DiagnosticsProperty<SliverPersistentHeaderWidgetBuilder?>(
+          'headerChildBuilder',
+          headerChildBuilder,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<double?>('headerFixedHeight', headerFixedHeight),
+      )
       ..add(DiagnosticsProperty<double>('headerMaxHeight', headerMaxHeight))
       ..add(DiagnosticsProperty<double>('headerMinHeight', headerMinHeight))
-      ..add(DiagnosticsProperty<SliverPersistentHeaderDelegate?>(
-          'headerDelegate', headerDelegate))
+      ..add(
+        DiagnosticsProperty<SliverPersistentHeaderDelegate?>(
+          'headerDelegate',
+          headerDelegate,
+        ),
+      )
       ..add(DiagnosticsProperty<bool>('pinned', headerPinned))
       ..add(DiagnosticsProperty<bool>('floating', headerFloating))
       ..add(DiagnosticsProperty<bool>('useSliverAppBar', useSliverAppBar))
-      ..add(DiagnosticsProperty<Color?>(
-          'headerBackgroundColor', headerBarBackgroundColor))
-      ..add(DiagnosticsProperty<Color?>(
-          'headerForegroundColor', headerBarForegroundColor))
-      ..add(DiagnosticsProperty<TextStyle?>(
-          'headerTitleTextStyle', headerBarTitleTextStyle));
+      ..add(
+        DiagnosticsProperty<Color?>(
+          'headerBackgroundColor',
+          headerBarBackgroundColor,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<Color?>(
+          'headerForegroundColor',
+          headerBarForegroundColor,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<TextStyle?>(
+          'headerTitleTextStyle',
+          headerBarTitleTextStyle,
+        ),
+      );
 
     properties
       ..add(DiagnosticsProperty<bool>('groupExpanded', groupExpanded))
       ..add(DiagnosticsProperty<List<String>?>('groups', groups))
-      ..add(DiagnosticsProperty<bool>(
-          'isSliverMainAxisGroup', isSliverMainAxisGroup));
+      ..add(
+        DiagnosticsProperty<bool>(
+          'isSliverMainAxisGroup',
+          isSliverMainAxisGroup,
+        ),
+      );
 
     properties
       ..add(DiagnosticsProperty<bool>('fillRemaining', fillRemaining))
@@ -633,21 +674,28 @@ class RItemTile extends StatefulWidget {
       ..add(DiagnosticsProperty<bool>('fillExpand', fillExpand));
 
     properties
-      ..add(DiagnosticsProperty<bool>(
-          'addAutomaticKeepAlives', addAutomaticKeepAlives))
-      ..add(DiagnosticsProperty<bool>(
-          'addRepaintBoundaries', addRepaintBoundaries))
+      ..add(
+        DiagnosticsProperty<bool>(
+          'addAutomaticKeepAlives',
+          addAutomaticKeepAlives,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>('addRepaintBoundaries', addRepaintBoundaries),
+      )
       ..add(DiagnosticsProperty<bool>('addSemanticIndexes', addSemanticIndexes))
       ..add(DiagnosticsProperty<double>('firstPaddingLeft', firstPaddingLeft))
       ..add(DiagnosticsProperty<double>('firstPaddingTop', firstPaddingTop))
       ..add(DiagnosticsProperty<double>('firstPaddingRight', firstPaddingRight))
       ..add(
-          DiagnosticsProperty<double>('firstPaddingBottom', firstPaddingBottom))
+        DiagnosticsProperty<double>('firstPaddingBottom', firstPaddingBottom),
+      )
       ..add(DiagnosticsProperty<double>('lastPaddingLeft', lastPaddingLeft))
       ..add(DiagnosticsProperty<double>('lastPaddingTop', lastPaddingTop))
       ..add(DiagnosticsProperty<double>('lastPaddingRight', lastPaddingRight))
       ..add(
-          DiagnosticsProperty<double>('lastPaddingBottom', lastPaddingBottom));
+        DiagnosticsProperty<double>('lastPaddingBottom', lastPaddingBottom),
+      );
 
     properties
       ..add(DiagnosticsProperty<int>('crossAxisCount', crossAxisCount))
@@ -658,7 +706,8 @@ class RItemTile extends StatefulWidget {
       ..add(DiagnosticsProperty<double?>('edgePaddingTop', edgePaddingTop))
       ..add(DiagnosticsProperty<double?>('edgePaddingRight', edgePaddingRight))
       ..add(
-          DiagnosticsProperty<double?>('edgePaddingBottom', edgePaddingBottom));
+        DiagnosticsProperty<double?>('edgePaddingBottom', edgePaddingBottom),
+      );
 
     properties.add(DiagnosticsProperty<List<Widget>>('childTiles', childTiles));
   }
@@ -671,7 +720,36 @@ class _RItemTileState extends State<RItemTile> {
   }
 }
 
+extension RItemTileListenableEx on Listenable {
+  /// 对应的数据结构
+  dynamic get tileValue {
+    final signal = this;
+    if (signal is ValueNotifier) {
+      return signal.value;
+    } else {
+      debugger();
+    }
+    return null;
+  }
+}
+
 extension RItemTileExtension on Widget {
+  /// 获取小部件支持的更新信号
+  Listenable? get tileUpdateSignal {
+    final element = this;
+    if (element is RItemTile) {
+      //element.updateTile();
+      return element.updateSignal;
+    } else if (element is RebuildWidget) {
+      return element.updateSignal;
+    }
+    return null;
+  }
+
+  dynamic get tileValue => tileUpdateSignal?.tileValue;
+
+  //--
+
   /// 列表item
   /// [RItemTile.buildListWrapChild]
   ///
@@ -736,7 +814,8 @@ extension RItemTileExtension on Widget {
       bottomLineMargin: bottomLineMargin,
       bottomLeading: bottomLeading,
       //--
-      sliverDecoration: sliverDecoration ??
+      sliverDecoration:
+          sliverDecoration ??
           (decorationFillColor != null
               ? fillDecoration(
                   color: decorationFillColor,
@@ -745,16 +824,19 @@ extension RItemTileExtension on Widget {
                 )
               : null),
       sliverDecorationPosition: sliverDecorationPosition,
-      sliverPadding: sliverPadding ??
+      sliverPadding:
+          sliverPadding ??
           (enablePadding
               ? EdgeInsets.only(
-                  left: firstPadding ??
+                  left:
+                      firstPadding ??
                       firstPaddingLeft ??
                       lastPadding ??
                       lastPaddingLeft ??
                       0.0,
                   top: firstPadding ?? firstPaddingTop ?? 0.0,
-                  right: firstPadding ??
+                  right:
+                      firstPadding ??
                       firstPaddingRight ??
                       lastPadding ??
                       lastPaddingRight ??
@@ -824,7 +906,8 @@ extension RItemTileExtension on Widget {
       edgePaddingRight: edgePadding ?? edgePaddingRight,
       edgePaddingBottom: edgePadding ?? edgePaddingBottom,
       //--
-      sliverDecoration: sliverDecoration ??
+      sliverDecoration:
+          sliverDecoration ??
           (decorationFillColor != null
               ? fillDecoration(
                   color: decorationFillColor,
@@ -833,7 +916,8 @@ extension RItemTileExtension on Widget {
                 )
               : null),
       sliverDecorationPosition: sliverDecorationPosition,
-      sliverPadding: sliverPadding ??
+      sliverPadding:
+          sliverPadding ??
           (enablePadding
               ? EdgeInsets.symmetric(
                   vertical: mainAxisSpacing,
@@ -954,7 +1038,8 @@ extension RItemTileExtension on Widget {
       groupExpanded: groupExpanded,
       groups: groups,
       sliverPadding: sliverPadding,
-      sliverDecoration: sliverDecoration ??
+      sliverDecoration:
+          sliverDecoration ??
           (decorationFillColor == null
               ? null
               : fillDecoration(
@@ -1063,7 +1148,8 @@ extension RItemTileExtension on Widget {
       headerBarBackgroundColor: headerBackgroundColor,
       headerBarForegroundColor: headerForegroundColor,
       sliverPadding: sliverPadding,
-      sliverDecoration: sliverDecoration ??
+      sliverDecoration:
+          sliverDecoration ??
           (decorationFillColor == null
               ? null
               : fillDecoration(
@@ -1121,7 +1207,8 @@ extension RItemTileExtension on Widget {
       //--
       part: part,
       sliverPadding: sliverPadding,
-      sliverDecoration: sliverDecoration ??
+      sliverDecoration:
+          sliverDecoration ??
           (decorationFillColor == null
               ? null
               : fillDecoration(
@@ -1274,7 +1361,8 @@ extension RItemTileListExtension on List<Widget> {
       part: part,
       //--
       sliverPadding: sliverPadding,
-      sliverDecoration: sliverDecoration ??
+      sliverDecoration:
+          sliverDecoration ??
           (decorationFillColor != null
               ? fillDecoration(
                   color: decorationFillColor,

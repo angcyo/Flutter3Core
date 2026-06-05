@@ -11,6 +11,8 @@ part of '../../flutter3_widgets.dart';
 /// - [buildAdapterStateWidget]  :实现自定义的情感图
 /// - [buildLoadMoreStateWidget] :实现自定义的加载更多
 ///
+/// - [notifyRebuildScrollViewWidget] 触发更新界面
+///
 class RScrollController extends ScrollController {
   /// 用来控制刷新的key
   /// [RefreshIndicatorState]
@@ -25,11 +27,6 @@ class RScrollController extends ScrollController {
   /// - 在[RScrollPage.pageRScrollView]中赋值
   @configProperty
   UpdateValueNotifier? scrollViewUpdateSignal;
-
-  /// 用来控制刷新完成
-  /// [_onRefresh]
-  /// [finishRefresh]
-  Completer<void> _refreshCompleter = Completer();
 
   /// 当前的刷新状态, 可以监听这个值的变化触发刷新
   /// [WidgetBuildState]
@@ -53,40 +50,55 @@ class RScrollController extends ScrollController {
     .none,
   );
 
-  /// 请求的分页信息
-  RequestPage requestPage = RequestPage();
-
   /// 情感图状态切换拦截
   WidgetBuildStateIntercept widgetStateIntercept = WidgetBuildStateIntercept();
 
-  /// 状态对应的任意数据
-  dynamic _widgetStateData;
+  /// 请求的分页信息
+  RequestPage requestPage = RequestPage();
 
-  /// 是否启用加载更多, 自动在
-  /// [buildLoadMoreStateWidget]中激活
-  var _isEnableLoadMore = false;
-
-  //---
+  //MARK: callback
 
   /// 也可以设置[onRefreshCallback]来监听刷新
   /// 刷新回调
+  @configProperty
   VoidCallback? onRefreshCallback;
 
   /// 加载更多回调
+  @configProperty
   VoidCallback? onLoadMoreCallback;
 
   /// 加载数据的回调[onRefreshCallback].[onLoadMoreCallback]的结合体
   /// 通过[requestPage]判断是否是刷新
   /// [_onRefreshStart]
   /// [_onLoadMoreStart]
+  @configProperty
   VoidCallback? onLoadDataCallback;
 
   /// 是否支持加载更多的触发
   /// [checkScrollPosition]->[isSupportScrollLoadData]
+  @configProperty
   bool Function()? isSupportScrollLoadDataCallback;
 
   //MARK: - tag
+
+  /// 用来控制刷新完成
+  /// [_onRefresh]
+  /// [finishRefresh]
+  @tempFlag
+  Completer<void> _refreshCompleter = Completer();
+
   String? tag;
+
+  /// 状态对应的任意数据
+  @tempFlag
+  dynamic _widgetStateData;
+
+  /// 是否启用加载更多, 自动在
+  /// [buildLoadMoreStateWidget]中激活
+  @tempFlag
+  var _isEnableLoadMore = false;
+
+  //--
 
   /// 满状态控制器
   RScrollController({this.tag, super.debugLabel});
@@ -296,6 +308,7 @@ class RScrollController extends ScrollController {
     return false;
   }
 
+  /// 刷新界面
   /// 通知滚动布局重新构建
   /// - [notifyRebuildScrollViewWidget]
   /// - [notifyRebuildLoadMoreWidget]

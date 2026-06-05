@@ -72,6 +72,9 @@ String? textOf(dynamic data, [BuildContext? context]) {
   return null;
 }
 
+/// 支持使用[widgetOf]获取对应的[Widget]
+typedef WidgetOf = dynamic;
+
 /// 在一个数据中, 提取Widget
 /// - [tryTextWidget] 是否尝试使用[Text]小部件
 /// - [textSelectable] 是否可选择文本

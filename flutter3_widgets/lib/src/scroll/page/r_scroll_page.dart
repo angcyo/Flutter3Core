@@ -80,11 +80,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   List<Bean> getWidgetDataList<Bean>() {
     final List<Bean> result = [];
     pageWidgetList.map((e) {
-      if (e is RItemTile) {
-        final value = e.updateSignal?.value;
-        if (value != null) {
-          result.add(value);
-        }
+      dynamic value = e.tileValue;
+      //--
+      if (value != null) {
+        result.add(value);
       }
     });
     return result;
@@ -92,10 +91,12 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 界面是否[build]了, 决定更新状态时是否要延迟
   /// [updateAdapterState]
+  @tempFlag
   bool _isPageBuild = false;
 
   /// 在[pageRScrollView]中使用->[RScrollView]小部件的更新信号
   /// - [updateLoadDataWidget] 刷新界面
+  @tempFlag
   final UpdateValueNotifier _scrollViewUpdateSignal = createUpdateSignal();
 
   //region 生命周期
@@ -477,6 +478,54 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   /// 重写此方法, 实现收尾插入自定义的小部件
+  /// - 也可以在此方法内进行排序
+  ///
+  /// # 自动排序交互
+  /// ```
+  ///  requestPage.buildSortWidget(
+  ///    context,
+  ///    "状态",
+  ///    "status",
+  ///    ascIcon: loadRootSvgWidget(Assets.svg.sortAsc, size: 16),
+  ///    descIcon: loadRootSvgWidget(Assets.svg.sortDesc, size: 16),
+  ///    onSortAction: scrollController.notifyRebuildScrollViewWidget,
+  ///  ),
+  /// ```
+  ///  # 排序
+  /// ```
+  /// if (requestPage.hasSort) {
+  ///   return [...children]..sort((a, b) {
+  ///     final ab = a.tileValue;
+  ///     final bb = b.tileValue;
+  ///     if (ab is ActivityBean && bb is ActivityBean) {
+  ///       if (requestPage.reversed == true) {
+  ///         //倒序
+  ///         if (requestPage.sortField == "status") {
+  ///           return bb.status?.compareTo(ab.status ?? "") ?? 0;
+  ///         }
+  ///         if (requestPage.sortField == "updateTime") {
+  ///           return bb.updateTime?.compareTo(ab.updateTime ?? "") ?? 0;
+  ///         }
+  ///         return bb.createTime?.compareTo(ab.createTime ?? "") ?? 0;
+  ///       } else {
+  ///         //升序
+  ///         if (requestPage.sortField == "status") {
+  ///           return ab.status?.compareTo(bb.status ?? "") ?? 0;
+  ///         }
+  ///         if (requestPage.sortField == "updateTime") {
+  ///           return ab.updateTime?.compareTo(bb.updateTime ?? "") ?? 0;
+  ///         }
+  ///         return ab.createTime?.compareTo(bb.createTime ?? "") ?? 0;
+  ///       }
+  ///     }
+  ///     //debugger();
+  ///     return 0;
+  ///   });
+  /// } else {
+  ///   return super.wrapScrollChildren(children);
+  /// }
+  /// ```
+  ///
   @overridePoint
   WidgetList wrapScrollChildren(WidgetList children) => children;
 
@@ -606,13 +655,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   void rebuildTile(bool Function(Widget tile, Listenable signal) test) {
     for (final element in pageWidgetList) {
       //debugger();
-      Listenable? updateSignal;
-      if (element is RItemTile) {
-        //element.updateTile();
-        updateSignal = element.updateSignal;
-      } else if (element is RebuildWidget) {
-        updateSignal = element.updateSignal;
-      }
+      Listenable? updateSignal = element.tileUpdateSignal;
       if (updateSignal != null) {
         try {
           if (test(element, updateSignal)) {
@@ -659,13 +702,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     final WidgetList removeList = [];
     for (final element in pageWidgetList) {
       //debugger();
-      Listenable? updateSignal;
-      if (element is RItemTile) {
-        //element.updateTile();
-        updateSignal = element.updateSignal;
-      } else if (element is RebuildWidget) {
-        updateSignal = element.updateSignal;
-      }
+      Listenable? updateSignal = element.tileUpdateSignal;
       if (updateSignal != null) {
         try {
           if (test(element, updateSignal)) {
