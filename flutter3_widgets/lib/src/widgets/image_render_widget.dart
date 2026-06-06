@@ -159,45 +159,78 @@ class ImageRenderObject extends RenderProxyBox implements TickerProvider {
 /// 控制器
 class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 渲染的背景颜色
+  @configProperty
   Color? renderBgColor;
 
-  /// 渲染的图片
+  /// 渲染的图片, 也就是需要裁剪的图片
+  /// - [resetImage]
+  @configProperty
   UiImage? image;
 
   /// 内边距
+  @configProperty
   EdgeInsets padding = const EdgeInsets.all(30);
 
   /// 在图片中手势移动的事件更新回调
+  /// - 可用于绘制刮刮乐
+  @configProperty
   OffsetCallback? onPointerUpdate;
 
   /// 在图片中手势抬起的事件回调
+  /// - 可以用于橡皮擦等擦除事件的触发
+  @configProperty
   OffsetCallback? onPointerUp;
 
-  //--
+  //MARK: crop
 
   /// 是否绘制剪切覆盖层, 并且会开启裁剪手势操作.
+  @configProperty
   bool renderCropOverlay;
 
   /// 剪切蒙层的颜色
+  @configProperty
   Color cropOverlayColor;
 
   /// 剪切线的大小
+  @configProperty
   double cropLineSize;
 
   /// 线宽
+  @configProperty
   double cropLineWidth;
 
   /// 线的颜色
+  @configProperty
   Color cropLineColor;
+
+  //MARK: config
+
+  /// 是否激活自动裁剪边缘
+  @configProperty
+  bool enableAutoEdgeCut;
+
+  /// 指定裁剪的比例
+  /// - [cropScale]
+  @configProperty
+  List<double> cropRatioList;
+
+  /// 剪切形状类型列表
+  @configProperty
+  List<CropType> cropTypeList;
 
   ImageRenderController({
     this.image,
     this.renderBgColor,
     this.renderCropOverlay = false,
+    //--
     this.cropOverlayColor = Colors.black26,
     this.cropLineSize = 20,
     this.cropLineWidth = 3,
     this.cropLineColor = Colors.white,
+    //--
+    this.enableAutoEdgeCut = true,
+    this.cropRatioList = const [-1, 0, 1],
+    this.cropTypeList = CropType.values,
   });
 
   //region --控制操作--
@@ -206,6 +239,12 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// [reset] 是否重置矩阵
   void resetImage(UiImage? image, {bool refresh = false, bool reset = true}) {
     this.image = image;
+    if (cropRatioList.length == 1) {
+      cropScale = cropRatioList.first;
+    }
+    if (cropTypeList.length == 1) {
+      cropType = cropTypeList.first;
+    }
     if (reset) {
       _baseMatrix = null;
       _cropBounds = null;
@@ -310,10 +349,10 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   CropType cropType = CropType.rect;
 
   /// 剪切框的比例 w/h
-  /// -1: 使用图片比例
+  /// -1: 使用图片比例: 默认
   /// 0: 任意比例
   /// 1: 1:1
-  /// 1.777 16:9
+  /// 1.777: 16:9
   @configProperty
   double cropScale = -1;
 
