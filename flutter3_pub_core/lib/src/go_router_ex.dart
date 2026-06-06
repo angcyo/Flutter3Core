@@ -494,3 +494,5 @@ Widget goRouterApp({
     //--
   );
 }
+
+//NoOpPage get noOpPage => NoOpPage();

@@ -5,6 +5,8 @@ part of '../../flutter3_widgets.dart';
 /// @date 2026/02/09
 ///
 /// 浮动在左上角的导航back按钮小部件
+/// - [FloatBackActionWidget]
+/// - [RouteBackWidget]
 class FloatBackActionWidget extends StatefulWidget {
   /// 是否要浮动, 否则一直显示. 在桌面端默认浮动显示
   /// - 浮动时: 鼠标悬停时, 显示; 鼠标离开时, 隐藏;
@@ -18,11 +20,19 @@ class FloatBackActionWidget extends StatefulWidget {
   @defInjectMark
   final Widget? child;
 
+  /// 导航器key
+  final GlobalKey<NavigatorState>? navigatorKey;
+
+  /// 检查是否可以关闭
+  final bool? checkDismissal;
+
   const FloatBackActionWidget({
     super.key,
     this.floatStyle,
     this.result,
     this.child,
+    this.navigatorKey,
+    this.checkDismissal,
   });
 
   @override
@@ -30,6 +40,24 @@ class FloatBackActionWidget extends StatefulWidget {
 }
 
 class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
+  @override
+  void initState() {
+    super.initState();
+    /*final navigator = widget.navigatorKey?.currentState;
+    if (navigator != null) {
+      final route = ModalRoute.of(navigator.context);
+      l.w("route->[$route]${route?.impliesAppBarDismissal}");
+    } else {
+      l.w("route->null");
+    }*/
+  }
+
+  @override
+  void didUpdateWidget(covariant FloatBackActionWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //l.w("route->didUpdateWidget");
+  }
+
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
@@ -42,9 +70,19 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
         ).insets(all: kX);
     body = body
         .inkWellCircle(() {
-          buildContext?.maybePop(result: widget.result);
+          //debugger();
+          //widget.navigatorKey?.currentState?.maybePop();
+          buildContext?.maybePop(
+            navigator: widget.navigatorKey?.currentState,
+            result: widget.result,
+            checkDismissal:
+                widget.checkDismissal ?? widget.navigatorKey == null,
+          );
         })
-        .card(shape: CircleBorder());
+        .card(
+          shape: CircleBorder(),
+          /*color: globalConfig.globalTheme.appBarBackgroundColor,*/
+        );
     final isFloatStyle = widget.floatStyle ?? isDesktopOrWeb;
     if (isFloatStyle) {
       body = body.mouseHoverVisibility().mouseHoverProvider();
@@ -63,12 +101,14 @@ extension FloatBackActionWidgetEx on Widget {
     bool? floatStyle,
     Object? result,
     Widget? child,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) => [
     this,
     FloatBackActionWidget(
       key: key,
       floatStyle: floatStyle,
       result: result,
+      navigatorKey: navigatorKey,
       child: child,
     ),
   ].stack()!;

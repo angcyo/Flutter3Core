@@ -200,6 +200,11 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   void add(NavigatorObserverMixin? observer) {
     if (observer != null && !navigatorObserverList.contains(observer)) {
       navigatorObserverList.add(observer);
+
+      //first
+      if (_routeStack.isNotEmpty) {
+        observer.onRouteStackChanged(_routeStack);
+      }
     }
   }
 
@@ -217,12 +222,14 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   String? debugLabel;
 
   /// 路由栈数量
-  final List<RouteSettings> _routeStack = [];
+  final List<RouteInfo> _routeStack = [];
 
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
-    _routeStack.remove(route.settings);
+    _routeStack.remove(
+      RouteInfo(route.settings, isPageRoute: route is PageRoute),
+    );
     debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
@@ -240,7 +247,8 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
-    _routeStack.add(route.settings);
+    //debugger();
+    _routeStack.add(RouteInfo(route.settings, isPageRoute: route is PageRoute));
     debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
@@ -258,7 +266,9 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
   @override
   void didRemove(Route route, Route? previousRoute) {
     super.didRemove(route, previousRoute);
-    _routeStack.remove(route.settings);
+    _routeStack.remove(
+      RouteInfo(route.settings, isPageRoute: route is PageRoute),
+    );
     debugger(when: !isIos && debugLabel != null);
     for (final element in navigatorObserverList) {
       try {
@@ -323,11 +333,42 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 
   @override
   void didChangeTop(Route topRoute, Route? previousTopRoute) {
-    debugger(when: !isIos && debugLabel != null);
     super.didChangeTop(topRoute, previousTopRoute);
+    debugger(when: !isIos && debugLabel != null);
+    for (final element in navigatorObserverList) {
+      try {
+        element.onRouteDidChangeTop(topRoute, previousTopRoute);
+      } catch (e) {
+        assert(() {
+          printError(e);
+          return true;
+        }());
+      }
+    }
   }
 
   //endregion --回调--
+}
+
+/// 路由信息, 包含路由类型, 路由设置
+/// - [Route]
+/// - [RouteSettings]
+@immutable
+class RouteInfo with EquatableMixin {
+  final RouteSettings routeSettings;
+
+  /// 是否是[PageRoute]
+  final bool? isPageRoute;
+
+  const RouteInfo(this.routeSettings, {this.isPageRoute});
+
+  @override
+  List<Object?> get props => [routeSettings];
+
+  @override
+  String toString() {
+    return 'RouteInfo{isPageRoute: $isPageRoute, routeSettings: $routeSettings}';
+  }
 }
 
 /// 导航监听混入, 需要将[navigatorObserverDispatcher]加入到导航观察者中.
@@ -339,19 +380,34 @@ mixin NavigatorObserverMixin<T extends StatefulWidget> on State<T> {
   /// 当前的[ModalRoute]
   ModalRoute? currentModalRoute;
 
+  /// 调试标签
+  String? get debugLabel => null;
+
+  /// 导航观察调度器
+  NavigatorObserverDispatcher get navigatorObserverDispatcherMixin =>
+      navigatorObserverDispatcher;
+
   @override
   void initState() {
-    navigatorObserverDispatcher.add(this);
+    debugger(when: debugLabel != null);
+    navigatorObserverDispatcherMixin.debugLabel = debugLabel;
+    navigatorObserverDispatcherMixin.add(this);
     super.initState();
-    postFrameCallback((_) {
+    /*postFrameCallback((_) {
       currentModalRoute = ModalRoute.of(context);
-    });
+    });*/
   }
 
   @override
   void dispose() {
-    navigatorObserverDispatcher.remove(this);
+    navigatorObserverDispatcherMixin.remove(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    currentModalRoute = ModalRoute.of(context);
   }
 
   @overridePoint
@@ -372,11 +428,14 @@ mixin NavigatorObserverMixin<T extends StatefulWidget> on State<T> {
   @overridePoint
   void onRouteDidStopUserGesture() {}
 
+  @overridePoint
+  void onRouteDidChangeTop(Route topRoute, Route? previousTopRoute) {}
+
   //MARK: - override
 
   ///当路由栈发生改变时触发
   /// - 移除了路由
   /// - 添加了路由
   @overridePoint
-  void onRouteStackChanged(List<RouteSettings> routeStack) {}
+  void onRouteStackChanged(List<RouteInfo> routeStack) {}
 }

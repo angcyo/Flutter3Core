@@ -29,7 +29,9 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
   /// [RouteSettings]
   @override
   void didPush(Route route, Route? previousRoute) {
-    l.v('[${classHash()}]Navigator didPush↓\nold->$previousRoute\npush->$route');
+    l.v(
+      '[${classHash()}]Navigator didPush↓\nold->$previousRoute\npush->$route',
+    );
   }
 
   @override
@@ -44,7 +46,9 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
 
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
-    l.v('[${classHash()}]Navigator didStartUserGesture↓\n$route\n$previousRoute');
+    l.v(
+      '[${classHash()}]Navigator didStartUserGesture↓\n$route\n$previousRoute',
+    );
   }
 
   @override
@@ -55,4 +59,6 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
 
 /// [NavigatorObserverLogMixin]的实现类
 class NavigatorObserverLog extends NavigatorObserver
-    with NavigatorObserverLogMixin {}
+    with NavigatorObserverLogMixin {
+  //no op
+}

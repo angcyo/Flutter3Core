@@ -2921,10 +2921,12 @@ extension WidgetEx on Widget {
           : null,
       mouseCursor: null,
       radius: radius,
+      /*focusColor: Colors.blue,*/
       splashColor: splashColor,
       hoverColor: hoverColor,
       highlightColor: highlightColor,
-      //overlayColor: MaterialStateProperty.all(Colors.blue),
+      //设置所有状态的颜色
+      /*overlayColor: WidgetStateProperty.all(Colors.blue),*/
       borderRadius: borderRadius,
       customBorder: customBorder,
       //边框裁剪
@@ -2943,13 +2945,14 @@ extension WidgetEx on Widget {
     return body;
   }
 
-  /// [enable] 是否启用
-  /// [disableColor] 禁用时的颜色, 不指定不处理
-  /// [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
+  /// - [enable] 是否启用
+  /// - [disableColor] 禁用时的颜色, 不指定不处理
+  /// - [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
+  /// - [hoverColor] 鼠标悬停时的颜色
   ///
-  /// [ink]
-  /// [inkWell]
-  /// [InkWell]
+  /// - [ink]
+  /// - [inkWell]
+  /// - [InkWell]
   ///
   /// [Material] 有些时候, 可能需要使用此部件包裹一下
   Widget inkWellCircle(

@@ -55,6 +55,12 @@ class _MouseHoverProviderState extends State<MouseHoverProvider> {
   final ValueNotifier<bool> hover = ValueNotifier(false);
 
   @override
+  void reassemble() {
+    hover.value = false;
+    super.reassemble();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MouseHoverScope(
       hover: hover,

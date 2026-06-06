@@ -663,14 +663,20 @@ extension NavigatorEx on BuildContext {
   );
 
   /// 尝试弹出一个路由, 可以被[PopScope]拦截
+  /// - [checkDismissal] 是否弹出检测, 保留最后一个根路由页面.
   Future<bool> maybePop<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = true,
+    NavigatorState? navigator,
   }) async {
     //debugger();
+    final isAppBarDismissal =
+        (navigator == null ? modalRoute : ModalRoute.of(navigator.context))
+            ?.impliesAppBarDismissal ??
+        false;
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
-      return navigatorOf(rootNavigator).maybePop(result);
+      return (navigator ?? navigatorOf(rootNavigator)).maybePop(result);
     }
     return false;
   }
