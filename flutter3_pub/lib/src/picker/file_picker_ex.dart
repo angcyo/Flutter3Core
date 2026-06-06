@@ -7,6 +7,8 @@ part of '../../flutter3_pub.dart';
 /// 文件选择扩展
 /// 选择单图片, 默认关闭了图片压缩.
 /// 关闭图片压缩后, `file_picker`插件不会走sd卡权限获取
+///
+///  - [PlatformFile.path]
 Future<PlatformFile?> pickSingleImage({
   bool allowCompression = false,
   int compressionQuality = 0,
@@ -20,8 +22,11 @@ Future<PlatformFile?> pickSingleImage({
 }
 
 /// 选择单个文件, 选择多个文件请使用[pickFiles]
+///  - [PlatformFile.path]
+///
 /// @return null表示取消了选择
 Future<PlatformFile?> pickFile({
+  FileType? type,
   String? dialogTitle,
   String? initialDirectory,
   List<String>? allowedExtensions,
@@ -29,7 +34,7 @@ Future<PlatformFile?> pickFile({
   bool withReadStream = false,
 }) async {
   return (await pickFiles(
-    type: isNil(allowedExtensions) ? FileType.any : FileType.custom,
+    type: type ?? (isNil(allowedExtensions) ? FileType.any : FileType.custom),
     allowCompression: false,
     compressionQuality: 0,
     allowMultiple: false,

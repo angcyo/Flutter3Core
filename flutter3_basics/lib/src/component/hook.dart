@@ -45,7 +45,13 @@ mixin HookMixin {
   @autoDispose
   void hookAny(dynamic any) {
     _hookAnyList ??= [];
-    _hookAnyList?.add(any);
+    if (any is Iterable) {
+      for (final item in any) {
+        _hookAnyList?.add(item);
+      }
+    } else {
+      _hookAnyList?.add(any);
+    }
   }
 
   /// - [hookAnyByKey]
