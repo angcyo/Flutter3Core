@@ -85,7 +85,7 @@ class _RouteBackWidgetState extends State<RouteBackWidget>
         if (beforeRouteFlag == null) {
           effectiveRouteCount++;
           beforeRouteFlag = routeFlag;
-        } else if (routeFlag?.startsWith(beforeRouteFlag) == true) {
+        } else if (routeFlag?.startsWith("${beforeRouteFlag}/") == true) {
           //子路由, 不显示返回按键
         } else {
           effectiveRouteCount++;
