@@ -225,7 +225,7 @@ mixin ValueMixin {
                       globalTheme.textPrimaryStyle.color,
                       globalTheme.themeBlackColor,
                     )
-                  : context.darkOr(globalTheme.textPrimaryStyle.color, null),
+                  : context.darkOr(globalTheme.textNormalStyle.color, null),
               fontWeight: (index == selectedIndex && selectedBold)
                   ? ui.FontWeight.bold
                   : null,

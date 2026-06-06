@@ -44,7 +44,7 @@ String? textOf(dynamic data, [BuildContext? context]) {
   }
   if (data is ITextProvider) {
     if (context != null) {
-      return data.provideIntlText?.call(context) ?? data.provideText;
+      return data.provideIntlText(context) ?? data.provideText;
     }
     return data.provideText;
   } else {
@@ -113,7 +113,7 @@ Widget? widgetOf(
     if (text != null) {
       final globalTheme = GlobalTheme.of(context);
       return text.text(
-        style: textStyle ?? globalTheme.textGeneralStyle,
+        style: textStyle ?? globalTheme.textNormalStyle,
         textAlign: textAlign,
         selectable: textSelectable,
       );
