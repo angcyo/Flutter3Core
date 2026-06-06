@@ -31,11 +31,16 @@ dependencies:
 
   # https://pub.dev/packages/image_picker
   # 适用于 iOS 和 Android 的 Flutter 插件，用于从图像库中选取图像，并使用相机拍摄新照片。
+  # Minimum OS Requirements / 最小支持系统版本
   #          |Android | iOS     | Linux   | macOS   |Web      |Windows
   # --------|---------|---------|---------|---------|---------|---------
   # Support |SDK 24+  |iOS 12+  |Any      |10.14+   |See image_picker_for_web | Windows 10+
   image_picker: ^1.2.2
   #image_picker_for_web: ^3.0.4
+
+  # https://pub.dev/packages/image_cropper
+  # 一款支持 Android、iOS 和 Web 的 Flutter 插件，用于裁剪图像。该插件基于三个不同的原生库，因此在不同平台上呈现不同的用户界面。
+  # image_cropper: ^12.2.1
 
 # mobile_scanner ^5.1.1 requires web ^0.5.1.
 #dependency_overrides:

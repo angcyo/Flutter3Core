@@ -102,6 +102,7 @@ mixin PageViewMixin<T extends StatefulWidget>
     //--
     void Function(int index)? onPageChangedAction,
   }) {
+    //debugger();
     keepAlive ??= useLifecycle;
     useChildLifecycle ??= useLifecycle;
 
@@ -115,10 +116,7 @@ mixin PageViewMixin<T extends StatefulWidget>
 
     if (useChildLifecycle) {
       body = body.mapIndex((e, index) {
-        return e.pageChildLifecycle(
-          index: index,
-          wantKeepAlive: keepAlive,
-        );
+        return e.pageChildLifecycle(index: index, wantKeepAlive: keepAlive);
       }).toList();
     } else if (keepAlive) {
       body = body.map((e) {
@@ -244,5 +242,5 @@ mixin PageViewMixin<T extends StatefulWidget>
     }
   }
 
-//endregion --PageView--
+  //endregion --PageView--
 }
