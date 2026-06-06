@@ -207,7 +207,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   void resetImage(UiImage? image, {bool refresh = false, bool reset = true}) {
     this.image = image;
     if (reset) {
-      baseMatrix = null;
+      _baseMatrix = null;
       _cropBounds = null;
     }
     if (refresh) {
@@ -238,7 +238,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   void _initIfNeed(ImageRenderObject renderObject) {
     //debugger();
     _renderObject = renderObject;
-    if (baseMatrix == null) {
+    if (_baseMatrix == null) {
       final Size size =
           (renderObject.size - Offset(padding.horizontal, padding.vertical))
               as Size;
@@ -254,7 +254,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
       );
       translate.translate(dst.left + padding.left, dst.top + padding.top);
       scale.scale(dst.width / rect.size.width, dst.height / rect.size.height);
-      baseMatrix = translate * scale;
+      _baseMatrix = translate * scale;
     }
     if (renderCropOverlay) {
       if (_cropBounds == null) {
@@ -263,10 +263,10 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
     }
   }
 
-  /// 基础矩阵
+  /// 基础矩阵, 居中显示图片, 保证图片显示完整
   /// [_initIfNeed]
   @autoInjectMark
-  Matrix4? baseMatrix;
+  Matrix4? _baseMatrix;
 
   /// 图片仅渲染时的矩阵
   Matrix4 get renderMatrix {
@@ -281,8 +281,25 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
   /// 操作后的矩阵, 包含了基础矩阵, 和操作属性的矩阵
   Matrix4 get operateMatrix {
-    final base = baseMatrix ?? Matrix4.identity();
-    return base * renderMatrix;
+    final base = _baseMatrix ?? Matrix4.identity();
+    final Matrix4 matrix = base * renderMatrix;
+
+    final result = matrix.mapRect(_imageRect);
+    if (result.left < 0) {
+      //如果旋转之后, 超出了图片范围, 则缩放图片
+      final scale =
+          (result.width - result.left.abs() * 2 - padding.horizontal) /
+          result.width;
+      return createScaleMatrix(scale: scale, anchor: result.center) * matrix;
+    }
+    if (result.top < 0) {
+      //如果旋转之后, 超出了图片范围, 则缩放图片
+      final scale =
+          (result.height - result.top.abs() * 2 - padding.vertical) /
+          result.height;
+      return createScaleMatrix(scale: scale, anchor: result.center) * matrix;
+    }
+    return matrix;
   }
 
   //endregion --绘制操作--
@@ -329,7 +346,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
     if (_renderObject == null) {
       return;
     }
-
+    //debugger();
     final rect = _imageOperateRect;
     if (cropScale <= 0) {
       //图片比例/任意比例
@@ -448,7 +465,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
   /// 获取剪切的图片
   Future<UiImage?> cropImage() async {
     if (_cropBounds != null) {
-      final base = baseMatrix ?? Matrix4.identity();
+      final base = _baseMatrix ?? Matrix4.identity();
       final bounds = base.invertedMatrix().mapRect(_cropBounds!);
       final cropPath = Path();
       if (cropType == CropType.oval) {
