@@ -20,10 +20,10 @@ export 'package:go_router/go_router.dart' hide GoRouterHelper;
 export 'package:rxdart/rxdart.dart';
 export 'package:watch_it/watch_it.dart';
 
+part 'src/go_router_ex.dart';
 // @formatter:off
 
 part 'src/marquee/marquee_ex.dart';
-part 'src/go_router_ex.dart';
 part 'src/refresh/easy_refresh_ex.dart';
 part 'src/tooltip/el_tooltip_ex.dart';
 
@@ -72,11 +72,11 @@ final $di = di;
 void keepScreenOn([bool enable = true]) {
   if (enable) {
     WakelockPlus.enable().get((data, error) {
-      debugger(when: error != null);
+      debugger(when: !isDesktopOrWeb && error != null);
     });
   } else {
     WakelockPlus.disable().get((data, error) {
-      debugger(when: error != null);
+      debugger(when: !isDesktopOrWeb && error != null);
     });
   }
 }
