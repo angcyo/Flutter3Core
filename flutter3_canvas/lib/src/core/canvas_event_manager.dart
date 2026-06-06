@@ -511,7 +511,7 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
           isKeyPressed(
             keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys,
           )) {
-        //控制键按下, 鼠标滚动
+        //鼠标滚动缩放画布: 控制键按下, 鼠标滚动
         final offset = event.mouseScrollDelta;
         if (offset.dy > 0) {
           //鼠标向下滚动, 缩小
@@ -529,6 +529,7 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
           );
         }
       } else {
+        //托盘缩放画布
         if (event.isPanZoomStart) {
           _startPanScaleX = canvasDelegate.canvasViewBox.scaleX;
           _startPanScaleY = canvasDelegate.canvasViewBox.scaleY;
