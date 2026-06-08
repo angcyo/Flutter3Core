@@ -9,31 +9,32 @@ part of '../flutter3_http.dart';
 /// [HttpStatus] http状态码
 class Http {
   /// api host, 不需要/结尾, 内存临时修改的接口地址
-  static final baseUrlData = $live<String?>();
+  static final baseUrlLive = $live<String?>();
 
   /// 获取一个[baseUrl], 最基础的接口地址
-  static String? Function()? getBaseUrl = () => baseUrlData.value;
+  static String? Function()? getBaseUrl = () => baseUrlLive.value;
 
   /// 支持配置的接口地址列表
-  static List<HttpHostData> hostListData = [];
+  static List<HttpHostData> hostDataList = [];
 }
 
 /// 接口请求地址
 /// api host, 不需要`/`结尾
 /// - [RDio.dio]
-String? get $host => Http.baseUrlData.value ?? Http.getBaseUrl?.call();
+String? get $host => Http.baseUrlLive.value ?? Http.getBaseUrl?.call();
 
 set $host(String? value) {
-  Http.baseUrlData <= value;
+  Http.baseUrlLive <= value;
 }
 
 /// 接口地址
+@immutable
 class HttpHostData {
   final String? name;
   final String? des;
   final String? host;
 
-  HttpHostData({this.name, this.des, this.host});
+  const HttpHostData({this.name, this.des, this.host});
 }
 
 extension HttpUriEx on Uri {

@@ -3,11 +3,13 @@ library flutter3_oss;
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter_oss_aliyun/flutter_oss_aliyun.dart';
 
 export 'package:flutter_oss_aliyun/flutter_oss_aliyun.dart';
 
+part 'src/oss_endpoint_config_dialog.dart';
 part 'src/oss_object.dart';
 part 'src/oss_upload.dart';
 
@@ -55,6 +57,15 @@ part 'src/oss_upload.dart';
 /// -[uploadAliyunOssFileList]
 ///
 class OssClient {
+  /// OSS配置信息
+  /// - 收到此值改变时, 重新初始化阿里云OSS
+  static final ossConfigLive = $live<OssConfigData?>();
+
+  /// 支持切换的OSS配置信息列表
+  static List<OssConfigData> ossConfigList = [];
+
+  //MARK: - OssClient
+
   OssClient._();
 
   /// 阿里云OSS的Client
@@ -94,6 +105,18 @@ class OssClient {
   }
 }
 
+/// OSS相关配置数据结构
+@immutable
+class OssConfigData {
+  /// 阿里云OSS的Endpoint
+  final String? ossEndpoint;
+
+  /// 阿里云OSS的Bucket 名称
+  final String? ossBucket;
+
+  const OssConfigData({this.ossEndpoint, this.ossBucket});
+}
+
 /// 使用sts授权的方式, 初始化阿里云oss
 ///
 /// sts默认应该返回以下结构: [Auth]
@@ -110,10 +133,11 @@ class OssClient {
 /// - [ossEndpoint] 不需要使用 `https://` 开头
 @initialize
 void initAliyunOssSts({
-  String? stsUrl,
+  //--basics
   String? ossEndpoint,
   String? ossBucket,
-  //--
+  //--auth
+  String? stsUrl,
   FutureOr<Auth> Function()? authGetter,
   //--
 }) {

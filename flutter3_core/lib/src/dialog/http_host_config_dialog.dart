@@ -5,6 +5,9 @@ part of '../../flutter3_core.dart';
 /// @date 2026/05/22
 ///
 /// 主机切换对话框
+///
+/// - [HttpHostConfigDialog]
+/// - [OssEndpointConfigDialog]
 class HttpHostConfigDialog extends StatefulWidget with DialogMixin {
   const HttpHostConfigDialog({super.key});
 
@@ -19,11 +22,19 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
     return widget.buildAdaptiveCenterDialog(
       context,
       [
-        "Api服务器地址切换".text(style: globalTheme.textTitleStyle).insets(all: kX),
+        [
+          Icon(
+            Icons.beenhere_outlined,
+            size: 24,
+            color: globalTheme.accentColor,
+            shadows: [kBoxShadow],
+          ),
+          "API服务器地址切换(临时)".text(style: globalTheme.textTitleStyle),
+        ].row(gap: kH)?.insets(all: kX),
         hLine(context),
         _buildItemTile(globalTheme, "当前服务器", $host, selected: true),
         hLine(context),
-        for (final item in Http.hostListData)
+        for (final item in Http.hostDataList)
           _buildItemTile(
             globalTheme,
             item.name,

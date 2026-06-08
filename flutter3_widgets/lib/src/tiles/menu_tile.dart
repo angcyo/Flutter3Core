@@ -229,6 +229,9 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// 中间的文本内容
   final String? text;
 
+  /// 文本显示最大的行数
+  final int? textMaxLines;
+
   //--
 
   /// 是否处于选中状态, 会有背景装饰
@@ -261,6 +264,7 @@ class DesktopTextMenuTile extends StatefulWidget {
   const DesktopTextMenuTile({
     super.key,
     this.text,
+    this.textMaxLines,
     this.leadingWidget,
     this.placeholderSize = const Size(24, 24),
     this.trailingWidget,
@@ -306,7 +310,12 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
           //-- leading
           widget.leadingWidget ??
               SizedBox.fromSize(size: widget.placeholderSize),
-          (widget.text ?? "").text(style: globalTheme.textBodyStyle).expanded(),
+          (widget.text ?? "")
+              .text(
+                style: globalTheme.textBodyStyle,
+                maxLines: widget.textMaxLines,
+              )
+              .expanded(),
           //-- trailing
           trailingWidget ?? SizedBox.fromSize(size: widget.placeholderSize),
         ]
