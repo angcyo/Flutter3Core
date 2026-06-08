@@ -421,6 +421,8 @@ Future _initAppDebugInfo() async {
 ///
 /// [checkOrShowNavigatorRouteOverlay]
 ///
+/// - [$onGlobalAppContextChanged]
+///
 @entryPoint
 @initialize
 Future initGlobalAppAtContext(BuildContext context) async {
