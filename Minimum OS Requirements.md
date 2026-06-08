@@ -1,4 +1,4 @@
-# Minimum OS Requirements
+# Minimum OS Requirements / 最小支持系统版本
 
 > `macOS Intel Chip` `macOS Apple Silicon`
 
