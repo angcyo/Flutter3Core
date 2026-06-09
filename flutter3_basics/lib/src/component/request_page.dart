@@ -155,13 +155,17 @@ class RequestPage {
   String? sortField;
 
   /// 排序方式: 是否倒序
-  /// - 默认升序
+  /// - 默认升序 -> 降序 -> 重置
   bool? reversed;
+
+  /// 是否允许排序字段重置
+  /// - 降序后 再次点击 是否重置排序字段?
+  bool? enableResetSort = true;
 
   /// 更新排序字段
   /// @return true: 排序字段发生改变
   @api
-  bool updateSort(String? field, {bool? reversed}) {
+  bool updateSort(String? field, {bool? reversed, bool? enableResetSort}) {
     if (reversed != null) {
       //更新当前字段的升降序
       sortField = field ?? sortField;
@@ -178,9 +182,31 @@ class RequestPage {
         sortLive << true;
       } else {
         //切换相同的字段升降序
-        this.reversed = !(this.reversed ?? false);
-        sortLive << true;
+        if (this.reversed != true) {
+          //当前未设置为降序/或已是升序
+          this.reversed = true;
+          sortLive << true;
+        } else if (this.reversed == true) {
+          //当前是降序
+          enableResetSort ??= this.enableResetSort;
+          if (enableResetSort == true) {
+            //重置排序字段
+            sortField = null;
+            this.reversed = null;
+            sortLive << true;
+          } else {
+            //切换到升序
+            this.reversed = false;
+            sortLive << true;
+          }
+        }
       }
+      return true;
+    } else if (sortField != null) {
+      //清除排序字段
+      sortField = null;
+      this.reversed = null;
+      sortLive << true;
       return true;
     }
     return false;
@@ -192,7 +218,7 @@ class RequestPage {
   /// - [ascIcon] 升序图标, 默认
   /// - [descIcon] 降序图标, 默认
   ///
-  /// - [onSort] 排序成功后的回调
+  /// - [onSortAction] 排序成功后的回调, 在此回调中更新界面
   ///
   /// @return 带排序提示的小部件
   @api
@@ -203,6 +229,8 @@ class RequestPage {
     Widget? ascIcon,
     Widget? descIcon,
     VoidAction? onSortAction,
+    //--
+    bool? enableResetSort,
     //--row
     MainAxisSize? mainAxisSize,
     MainAxisAlignment? mainAxisAlignment = .center,
@@ -246,7 +274,7 @@ class RequestPage {
     }
 
     return result?.click(() {
-      if (updateSort(sortField)) {
+      if (updateSort(sortField, enableResetSort: enableResetSort)) {
         onSortAction?.call();
       }
     });
