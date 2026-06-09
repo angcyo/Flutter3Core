@@ -28,7 +28,7 @@ dev_dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/ordered_set
   # https://pub.dev/packages/vector_math
-  flame: ^1.36.0
+  flame: ^1.37.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

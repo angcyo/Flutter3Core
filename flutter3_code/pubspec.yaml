@@ -22,14 +22,19 @@ dependencies:
   # https://github.com/kevmoo/qr.dart
   # https://pub.dev/packages/meta
   # https://kevmoo.github.io/qr.dart/
-  qr: ^3.0.2
+  qr: ^4.0.0
 
   # https://pub.dev/packages/barcode
   # Dart 的条形码生成库，可以为任何后端生成通用绘图操作。
   # https://github.com/DavBfr/dart_barcode
   # https://pub.dev/packages/qr
   # https://pub.dev/packages/meta
-  barcode: ^2.2.9
+  #barcode: ^2.2.9
+  barcode:
+    git:
+      url: git@github.com:angcyo/dart_barcode.git
+      path: barcode
+      ref: 2.2.9-fix1
 
   # https://pub.dev/packages/barcode_image
   # Dart 的条形码生成库，可以使用 pub:image 库生成条形码。
@@ -38,22 +43,27 @@ dependencies:
   # https://pub.dev/packages/barcode
   # https://pub.dev/packages/image
   # https://pub.dev/packages/meta
-  barcode_image: ^2.0.3
+  #barcode_image: ^2.0.3
+  barcode_image:
+    git:
+      url: git@github.com:angcyo/dart_barcode.git
+      path: image
+      ref: 2.0.3-fix1
   # https://pub.dev/packages/image
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/xml
-  image: ^4.8.0
+  image: ^4.9.1
+
+  # https://pub.dev/packages/qr_flutter
+  # QR.Flutter 是一个 Flutter 库，用于通过 Widget 或自定义 Painter 进行简单快速的 QR 代码渲染。
+  # https://pub.dev/packages/qr
+  # qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: any
-
-  # https://pub.dev/packages/qr_flutter
-  # QR.Flutter 是一个 Flutter 库，用于通过 Widget 或自定义 Painter 进行简单快速的 QR 代码渲染。
-  # https://pub.dev/packages/qr
-  qr_flutter: ^4.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

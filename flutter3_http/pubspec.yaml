@@ -35,13 +35,13 @@ dependencies:
   # Because flutter3_http depends on json_annotation ^4.11.0 and json_serializable 6.11.2 depends on json_annotation >=4.9.0 <4.10.0, json_serializable 6.11.2 is forbidden.
   #And because flutter3_http depends on json_serializable ^6.11.2, json_serializable >6.11.2 <7.0.0 is required.
   #Because json_serializable >=6.11.3 depends on build ^4.0.3 and no versions of json_serializable match >6.11.2 <6.11.3, json_serializable >6.11.2 requires build ^4.0.3.
-  json_annotation: ^4.11.0
+  json_annotation: ^4.12.0
 
   # https://pub.dev/packages/doh
   doh: ^0.0.4+2
 
   # https://pub.dev/packages/xml
-  xml: ^6.6.1
+  xml: ^7.0.1
 
   # https://pub.dev/packages/json_rpc_2
   # https://www.jsonrpc.org/specification
@@ -81,6 +81,12 @@ dependencies:
   # https://pub.dev/packages/freezed_annotation
   #flutter_quic: ^1.0.0
 
+dependency_overrides:
+  # Because flutter3_http depends on xml ^7.0.1 and flutter_gen_core 5.14.1 depends on xml ^6.0.0, flutter_gen_core 5.14.1 is forbidden.
+  #And because flutter_gen 5.14.1 depends on flutter_gen_core 5.14.1, flutter_gen 5.14.1 is forbidden.
+  #Because no versions of flutter_gen match >5.14.1 <6.0.0 and flutter3_basics depends on flutter_gen ^5.14.1, flutter_gen 5.14.1 is required.
+  xml: ^7.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -104,7 +110,7 @@ dev_dependencies:
   #So, because flutter3_http depends on json_serializable ^6.9.4 which depends on source_gen ^2.0.0, version solving failed.
   #...
   # source_gen: ^4.1.1 / isar_generator
-  json_serializable: ^6.13.2
+  json_serializable: ^6.14.0
 
   # https://pub.dev/packages/googleapis
   # https://pub.dev/packages/_discoveryapis_commons

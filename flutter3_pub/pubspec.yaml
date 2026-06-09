@@ -72,7 +72,9 @@ dependencies:
   # https://pub.dev/packages/plugin_platform_interface
   # https://pub.dev/packages/path
   # https://pub.dev/packages/win32
+  # And because file_picker 11.0.2 depends on win32 ^5.9.0, file_picker 11.0.2 is forbidden.
   file_picker: ^11.0.2
+  #file_picker: ^12.0.0-beta.5
 
   # https://pub.dev/packages/archive
   # https://github.com/brendan-duncan/archive
@@ -100,7 +102,8 @@ dependencies:
   # https://pub.dev/packages/charset
   charset: ^2.0.1
   # https://pub.dev/packages/json_annotation
-  json_annotation: ^4.11.0
+  # in flutter3_http
+  json_annotation: any
 
   # https://pub.dev/packages/fl_chart
   # https://pub.dev/packages/equatable
@@ -136,8 +139,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: any
-  json_serializable: ^6.13.2
-  build_runner: ^2.13.1
+  json_serializable: ^6.14.0
+  build_runner: ^2.15.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

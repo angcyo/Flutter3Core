@@ -74,7 +74,7 @@ dependencies:
   # https://pub.dev/packages/permission_handler
   # https://github.com/baseflow/flutter-permission-handler
   # https://pub.dev/packages/meta
-  permission_handler: ^12.0.1
+  permission_handler: ^12.0.3
 
   # 保存图片到相册 #ANDROID IOS
   # https://pub.dev/packages/image_gallery_saver
@@ -82,7 +82,9 @@ dependencies:
   #image_gallery_saver: ^2.0.3 #ANDROID IOS
   # https://pub.dev/packages/image_gallery_saver_plus
   # https://github.com/ArmanKT/image_gallery_saver_plus
-  image_gallery_saver_plus: ^4.0.1
+  # Minimum OS Requirements / 最小支持系统版本
+  # - iOS: 13.0
+  image_gallery_saver_plus: ^5.0.0
 
   # https://pub.dev/packages/flutter_install_app
   # flutter_install_app: ^1.3.0 #ANDROID IOS

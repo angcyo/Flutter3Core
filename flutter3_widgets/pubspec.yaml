@@ -63,7 +63,7 @@ dependencies:
   flutter_constraintlayout: ^1.7.0-stable
 
   # https://pub.dev/packages/scrollview_observer
-  scrollview_observer: ^1.26.3
+  scrollview_observer: ^1.27.0
 
   # https://pub.dev/packages/flutter_rating_bar
   flutter_rating_bar: ^4.0.1
