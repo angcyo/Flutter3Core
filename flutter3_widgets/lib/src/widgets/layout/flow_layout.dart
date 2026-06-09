@@ -470,6 +470,9 @@ class FlowLayoutRender extends RenderBox
   void performLayout() {
     final constraints = this.constraints;
     debugger(when: !isIos && debugLabel != null);
+    //清除缓存
+    _childUsedWidth = 0;
+    _childUsedHeight = 0;
     measureChild(/*debugLabel: debugLabel*/);
     layoutChild(/*debugLabel: debugLabel*/);
 
@@ -720,7 +723,10 @@ class FlowLayoutRender extends RenderBox
     }
   }
 
+  @tempFlag
   double _childUsedWidth = 0;
+
+  @tempFlag
   double _childUsedHeight = 0;
 
   /// 2: 布局所有的child位置, 包裹stack的child
