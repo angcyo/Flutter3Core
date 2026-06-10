@@ -196,6 +196,10 @@ class _SweepingGradientTransform extends GradientTransform {
 }
 
 /// 骨架小部件
+///
+/// # flutter_pagination_pro: ^1.0.2
+///
+/// https://pub.dev/packages/flutter_pagination_pro
 class SkeletonWidget extends LeafRenderObjectWidget {
   final SkeletonData? data;
 

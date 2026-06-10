@@ -308,6 +308,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [flutter_markdown: ^0.6.18+2](https://pub.dev/packages/flutter_markdown) Flutter 的 Markdown 渲染器。它支持原始格式，但不支持内联 HTML。
 - [markdown_widget: ^2.3.2+2](https://pub.dev/packages/markdown_widget)支持TOC功能，可以通过Heading快速定位;支持代码高亮;支持夜间模式;
 - [flutter_keyboard_visibility: ^5.4.1](https://pub.dev/packages/flutter_keyboard_visibility)对键盘可见性更改做出反应。
+- [virtual_keypad: ^0.8.1](https://pub.dev/packages/virtual_keypad)适用于 Flutter 的可自定义虚拟键盘​​、屏幕键盘和数字键盘。 专为自助服务终端应用、触摸屏和桌面输入、PIN 码和密码输入、数字键盘和数字小键盘流程以及自定义文本字段集成而设计。
 - [scroll_to_index: ^3.0.1](https://pub.dev/packages/scroll_to_index) 该软件包为 Flutter 可滚动小部件提供了固定/可变行高的滚动到索引机制。
 - [scrollview_observer: ^1.21.0](https://pub.dev/packages/scrollview_observer) flutter_scrollview_observer 这是一个可用于监听滚动视图中正在显示的子部件的组件库。
 - [indexed_list_view: ^3.0.1](https://pub.dev/packages/indexed_list_view) 按索引跳转到任何项目。

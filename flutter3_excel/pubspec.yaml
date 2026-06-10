@@ -26,10 +26,17 @@ dependencies:
   #excel_dart: ^3.0.0
   #And because excel >=4.0.6 depends on archive ^3.6.1, every version of flutter3_abc from path requires archive ^3.6.1.
   #excel: ^4.0.6
-  excel:
-    git:
-      url: git@github.com:FlutterStudioIst/excel.git
-      ref: 4.0.6-fix3
+#  excel:
+#    git:
+#      url: git@github.com:FlutterStudioIst/excel.git
+#      ref: 4.0.6-fix3
+  # https://pub.dev/packages/excel_plus
+  # https://pub.dev/packages/archive
+  # https://pub.dev/packages/web
+  # https://pub.dev/packages/xml
+  excel_plus: ^0.0.4
+  # https://pub.dev/packages/csv_plus
+  #csv_plus: ^0.0.2
 
 dependency_overrides:
   # in flutter3_pub
