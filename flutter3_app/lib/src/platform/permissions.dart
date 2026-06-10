@@ -14,7 +14,7 @@ abstract class Permissions {
       : [
           // 如果 Android 版本低于 12，或者需要精确定位，请加上这一行
           Permission.location,
-          Permission.bluetooth,
+          /*Permission.bluetooth,*/ // API: 36+ 不需要这个权限
           Permission.bluetoothScan,
           Permission.bluetoothConnect,
           Permission.bluetoothAdvertise,
