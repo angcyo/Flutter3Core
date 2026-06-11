@@ -326,6 +326,7 @@ extension FfiVecVecDoubleEx on Vec_Vec_double_t {
   }
 }
 
+/// [StringUtf8Pointer]
 extension FfiStringEx on String {
   /// 转成[Vec_uint8_t]
   Vec_uint8_t toVecUint8() {
