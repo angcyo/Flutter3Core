@@ -16,7 +16,7 @@ class DebugAction {
   /// 普通的按钮点击事件
   ClickAction? clickAction;
 
-  //--
+  //MARK: - hive
 
   /// 自动修改hive属性
   String? hiveKey;
@@ -30,13 +30,19 @@ class DebugAction {
   /// [hiveKey]对应的默认值
   dynamic defHiveValue;
 
+  /// hive属性值改变时触发
+  /// @return true 表示更新界面
+  ValueCallback? onHiveChangedAction;
+
   DebugAction({
     this.label,
     this.des,
     this.clickAction,
+    //--
     this.hiveKey,
     this.hiveType,
     this.defHiveValue,
+    this.onHiveChangedAction,
   });
 }
 
@@ -71,6 +77,9 @@ mixin DebugActionMixin {
             inputText: action.hiveKey?.hiveGet<String>(action.defHiveValue),
             onInputTextChanged: (value) {
               action.hiveKey?.hivePut(value);
+              if (action.onHiveChangedAction?.call(value) == true) {
+                context.tryUpdateState();
+              }
             },
           )
         else if (action.hiveType == int)
@@ -81,6 +90,9 @@ mixin DebugActionMixin {
             value: action.hiveKey?.hiveGet<int>(action.defHiveValue) ?? 0,
             onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
+              if (action.onHiveChangedAction?.call(value) == true) {
+                context.tryUpdateState();
+              }
             },
           )
         else if (action.hiveType == double)
@@ -91,6 +103,9 @@ mixin DebugActionMixin {
             value: action.hiveKey?.hiveGet<double>(action.defHiveValue) ?? 0.0,
             onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
+              if (action.onHiveChangedAction?.call(value) == true) {
+                context.tryUpdateState();
+              }
             },
           )
         else if (action.hiveType == bool)
@@ -101,6 +116,9 @@ mixin DebugActionMixin {
             value: action.hiveKey?.hiveGet<bool>(action.defHiveValue) == true,
             onValueChanged: (value) {
               action.hiveKey?.hivePut(value);
+              if (action.onHiveChangedAction?.call(value) == true) {
+                context.tryUpdateState();
+              }
             },
           )
         else

@@ -182,8 +182,9 @@ class DebugPage extends StatefulWidget {
     String des,
     Type hiveType,
     String hiveKey,
-    dynamic defHiveValue,
-  ) {
+    dynamic defHiveValue, {
+    ValueCallback? onHiveChangedAction,
+  }) {
     debugActions.add(
       DebugAction(
         label: label,
@@ -191,6 +192,7 @@ class DebugPage extends StatefulWidget {
         hiveKey: hiveKey,
         hiveType: hiveType,
         defHiveValue: defHiveValue,
+        onHiveChangedAction: onHiveChangedAction,
       ),
     );
   }
