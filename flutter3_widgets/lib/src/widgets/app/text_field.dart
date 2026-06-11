@@ -368,7 +368,7 @@ class TextFieldConfig {
     bool? restoreSelection = false,
     bool? notify,
     //--
-    bool? updateEmpty = false,
+    bool? updateEmpty,
   }) {
     if (this.text == text) {
       //debugger();
@@ -381,7 +381,7 @@ class TextFieldConfig {
       return;
     }
     text ??= '';
-    if (updateEmpty != true && text.isEmpty) {
+    if (updateEmpty == false && text.isEmpty) {
       assert(() {
         l.v('${classHash()} 忽略更新空字符');
         return true;

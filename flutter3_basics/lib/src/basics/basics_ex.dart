@@ -542,6 +542,8 @@ extension StringEx on String {
   /// 获取非空的字符串
   String? get orNull => isEmpty ? null : this;
 
+  String? orNull2([bool enable = true]) => enable && isEmpty ? null : this;
+
   /// 限制字符串返回的最大长度
   /// - [length] 最大返回的长度
   /// - [ellipsis] 超过之后使用"..."
