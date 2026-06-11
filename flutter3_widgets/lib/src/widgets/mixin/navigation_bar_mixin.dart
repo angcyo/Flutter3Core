@@ -62,28 +62,51 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     String? label,
     String? tooltip,
     Color? backgroundColor,
-    //--
+    //--flex
     Axis axis = .horizontal,
     Widget? before,
     Widget? after,
     double? gap = kH,
+    //--decoration
+    EdgeInsetsGeometry? decorationPadding,
+    Widget? Function(Widget? child, bool active)? wrapDecorationAction,
+    Decoration? decoration,
+    Decoration? activeDecoration,
   }) {
+    //是否需要装饰
+    final hasDecoration = decoration != null || activeDecoration != null;
+    if (hasDecoration) {
+      wrapDecorationAction ??= (child, active) => child
+          ?.iw()
+          .insets(h: kX, v: kM, insets: decorationPadding)
+          .decoration(active ? activeDecoration : decoration)
+          .align(.center);
+    } else {
+      wrapDecorationAction = (child, active) => child;
+    }
     if (axis == .horizontal) {
       return BottomNavigationBarItem(
-        icon: normal.rowOf(null, before: before, after: after, gap: gap),
-        activeIcon: active?.rowOf(null, before: before, after: after, gap: gap),
+        icon: wrapDecorationAction(
+          normal.rowOf(null, before: before, after: after, gap: gap),
+          false,
+        )!,
+        activeIcon: wrapDecorationAction(
+          active?.rowOf(null, before: before, after: after, gap: gap),
+          true,
+        ),
         label: label ?? "",
         tooltip: tooltip,
         backgroundColor: backgroundColor,
       );
     }
     return BottomNavigationBarItem(
-      icon: normal.columnOf(null, before: before, after: after, gap: gap),
-      activeIcon: active?.columnOf(
-        null,
-        before: before,
-        after: after,
-        gap: gap,
+      icon: wrapDecorationAction(
+        normal.columnOf(null, before: before, after: after, gap: gap),
+        false,
+      )!,
+      activeIcon: wrapDecorationAction(
+        active?.columnOf(null, before: before, after: after, gap: gap),
+        true,
       ),
       label: label ?? "",
       tooltip: tooltip,
