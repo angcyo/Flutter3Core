@@ -55,17 +55,39 @@ class ReceiveIntent {
       //在桌面上使用 app_links
       //https://pub.dev/packages/app_links
       final appLinks = AppLinks(); // AppLinks is singleton
+      //MARK: - first
+      appLinks.getInitialLink().get((uri, _) {
+        if (uri is Uri) {
+          if (isDebugFlag) {
+            l.t("First处理uri->$uri");
+            toastInfo("First处理uri->$uri");
+          }
+          uriStream.add(uri);
+          _handleUri(uri);
+        }
+      });
+      appLinks.getInitialLinkString().get((text, _) {
+        if (text is String) {
+          textStream.add(text);
+        }
+      });
+      //MARK: - listen
       // Subscribe to all events (initial link and further)
-      final sub = appLinks.uriLinkStream.listen((uri) {
+      appLinks.uriLinkStream.listen((uri) {
         // Do something (navigation, ...)
         if (isDebugFlag) {
           l.t("处理uri->$uri");
+          toastInfo("处理uri->$uri");
         }
         uriStream.add(uri);
         _handleUri(uri);
       });
+      appLinks.stringLinkStream.listen((text) {
+        textStream.add(text);
+      });
       return;
     }
+    //MARK: - first
     // 首次打开软件时, 检查平台分享数据
     ReceiveSharingIntentPlus.getInitialMedia().get((value, _) {
       if (value is List<SharedMediaFile> && value.isNotEmpty) {
@@ -98,6 +120,7 @@ class ReceiveIntent {
         _handleUri(value);
       }
     });
+    //MARK: - listen
     // 监听平台分享数据
     ReceiveSharingIntentPlus.getMediaStream().listen((value) {
       assert(() {
