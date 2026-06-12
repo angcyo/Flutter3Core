@@ -44,10 +44,10 @@ import 'build_config.dart';
 /// 默认文件名是: `windows/CMakeLists.txt`中`BINARY_NAME`对应的值
 ///
 void main(List<String> arguments) async {
-  colorLog('[$currentFileName]工作路径->$currentPath');
+  colorLog('🚀[$currentFileName]工作路径->$currentPath');
   final config = $value(currentFileName);
   if (config is! Map) {
-    throw "请在[$currentPath]目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本的收集产品名称";
+    throw "❌ 请在[$currentPath]目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本的收集产品名称";
   }
 
   final time = DateTime.now();
@@ -56,9 +56,9 @@ void main(List<String> arguments) async {
   final versionName = _getVersionName();
   final versionCode = _getVersionCode();
   print(
-    "appName: $appName"
-    "\nversionName: $versionName"
-    "\nversionCode: $versionCode",
+    "💡 appName: $appName"
+    " versionName: $versionName"
+    " versionCode: $versionCode",
   );
 
   //输出路径
@@ -80,7 +80,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "app-release.apk/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("已复制过: $from");
+        colorLog("⚠️已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
@@ -103,7 +103,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "app-release.aab/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("已复制过: $from");
+        colorLog("⚠️已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
@@ -126,7 +126,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("已复制过: $from");
+        colorLog("⚠️已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.ipa/$outputName";
@@ -151,7 +151,7 @@ void main(List<String> arguments) async {
       final key =
           "$targetFileName.app/${File("$from/Contents/MacOS/Laserabc Factory Tools").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("已复制过: $from");
+        colorLog("⚠️已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.app/$outputName";
@@ -176,14 +176,14 @@ void main(List<String> arguments) async {
   final windowsExeName = config["windows_exe_name"];
   if (windowsExeName is String) {
     //收集 exe
-    final targetFileName = readWindowsExeName();
+    final exeFileName = "${readWindowsExeName()}.exe";
     final outputName = formatName(windowsExeName, "windows");
     final from = "$currentPath/build/windows/x64/runner/Release";
     if (Directory(from).existsSync()) {
       final key =
-          "$targetFileName.exe/${File("$from/data/app.so").lastModifiedSync()}";
+          "$exeFileName/${File("$from/data/app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("已复制过: $from/${_getAppName()}.exe");
+        colorLog("⚠️已复制过: $from/$exeFileName");
         exitProductCount++;
       } else {
         final toDir = "$currentPath/$outputPath/.exe";
@@ -209,22 +209,31 @@ void main(List<String> arguments) async {
           if (issFile.existsSync()) {
             final isccPath = await _findISCCPath();
             if (isccPath != null) {
-              final setupName = outputName.substring(
+              final setupExeName = outputName.substring(
                 0,
                 outputName.lastIndexOf("."),
               );
               final appVersion = _getVersionName() ?? "0.0.1";
-              //print("$toDir/$setupName:$appVersion");
-              await runCommand(
+              //print("$toDir/$setupExeName:$appVersion");
+              colorLog('💡准备打包安装程序: $from/$exeFileName');
+              final result = await runCommand(
                 isccPath,
                 args: [
                   "/Qp",
-                  "/F$setupName",
+                  "/F$setupExeName",
                   "/O$toDir",
                   '/DMyAppVersion=$appVersion',
+                  '/DMySource=$from',
+                  '/DMyAppExeName=$exeFileName',
                   issFile.path,
                 ],
+                printLog: false,
               );
+              if (result.exitCode == 0) {
+                collectProductCount++;
+                final outputExePath = "$toDir/$setupExeName.exe";
+                colorLog('🎉-> $outputExePath ${outputExePath.fileSizeStr}');
+              }
             } else {
               colorErrorLog(
                 "请先安装 Inno Setup ->https://jrsoftware.org/isdl.php",
@@ -243,7 +252,7 @@ void main(List<String> arguments) async {
     colorErrorLog('请检查是否执行过`flutter build xxx --release`');
   }
   colorLog(
-    '收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}',
+    '✅收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}',
   );
 }
 
@@ -380,6 +389,9 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
   //如果是文件夹, 则复制文件夹
   if (FileSystemEntity.isDirectorySync(srcPath)) {
     //--
+    if (!inner) {
+      colorLog('💡准备复制文件夹: $srcPath');
+    }
     Directory(dstPath).createSync(recursive: true);
     Directory(srcPath).listSync().forEach((element) {
       copyFile(
@@ -389,7 +401,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
       );
     });
     if (!inner) {
-      colorLog('复制文件夹: $srcPath -> $dstPath');
+      colorLog('🎉-> $dstPath');
     }
     return true;
   }
@@ -403,12 +415,13 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
   }
 
   //--
+  if (!inner) {
+    colorLog('💡准备复制文件: $srcPath');
+  }
   dstFile.createSync(recursive: true);
   dstFile.writeAsBytesSync(srcFile.readAsBytesSync());
-
-  //--
   if (!inner) {
-    colorLog('复制文件: $srcPath -> $dstPath');
+    colorLog('🎉-> $dstPath');
   }
 
   return true;
@@ -429,6 +442,7 @@ Future<bool> zipFolder(
   final encoder = ZipFileEncoder();
   try {
     encoder.create(dstPath);
+    colorLog('💡准备压缩文件夹: $srcPath');
     if (excludeRoot) {
       await srcFolder
           .listSync()
@@ -438,7 +452,7 @@ Future<bool> zipFolder(
     } else {
       await [srcPath].zipEncoder(encoder);
     }
-    colorLog('压缩文件夹: $srcPath -> $dstPath ${dstPath.fileSizeStr}');
+    colorLog('🎉-> $dstPath ${dstPath.fileSizeStr}');
     return true;
   } catch (e) {
     colorErrorLog(e);
@@ -464,6 +478,7 @@ Future<bool> zipFolderByPlatform(
       : [srcPath];
 
   final workPath = srcFolder.parent.path;
+  colorLog('💡准备压缩文件夹: $srcPath');
   final result = await Process.run(
     Platform.isWindows ? "7z" : "zip",
     [
@@ -474,9 +489,7 @@ Future<bool> zipFolderByPlatform(
     workingDirectory: workPath,
     /*runInShell: true,*/
   );
-  colorLog(
-    '压缩文件夹(${result.exitCode}): $srcPath -> $dstPath ${dstPath.fileSizeStr}',
-  );
+  colorLog('🎉-> $dstPath ${dstPath.fileSizeStr}');
   if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }
@@ -485,12 +498,13 @@ Future<bool> zipFolderByPlatform(
 
 /// 使用平台cp命令, 复制文件夹
 Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
+  colorLog('💡准备复制文件夹: $srcPath');
   final result = await Process.run(Platform.isWindows ? "cp" : "cp", [
     Platform.isWindows ? "" : "-R",
     srcPath,
     dstPath,
   ], runInShell: true);
-  colorLog('复制文件夹(${result.exitCode}): $srcPath -> $dstPath');
+  colorLog('🎉-> $dstPath');
   if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }

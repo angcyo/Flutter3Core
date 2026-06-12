@@ -45,9 +45,9 @@ void colorLog(dynamic msg, [int col = 93]) {
 /// 输出带颜色的错误日志
 void colorErrorLog(dynamic msg, [int col = 9]) {
   if (Platform.isWindows) {
-    print(msg);
+    print('❌ $msg');
   } else {
-    print('\x1B[38;5;${col}m$msg$_reset');
+    print('❌ \x1B[38;5;${col}m$msg$_reset');
   }
 }
 
@@ -118,12 +118,12 @@ Future<ProcessResult> runCommand(
     stdoutEncoding: systemEncoding,
     stderrEncoding: systemEncoding,
   );
-  if (printLog) {
-    if (result.exitCode == 0) {
+  if (result.exitCode == 0) {
+    if (printLog) {
       colorLog(result.stdout, 250); //输出标准输出
-    } else {
-      colorErrorLog(result.stderr, 9); //输出错误输出
     }
+  } else {
+    colorErrorLog(result.stderr, 9); //输出错误输出
   }
   return result;
 }
