@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:path/path.dart' as p;
 
 import '_script_common.dart';
 import 'build_config.dart';
@@ -182,10 +183,11 @@ void main(List<String> arguments) async {
       final key =
           "$targetFileName.exe/${File("$from/data/app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("已复制过: $from");
+        colorLog("已复制过: $from/${_getAppName()}.exe");
         exitProductCount++;
       } else {
-        final to = "$currentPath/$outputPath/.exe/$outputName";
+        final toDir = "$currentPath/$outputPath/.exe";
+        final to = "$toDir/$outputName";
         ensureFolder(to, parent: true);
         if (outputName.endsWith(".exe")) {
           if (copyFile(from, to)) {
@@ -198,6 +200,38 @@ void main(List<String> arguments) async {
             collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+          }
+        }
+        //使用Inno Setup打包安装程序
+        final windowsInnoSetup = config["windows_inno_setup"];
+        if (windowsInnoSetup is String) {
+          final issFile = File("$currentPath/$windowsInnoSetup");
+          if (issFile.existsSync()) {
+            final isccPath = await _findISCCPath();
+            if (isccPath != null) {
+              final setupName = outputName.substring(
+                0,
+                outputName.lastIndexOf("."),
+              );
+              final appVersion = _getVersionName() ?? "0.0.1";
+              //print("$toDir/$setupName:$appVersion");
+              await runCommand(
+                isccPath,
+                args: [
+                  "/Qp",
+                  "/F$setupName",
+                  "/O$toDir",
+                  '/DMyAppVersion=$appVersion',
+                  issFile.path,
+                ],
+              );
+            } else {
+              colorErrorLog(
+                "请先安装 Inno Setup ->https://jrsoftware.org/isdl.php",
+              );
+            }
+          } else {
+            colorErrorLog("未找到iss文件->${issFile.path}");
           }
         }
       }
@@ -250,9 +284,9 @@ String? _getBuildFlavorName(String? platformName) {
 /// 格式化名称
 String formatName(String pattern, String? platformName) {
   String output = pattern;
-  output = output.replaceAll("#an", _getAppName() ?? "");
-  output = output.replaceAll("#vn", _getVersionName() ?? "");
-  output = output.replaceAll("#vc", _getVersionCode() ?? "");
+  output = output.replaceAll("#an", _getAppName() ?? "APP");
+  output = output.replaceAll("#vn", _getVersionName() ?? "0.0.1");
+  output = output.replaceAll("#vc", _getVersionCode() ?? "1");
   output = output.replaceAll("#bn", _getBuildTypeName(platformName) ?? "");
   output = output.replaceAll("#fn", _getBuildFlavorName(platformName) ?? "");
   output = output.replaceAll("--", "-");
@@ -516,4 +550,69 @@ extension ZipListEx on List<String> {
       }
     }
   }
+}
+
+//MARK: - iscc
+
+/// 通过注册表查找本地安装的`ISCC.exe`的路径
+Future<String?> _findISCCPath() async {
+  for (final key in [
+    r"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\",
+    r"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\",
+  ]) {
+    final result = await runCommand(
+      "reg",
+      args: ["query", key],
+      printLog: false,
+    );
+    if (result.exitCode != 0) {
+      continue;
+    }
+    final output = result.stdout;
+    if (output is String) {
+      for (final line
+          in output
+              .split('\n')
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)) {
+        //print("行->" + line);
+        final subKey = line;
+        final subOutput = await runCommand(
+          "reg",
+          args: ["query", subKey],
+          printLog: false,
+        );
+        if (subOutput.exitCode != 0) {
+          continue;
+        }
+        //print("subKey:" + subKey + " -> " + subOutput.stdout);
+        final path = _findInnoSetupPath(subOutput.stdout);
+        if (path != null) {
+          final isccPath = p.join(path, 'ISCC.exe');
+          if (File(isccPath).existsSync()) {
+            return isccPath;
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+/// 查找`Inno Setup`的安装路径内
+String? _findInnoSetupPath(String output) {
+  // reg query 的输出格式通常为：
+  //     (Default)    REG_SZ    C:\Program Files (x86)\Inno Setup 6\ISCC.exe
+  // Inno Setup: App Path    REG_SZ    D:\Inno Setup 7
+  final lines = output.split('\n');
+  for (final line in lines) {
+    if (line.contains("Inno Setup: App Path") && line.contains('REG_SZ')) {
+      // 以 REG_SZ 作为切分点，取后面的部分并修剪空格
+      final parts = line.split('REG_SZ');
+      if (parts.length > 1) {
+        return parts[1].trim();
+      }
+    }
+  }
+  return null;
 }

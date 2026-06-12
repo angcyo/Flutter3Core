@@ -102,14 +102,30 @@ Directory? ensureFolder(String? folderPath, {bool? parent}) {
 //---
 
 /// 执行命令
-Future runCommand(String executable, {String? dir, List<String>? args}) async {
+/// - [runInShell] 为true时, 在Windows上参数中有空格时, 会被shell解析为多个参数, 导致失败
+Future<ProcessResult> runCommand(
+  String executable, {
+  String? dir,
+  List<String>? args,
+  bool runInShell = false,
+  bool printLog = true,
+}) async {
   final result = Process.runSync(
     executable,
     [...?args],
-    runInShell: true,
+    runInShell: runInShell,
     workingDirectory: dir ?? currentPath,
+    stdoutEncoding: systemEncoding,
+    stderrEncoding: systemEncoding,
   );
-  colorLog(result.stdout, 250); //输出标准输出
+  if (printLog) {
+    if (result.exitCode == 0) {
+      colorLog(result.stdout, 250); //输出标准输出
+    } else {
+      colorErrorLog(result.stderr, 9); //输出错误输出
+    }
+  }
+  return result;
 }
 
 //MARK: yaml
