@@ -93,6 +93,7 @@ mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
   /// 处理完数据之后, 请主动清空数据
   @callPoint
   void handleOpenFileDataMixin() {
+    //debugger();
     final data = openFileDataMixin?.value;
     if (data != null) {
       onHandleOpenFileDataMixin(data).get((data, error) {
