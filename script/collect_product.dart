@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
@@ -44,7 +45,7 @@ import 'build_config.dart';
 /// 默认文件名是: `windows/CMakeLists.txt`中`BINARY_NAME`对应的值
 ///
 void main(List<String> arguments) async {
-  colorLog('🚀[$currentFileName]工作路径->$currentPath');
+  colorLog('🚀 [$currentFileName]工作路径->$currentPath');
   final config = $value(currentFileName);
   if (config is! Map) {
     throw "❌ 请在[$currentPath]目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本的收集产品名称";
@@ -56,9 +57,9 @@ void main(List<String> arguments) async {
   final versionName = _getVersionName();
   final versionCode = _getVersionCode();
   print(
-    "💡 appName: $appName"
-    " versionName: $versionName"
-    " versionCode: $versionCode",
+    "💡 appName:$appName"
+    " versionName:$versionName"
+    " versionCode:$versionCode",
   );
 
   //输出路径
@@ -80,7 +81,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "app-release.apk/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️已复制过: $from");
+        colorLog("⚠️ 已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
@@ -103,7 +104,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "app-release.aab/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️已复制过: $from");
+        colorLog("⚠️ 已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
@@ -126,7 +127,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️已复制过: $from");
+        colorLog("⚠️ 已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.ipa/$outputName";
@@ -143,18 +144,19 @@ void main(List<String> arguments) async {
   final macosAppName = config["macos_app_name"];
   if (macosAppName is String) {
     //收集 app
-    final targetFileName = readMacosProductName();
+    final productFileName = readMacosProductName();
     final outputName = formatName(macosAppName, "macos");
     final from =
-        "$currentPath/build/macos/Build/Products/Release/$targetFileName.app";
+        "$currentPath/build/macos/Build/Products/Release/$productFileName.app";
     if (Directory(from).existsSync()) {
       final key =
-          "$targetFileName.app/${File("$from/Contents/MacOS/Laserabc Factory Tools").lastModifiedSync()}";
+          "$productFileName.app/${File("$from/Contents/MacOS/$productFileName").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️已复制过: $from");
+        colorLog("⚠️ 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath/$outputPath/.app/$outputName";
+        final toDir = "$currentPath/$outputPath/.app";
+        final to = "$toDir/$outputName";
         ensureFolder(to, parent: true);
         if (outputName.endsWith(".app")) {
           if (await copyFolderByPlatform(from, to)) {
@@ -167,6 +169,82 @@ void main(List<String> arguments) async {
             collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+          }
+        }
+        //使用appdmg打包安装程序
+        final macosAppdmgConfig = config["macos_appdmg_config"];
+        if (macosAppdmgConfig is String) {
+          final appdmgConfigFile = File("$currentPath/$macosAppdmgConfig");
+          if (appdmgConfigFile.existsSync()) {
+            final result = await runCommand(
+              "appdmg",
+              printLog: false,
+              printErrorLog: false,
+            );
+            if (result != null) {
+              final dmgName = outputName.substring(
+                0,
+                outputName.lastIndexOf("."),
+              );
+              final outputDmgPath = "$toDir/$dmgName.dmg";
+              outputDmgPath.safeDelete();
+
+              //修改appdmg配置文件
+              final appVersion = _getVersionName() ?? "0.0.1";
+              final dmgTitle = "$appName v$appVersion";
+              final json = jsonDecode(appdmgConfigFile.readAsStringSync());
+              json["title"] = dmgTitle;
+              final tempConfigFile = File(
+                "$currentPath/.appdmg.config.temp.json",
+              );
+              tempConfigFile.writeAsStringSync(jsonEncode(json));
+
+              colorLog('💡准备打包安装程序: $from -> $dmgTitle');
+              final result = await runCommand(
+                "appdmg",
+                args: [tempConfigFile.path, outputDmgPath],
+                printLog: false,
+              );
+              tempConfigFile.path.safeDelete();
+              if (result?.exitCode == 0) {
+                collectProductCount++;
+                colorLog('🎉-> $outputDmgPath ${outputDmgPath.fileSizeStr}');
+              }
+            } else {
+              colorErrorLog("请先安装 appdmg -> npm install -g appdmg");
+            }
+            /*final isccPath = await _findISCCPath();
+            if (isccPath != null) {
+              final setupExeName = outputName.substring(
+                0,
+                outputName.lastIndexOf("."),
+              );
+              final appVersion = _getVersionName() ?? "0.0.1";
+              //print("$toDir/$setupExeName:$appVersion");
+              colorLog('💡准备打包安装程序: $from/$exeFileName');
+              final result = await runCommand(
+                isccPath,
+                args: [
+                  "/Qp",
+                  "/F$setupExeName",
+                  "/O$toDir",
+                  '/DMyAppVersion=$appVersion',
+                  '/DMySource=$from',
+                  '/DMyAppExeName=$exeFileName',
+                  appdmgConfigFile.path,
+                ],
+                printLog: false,
+              );
+              if (result.exitCode == 0) {
+                collectProductCount++;
+                final outputExePath = "$toDir/$setupExeName.exe";
+                colorLog('🎉-> $outputExePath ${outputExePath.fileSizeStr}');
+              }
+            } else {
+
+            }*/
+          } else {
+            colorErrorLog("未找到`appdmg`配置文件->${appdmgConfigFile.path}");
           }
         }
       }
@@ -183,7 +261,7 @@ void main(List<String> arguments) async {
       final key =
           "$exeFileName/${File("$from/data/app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️已复制过: $from/$exeFileName");
+        colorLog("⚠️ 已复制过: $from/$exeFileName");
         exitProductCount++;
       } else {
         final toDir = "$currentPath/$outputPath/.exe";
@@ -229,7 +307,7 @@ void main(List<String> arguments) async {
                 ],
                 printLog: false,
               );
-              if (result.exitCode == 0) {
+              if (result?.exitCode == 0) {
                 collectProductCount++;
                 final outputExePath = "$toDir/$setupExeName.exe";
                 colorLog('🎉-> $outputExePath ${outputExePath.fileSizeStr}');
@@ -240,7 +318,7 @@ void main(List<String> arguments) async {
               );
             }
           } else {
-            colorErrorLog("未找到iss文件->${issFile.path}");
+            colorErrorLog("未找到`iss`文件->${issFile.path}");
           }
         }
       }
@@ -252,7 +330,7 @@ void main(List<String> arguments) async {
     colorErrorLog('请检查是否执行过`flutter build xxx --release`');
   }
   colorLog(
-    '✅收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}',
+    '✅ 收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}',
   );
 }
 
@@ -579,10 +657,10 @@ Future<String?> _findISCCPath() async {
       args: ["query", key],
       printLog: false,
     );
-    if (result.exitCode != 0) {
+    if (result?.exitCode != 0) {
       continue;
     }
-    final output = result.stdout;
+    final output = result!.stdout;
     if (output is String) {
       for (final line
           in output
@@ -596,11 +674,11 @@ Future<String?> _findISCCPath() async {
           args: ["query", subKey],
           printLog: false,
         );
-        if (subOutput.exitCode != 0) {
+        if (subOutput?.exitCode != 0) {
           continue;
         }
         //print("subKey:" + subKey + " -> " + subOutput.stdout);
-        final path = _findInnoSetupPath(subOutput.stdout);
+        final path = _findInnoSetupPath(subOutput!.stdout);
         if (path != null) {
           final isccPath = p.join(path, 'ISCC.exe');
           if (File(isccPath).existsSync()) {

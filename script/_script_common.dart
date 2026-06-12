@@ -103,29 +103,39 @@ Directory? ensureFolder(String? folderPath, {bool? parent}) {
 
 /// 执行命令
 /// - [runInShell] 为true时, 在Windows上参数中有空格时, 会被shell解析为多个参数, 导致失败
-Future<ProcessResult> runCommand(
+Future<ProcessResult?> runCommand(
   String executable, {
   String? dir,
   List<String>? args,
   bool runInShell = false,
-  bool printLog = true,
+  bool? printLog,
+  bool? printErrorLog,
 }) async {
-  final result = Process.runSync(
-    executable,
-    [...?args],
-    runInShell: runInShell,
-    workingDirectory: dir ?? currentPath,
-    stdoutEncoding: systemEncoding,
-    stderrEncoding: systemEncoding,
-  );
-  if (result.exitCode == 0) {
-    if (printLog) {
-      colorLog(result.stdout, 250); //输出标准输出
+  try {
+    final result = Process.runSync(
+      executable,
+      [...?args],
+      runInShell: runInShell,
+      workingDirectory: dir ?? currentPath,
+      stdoutEncoding: systemEncoding,
+      stderrEncoding: systemEncoding,
+    );
+    printLog ??= true;
+    printErrorLog ??= true;
+    if (result.exitCode == 0) {
+      if (printLog) {
+        colorLog(result.stdout, 250); //输出标准输出
+      }
+    } else {
+      if (printErrorLog) {
+        colorErrorLog(result.stderr, 9); //输出错误输出
+      }
     }
-  } else {
-    colorErrorLog(result.stderr, 9); //输出错误输出
+    return result;
+  } catch (e) {
+    colorErrorLog("命令[$executable]执行失败->$e");
+    return null;
   }
-  return result;
 }
 
 //MARK: yaml
@@ -468,7 +478,22 @@ String? assembleVersionTitle(Map<String, dynamic>? json) {
 }
 
 extension FileStringPubEx on String {
+  /// 获取文件大小字符串
   String get fileSizeStr => fileSize(File(this).lengthSync());
+
+  /// 安全删除文件
+  bool safeDelete() {
+    try {
+      final file = File(this);
+      if (file.existsSync()) {
+        file.deleteSync();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 String fileSize(dynamic size, [int round = 2, String space = ""]) {
