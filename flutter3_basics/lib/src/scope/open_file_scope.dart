@@ -66,6 +66,7 @@ extension OpenFileScopeEx on Widget {
 
 //MARK: - open mixin
 
+/// 需要先使用[OpenFileScopeEx.provideOpenFileData]
 /// 混入操作, 自动处理[OpenFileScope.data]中的数据
 /// - 需要重写[onHandleOpenFileDataMixin]实现对应逻辑即可
 mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
