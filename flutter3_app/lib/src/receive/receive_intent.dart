@@ -58,6 +58,9 @@ class ReceiveIntent {
       // Subscribe to all events (initial link and further)
       final sub = appLinks.uriLinkStream.listen((uri) {
         // Do something (navigation, ...)
+        if (isDebugFlag) {
+          l.t("处理uri->$uri");
+        }
         uriStream.add(uri);
         _handleUri(uri);
       });
