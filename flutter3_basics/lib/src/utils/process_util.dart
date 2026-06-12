@@ -7,20 +7,27 @@ part of '../../flutter3_basics.dart';
 /// https://pub.dev/packages/git
 
 /// 运行本机命令
+/// - [runInShell] 为true时, 在Windows上参数中有空格时, 会被shell解析为多个参数, 导致失败
+/// - [ProcessStartMode.detached] 脱离模式, 分离进程, 父进程退出, 子进程继续运行
+///
+/// - [Process.runSync]
 Future<ProcessResult> runCommand(
   String executable,
   List<String> arguments, {
   bool throwOnError = true,
   bool echoOutput = false,
-  runInShell = true,
+  bool runInShell = false,
   String? processWorkingDir,
+  ProcessStartMode? mode,
 }) async {
   final pr = await Process.start(
     executable,
     arguments,
     workingDirectory: processWorkingDir,
     runInShell: runInShell,
-    mode: echoOutput ? ProcessStartMode.inheritStdio : ProcessStartMode.normal,
+    mode:
+        mode ??
+        (echoOutput ? ProcessStartMode.inheritStdio : ProcessStartMode.normal),
   );
 
   final results = await Future.wait([
