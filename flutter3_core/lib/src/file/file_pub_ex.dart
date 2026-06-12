@@ -159,7 +159,7 @@ extension DirectoryPubEx on Directory {
       //2024-3-26`listSync`偶尔会返回数据空
       final list = listSync(recursive: recursive, followLinks: followLinks);
       assert(() {
-        l.d('listFilesSync->$path:${list.length}');
+        l.d('listFilesSync->$path :${list.length}');
         return true;
       }());
       if (!sort) {

@@ -52,8 +52,9 @@ mixin DebugFileListStateMixin<T extends StatefulWidget> on State<T> {
   /// 加载指定路径
   @api
   void loadPathMixin(String? path) {
+    //debugger();
     assert(() {
-      l.d('准备加载路径:$path');
+      l.d('[${widget.classHash()}]准备加载路径:$path');
       return true;
     }());
     if (path?.isFileSync() == true) {

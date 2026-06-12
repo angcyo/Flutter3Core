@@ -284,6 +284,7 @@ class TabsManagerController {
   }
 
   /// 构建内容的容器
+  /// - 通过可见性, 控制内容是否显示
   @api
   Widget buildContentContainer(
     BuildContext context,
@@ -336,12 +337,17 @@ class TabEntryInfo with EquatableMixin {
   @configProperty
   final TransformDataWidgetBuilder? tabBuilder;
 
-  /// 内容小部件
+  //--
+
+  /// 直接指定内容小部件
   final Widget? contentWidget;
 
   /// 完全自定义的内容构建方法, 数据是[tabInfoLive.value]
   @configProperty
   final TransformDataWidgetBuilder? contentBuilder;
+
+  /// 在使用[contentBuilder]构建内容时, 是否要保持状态, 否则每次切换tab都会重新创建
+  final bool? keepAlive;
 
   /// 是否固定的标签, 固定的标签不支持关闭
   /// - [buildCloseTabButton]
@@ -353,6 +359,7 @@ class TabEntryInfo with EquatableMixin {
     this.tabBuilder,
     this.contentWidget,
     this.contentBuilder,
+    this.keepAlive,
     bool fixed = false,
   }) {
     tabInfoLive << tabInfo;
@@ -411,15 +418,22 @@ class TabEntryInfo with EquatableMixin {
   @api
   @overridePoint
   Widget buildContentWidget(BuildContext context, int index, bool isSelected) {
-    return contentWidget ??
-        contentBuilder?.call(
-          context,
-          empty,
-          index,
-          tabInfoLive.value,
-          isSelected,
-        ) ??
-        empty;
+    if (contentWidget != null) {
+      return contentWidget!;
+    }
+    if (isSelected || keepAlive == true) {
+      return contentBuilder?.call(
+            context,
+            empty,
+            index,
+            tabInfoLive.value,
+            isSelected,
+          ) ??
+          empty;
+    } else {
+      //未选中tab时, 返回 空, 提高性能
+      return empty;
+    }
   }
 
   //MARK: - other

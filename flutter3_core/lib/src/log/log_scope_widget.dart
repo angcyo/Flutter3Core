@@ -99,6 +99,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
     TabEntryInfo(
       tabInfo: LogPanelTabData(title: "Log"),
       fixed: true,
+      keepAlive: true,
       tabBuilder: (ctx, child, index, data, isSelected) {
         return [
           "日志"

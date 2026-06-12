@@ -99,7 +99,8 @@ class _DebugFilePageState extends State<DebugFilePage>
   @override
   void initState() {
     super.initState();
-    _reload();
+    //debugger();
+    _reload(true);
   }
 
   @override
@@ -109,17 +110,24 @@ class _DebugFilePageState extends State<DebugFilePage>
   }
 
   /// 重新加载
-  void _reload() {
+  void _reload([bool firstLoad = false]) {
     if (widget.initPath == null) {
       fileDirectory().getValue((value, error) {
         //l.d(value);
         loadPathMixin(value?.path);
-        postCallback(() {
-          _pathScrollController.scrollToBottom();
-        });
+        if (firstLoad) {
+          $next(() {
+            _pathScrollController.scrollToBottom();
+          });
+        }
       });
     } else {
       loadPathMixin(widget.initPath);
+      if (firstLoad) {
+        $next(() {
+          _pathScrollController.scrollToBottom();
+        });
+      }
     }
   }
 
