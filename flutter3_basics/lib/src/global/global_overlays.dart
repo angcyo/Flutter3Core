@@ -52,6 +52,7 @@ enum OverlayPosition { top, center, bottom }
 OverlayEntry? _lastToastEntry;
 
 /// toast通知
+/// [toast] -> [showNotification]->[showOverlay]
 OverlayEntry? toast(
   Widget? msg, {
   // 背景颜色
@@ -107,7 +108,7 @@ OverlayEntry? toast(
 
 /// [msg] 显示小部件
 /// [text] 显示文本
-/// [toast]
+/// [toast] -> [showNotification]->[showOverlay]
 OverlayEntry? toastBlur({
   Widget? msg,
   dynamic text,
@@ -126,7 +127,7 @@ OverlayEntry? toastBlur({
 /// 顶部全屏toast
 /// [black] 背景是否是黑色,影响[background]
 ///
-/// [showNotification]->[showOverlay]
+/// [toastMessage]->[showNotification]->[showOverlay]
 OverlayEntry? toastMessage(
   Widget msg, {
   //--
@@ -154,7 +155,7 @@ OverlayEntry? toastMessage(
   animate: animate ?? OverlayAnimate.opacity,
 );
 
-/// [toastMessage]
+/// [toastInfo] -> [toastMessage] -> [showNotification]->[showOverlay]
 OverlayEntry? toastInfo(
   String? msg, {
   //-- 图标
@@ -329,7 +330,7 @@ OverlayEntry? showSimpleNotification(
 }
 
 /// 显示一个通知
-/// [showOverlay]的简单封装
+/// [showNotification]->[showOverlay]的简单封装
 OverlayEntry? showNotification(
   WidgetBuilder builder, {
   Duration? duration = kNotificationDuration,
