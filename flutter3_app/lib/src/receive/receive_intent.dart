@@ -52,10 +52,15 @@ class ReceiveIntent {
 
   ReceiveIntent._() {
     if (isDesktopOrWeb) {
-      assert(() {
-        l.w("[${classHash()}] 当前插件不支持在桌面端运行.");
-        return true;
-      }());
+      //在桌面上使用 app_links
+      //https://pub.dev/packages/app_links
+      final appLinks = AppLinks(); // AppLinks is singleton
+      // Subscribe to all events (initial link and further)
+      final sub = appLinks.uriLinkStream.listen((uri) {
+        // Do something (navigation, ...)
+        uriStream.add(uri);
+        _handleUri(uri);
+      });
       return;
     }
     // 首次打开软件时, 检查平台分享数据
@@ -139,6 +144,7 @@ class ReceiveIntent {
           printError(e, s);
           return true;
         }());
+        toastInfo("不支持处理: $uri");
       }
     }
   }

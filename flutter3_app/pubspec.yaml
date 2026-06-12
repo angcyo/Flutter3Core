@@ -104,14 +104,30 @@ dependencies:
   # https://github.com/FlutterStudioIst/uri-to-file
   flutter_uri_to_file: ^1.0.0+1
 
+  # https://pub.dev/packages/protocol_handler
+  # 该插件允许 Flutter 应用注册和处理自定义协议（例如深度链接）。
+  # https://pub.dev/packages/protocol_handler_windows
+  #   https://pub.dev/packages/win32_registry
+  #     https://pub.dev/packages/ffi_leak_tracker
+  #     https://pub.dev/packages/win32
+  # 需要配置:
+  # https://github.com/leanflutter/protocol_handler/blob/main/README-ZH.md
+  #protocol_handler: ^0.2.0
+  # https://pub.dev/packages/app_links
+  # Android 应用链接、深度链接、iOS 通用链接和自定义 URL 方案处理程序（桌面版包括 Linux、macOS、Windows）。
+  # 需要配置:
+  # https://github.com/llfbandit/app_links/blob/main/doc/README_android.md
+  # https://github.com/llfbandit/app_links/blob/main/doc/README_ios.md
+  # https://github.com/llfbandit/app_links/blob/main/doc/README_windows.md
+  # https://github.com/llfbandit/app_links/blob/main/doc/README_macos.md
+  app_links: ^7.1.2
+
   # https://pub.dev/packages/flutter_move_task_back
   # flutter_move_task_back: ^1.0.0 #ANDROID
   flutter_move_task_back:
     git: git@github.com:angcyo/flutter_move_task_back.git
 
-#dependency_overrides:
-  # cross_file: ^0.3.4+1
-  # web: ^0.5.1
+# dependency_overrides:
 
 dev_dependencies:
   flutter_test:

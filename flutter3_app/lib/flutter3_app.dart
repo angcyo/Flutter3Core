@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:app_links/app_links.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
