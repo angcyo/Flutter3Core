@@ -211,38 +211,8 @@ void main(List<String> arguments) async {
                 colorLog('🎉-> $outputDmgPath ${outputDmgPath.fileSizeStr}');
               }
             } else {
-              colorErrorLog("请先安装 appdmg -> npm install -g appdmg");
+              colorErrorLog("请先安装`appdmg` -> npm install -g appdmg");
             }
-            /*final isccPath = await _findISCCPath();
-            if (isccPath != null) {
-              final setupExeName = outputName.substring(
-                0,
-                outputName.lastIndexOf("."),
-              );
-              final appVersion = _getVersionName() ?? "0.0.1";
-              //print("$toDir/$setupExeName:$appVersion");
-              colorLog('💡准备打包安装程序: $from/$exeFileName');
-              final result = await runCommand(
-                isccPath,
-                args: [
-                  "/Qp",
-                  "/F$setupExeName",
-                  "/O$toDir",
-                  '/DMyAppVersion=$appVersion',
-                  '/DMySource=$from',
-                  '/DMyAppExeName=$exeFileName',
-                  appdmgConfigFile.path,
-                ],
-                printLog: false,
-              );
-              if (result.exitCode == 0) {
-                collectProductCount++;
-                final outputExePath = "$toDir/$setupExeName.exe";
-                colorLog('🎉-> $outputExePath ${outputExePath.fileSizeStr}');
-              }
-            } else {
-
-            }*/
           } else {
             colorErrorLog("未找到`appdmg`配置文件->${appdmgConfigFile.path}");
           }
@@ -300,7 +270,7 @@ void main(List<String> arguments) async {
                   "/Qp",
                   "/F$setupExeName",
                   "/O$toDir",
-                  '/DMyAppVersion=$appVersion',
+                  '/DMyAppVersion=v$appVersion',
                   '/DMySource=$from',
                   '/DMyAppExeName=$exeFileName',
                   issFile.path,
@@ -314,7 +284,7 @@ void main(List<String> arguments) async {
               }
             } else {
               colorErrorLog(
-                "请先安装 Inno Setup ->https://jrsoftware.org/isdl.php",
+                "请先安装`Inno Setup` -> https://jrsoftware.org/isdl.php",
               );
             }
           } else {
