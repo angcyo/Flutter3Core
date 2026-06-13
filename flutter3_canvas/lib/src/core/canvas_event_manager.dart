@@ -11,6 +11,8 @@ part of '../../flutter3_canvas.dart';
 /// [CanvasElementControlManager]
 ///
 /// - [CanvasDelegate.canvasEventManager] 成员属性
+///   - [CanvasKeyManager] 用来监听键盘事件
+///   - [CanvasEventManager] 用来处理手势事件
 ///
 class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   final CanvasDelegate canvasDelegate;
@@ -65,7 +67,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   }
 
   /// [event] 最原始的事件参数, 未经过加工处理
-  /// [CanvasDelegate.handlePointerEvent]驱动
+  /// [CanvasDelegate.handlePointerEvent] 驱动 -> [handlePointerEvent]
   @entryPoint
   void handlePointerEvent(@viewCoordinate PointerEvent event) {
     final localPosition = event.localPosition;

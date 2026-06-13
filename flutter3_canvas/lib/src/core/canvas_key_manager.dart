@@ -6,7 +6,9 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 用来监听键盘事件
 ///
-/// [CanvasDelegate] 的成员
+/// - [CanvasDelegate.canvasKeyManager] 的成员
+///   - [CanvasKeyManager] 用来监听键盘事件
+///   - [CanvasEventManager] 用来处理手势事件
 ///
 class CanvasKeyManager
     with DiagnosticableTreeMixin, DiagnosticsMixin, CanvasDelegateManagerMixin {

@@ -35,7 +35,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     dispatchCanvasPaint(paintCount);
   }
 
-  /// 手势输入的入口点
+  /// 手势事件输入的入口点
   @entryPoint
   void handlePointerEvent(
     @viewCoordinate PointerEvent event,
