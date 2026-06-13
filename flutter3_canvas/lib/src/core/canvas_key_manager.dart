@@ -46,6 +46,7 @@ class CanvasKeyManager
           //renderObject.postMarkNeedsPaint();
           return .handled;
         },
+        keyRepeat: true,
         keyUp: true,
         tag: keyTag,
       );
