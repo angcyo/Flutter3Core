@@ -20,7 +20,10 @@ class CanvasKeyManager
 
   String get keyTag => "$runtimeType";
 
-  /// 注册所有键盘事件
+  /// 注册所有键盘事件, 注册事件之后通过[KeyEventMixin.onHandleKeyEventMixin]入口进行分发处理
+  ///
+  /// - [registerKeyEventHandler] -> [KeyEventMixin.registerKeyEvent]
+  /// - [unregisterKeyEventHandler]
   ///
   /// - [CanvasRenderBox.attach] 驱动
   @desktopFlag
@@ -249,6 +252,8 @@ class CanvasKeyManager
   }
 
   /// 取消所有按键的注册
+  /// - [registerKeyEventHandler]
+  /// - [unregisterKeyEventHandler]
   @callPoint
   void unregisterKeyEventHandler(CanvasRenderBox renderObject) {
     renderObject.removeAllKeyEventRegister(tag: keyTag);

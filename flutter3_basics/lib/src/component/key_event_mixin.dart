@@ -114,6 +114,8 @@ mixin KeyEventMixin {
     }
   }
 
+  /// 平台按键事件入口
+  /// - [onHandleKeyEventMixin] -> [handleKeyEventResultMixin]
   @callPoint
   @overridePoint
   bool onHandleKeyEventMixin(KeyEvent event) {
