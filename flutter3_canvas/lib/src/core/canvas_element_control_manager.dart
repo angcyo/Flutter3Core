@@ -1167,7 +1167,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 /// 选择元素组件, 滑动选择元素, 按下选择元素
 /// 支持[ElementGroupPainter]所有属性
 ///
-/// [CanvasElementControlManager] 的成员
+/// [CanvasElementControlManager.elementSelectComponent] 的成员
 class ElementSelectComponent extends ElementGroupPainter
     with
         CanvasComponentMixin,
@@ -1312,11 +1312,16 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   /// 多指选择的手指id
+  @tempFlag
   int? _multiSelectPointerId;
+
+  @tempFlag
+  String? pointDebugLabel;
 
   @override
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
-    //debugger(when: event.isPointerMove);
+    //debugger(when: event.isPointerDown);
+    debugger(when: pointDebugLabel != null);
     if (enableMultiSelect && pointerCount > 0 && isSelectedElement) {
       if (event.isPointerDown) {
         _multiSelectPointerId = event.pointer;
@@ -1346,6 +1351,15 @@ class ElementSelectComponent extends ElementGroupPainter
       _multiSelectPointerId = null;
     }
     super.dispatchPointerEvent(dispatch, event);
+    assert(() {
+      /*l.w(
+        "[${classHash()}]按下点位数量->${pointerDownMap.length} "
+        "移动点位数量->${pointerMoveMap.length} "
+        "firstDownPointer:${firstDownEvent?.pointer} "
+        "eventPointer:${event.pointer}",
+      );*/
+      return true;
+    }());
   }
 
   @override
@@ -1369,7 +1383,9 @@ class ElementSelectComponent extends ElementGroupPainter
   /// 点击选择可能需要在[TranslateControl]组件中处理
   @override
   bool onPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
+    //debugger(when: event.isPointerDown);
     //debugger(when: event.isPointerMove);
+    debugger(when: pointDebugLabel != null);
     if (isCanvasComponentEnable) {
       //debugger(when: !event.isPointerHover);
       if (isFirstPointerEvent(dispatch, event) &&

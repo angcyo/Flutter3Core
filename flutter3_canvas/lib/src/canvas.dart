@@ -240,7 +240,12 @@ class CanvasRenderBox extends RenderBox
     debugLabel: "CanvasRenderBoxFocusNode",
     onKeyEvent: (node, event) {
       //debugger();
-      return handleKeyEventResultMixin(event);
+      final handle = handleKeyEventResultMixin(event);
+      assert(() {
+        //l.w("_canvasFocusNode[$event]->$handle");
+        return true;
+      }());
+      return handle;
     },
   );
 

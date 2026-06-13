@@ -6,7 +6,9 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 元素管理, 包含元素的绘制, 选择, 添加/删除等相关操作
 ///
-/// [CanvasDelegate] 的成员
+/// [CanvasDelegate.canvasElementManager] 的成员
+///
+/// - [ElementSelectComponent] 元素选择组件
 ///
 class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   //region ---属性----

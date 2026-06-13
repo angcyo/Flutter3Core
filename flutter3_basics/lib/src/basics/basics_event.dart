@@ -579,6 +579,8 @@ mixin IHandlePointerEventMixin {
 
   /// 当执行了回调[onPointerEvent]后, [ignoreEventHandle]被设为[true]时回调
   /// [ignoreEventHandle]
+  ///
+  /// [PointerDispatchMixin.handleDispatchEvent]中驱动
   @property
   void onIgnorePointerEvent(
     PointerDispatchMixin dispatch,
@@ -1178,7 +1180,7 @@ mixin MultiPointerDetectorMixin {
       return;
     }
     //1---
-    var pointer = event.pointer;
+    final pointer = event.pointer;
     if (event.isPointerDown || event.isPanZoomStart) {
       //手势按下
       pointerDownMap[pointer] = event;
@@ -1416,6 +1418,10 @@ mixin MultiPointerDetectorMixin {
     pointerDownMap.remove(pointer);
     pointerMoveMap.remove(pointer);
     pointerMoveLastMap.remove(pointer);
+    /*assert(() {
+      l.w("[${classHash()}]移除点位信息->$pointer");
+      return true;
+    }());*/
   }
 
   /// 移除所有指针缓存
@@ -1423,6 +1429,10 @@ mixin MultiPointerDetectorMixin {
     pointerDownMap.clear();
     pointerMoveMap.clear();
     pointerMoveLastMap.clear();
+    /*assert(() {
+      l.w("[${classHash()}]移除所有点位信息.");
+      return true;
+    }());*/
   }
 
   // ---多指长按检测---

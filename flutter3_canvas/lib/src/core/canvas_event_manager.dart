@@ -43,6 +43,10 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   late CanvasBoundsEventComponent canvasBoundsEventComponent =
       CanvasBoundsEventComponent(canvasDelegate);
 
+  /// 按下的手势事件
+  @tempFlag
+  PointerEvent? _pointerDownEvent;
+
   /// 当前手势按下时的位置
   @output
   @viewCoordinate
@@ -74,6 +78,10 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     pointerPosition = localPosition;
     if (!canvasDelegate.canvasStyle.enableCanvasEvent) {
       //事件总开关被关闭, 不处理任何手势
+      assert(() {
+        l.w("[${classHash()}]事件总开关被关闭, 不处理任何手势->>$event");
+        return true;
+      }());
       return;
     }
     if (!event.isPointerHover) {
@@ -96,6 +104,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
     //--
     if (event.isPointerDown) {
+      _pointerDownEvent = event;
       pointerDownPosition = localPosition;
     }
 
@@ -146,15 +155,24 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //--finish
     if (event.isPointerFinish) {
       _cancelDispatchEvent = false;
+      _pointerDownEvent = null;
       pointerDownPosition = null;
       _painterEventInterceptHandler = null;
     }
 
     assert(() {
-      /*if (event.isPointerUp) {
-        final pivot = localPosition;
-        l.v('抬手点:$pivot->${canvasDelegate.canvasViewBox.offsetToSceneOriginPoint(pivot)}'
-            '->${canvasDelegate.canvasViewBox.toScenePoint(pivot)}');
+      final pivot = localPosition;
+      final canvasViewBox = canvasDelegate.canvasViewBox;
+      /*if (event.isPointerDown) {
+        l.v(
+          '按下点:$pivot->${canvasViewBox.offsetToSceneOriginPoint(pivot)}'
+          '->${canvasViewBox.toScenePoint(pivot)}',
+        );
+      } else if (event.isPointerUp) {
+        l.v(
+          '抬手点:$pivot->${canvasViewBox.offsetToSceneOriginPoint(pivot)}'
+          '->${canvasViewBox.toScenePoint(pivot)}',
+        );
       }*/
       return true;
     }());
@@ -276,10 +294,13 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// 临时取消所有事件的派发
   @callPoint
-  void cancelDispatchEvent(PointerEvent seedEvent) {
-    final cancelEvent = createPointerCancelEvent(seedEvent);
-    handlePointerEvent(cancelEvent);
-    _cancelDispatchEvent = true;
+  void cancelDispatchEvent([PointerEvent? seedEvent]) {
+    seedEvent ??= _pointerDownEvent;
+    if (seedEvent != null) {
+      final cancelEvent = createPointerCancelEvent(seedEvent);
+      handlePointerEvent(cancelEvent);
+      _cancelDispatchEvent = true;
+    }
   }
 
   //region WidgetElementPainter

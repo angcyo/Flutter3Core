@@ -1051,9 +1051,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @api
   void updateCanvasStyleModeChanged(CanvasStyleMode? mode) {
     final old = canvasStyleModeValue.value;
-    final to = mode ?? CanvasStyleMode.defaultMode;
+    final to = mode ?? .defaultMode;
     if (old != to) {
-      canvasStyleModeValue.value = mode ?? CanvasStyleMode.defaultMode;
+      if (to == .dragMode) {
+        //进入拖拽模式, 需要取消当前所有手势事件, 否则会导致手势异常冲突
+        canvasEventManager.cancelDispatchEvent();
+      }
+      canvasStyleModeValue.value = to;
       dispatchCanvasStyleModeChanged(old, to);
     }
   }
