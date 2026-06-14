@@ -145,7 +145,8 @@ abstract class BaseTextPainter {
   /// [crossTextAlign] 和这个属性有冲突
   @implementation
   void translateVectorCharPathToBaseline(
-      List<List<BaseCharPainter>>? charPainterList) {
+    List<List<BaseCharPainter>>? charPainterList,
+  ) {
     final list = charPainterList;
     if (list != null) {
       for (final line in list) {
@@ -212,7 +213,8 @@ abstract class BaseTextPainter {
       isUnderline: isUnderline,
       isLineThrough: isLineThrough,
       textDirection: textDirection,
-      strutHeight: strutHeight ??
+      strutHeight:
+          strutHeight ??
           (lineSpacing != null ? (1 + lineSpacing! / fontSize) : null),
       forceStrutHeight: forceStrutHeight,
     );
@@ -308,8 +310,9 @@ abstract class BaseTextPainter {
           if (isUnderline) TextDecoration.underline,
           if (isLineThrough) TextDecoration.lineThrough,
         ]),
-        decorationStyle:
-            isBold ? TextDecorationStyle.double : TextDecorationStyle.solid,
+        decorationStyle: isBold
+            ? TextDecorationStyle.double
+            : TextDecorationStyle.solid,
         decorationColor: textColor,
         /*decorationThickness: 1,*/
         foreground: Paint()
@@ -468,7 +471,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// 文本绘制对象, 每个字符一个对象
   List<List<BaseCharPainter>>? charPainterList;
 
-/*  void test() {
+  /*  void test() {
     final list = charPainterList;
     final painter = list?.firstOrNull?.firstOrNull?.charPainter;
     final charDescent = list?.firstOrNull?.firstOrNull?.charDescent;
@@ -492,6 +495,7 @@ class SingleCharTextPainter extends BaseTextPainter {
     if (list == null || list.isEmpty) {
       _painterBounds = Rect.zero;
     } else {
+      //整体的宽高
       double width = -2147483648;
       double height = -2147483648;
 
@@ -513,6 +517,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         double lineDescender = 0;
 
         if (orientation.isVertical) {
+          //纵向
           height = max(height, last.bottom - first.top);
 
           for (final char in line) {
@@ -717,12 +722,7 @@ class SingleCharTextPainter extends BaseTextPainter {
           CharTextPainter(
             placeholderChar,
             null,
-            Rect.fromLTWH(
-              left,
-              top,
-              charWidth,
-              charHeight,
-            ),
+            Rect.fromLTWH(left, top, charWidth, charHeight),
           )..debugPaintBounds = debugPaintBounds,
         );
         lineMaxWidth = charWidth;
@@ -751,10 +751,13 @@ class SingleCharTextPainter extends BaseTextPainter {
                 )..debugPaintBounds = debugPaintBounds,
               );
             } else {
+              //正常矢量字符
               final charPath = vectorTextPathMap?[char];
               if (charPath != null) {
+                //矢量字符
                 @dp
                 final charPathBounds = charPath.getBounds();
+
                 charWidth = charPathBounds.width;
                 charHeight = charPathBounds.height;
 
@@ -768,6 +771,8 @@ class SingleCharTextPainter extends BaseTextPainter {
                     Rect.fromLTWH(left, top, charWidth, charHeight),
                   )..debugPaintBounds = debugPaintBounds,
                 );
+              } else {
+                //字体不支持的矢量字符
               }
             }
           } else {
@@ -785,6 +790,8 @@ class SingleCharTextPainter extends BaseTextPainter {
               )..debugPaintBounds = debugPaintBounds,
             );
           }
+
+          //--line
 
           lineMaxWidth = max(lineMaxWidth, charWidth);
           lineMaxHeight = max(lineMaxHeight, charHeight);
@@ -866,20 +873,23 @@ class SingleCharTextPainter extends BaseTextPainter {
           if (left != null && right != null) {
             if (isUnderline) {
               //绘制下划线
-              final top = offsetLineTop +
+              final top =
+                  offsetLineTop +
                   first!.lineHeight -
                   customLineStyleHeight -
                   underlineOffsetBottom;
               canvas.drawRect(
-                  Rect.fromLTWH(left, top, right, customLineStyleHeight),
-                  paint);
+                Rect.fromLTWH(left, top, right, customLineStyleHeight),
+                paint,
+              );
             }
             if (isLineThrough) {
               //绘制删除线
               final top = offsetLineTop + first!.lineHeight / 2;
               canvas.drawRect(
-                  Rect.fromLTWH(left, top, right, customLineStyleHeight),
-                  paint);
+                Rect.fromLTWH(left, top, right, customLineStyleHeight),
+                paint,
+              );
             }
             offsetLineTop += first!.lineHeight;
           }
@@ -978,10 +988,7 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
 
         //1: 先将元素移至锚点中心
         final translateMatrix = Matrix4.identity()
-          ..translate(
-            _curveRefCenter.dx - bounds.width / 2,
-            bounds.top,
-          );
+          ..translate(_curveRefCenter.dx - bounds.width / 2, bounds.top);
 
         //2: 再旋转到目标位置
         final rotateAngle = charAngle - _curveAnchorAngle;
@@ -1020,9 +1027,10 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
       canvas.withTranslate(offset.dx, offset.dy, () {
         final paint = createBasePaint();
         double offsetLineBottom = 0;
-        for (final line in (isReverseCurve
-            ? charPainterList!
-            : charPainterList!.reversed)) {
+        for (final line
+            in (isReverseCurve
+                ? charPainterList!
+                : charPainterList!.reversed)) {
           final first = line.firstOrNull;
           final last = line.lastOrNull;
 
@@ -1032,21 +1040,25 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
             if (isUnderline) {
               //绘制下划线
               final path = Path()
-                ..addFanShaped(curveCenter,
-                    curveRadius + underlineOffsetBottom + offsetLineBottom,
-                    startAngle: firstAngle,
-                    sweepAngle: endAngle - firstAngle,
-                    size: customLineStyleHeight);
+                ..addFanShaped(
+                  curveCenter,
+                  curveRadius + underlineOffsetBottom + offsetLineBottom,
+                  startAngle: firstAngle,
+                  sweepAngle: endAngle - firstAngle,
+                  size: customLineStyleHeight,
+                );
               canvas.drawPath(path, paint);
             }
             if (isLineThrough) {
               //绘制删除线
               final path = Path()
-                ..addFanShaped(curveCenter,
-                    curveRadius + offsetLineBottom + first!.lineHeight / 2,
-                    startAngle: firstAngle,
-                    sweepAngle: endAngle - firstAngle,
-                    size: customLineStyleHeight);
+                ..addFanShaped(
+                  curveCenter,
+                  curveRadius + offsetLineBottom + first!.lineHeight / 2,
+                  startAngle: firstAngle,
+                  sweepAngle: endAngle - firstAngle,
+                  size: customLineStyleHeight,
+                );
               canvas.drawPath(path, paint);
             }
 
