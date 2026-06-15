@@ -406,6 +406,9 @@ class DesktopIconMenuTile extends StatefulWidget {
 
   //--
 
+  /// 点击后是否自动关闭弹窗
+  final bool autoClosePopup;
+
   /// 长按提示文本
   final String? tooltip;
 
@@ -422,6 +425,7 @@ class DesktopIconMenuTile extends StatefulWidget {
     this.onTap,
     this.popupAlignment,
     //--
+    this.autoClosePopup = true,
     this.tooltip,
   });
 
@@ -470,20 +474,31 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
           widget.onTap != null
               ? () {
                   final result = widget.onTap!();
-                  if (result is bool && result == true) {
+                  if (widget.autoClosePopup && result is Future) {
+                    result.then((data) {
+                      if (data is bool && data == true) {
+                      } else {
+                        buildContext?.popMenu();
+                      }
+                    });
+                  } else if (!widget.autoClosePopup ||
+                      result is bool && result == true) {
                     // 拦截默认处理
                   } else {
                     buildContext?.popMenu();
                   }
                 }
-              : () {
+              : widget.popupBodyWidget != null
+              ? () {
+                  //点击之后显示弹窗内容
                   wrapShowPopupMixin(() async {
                     await buildContext?.showPopupDialog(
                       widget.popupBodyWidget!,
                       alignment: widget.popupAlignment,
                     );
                   });
-                },
+                }
+              : null,
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
