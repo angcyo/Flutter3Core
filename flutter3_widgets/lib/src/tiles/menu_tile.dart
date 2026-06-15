@@ -496,6 +496,10 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
                       widget.popupBodyWidget!,
                       alignment: widget.popupAlignment,
                     );
+                  }).get((data, error) {
+                    if (widget.autoClosePopup == true) {
+                      buildContext?.popMenu();
+                    }
                   });
                 }
               : null,

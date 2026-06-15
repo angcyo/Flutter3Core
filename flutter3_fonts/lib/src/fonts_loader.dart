@@ -16,7 +16,7 @@ part of '../flutter3_fonts.dart';
 class FontsLoader {
   FontsLoader._();
 
-  /// 加载assets中的字体
+  /// 加载字体数据[bytes]
   static Future<bool> loadFont(Uint8List? bytes, {String? fontFamily}) async {
     try {
       if (bytes != null) {
@@ -26,7 +26,7 @@ class FontsLoader {
       return false;
     } catch (e) {
       assert(() {
-        debugPrint("Font load error!!!");
+        debugPrint("[$fontFamily]Font load error!!!");
         debugPrint(e.toString());
         return true;
       }());
@@ -40,17 +40,20 @@ class FontsLoader {
   /// 返回是否加载成功
   static Future<(bool, ByteData?)> loadAssetFont(
     String fontFamily,
-    String uri,
-  ) async {
+    String uri, {
+    String? fontPackage,
+  }) async {
     try {
       final loader = FontLoader(fontFamily);
-      final fontData = await rootBundle.load(uri);
+      final fontData = await rootBundle.load(
+        uri.ensurePackagePrefix(fontPackage),
+      );
       loader.addFont(Future.value(fontData));
       await loader.load();
       return (true, fontData);
     } catch (e) {
       assert(() {
-        debugPrint("Font asset error!!!");
+        debugPrint("[$fontFamily]Font asset error!!!");
         debugPrint(e.toString());
         return true;
       }());
@@ -61,18 +64,15 @@ class FontsLoader {
   /// 加载文件中的字体
   /// [fontFamily] 字体名称
   /// [uri] 字体文件路径
-  static Future<bool> loadFileFont(
-    String fontFamily,
-    String uri,
-  ) async {
+  static Future<bool> loadFileFont(String fontFamily, String uri) async {
     try {
       final bytes = await File(uri).readAsBytes();
       //debugger();
-      await loadFontFromList(bytes, fontFamily: fontFamily);
-      return true;
+      //await loadFontFromList(bytes, fontFamily: fontFamily);
+      return loadFont(bytes, fontFamily: fontFamily);
     } catch (e) {
       assert(() {
-        debugPrint("Font file error!!!");
+        debugPrint("[$fontFamily]Font file error!!!->$uri");
         debugPrint(e.toString());
         return true;
       }());
@@ -155,8 +155,9 @@ class FontsLoader {
   static Future<Uint8List> downloadBytes(Uri uri) async {
     final client = http.Client();
     final request = http.Request('GET', uri);
-    final response =
-        await client.send(request).timeout(const Duration(seconds: 5));
+    final response = await client
+        .send(request)
+        .timeout(const Duration(seconds: 5));
 
     if (response.statusCode != 200) {
       throw HttpException("status code ${response.statusCode}");

@@ -80,10 +80,14 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
     final textStyle = widget.fontFamilyMeta?.textStyle();
     final fontFamily = widget.fontFamilyMeta?.displayFontFamily;
 
-    final fontFamilyWidget = fontFamily?.text(
-          style: textStyle,
-          maxLines: widget.isSingleLine ? 1 : null,
-        ) ??
+    final fontFamilyWidget =
+        fontFamily
+            ?.text(style: textStyle, maxLines: widget.isSingleLine ? 1 : null)
+            .tooltip(
+              isDebug
+                  ? widget.fontFamilyMeta?.variantList.firstOrNull?.uri
+                  : null,
+            ) ??
         widget.defWidget ??
         "Default".text();
 
@@ -94,19 +98,23 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
 
     if (widget.direction == Axis.horizontal) {
       final left = fontFamilyWidget;
-      return [left.expanded(), previewTextWidget, widget.trailingWidget]
-              .row()
-              ?.paddingInsets(widget.padding) ??
+      return [
+            left.expanded(),
+            previewTextWidget,
+            widget.trailingWidget,
+          ].row()?.paddingInsets(widget.padding) ??
           empty;
     }
 
     final left = [fontFamilyWidget, previewTextWidget].column(
-        crossAxisAlignment: widget.alignment == Alignment.center
-            ? CrossAxisAlignment.center
-            : CrossAxisAlignment.start);
-    return [left?.expanded(), widget.trailingWidget]
-            .row()
-            ?.paddingInsets(widget.padding) ??
+      crossAxisAlignment: widget.alignment == Alignment.center
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
+    );
+    return [
+          left?.expanded(),
+          widget.trailingWidget,
+        ].row()?.paddingInsets(widget.padding) ??
         empty;
   }
 }
