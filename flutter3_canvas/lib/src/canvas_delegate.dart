@@ -65,9 +65,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// 布局完成后的入口点
   @entryPoint
-  void layout(Size size) {
+  void layout(Size size, {bool suppressLeftTopSizeChange = true}) {
     _layoutSize = size;
-    canvasViewBox.updatePaintBounds(size, true);
+    canvasViewBox.updatePaintBounds(
+      size,
+      true,
+      suppressLeftTopSizeChange: suppressLeftTopSizeChange,
+    );
     canvasPaintManager.onUpdatePaintBounds();
   }
 

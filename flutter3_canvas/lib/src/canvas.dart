@@ -15,10 +15,14 @@ class CanvasWidget extends LeafRenderObjectWidget {
   @configProperty
   final bool autofocus;
 
+  /// 当 Canvas 小部件的大小变化时, 是否抑制大小带来的位置变化
+  final bool suppressSizeChange;
+
   const CanvasWidget(
     this.canvasDelegate, {
     super.key,
     this.autofocus = true,
+    this.suppressSizeChange = true,
     this.parentNode,
   });
 
@@ -34,6 +38,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
     canvasDelegate..delegateContext = context,
     autofocus: autofocus,
     parentNode: parentNode,
+    suppressSizeChange: suppressSizeChange,
   );
 
   @override
@@ -45,6 +50,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
       ..canvasDelegate = canvasDelegate
       ..autofocus = autofocus
       ..parentNode = parentNode
+      ..suppressSizeChange = suppressSizeChange
       ..markNeedsPaint();
   }
 
@@ -229,6 +235,10 @@ class CanvasRenderBox extends RenderBox
   @configProperty
   bool autofocus = true;
 
+  /// 当画布大小变化时, 是否抑制大小带来的位置变化
+  @configProperty
+  bool suppressSizeChange = true;
+
   //
 
   /// 焦点[FocusNode]
@@ -254,6 +264,7 @@ class CanvasRenderBox extends RenderBox
     this.canvasDelegate, {
     this.autofocus = true,
     this.parentNode,
+    this.suppressSizeChange = true,
   });
 
   //region core
@@ -280,7 +291,7 @@ class CanvasRenderBox extends RenderBox
               : (width ?? screenHeight)),
     );
     //debugger();
-    canvasDelegate.layout(size);
+    canvasDelegate.layout(size, suppressLeftTopSizeChange: suppressSizeChange);
   }
 
   /// [RenderProxyBoxMixin.performLayout]

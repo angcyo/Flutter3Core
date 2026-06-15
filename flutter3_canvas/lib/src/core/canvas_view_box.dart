@@ -90,9 +90,14 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   //endregion ---限制---
 
   /// 更新整个绘制区域大小, 顺便更新内容绘制区域
-  /// [fromInitialize] 来自初始化的调用
+  /// - [fromInitialize] 来自初始化的调用
+  /// - [suppressLeftTopSizeChange] 当画布大小变化时, 是否抑制大小带来的位置变化. 暂时只能支持left top的方向的抑制
   @entryPoint
-  void updatePaintBounds(Size size, bool fromInitialize) {
+  void updatePaintBounds(
+    Size size,
+    bool fromInitialize, {
+    bool suppressLeftTopSizeChange = true,
+  }) {
     //debugger();
     final oldPaintBounds = paintBounds;
     final isFirstInitialize = paintBounds == Rect.zero;
@@ -152,6 +157,17 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
           oldPaintBounds,
           paintBounds,
           isFirstInitialize,
+        );
+      }
+
+      if (suppressLeftTopSizeChange) {
+        final dx = paintBounds.width - oldPaintBounds.width;
+        final dy = paintBounds.height - oldPaintBounds.height;
+        //抑制画布大小带来的位置抖动
+        canvasDelegate.canvasViewBox.translateBy(
+          dx / canvasDelegate.canvasViewBox.scaleX,
+          dy / canvasDelegate.canvasViewBox.scaleY,
+          anim: false,
         );
       }
     }
@@ -373,7 +389,11 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 平移画布
   @api
-  void translateBy(double tx, double ty, {bool anim = true}) {
+  void translateBy(
+    @sceneCoordinate double tx,
+    @sceneCoordinate double ty, {
+    bool anim = true,
+  }) {
     assert(() {
       //l.v('平移画布by: tx:$tx ty:$ty');
       return true;
@@ -386,7 +406,11 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 平移画布
   @api
-  void translateTo(double tx, double ty, {bool anim = true}) {
+  void translateTo(
+    @sceneCoordinate double tx,
+    @sceneCoordinate double ty, {
+    bool anim = true,
+  }) {
     assert(() {
       //l.v('平移画布to: tx:$tx tx:$ty');
       return true;
