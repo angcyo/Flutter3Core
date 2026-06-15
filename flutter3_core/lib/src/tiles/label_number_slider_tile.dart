@@ -11,6 +11,7 @@ part of '../../flutter3_core.dart';
 /// [LabelNumberTile]
 /// [LabelNumberSliderTile]
 /// [LabelRangeNumberSliderTile]
+@adaptiveLayout
 class LabelNumberSliderTile extends StatefulWidget {
   /// label
   final String? label;
