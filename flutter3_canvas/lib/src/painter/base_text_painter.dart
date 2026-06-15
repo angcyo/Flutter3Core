@@ -76,7 +76,7 @@ abstract class BaseTextPainter {
   /// 强制行高
   bool forceStrutHeight = false;
 
-  //--
+  //MARK: vector
 
   /// 是否使用矢量字符绘制
   bool useVectorText = false;
