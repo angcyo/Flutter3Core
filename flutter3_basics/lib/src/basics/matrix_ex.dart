@@ -110,16 +110,24 @@ extension Matrix4Ex on vector.Matrix4 {
   /// 映射一个[Path]
   Path mapPath(Path path) => path.transformPath(this);
 
+  /// 后乘矩阵
   /// Preconcats the matrix with the specified matrix. M' = M * other
-  void preConcat(Matrix4 other) {
+  void preConcat(Matrix4? other) {
+    if (other == null) {
+      return;
+    }
     multiply(other);
   }
 
   /// 返回一个新的矩阵
   Matrix4 preConcatIt(Matrix4 other) => Matrix4.copy(this)..preConcat(other);
 
+  /// 前成矩阵
   /// Postconcats the matrix with the specified matrix. M' = other * M
-  void postConcat(Matrix4 other) {
+  void postConcat(Matrix4? other) {
+    if (other == null) {
+      return;
+    }
     setFrom(other * this);
   }
 
