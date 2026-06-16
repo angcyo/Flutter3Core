@@ -66,8 +66,8 @@ abstract class BaseTextPainter {
   /// [TextAlign.justify] 矢量文本的极限对齐
   TextAlign crossTextAlign = TextAlign.center;
 
-  ///
-  TextDirection? textDirection = TextDirection.ltr; //文本方向
+  /// 文本方向
+  TextDirection? textDirection = TextDirection.ltr;
 
   /// 行高倍数, 间接控制了行高
   /// 优先于[lineSpacing] 属性
@@ -82,6 +82,7 @@ abstract class BaseTextPainter {
   bool useVectorText = false;
 
   /// 矢量字符对应的矢量路径, 适量文本的核心
+  /// - 每个字符对应的原始字形数据
   Map<String, Path?>? vectorTextPathMap;
 
   //endregion ---属性---
@@ -91,7 +92,7 @@ abstract class BaseTextPainter {
   Rect _painterBounds = Rect.zero;
 
   /// 当前绘制对象占用的大小
-  /// 如果是曲线文本, left/top可能是负值
+  /// 如果是曲线文本, left/top 可能是负值
   @output
   Rect get painterBounds => Rect.zero;
 
@@ -100,6 +101,10 @@ abstract class BaseTextPainter {
   UiLineMetrics? get lineMetrics => null;
 
   /// 必要的初始化方法
+  /// - 测量所有文本的大小
+  /// - 可以进行额外的变换
+  /// - 决定文本的布局位置
+  /// - 返回整体的边界大小
   @initialize
   @entryPoint
   void initPainter() {
@@ -108,13 +113,13 @@ abstract class BaseTextPainter {
     }
   }
 
-  /// 绘制文本, 相对于左上角0,0锚点绘制
+  /// 核心绘制入口, 绘制文本, 相对于左上角0,0锚点绘制
   @api
   @overridePoint
   @entryPoint
   void painterText(Canvas canvas, Offset offset);
 
-  //--
+  //MARK: base
 
   /// 缩放所有矢量文本路径, 以便适应字体大小
   /// 字体库中用的pt单位, 所以需要缩放到指定的dp字体大小值
@@ -187,6 +192,8 @@ abstract class BaseTextPainter {
     strokeWidth = textStrokeWidth ?? strokeWidth;
   }
 
+  //MARK: base
+
   /// 创建基础画笔, 用来绘制装饰线
   /// [Paint]
   Paint createBasePaint() => Paint()
@@ -196,7 +203,7 @@ abstract class BaseTextPainter {
     ..style = paintingStyle
     ..strokeWidth = isBold ? 1 : 0;
 
-  /// 创建单字符的文本绘制对象
+  /// 创建单字符的文本绘制对象/系统文本绘制对象
   /// [TextPainter]
   TextPainter createBaseTextPainter(String? text) {
     return createTextPainter(
@@ -219,6 +226,8 @@ abstract class BaseTextPainter {
       forceStrutHeight: forceStrutHeight,
     );
   }
+
+  //MARK: static
 
   /// 更新[TextPainter]对应的文本颜色
   /// [createTextPainter]
@@ -432,13 +441,16 @@ class NormalTextPainter extends BaseTextPainter {
 /// [NormalTextPainter]
 class SingleCharTextPainter extends BaseTextPainter {
   /// 是否使用自定义的删除线/下划线样式
+  @configProperty
   bool useCustomLineStyle = false;
 
   /// 自定义样式时的线高
   /// [useCustomLineStyle]
+  @configProperty
   double customLineStyleHeight = 6;
 
   /// 下划线底部的偏移距离
+  @configProperty
   double underlineOffsetBottom = 4;
 
   SingleCharTextPainter();
@@ -454,6 +466,7 @@ class SingleCharTextPainter extends BaseTextPainter {
 
   /// 斜体宽度补偿方案
   /// 是否使用整行补偿宽度的方案
+  @configProperty
   bool italicWidthWithLine = true;
 
   /// 斜体补偿的单字符宽度
@@ -469,6 +482,7 @@ class SingleCharTextPainter extends BaseTextPainter {
       : (isItalic && italicWidthWithLine ? fontSize * 0.2 : 0);
 
   /// 文本绘制对象, 每个字符一个对象
+  @output
   List<List<BaseCharPainter>>? charPainterList;
 
   /*  void test() {
@@ -490,7 +504,7 @@ class SingleCharTextPainter extends BaseTextPainter {
 
   /// 测量总体的大小
   /// 最终缓存在[_painterBounds]中
-  void _measureCharPainterSize() {
+  void _measurePainterSize() {
     final list = charPainterList;
     if (list == null || list.isEmpty) {
       _painterBounds = Rect.zero;
@@ -573,7 +587,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// [orientation]
   /// [textAlign]
   /// [crossTextAlign]
-  void _measureCharPainterOffset() {
+  void _measureCharOffset() {
     final list = charPainterList;
     if (list == null || list.isEmpty) {
       return;
@@ -818,8 +832,8 @@ class SingleCharTextPainter extends BaseTextPainter {
       }
     }
     this.charPainterList = charPainterList;
-    _measureCharPainterSize();
-    _measureCharPainterOffset();
+    _measurePainterSize();
+    _measureCharOffset();
     //translateVectorCharPathToBaseline(charPainterList);
     //debugger();
   }
@@ -853,14 +867,14 @@ class SingleCharTextPainter extends BaseTextPainter {
       }
     });
     if (!useVectorText && useCustomLineStyle && !isNil(charPainterList)) {
-      painterCustomLine(canvas, offset);
+      painterCustomLineStyle(canvas, offset);
     }
   }
 
   /// 绘制自定义的线样式
   /// [painterText]
   @overridePoint
-  void painterCustomLine(Canvas canvas, Offset offset) {
+  void painterCustomLineStyle(Canvas canvas, Offset offset) {
     canvas.withTranslate(offset.dx, offset.dy, () {
       final paint = createBasePaint();
       double offsetLineTop = 0;
@@ -899,7 +913,7 @@ class SingleCharTextPainter extends BaseTextPainter {
   }
 }
 
-/// 曲线文本
+/// 曲线文本, 单字符绘制
 /// [SingleCharTextPainter]
 class SingleCurveCharTextPainter extends SingleCharTextPainter {
   /// 曲线文本曲率[-360°~360°]; 0表示正常文本
@@ -1021,7 +1035,7 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
   }
 
   @override
-  void painterCustomLine(Canvas canvas, Offset offset) {
+  void painterCustomLineStyle(Canvas canvas, Offset offset) {
     //绘制曲线上的删除线/下划线
     if (isUnderline || isLineThrough) {
       canvas.withTranslate(offset.dx, offset.dy, () {

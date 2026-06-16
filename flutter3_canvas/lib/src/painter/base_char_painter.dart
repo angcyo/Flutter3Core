@@ -6,14 +6,20 @@ part of '../../flutter3_canvas.dart';
 /// @date 2024/11/18
 ///
 /// 单字符逐个绘制
+/// - 包含每个字符的信息
+/// - 包含字符所在行的信息
 abstract class BaseCharPainter {
   /// 调试模式下, 是否绘制文本的边界
   bool debugPaintBounds = false;
+
+  //MARK: char
 
   /// 在整体中绘制的区域, 不包含[alignOffset]
   /// 在曲线文本中, 会有特殊处理, 需要使用[paintBounds]
   @autoInjectMark
   Rect bounds = Rect.zero;
+
+  //MARK: line
 
   /// 对齐偏移
   @autoInjectMark
@@ -37,7 +43,7 @@ abstract class BaseCharPainter {
   @autoInjectMark
   double lineDescender = 0;
 
-  //--paint--
+  //MARK: curve
 
   /// 绘制矩阵, 通常用来实现文本的曲线绘制
   @autoInjectMark
@@ -46,8 +52,6 @@ abstract class BaseCharPainter {
   /// [bounds]与[paintMatrix]的集合, 通常在曲线文本中使用
   @autoInjectMark
   Rect paintBounds = Rect.zero;
-
-  //--曲线--
 
   /// 是否是绘制在曲线上
   /// 标识当前对象是在曲线文本上绘制
@@ -65,7 +69,7 @@ abstract class BaseCharPainter {
   @flagProperty
   double? charCurveEndAngle;
 
-  //--get--
+  //MARK: get
 
   /// 包含了基线, 行高, 宽度
   @output
@@ -81,7 +85,7 @@ abstract class BaseCharPainter {
   /// 下降距离, 正值
   double get descender => 0;
 
-  //--core--
+  //MARK: core
 
   /// 绘制入口
   @api
