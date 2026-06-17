@@ -175,7 +175,11 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     //MARK: - number
     final numberStr = _currentValue == null
         ? widget.valueText
-        : formatNumber(_currentValue!, numType: widget._numType);
+        : formatNumber(
+            _currentValue!,
+            numType: widget._numType,
+            digits: widget.maxDigits,
+          );
     final numberWidget = widget.showNumber
         ? isDesktopOrWeb
               ? buildNumberInputWidget(
@@ -402,6 +406,7 @@ class _LabelRangeNumberSliderTileState extends State<LabelRangeNumberSliderTile>
     final startNumberStr = formatNumber(
       _currentStartValue,
       numType: widget._numType,
+      digits: widget.maxDigits,
     );
     final startNumber = widget.showNumber
         ? buildNumberWidget(
@@ -438,6 +443,7 @@ class _LabelRangeNumberSliderTileState extends State<LabelRangeNumberSliderTile>
     final endNumberStr = formatNumber(
       _currentEndValue,
       numType: widget._numType,
+      digits: widget.maxDigits,
     );
     final endNumber = widget.showNumber
         ? buildNumberWidget(

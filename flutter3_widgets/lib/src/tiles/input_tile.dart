@@ -413,6 +413,9 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           ? NumType.i
           : (widget.inputText is double ? NumType.d : null));
 
+  @tempFlag
+  String? _lastInputText;
+
   bool get isInt => _inputNumType == NumType.i;
 
   bool get isDouble => _inputNumType == NumType.d;
@@ -421,24 +424,28 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
 
   String get inputText {
     //debugger(when: isInt);
-    if (widget.inputText == null) {
+    final value = widget.inputText;
+    if (value == null) {
       return "";
     }
-    if (isInt || isDouble) {
-      return _formatDigits("${widget.inputText}");
+    if (value is String) {
+      return value;
     }
-    return "${widget.inputText}";
+    if (isInt || isDouble) {
+      return _formatDigits("$value");
+    }
+    return "$value";
   }
 
   /// 格式化数字字符串
-  String _formatDigits(String value) {
+  String _formatDigits(String value, {bool? removeZero}) {
     if (isDouble || isInt) {
       final num = value.toDoubleOrNull();
       return widget.onNumberFormat?.call(num) ??
           num?.toDigits(
             digits: widget.inputMaxDigits,
             ensureInt: isInt,
-            removeZero: !value.contains("."),
+            removeZero: removeZero ?? !value.contains("."),
           ) ??
           value;
     }
@@ -451,6 +458,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   void initState() {
     inputConfig.focusNode = widget.inputFocusNode ?? inputConfig.focusNode;
     inputConfig.text = inputText;
+    _lastInputText = inputText;
     super.initState();
   }
 
@@ -463,6 +471,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
     if (oldWidget.inputText != inputText) {
       inputConfig.updateText(inputText, notify: false);
     }
+    _lastInputText = inputText;
   }
 
   @override
@@ -499,12 +508,18 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
         final selection = inputConfig.controller.selection;
         if (isDouble && widget.inputMaxDigits > 0 && selection.isCollapsed) {
           final newValue = _formatDigits(value);
-          if (newValue != value &&
+          if (_lastInputText != null &&
+              _lastInputText!.toDoubleOrNull() == value.toDoubleOrNull() &&
+              value.decimalDigits <= widget.inputMaxDigits) {
+            //浮点数, 退格删除了末尾的0
+            return;
+          } else if (newValue != value &&
               value.decimalDigits > widget.inputMaxDigits) {
             //debugger();
             inputConfig.text = newValue;
           }
         }
+        _lastInputText = value;
         widget.onChanged?.call(
           _formatResultValue(
             value,

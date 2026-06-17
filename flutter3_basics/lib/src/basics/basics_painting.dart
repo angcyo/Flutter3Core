@@ -1209,6 +1209,19 @@ extension PaintEx on Paint {
 }
 
 extension AlignmentEx on Alignment {
+  String? get name => switch (this) {
+    Alignment.topLeft => "topLeft",
+    Alignment.topCenter => "topCenter",
+    Alignment.topRight => "topRight",
+    Alignment.centerLeft => "centerLeft",
+    Alignment.center => "center",
+    Alignment.centerRight => "centerRight",
+    Alignment.bottomLeft => "bottomLeft",
+    Alignment.bottomCenter => "bottomCenter",
+    Alignment.bottomRight => "bottomRight",
+    _ => null,
+  };
+
   bool get isLeft =>
       this == AlignmentDirectional.topStart ||
       this == AlignmentDirectional.centerStart ||

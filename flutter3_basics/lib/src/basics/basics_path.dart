@@ -741,6 +741,11 @@ extension ListPathEx on List<Path> {
 
     sx ??= scale ?? (boundsWidth == 0 ? 1 : width / boundsWidth);
     sy ??= scale ?? (boundsHeight == 0 ? 1 : height / boundsHeight);
+
+    if (sx == 1 && sy == 1) {
+      return transformPath(translate);
+    }
+
     final scaleMatrix = createScaleMatrix(
       sx: sx,
       sy: sy,
