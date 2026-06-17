@@ -1886,6 +1886,12 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  /// 是否是正数
+  bool get isPositive => this > 0;
+
+  /// 是否是负数
+  bool get isNegative => this < 0;
+
   /// 映射
   T map<T>(T Function(num) map) => map(this);
 
