@@ -468,10 +468,17 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
     if (oldWidget.inputFocusNode == inputConfig.focusNode) {
       inputConfig.focusNode = widget.inputFocusNode;
     }
-    if (oldWidget.inputText != inputText) {
-      inputConfig.updateText(inputText, notify: false);
+    final value = inputText;
+    if (inputConfig.text != value) {
+      if (isDouble &&
+          _lastInputText?.startsWith("0") == true &&
+          _lastInputText?.toDoubleOrNull() == value.toDoubleOrNull()) {
+        //忽略相同的值带来的页面刷新
+      } else {
+        inputConfig.updateText(value, notify: false);
+      }
     }
-    _lastInputText = inputText;
+    _lastInputText = value;
   }
 
   @override

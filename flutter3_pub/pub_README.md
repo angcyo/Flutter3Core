@@ -241,6 +241,7 @@ https://guoshuyu.cn/home/wx/Z1.html
 
 - [animated_text_kit: ^4.2.2](https://pub.dev/packages/animated_text_kit) 一个 flutter 包，其中包含一些很酷和很棒的文本动画的集合。Codemagic 电子书“我们喜欢的 Flutter 库”中文本动画的推荐包。试用我们的实时示例应用程序。
 - [pretty_animated_text: ^3.0.1](https://pub.dev/packages/pretty_animated_text) 一款文本动画 UI 插件，为您提供美观且可自定义的动画文本小部件，以便您在项目中轻松使用它们。 文本动画采用基于物理的动画技术，提供流畅愉悦的体验。
+- [reel_text: ^0.1.5](https://pub.dev/packages/reel_text) 这是一个轻量级的 Flutter 文本滚动动画插件，适用于短标签、计数器、状态文本、命令按钮、富文本和内联可编辑文本更正。
 - [animate_do: ^3.1.2](https://pub.dev/packages/animate_do) 受 Animate.css 启发的动画包，仅使用 Flutter 动画构建，零依赖性。
 - [auto_animated: ^3.2.0](https://pub.dev/packages/auto_animated) 一个 Flutter 包，用于创建动画列表。
 - [simple_animations: ^5.0.2](https://pub.dev/packages/simple_animations) Simple Animations 简化了创建精美自定义动画的过程：

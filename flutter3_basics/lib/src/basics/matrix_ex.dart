@@ -726,7 +726,8 @@ Matrix4 createTranslateMatrix({
 }) {
   tx ??= offset?.dx;
   ty ??= offset?.dy;
-  return Matrix4.identity()..translate(tx ?? 0.0, ty ?? 0.0, tz ?? 0.0);
+  return Matrix4.identity()
+    ..translateByDouble(tx ?? 0.0, ty ?? 0.0, tz ?? 0.0, 1.0);
 }
 
 /// 在指定锚点[anchor],创建一个缩放矩阵
@@ -740,20 +741,30 @@ Matrix4 createScaleMatrix({
   final tv = vector.Vector3(anchor.dx, anchor.dy, 0);
   final sv = vector.Vector3(scale ?? sx ?? 1.0, scale ?? sy ?? 1.0, 1.0);
   return Matrix4.identity()
-    ..translate(tv)
+    ..translateByVector3(tv)
     ..scale(sv)
-    ..translate(-tv);
+    ..translateByVector3(-tv);
 }
 
 /// 在指定锚点[anchor],创建一个旋转矩阵
 /// [radians] 旋转的弧度
-Matrix4 createRotateMatrix(double? radians, {Offset? anchor}) {
-  anchor ??= Offset.zero;
-  final translation = vector.Vector3(anchor.dx, anchor.dy, 0);
+Matrix4 createRotateMatrix(
+  double? radians, {
+  double? anchorX,
+  double? anchorY,
+  Offset? anchor, //优先
+}) {
+  anchorX ??= 0;
+  anchorY ??= 0;
+  final translation = vector.Vector3(
+    anchor?.dx ?? anchorX,
+    anchor?.dy ?? anchorY,
+    0,
+  );
   return Matrix4.identity()
-    ..translate(translation)
+    ..translateByVector3(translation)
     ..rotateZ(radians ?? 0)
-    ..translate(-translation);
+    ..translateByVector3(-translation);
 }
 
 /// 创建一个3*3矩阵
