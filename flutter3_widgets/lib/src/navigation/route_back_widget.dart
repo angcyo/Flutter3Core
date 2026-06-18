@@ -18,7 +18,16 @@ class RouteBackWidget extends StatefulWidget {
   /// 导航器key
   final GlobalKey<NavigatorState>? navigatorKey;
 
-  const RouteBackWidget({super.key, this.child, this.navigatorKey});
+  /// 是否是使用的子路由, 自动合并路由前缀key
+  @defInjectMark
+  final bool? isInSubNavigator;
+
+  const RouteBackWidget({
+    super.key,
+    this.child,
+    this.navigatorKey,
+    this.isInSubNavigator,
+  });
 
   @override
   State<RouteBackWidget> createState() => _RouteBackWidgetState();
@@ -64,10 +73,15 @@ class _RouteBackWidgetState extends State<RouteBackWidget>
     //final impliesAppBarDismissal2 = route?.impliesAppBarDismissal;
     //debugger();
 
-    //有效路由的数量
-    int effectiveRouteCount = 0;
-    String? beforeRouteFlag;
-    //debugger();
+    final isInSubNavigator =
+        widget.isInSubNavigator ??
+        (widget.navigatorKey?.currentContext?.isInRootNavigator ??
+                buildContext?.isInRootNavigator) ==
+            false;
+
+    // 相同前缀路由路径对应的路由数量
+    final routePathCountMap = <String, int>{};
+    String? lastKey;
     for (final route in routeStack) {
       if (route.isPageRoute == true) {
         final routeSettings = route.routeSettings;
@@ -82,18 +96,42 @@ class _RouteBackWidgetState extends State<RouteBackWidget>
             }
           }
         }
-        if (beforeRouteFlag == null) {
-          effectiveRouteCount++;
-          beforeRouteFlag = routeFlag;
-        } else if (routeFlag?.startsWith("$beforeRouteFlag/") == true) {
-          //子路由, 不显示返回按键
+
+        if (routeFlag == null && isInSubNavigator) {
+          routeFlag = lastKey;
+        }
+        //--
+        if (routeFlag == null) {
+          lastKey = "${nowTimestamp()}";
+          routePathCountMap[lastKey] = 1;
         } else {
-          effectiveRouteCount++;
-          beforeRouteFlag = routeFlag;
+          final key = routePathCountMap.keys.findFirst(
+            (e) => routeFlag == e || routeFlag?.startsWith("$e/") == true,
+          );
+          lastKey = key ?? routeFlag;
+          if (key != null) {
+            if (isInSubNavigator) {
+              //合并子路由的主路径
+              if (routeFlag.startsWith("$key/")) {
+                routePathCountMap.remove(key);
+                routePathCountMap[routeFlag] =
+                    (routePathCountMap[routeFlag] ?? 0) + 1;
+                lastKey = routeFlag;
+              } else {
+                routePathCountMap[key] = (routePathCountMap[key] ?? 0) + 1;
+              }
+            } else {
+              routePathCountMap[key] = (routePathCountMap[key] ?? 0) + 1;
+            }
+          } else {
+            routePathCountMap[routeFlag] = 1;
+          }
         }
       }
     }
-    _visible = effectiveRouteCount > 1;
+    _visible = isInSubNavigator
+        ? (routePathCountMap[lastKey ?? ""] ?? 0) > 1
+        : routePathCountMap.length > 1;
     updateState();
     //l.w("[RouteBackWidget]: $effectiveRouteCount");
   }
