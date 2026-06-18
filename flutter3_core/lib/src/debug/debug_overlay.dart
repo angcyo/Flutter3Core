@@ -38,6 +38,12 @@ class DebugOverlayButton extends StatefulWidget {
   /// - [DebugPage.defDebugActions]
   static final List<DebugAction> defDebugActions = [
     DebugAction(
+      label: "调试页面",
+      clickAction: (context) {
+        context.pushWidget(const DebugPage());
+      },
+    ),
+    DebugAction(
       label: "切换ThemeMode",
       clickAction: (context) {
         final globalConfig = GlobalConfig.of(context);
