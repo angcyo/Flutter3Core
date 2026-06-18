@@ -609,6 +609,9 @@ Future<Directory> cacheFolder([
 ///
 /// `/Users/angcyo/Library/Containers/com.laserabc.factory.tools.desktop/Data/Library/Caches/com.laserabc.factory.tools.desktop/test.txt`
 ///
+/// # Windows
+///
+/// `C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools\test.txt`
 ///
 /// - [cacheFolder]
 /// - [cacheFilePath]

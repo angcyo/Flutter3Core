@@ -316,18 +316,17 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
   }
 
   /// iOS 平台无法安装APK
-  void _startInstall() {
+  void _startInstall({String? path}) {
     //debugger();
+    path ??= downloadFilePathCacheMixin;
     if (isAndroid) {
-      AndroidPackageInstaller.installApk(
-        apkFilePath: downloadFilePathCacheMixin,
-      );
+      AndroidPackageInstaller.installApk(apkFilePath: path);
     } else if (isMacOS) {
-      runCommand("open", [downloadFilePathCacheMixin]);
+      runCommand("open", [path], throwOnError: false, mode: .detached);
     } else if (isIos) {
     } else if (isWeb) {
     } else if (isWindows) {
-      runCommand("explorer", [downloadFilePathCacheMixin]);
+      runCommand("explorer", [path], throwOnError: false, mode: .detached);
     }
   }
 }
