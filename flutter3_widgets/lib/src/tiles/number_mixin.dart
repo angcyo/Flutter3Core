@@ -39,10 +39,10 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 当前数字对应的文本
   String get currentNumberValueText => formatNumber(
-        currentNumberValue,
-        numType: numberMixin.numberValueTypeMixin,
-        digits: numberMixin.numberMaxDigits,
-      );
+    currentNumberValue,
+    numType: numberMixin.numberValueTypeMixin,
+    digits: numberMixin.numberMaxDigits,
+  );
 
   /// 数值是否发生了改变
   bool get isNumberValueChanged => initialNumberValue != currentNumberValue;
@@ -66,8 +66,11 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 数字改变回调
   void onNumberValueChanged(num toValue) async {
-    toValue =
-        clamp(toValue, numberMixin.numberMinValue, numberMixin.numberMaxValue);
+    toValue = clamp(
+      toValue,
+      numberMixin.numberMinValue,
+      numberMixin.numberMaxValue,
+    );
     if (numberMixin.onNumberValueConfirmChange != null) {
       final result = await numberMixin.onNumberValueConfirmChange!(toValue);
       if (result is bool && result != true) {
@@ -102,9 +105,10 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
               fontSize: fontSize,
               textAlign: ui.TextAlign.center,
               style: globalTheme.textGeneralStyle.copyWith(
-                  color: enable
-                      ? null
-                      : globalTheme.textGeneralStyle.color?.addBrightness(-20)),
+                color: enable
+                    ? null
+                    : globalTheme.textGeneralStyle.color?.addBrightness(-20),
+              ),
             )
             .stateDecoration(
               enable
@@ -114,8 +118,9 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
                     )
                   : fillDecoration(
                       color: context.darkOr(
-                          globalTheme.themeWhiteColor.addBrightness(-5),
-                          globalTheme.themeWhiteColor.withOpacity(0.9)),
+                        globalTheme.themeWhiteColor.addBrightness(-5),
+                        globalTheme.themeWhiteColor.withOpacity(0.9),
+                      ),
                       radius: kDefaultBorderRadiusL,
                     ),
               pressedDecoration: fillDecoration(
@@ -125,12 +130,12 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
               enablePressedDecoration: enable,
             )
             .onTouchDetector(
-              onClick: (_) {
+              onClick: (_, _) {
                 //debugger();
                 final toValue = currentNumberValue + step;
                 onNumberValueChanged(toValue);
               },
-              onLongPress: (_) {
+              onLongPress: (_, _) {
                 //debugger();
                 final toValue = currentNumberValue + (longStep ?? step * 10);
                 onNumberValueChanged(toValue);

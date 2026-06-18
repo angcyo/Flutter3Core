@@ -8,11 +8,11 @@ part of '../../flutter3_basics.dart';
 /// 会比[GestureDetector].[onTap]回调快
 /// [RawGestureDetector]
 class TouchDetectorWidget extends SingleChildRenderObjectWidget {
-  final PointerAction? onClick;
-  final PointerAction? onLongPress;
+  final BoxPointerAction? onClick;
+  final BoxPointerAction? onLongPress;
 
   /// 手势事件, 未处理
-  final PointerAction? onPointerEvent;
+  final BoxPointerAction? onPointerEvent;
 
   /// 是否激活长按循环事件通知
   final bool enableLoopLongPress;
@@ -28,15 +28,17 @@ class TouchDetectorWidget extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) => RenderTouchDetector(
-        onClick: onClick,
-        onLongPress: onLongPress,
-        onPointerEvent: onPointerEvent,
-        enableLoopLongPress: enableLoopLongPress,
-      );
+    onClick: onClick,
+    onLongPress: onLongPress,
+    onPointerEvent: onPointerEvent,
+    enableLoopLongPress: enableLoopLongPress,
+  );
 
   @override
   void updateRenderObject(
-      BuildContext context, RenderTouchDetector renderObject) {
+    BuildContext context,
+    RenderTouchDetector renderObject,
+  ) {
     renderObject
       ..onClick = onClick
       ..onPointerEvent = onPointerEvent
@@ -49,11 +51,11 @@ class TouchDetectorWidget extends SingleChildRenderObjectWidget {
 class RenderTouchDetector extends RenderProxyBox
     with TouchDetectorMixin
     implements MouseTrackerAnnotation {
-  PointerAction? onClick;
-  PointerAction? onLongPress;
+  BoxPointerAction? onClick;
+  BoxPointerAction? onLongPress;
 
   /// 手势事件, 未处理
-  PointerAction? onPointerEvent;
+  BoxPointerAction? onPointerEvent;
 
   @override
   bool enableLoopLongPress = false;
@@ -69,11 +71,13 @@ class RenderTouchDetector extends RenderProxyBox
     this.enableLoopLongPress = false,
   }) : super(child);
 
+  /// 命中测试
   @override
   bool hitTest(BoxHitTestResult result, {required ui.Offset position}) {
     return super.hitTest(result, position: position);
   }
 
+  /// 自身命中测试
   @override
   bool hitTestSelf(ui.Offset position) {
     return _enableTouchDetector;
@@ -87,7 +91,7 @@ class RenderTouchDetector extends RenderProxyBox
     if (_enableTouchDetector) {
       addTouchDetectorPointerEvent(event);
     }
-    onPointerEvent?.call(event);
+    onPointerEvent?.call(this, event);
   }
 
   @override
@@ -97,9 +101,9 @@ class RenderTouchDetector extends RenderProxyBox
   ) {
     //debugger();
     if (touchType == TouchDetectorType.click) {
-      onClick?.call(event);
+      onClick?.call(this, event);
     } else if (touchType == TouchDetectorType.longPress) {
-      onLongPress?.call(event);
+      onLongPress?.call(this, event);
     }
     return super.onTouchDetectorPointerEvent(event, touchType);
   }
@@ -116,10 +120,12 @@ class RenderTouchDetector extends RenderProxyBox
   @override
   PointerExitEventListener? get onExit => null;
 
+  /// 是否要鼠标追踪
+  /// false: 那么内部的子部件都收不到鼠标事件
   @override
-  bool get validForMouseTracker => false;
+  bool get validForMouseTracker => true;
 
-//endregion --Mouse--
+  //endregion --Mouse--
 }
 
 extension TouchDetectorWidgetEx on Widget {
@@ -127,8 +133,8 @@ extension TouchDetectorWidgetEx on Widget {
   /// [TouchDetectorWidget]扩展方法
   Widget onTouchDetector({
     GestureTapCallback? onTap,
-    PointerAction? onClick,
-    PointerAction? onLongPress,
+    BoxPointerAction? onClick,
+    BoxPointerAction? onLongPress,
     bool enableClick = true,
     bool enableLongPress = false,
     bool enableLoopLongPress = false,
@@ -142,7 +148,7 @@ extension TouchDetectorWidgetEx on Widget {
     }
     if (enableClick && onClick == null) {
       if (onTap != null) {
-        onClick = (event) {
+        onClick = (box, event) {
           onTap.call();
         };
       }

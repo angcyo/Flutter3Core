@@ -222,7 +222,14 @@ int get pressedKeyCount => HardwareKeyboard.instance.logicalKeysPressed.length;
 //--
 
 /// 手势事件回调
+/// - [PointerEvent.localPosition] 鼠标在当前box上的坐标
 typedef PointerAction = void Function(PointerEvent event);
+
+/// 手势事件回调
+/// - [RenderBox.size] box的大小
+/// - [PointerEvent.localPosition] 鼠标在当前box上的坐标
+typedef BoxPointerAction =
+    void Function(RenderBox renderBox, PointerEvent event);
 
 /// 手指移动多少距离时, 视为移动
 /// [kTouchSlop] 18.0

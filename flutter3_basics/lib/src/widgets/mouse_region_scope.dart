@@ -66,9 +66,17 @@ class _MouseHoverProviderState extends State<MouseHoverProvider> {
       hover: hover,
       child: MouseRegion(
         onEnter: (event) {
+          /*assert(() {
+            l.d("鼠标进入.");
+            return true;
+          }());*/
           hover.value = true;
         },
         onExit: (event) {
+          /*assert(() {
+            l.d("鼠标离开.");
+            return true;
+          }());*/
           hover.value = false;
         },
         cursor: widget.cursor,
