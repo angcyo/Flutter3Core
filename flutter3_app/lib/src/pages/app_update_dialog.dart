@@ -326,7 +326,13 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
     } else if (isIos) {
     } else if (isWeb) {
     } else if (isWindows) {
-      runCommand("explorer", [path], throwOnError: false, mode: .detached);
+      //runCommand("explorer", [path], throwOnError: false, mode: .detached);
+      runCommand(
+        path,
+        ["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART"],
+        throwOnError: false,
+        mode: .detached,
+      );
     }
   }
 }
