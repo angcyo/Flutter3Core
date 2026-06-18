@@ -7,7 +7,8 @@ part of '../../flutter3_canvas.dart';
 ///
 
 /// 基础文本绘制
-/// [NormalTextPainter]
+/// - [NormalTextPainter] 系统绘制
+/// - [SingleCharTextPainter] 逐字绘制
 abstract class BaseTextPainter {
   /// 调试模式下, 是否绘制文本的边界
   bool debugPaintBounds = false;
@@ -22,6 +23,9 @@ abstract class BaseTextPainter {
 
   /// 绘制方向
   int orientation = kHorizontal;
+
+  /// 文本是否要在[orientation]方向上顺时针旋转90°
+  bool orientationRotate = false;
 
   /// 文本的颜色
   Color textColor = Colors.black;
@@ -59,11 +63,12 @@ abstract class BaseTextPainter {
   bool isLineThrough = false;
 
   /// 对齐方式, 在多行文本时, 会影响每行的对齐方式
-  /// [TextAlign.justify] 矢量文本的极限对齐
+  /// ~~~[TextAlign.justify] 矢量文本的极限对齐~~~
   TextAlign textAlign = TextAlign.start;
 
   /// 交叉轴上文本对齐的方式
-  /// [TextAlign.justify] 矢量文本的极限对齐
+  /// - 在垂直排列时, 效果明显
+  /// ~~~[TextAlign.justify] 矢量文本的极限对齐~~~
   TextAlign crossTextAlign = TextAlign.center;
 
   /// 文本方向
@@ -79,10 +84,12 @@ abstract class BaseTextPainter {
   //MARK: vector
 
   /// 是否使用矢量字符绘制
+  @configProperty
   bool useVectorText = false;
 
-  /// 矢量字符对应的矢量路径, 适量文本的核心
+  /// 矢量字符对应的矢量路径, 适量文本的核心. 需要要外部提供处理好
   /// - 每个字符对应的原始字形数据
+  @configProperty
   Map<String, Path?>? vectorTextPathMap;
 
   //endregion ---属性---
@@ -162,7 +169,7 @@ abstract class BaseTextPainter {
               //final scale = createScaleMatrix(sx: 0.1, sy: 0.1);
               //vectorTextPathMap?[char.char] = charPath.transformPath(scale);
               //char.charPath = charPath.transformPath(scale);
-              final bounds = char.charPathBounds;
+              final bounds = char.charBounds;
               final translate = createTranslateMatrix(
                 tx: -bounds.left,
                 //ty: char.lineHeight - char.lineDescender /* - bounds.bottom*/,
@@ -205,7 +212,13 @@ abstract class BaseTextPainter {
 
   /// 创建单字符的文本绘制对象/系统文本绘制对象
   /// [TextPainter]
-  TextPainter createBaseTextPainter(String? text) {
+  TextPainter createBaseTextPainter(
+    String? text, {
+    double? letterSpacing,
+    double? lineSpacing,
+  }) {
+    letterSpacing ??= this.letterSpacing;
+    lineSpacing ??= this.lineSpacing;
     return createTextPainter(
       text: text,
       fontFamily: fontFamily,
@@ -222,7 +235,9 @@ abstract class BaseTextPainter {
       textDirection: textDirection,
       strutHeight:
           strutHeight ??
-          (lineSpacing != null ? (1 + lineSpacing! / fontSize) : null),
+          ((lineSpacing != null && lineSpacing != 0)
+              ? (1 + lineSpacing / fontSize)
+              : null),
       forceStrutHeight: forceStrutHeight,
     );
   }
@@ -284,6 +299,8 @@ abstract class BaseTextPainter {
 
   /// 通过给定的属性, 创建对应的[TextPainter]文本绘制对象
   /// [text]生成[InlineSpan]对象
+  ///
+  /// - 自动执行[TextPainter.layout]
   static TextPainter createTextPainter({
     String? text,
     String? fontFamily,
@@ -400,7 +417,23 @@ class NormalTextPainter extends BaseTextPainter {
   void initPainter() {
     super.initPainter();
     _textPainter = createBaseTextPainter(text);
-    _painterBounds = Offset.zero & _textPainter!.size;
+    double left = 2147483648;
+    double top = 2147483648;
+    double right = -2147483648;
+    double bottom = -2147483648;
+    for (final line in _textPainter!.computeLineMetrics()) {
+      left = min(left, line.left);
+      top = min(top, 0);
+      right = max(right, line.left + line.width);
+      bottom = max(bottom, line.height);
+    }
+    //_painterBounds = Offset.zero & _textPainter!.size;
+    _painterBounds = Rect.fromLTWH(
+      0,
+      0,
+      right - left,
+      _textPainter!.size.height,
+    );
     if (orientation.isVertical) {
       final rotateMatrix = Matrix4.identity()
         ..rotateBy(90.hd, anchor: _painterBounds.center);
@@ -460,10 +493,6 @@ class SingleCharTextPainter extends BaseTextPainter {
   @override
   Rect get painterBounds => _painterBounds;
 
-  @override
-  UiLineMetrics? get lineMetrics =>
-      charPainterList?.firstOrNull?.firstOrNull?.lineMetrics;
-
   /// 斜体宽度补偿方案
   /// 是否使用整行补偿宽度的方案
   @configProperty
@@ -502,152 +531,12 @@ class SingleCharTextPainter extends BaseTextPainter {
     return list.map((e) => e.characters.clone()).clone();
   }
 
-  /// 测量总体的大小
-  /// 最终缓存在[_painterBounds]中
-  void _measurePainterSize() {
-    final list = charPainterList;
-    if (list == null || list.isEmpty) {
-      _painterBounds = Rect.zero;
-    } else {
-      //整体的宽高
-      double width = -2147483648;
-      double height = -2147483648;
-
-      double left = 2147483648;
-      double top = 2147483648;
-      double right = -2147483648;
-      double bottom = -2147483648;
-
-      for (final line in list) {
-        if (line.isEmpty) {
-          continue;
-        }
-        final first = line.first.bounds;
-        final last = line.last.bounds;
-
-        double lineWidth = -2147483648;
-        double lineHeight = -2147483648;
-        double lineAscender = 0;
-        double lineDescender = 0;
-
-        if (orientation.isVertical) {
-          //纵向
-          height = max(height, last.bottom - first.top);
-
-          for (final char in line) {
-            left = min(left, char.bounds.left);
-            right = max(right, char.bounds.right);
-
-            lineWidth = max(lineWidth, char.bounds.width + italicLineWidth);
-            lineHeight = last.bottom - first.top;
-            lineAscender = min(char.ascender, lineAscender);
-            lineDescender = max(char.descender, lineDescender);
-          }
-          width = right - left + italicLineWidth;
-
-          //line 对齐
-          for (final char in line) {
-            char.lineWidth = lineWidth;
-            char.lineHeight = lineHeight;
-            char.lineAscender = lineAscender;
-            char.lineDescender = lineDescender;
-          }
-        } else {
-          //横向
-          width = max(width, last.right - first.left + italicLineWidth);
-
-          double lineHeight = -2147483648;
-          for (final char in line) {
-            top = min(top, char.bounds.top);
-            bottom = max(bottom, char.bounds.bottom);
-
-            lineWidth = last.right - first.left + italicLineWidth;
-            lineHeight = max(lineHeight, char.bounds.height);
-            lineAscender = min(char.ascender, lineAscender);
-            lineDescender = max(char.descender, lineDescender);
-            //debugger();
-          }
-          height = bottom - top;
-
-          //line 对齐
-          for (final char in line) {
-            char.lineWidth = lineWidth;
-            char.lineHeight = lineHeight;
-            char.lineAscender = lineAscender;
-            char.lineDescender = lineDescender;
-          }
-        }
-      }
-      _painterBounds = Offset.zero & Size(width, height);
-      //debugger();
-    }
-  }
-
-  /// 测量每个字符的对齐偏移
-  /// [orientation]
-  /// [textAlign]
-  /// [crossTextAlign]
-  void _measureCharOffset() {
-    final list = charPainterList;
-    if (list == null || list.isEmpty) {
-      return;
-    }
-    for (final line in list) {
-      if (line.isEmpty) {
-        continue;
-      }
-      for (final char in line) {
-        double dx = 0;
-        double dy = 0;
-
-        if (orientation.isVertical) {
-          //纵向
-          if (crossTextAlign == TextAlign.center) {
-            dx = (char.lineWidth - char.charWidth) / 2;
-          } else if (crossTextAlign == TextAlign.right ||
-              crossTextAlign == TextAlign.end) {
-            dx = char.lineWidth - char.charWidth;
-          }
-
-          if (textAlign == TextAlign.center) {
-            dy = (painterBounds.height - char.lineHeight) / 2;
-          } else if (textAlign == TextAlign.right ||
-              textAlign == TextAlign.end ||
-              textAlign == TextAlign.justify) {
-            dy = painterBounds.height - char.lineHeight;
-            if (crossTextAlign == TextAlign.justify) {
-              dy -= char.lineDescender - char.descender;
-            }
-          }
-        } else {
-          //横向
-          if (crossTextAlign == TextAlign.center) {
-            dy = (char.lineHeight - char.charHeight) / 2;
-          } else if (crossTextAlign == TextAlign.right ||
-              crossTextAlign == TextAlign.end ||
-              crossTextAlign == TextAlign.justify) {
-            dy = char.lineHeight - char.charHeight;
-            if (crossTextAlign == TextAlign.justify) {
-              dy -= char.lineDescender - char.descender;
-            }
-          }
-
-          if (textAlign == TextAlign.center) {
-            dx = (painterBounds.width - char.lineWidth) / 2;
-          } else if (textAlign == TextAlign.right ||
-              textAlign == TextAlign.end) {
-            dx = painterBounds.width - char.lineWidth;
-            //debugger();
-          }
-        }
-        //l.d("${char.char} :${char.charDescent} :${char.charUnscaledAscent}");
-        char.alignOffset = Offset(dx, dy);
-      }
-    }
-  }
-
   @override
-  TextPainter createBaseTextPainter(String? text) {
+  TextPainter createBaseTextPainter(
+    String? text, {
+    double? letterSpacing,
+    double? lineSpacing,
+  }) {
     final oldIsUnderline = isUnderline;
     final oldIsLineThrough = isLineThrough;
 
@@ -655,7 +544,11 @@ class SingleCharTextPainter extends BaseTextPainter {
       isUnderline = false;
       isLineThrough = false;
     }
-    final painter = super.createBaseTextPainter(text);
+    final painter = super.createBaseTextPainter(
+      text,
+      letterSpacing: letterSpacing,
+      lineSpacing: lineSpacing,
+    );
 
     isUnderline = oldIsUnderline;
     isLineThrough = oldIsLineThrough;
@@ -688,7 +581,8 @@ class SingleCharTextPainter extends BaseTextPainter {
           BaseTextPainter.updatePaintProperty(
             char.charPaint,
             textColor: textColor,
-            textStrokeWidth: textStrokeWidth,
+            //矢量文本画笔宽度恒为0
+            textStrokeWidth: 0 /*textStrokeWidth*/,
             textStyle: textPaintingStyle,
           );
         }
@@ -696,146 +590,321 @@ class SingleCharTextPainter extends BaseTextPainter {
     });
   }
 
+  /// 单字符自定义绘制初始化
   /// 初始化文本绘制对象
   @initialize
   @override
   void initPainter() {
     super.initPainter();
-    List<List<BaseCharPainter>> charPainterList = [];
-    final list = _splitText(text);
-
-    //每个字符左上角的位置
-    double left = 0;
-    double top = 0;
-
+    final List<List<BaseCharPainter>> charPainterList = [];
+    final charList = _splitText(text);
     //矢量文本画笔
     final vectorPaint = useVectorText ? createBasePaint() : null;
     vectorPaint?.strokeWidth = 0; //矢量文本画笔宽度恒为0
 
     //当出现空行时, 使用此对象的宽高占位
-    const placeholderChar = "中";
-    final placeholderPainter = createBaseTextPainter(placeholderChar);
-    for (final line in list) {
-      //每一行的开始
-      List<BaseCharPainter> lineCharPainterList = [];
-      if (orientation.isVertical) {
-        top = 0;
-      } else {
-        left = 0;
-      }
+    String? placeholderChar;
+    TextPainter? placeholderPainter;
 
-      //--
-      double lineMaxWidth = 0;
-      double lineMaxHeight = 0;
-
+    //MARK: 1. 初始化每一个char以及基础信息
+    for (final line in charList) {
+      List<BaseCharPainter> lineList = [];
+      double lineBaseline = 0;
+      //上升距离, 负值
+      double? lineAscender;
+      //下降距离, 正值
+      double? lineDescender;
       if (line.isEmpty) {
         //空行
+        placeholderChar ??= "中";
+        placeholderPainter ??= createBaseTextPainter(placeholderChar);
         final charWidth = placeholderPainter.width + italicCharWidth;
         final charHeight = placeholderPainter.height;
-        lineCharPainterList.add(
+        lineAscender ??= -charHeight;
+        lineDescender ??= 0;
+        lineBaseline = lineDescender - lineAscender;
+        lineList.add(
           CharTextPainter(
             placeholderChar,
             null,
-            Rect.fromLTWH(left, top, charWidth, charHeight),
-          )..debugPaintBounds = debugPaintBounds,
+            charBounds: Rect.fromLTWH(
+              0,
+              lineAscender,
+              charWidth,
+              lineDescender,
+            ),
+          ),
         );
-        lineMaxWidth = charWidth;
-        lineMaxHeight = charHeight;
       } else {
         //有效数据行
         for (final char in line) {
-          double charWidth = 0;
-          double charHeight = 0;
-
           if (useVectorText) {
             //矢量文本
             if (char == " ") {
               //空字符
-              charWidth = fontSize / 4 + italicCharWidth;
-              charHeight = fontSize / 4;
+              final charWidth = fontSize / 4 + italicCharWidth;
+              final charHeight = fontSize / 4;
 
-              lineCharPainterList.add(
+              lineBaseline = max(lineBaseline, charHeight);
+              lineAscender ??= -charHeight;
+              lineDescender ??= 0;
+              lineAscender = min(lineAscender, -charHeight);
+              lineDescender = max(lineDescender, 0);
+
+              lineList.add(
                 CharPathPainter(
                   char,
                   kEmptyPath,
-                  Rect.zero,
                   vectorPaint,
-                  kEmptyPath,
-                  Rect.fromLTWH(left, top, charWidth, charHeight),
-                )..debugPaintBounds = debugPaintBounds,
+                  charBounds: Rect.fromLTWH(0, -charHeight, charWidth, 0),
+                ),
               );
             } else {
               //正常矢量字符
               final charPath = vectorTextPathMap?[char];
               if (charPath != null) {
                 //矢量字符
+                //如果需要变换字符, 应该是在这里进行.
                 @dp
-                final charPathBounds = charPath.getBounds();
+                final pathBounds = charPath.getBounds();
 
-                charWidth = charPathBounds.width;
-                charHeight = charPathBounds.height;
+                lineBaseline = max(lineBaseline, -pathBounds.top);
+                final ascender = pathBounds.top;
+                final descender = pathBounds.bottom;
+                lineAscender ??= ascender;
+                lineDescender ??= descender;
+                lineAscender = min(lineAscender, ascender);
+                lineDescender = max(lineDescender, descender);
 
-                lineCharPainterList.add(
+                lineList.add(
                   CharPathPainter(
                     char,
                     charPath,
-                    charPathBounds,
                     vectorPaint,
-                    charPath.moveToZero(scaleAnchor: Offset.zero),
-                    Rect.fromLTWH(left, top, charWidth, charHeight),
-                  )..debugPaintBounds = debugPaintBounds,
+                    charBounds: pathBounds,
+                  ),
                 );
               } else {
                 //字体不支持的矢量字符
+                debugger();
               }
             }
           } else {
             //普通文本
-            final charPainter = createBaseTextPainter(char);
-            //debugger();
-            charWidth = charPainter.width + italicCharWidth;
-            charHeight = charPainter.height;
-
-            lineCharPainterList.add(
-              CharTextPainter(
-                char,
-                charPainter,
-                Rect.fromLTWH(left, top, charWidth, charHeight),
-              )..debugPaintBounds = debugPaintBounds,
+            final charPainter = createBaseTextPainter(
+              char,
+              letterSpacing: 0,
+              lineSpacing: 0,
             );
-          }
+            //debugger();
+            final lineMetrics = charPainter.computeLineMetrics().first;
+            final charWidth = lineMetrics.width + italicCharWidth;
+            final charHeight = lineMetrics.height;
 
-          //--line
+            final ascent = -lineMetrics.ascent;
+            final descent = lineMetrics.descent;
+            lineBaseline = max(lineBaseline, -ascent);
+            lineAscender ??= ascent;
+            lineDescender ??= lineMetrics.descent;
+            lineAscender = min(lineAscender, ascent);
+            lineDescender = max(lineDescender, descent);
 
-          lineMaxWidth = max(lineMaxWidth, charWidth);
-          lineMaxHeight = max(lineMaxHeight, charHeight);
-
-          //下一个字符
-          if (orientation.isVertical) {
-            top += (letterSpacing ?? 0) + charHeight;
-          } else {
-            left += (letterSpacing ?? 0) + charWidth;
+            final charBounds = Rect.fromLTWH(
+              lineMetrics.left,
+              ascent,
+              charWidth,
+              charHeight,
+            );
+            lineList.add(
+              CharTextPainter(char, charPainter, charBounds: charBounds),
+            );
           }
         }
       }
-
       //result
-      if (lineCharPainterList.isNotEmpty) {
-        charPainterList.add(lineCharPainterList);
-      }
-
-      //下一行
-      if (orientation.isVertical) {
-        left += (lineSpacing ?? 0) + lineMaxWidth;
-      } else {
-        top += (lineSpacing ?? 0) + lineMaxHeight;
+      if (lineList.isNotEmpty) {
+        for (final char in lineList) {
+          char
+            ..debugPaintBounds = debugPaintBounds
+            ..lineBaseline = lineBaseline
+            ..lineAscender = lineAscender ?? 0
+            ..lineDescender = lineDescender ?? 0;
+        }
+        charPainterList.add(lineList);
       }
     }
+
+    //MARK: 2. 对齐lineBaseline, 计算charOriginBounds
+    for (final line in charPainterList) {
+      double? lineHeight;
+      for (final char in line) {
+        lineHeight ??= char.lineDescender - char.lineAscender;
+        final charWidth = char.charBounds.width;
+        final charHeight = char.charBounds.height;
+        lineHeight = max(charHeight, lineHeight);
+
+        //相对于这一行, 每个char需要偏移多少才对齐baseline
+        final dy =
+            ((orientation.isHorizontal && !orientationRotate) ||
+                (orientation.isVertical && orientationRotate))
+            ? char.lineBaseline + char.ascender
+            : 0.0;
+        char.charBaselineOffset = Offset(0, dy);
+        char.charOriginBounds = Rect.fromLTWH(
+          0,
+          0,
+          charWidth,
+          ((orientation.isHorizontal && !orientationRotate) ||
+                  (orientation.isVertical && orientationRotate))
+              ? lineHeight
+              : charHeight + dy,
+        );
+      }
+    }
+
+    //MARK: 3. 作用变换
+    if (orientationRotate) {
+      for (final line in charPainterList) {
+        for (final char in line) {
+          final matrix = createRotateMatrix(
+            90.hd,
+            /*anchorX: char.charBounds.width / 2,
+            anchorY: char.charBounds.height / 2,*/
+            /*anchor: char.charBounds.center,*/
+            /*anchor: char.charOriginBounds.center,*/
+          );
+          //char.charBounds = matrix.mapRect(char.charBounds);
+          char.charRotateMatrix = matrix
+            ..postConcat(
+              createTranslateMatrix(tx: char.charOriginBounds.height),
+            );
+        }
+      }
+    }
+
+    //MARK: 4. 计算行边界, 行开始的偏移
+    double lineStartLeft = 0;
+    double lineStartTop = 0;
+    double lineMaxWidth = 0; //最大行宽
+    double lineMaxHeight = 0; //最大行高
+    for (final line in charPainterList) {
+      if (orientation.isVertical) {
+        lineStartTop = 0;
+      } else {
+        lineStartLeft = 0;
+      }
+      double? lineWidth;
+      double? lineHeight;
+      //计算行尺寸
+      for (final char in line) {
+        //下一个字符
+        final charOriginBoundsRotate = char.charOriginBoundsRotate;
+        final charWidth = charOriginBoundsRotate.width;
+        final charHeight = charOriginBoundsRotate.height;
+        if (orientation.isVertical) {
+          final w = charWidth;
+          lineWidth ??= w;
+          lineWidth = max(lineWidth, w);
+          if (lineHeight == null) {
+            lineHeight = charHeight;
+          } else {
+            lineHeight += (letterSpacing ?? 0) + charHeight;
+          }
+          lineHeight = max(lineHeight, charHeight); //防止间隙负值, 坍塌
+        } else {
+          final h = charHeight;
+          if (lineWidth == null) {
+            lineWidth ??= charWidth;
+          } else {
+            lineWidth += (letterSpacing ?? 0) + charWidth;
+          }
+          lineWidth = max(lineWidth, charWidth); //防止间隙负值, 坍塌
+          lineHeight ??= h;
+          lineHeight = max(lineHeight, h);
+        }
+      }
+      //result 赋值行尺寸
+      for (final char in line) {
+        char.lineStartOffset = Offset(lineStartLeft, lineStartTop);
+        char.lineWidth = lineWidth ?? 0;
+        char.lineHeight = lineHeight ?? 0;
+      }
+      if (orientation.isVertical) {
+        lineStartLeft += (lineSpacing ?? 0) + (lineWidth ?? 0);
+        lineStartLeft = max(lineStartLeft, 0); //防止间隙负值, 坍塌
+      } else {
+        lineStartTop += (lineSpacing ?? 0) + (lineHeight ?? 0);
+        lineStartTop = max(lineStartTop, 0); //防止间隙负值, 坍塌
+      }
+      lineMaxWidth = max(lineMaxWidth, lineWidth ?? 0);
+      lineMaxHeight = max(lineMaxHeight, lineHeight ?? 0);
+    }
+
+    //MARK: 5. 计算对齐方式的偏移量
+    for (final line in charPainterList) {
+      double left = 0;
+      double top = 0;
+      for (final char in line) {
+        final charOriginBoundsRotate = char.charOriginBoundsRotate;
+        final charWidth = charOriginBoundsRotate.width;
+        final charHeight = charOriginBoundsRotate.height;
+        double dx = 0;
+        double dy = 0;
+        if (orientation.isVertical) {
+          if (textAlign == TextAlign.center) {
+            dy = (lineMaxHeight - char.lineHeight) / 2;
+          } else if (textAlign == TextAlign.right ||
+              textAlign == TextAlign.end) {
+            dy = lineMaxHeight - char.lineHeight;
+          }
+          if (crossTextAlign == TextAlign.center) {
+            dx = (lineMaxWidth - charWidth) / 2;
+          } else if (crossTextAlign == TextAlign.right ||
+              crossTextAlign == TextAlign.end) {
+            dx = lineMaxWidth - charWidth;
+          }
+        } else {
+          if (textAlign == TextAlign.center) {
+            dx = (lineMaxWidth - char.lineWidth) / 2;
+          } else if (textAlign == TextAlign.right ||
+              textAlign == TextAlign.end) {
+            dx = lineMaxWidth - char.lineWidth;
+            //debugger();
+          }
+          /*if (crossTextAlign == TextAlign.center) {
+            dy += (lineMaxHeight - charHeight) / 2;
+          } else if (crossTextAlign == TextAlign.right ||
+              crossTextAlign == TextAlign.end) {
+            dy += lineMaxHeight - charHeight;
+          }*/
+        }
+        char.alignOffset = Offset(left + dx, top + dy);
+        //end char
+        if (orientation.isVertical) {
+          top += (letterSpacing ?? 0) + charHeight;
+          top = max(top, 0); //防止间隙负值, 坍塌
+        } else {
+          left += (letterSpacing ?? 0) + charWidth;
+          left = max(left, 0); //防止间隙负值, 坍塌
+        }
+      }
+    }
+    //result
+    if (charPainterList.isEmpty) {
+      _painterBounds = Rect.zero;
+    } else {
+      final last = charPainterList.last.last;
+      final startOffset = last.lineStartOffset;
+      final lineWidth = last.lineWidth;
+      final lineHeight = last.lineHeight;
+      _painterBounds = Rect.fromLTWH(
+        0,
+        0,
+        startOffset.dx + lineWidth,
+        startOffset.dy + lineHeight,
+      );
+    }
     this.charPainterList = charPainterList;
-    _measurePainterSize();
-    _measureCharOffset();
-    //translateVectorCharPathToBaseline(charPainterList);
-    //debugger();
   }
 
   @override
@@ -858,6 +927,7 @@ class SingleCharTextPainter extends BaseTextPainter {
       return;
     }
 
+    //paint
     final anchor = _painterBounds.lt;
     canvas.withTranslate(-anchor.dx + offset.dx, -anchor.dy + offset.dy, () {
       for (final line in charPainterList!) {
@@ -866,6 +936,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         }
       }
     });
+    //custom style
     if (!useVectorText && useCustomLineStyle && !isNil(charPainterList)) {
       painterCustomLineStyle(canvas, offset);
     }
@@ -882,8 +953,8 @@ class SingleCharTextPainter extends BaseTextPainter {
         if (isUnderline || isLineThrough) {
           final first = line.firstOrNull;
           final last = line.lastOrNull;
-          final left = first?.bounds.left;
-          final right = last?.bounds.right;
+          final left = first?.charBounds.left;
+          final right = last?.charBounds.right;
           if (left != null && right != null) {
             if (isUnderline) {
               //绘制下划线
@@ -911,133 +982,309 @@ class SingleCharTextPainter extends BaseTextPainter {
       }
     });
   }
+
+  /// 使用[BaseCharPainter.outputPaintMatrix]作用下, 重新测量整体的边界
+  /// [painterBounds]
+  /// @return 返回中心位置的偏移量
+  Offset _measureCharTextOutputBounds() {
+    final list = charPainterList;
+    if (list == null) {
+      return .zero;
+    }
+    double left = 2147483648;
+    double top = 2147483648;
+    double right = -2147483648;
+    double bottom = -2147483648;
+    for (final line in list) {
+      for (final char in line) {
+        final bounds = char.outputPaintMatrix.mapRect(char.charBounds);
+        //计算整体边界
+        left = min(left, bounds.left);
+        top = min(top, bounds.top);
+        right = max(right, bounds.right);
+        bottom = max(bottom, bounds.bottom);
+      }
+    }
+    final oldCenter = painterBounds.center;
+    _painterBounds = Rect.fromLTRB(left, top, right, bottom);
+    final newCenter = _painterBounds.center;
+    return newCenter - oldCenter;
+  }
 }
 
 /// 曲线文本, 单字符绘制
 /// [SingleCharTextPainter]
 class SingleCurveCharTextPainter extends SingleCharTextPainter {
-  /// 曲线文本曲率[-360°~360°]; 0表示正常文本
-  double curvature = 0;
+  //MARK: - config
 
-  /// 曲线的中心点坐标
-  @output
-  Offset curveCenter = Offset.zero;
-
-  /// 曲线的半径
-  @output
+  /// 曲线文本的半径, 支持正负数
+  @configProperty
   double curveRadius = 0;
 
+  /// 曲线位置
+  /// - [Alignment.center] 元素整体的居中放置, 整体被圆上下平分切割 (文本放置在中间)
+  /// - [Alignment.topCenter] 元素整体的顶部放置, 整体放在圆的内部 (文本放置在里面)
+  /// - [Alignment.bottomCenter] 元素整体的底部放置, 整体放在圆的外部. (文本放置在外面) 默认效果
+  @configProperty
+  Alignment curvePlacementAlign = .center;
+
+  /// 是否绘制曲线提示圆
+  @configProperty
+  bool paintCurveCircle = false;
+
+  @configProperty
+  Paint curveCirclePaint = Paint()
+    ..style = PaintingStyle.stroke
+    ..color = Colors.purpleAccent
+  /*kNewElementTipColor*/;
+
+  //MARK: - get
+
   /// 是否是反向的曲线
-  bool get isReverseCurve => curvature < 0;
+  bool get isReverseCurve => curveRadius < 0;
 
-  /// 曲线的周长
-  double get _curvePerimeter {
-    final angle = curvature.abs() % 360;
-    if (angle == 0) {
-      return _painterBounds.width;
-    }
-    return _painterBounds.width / angle * 360;
-  }
+  /// 整体参考的曲线半径
+  @tempFlag
+  double refCurveRadius = 0;
 
-  /// 曲线文本的理论参考的中心点, 这个参考点不准确, 仅用于计算矩阵
-  Offset get _curveRefCenter {
-    //半径
-    final bounds = _painterBounds;
-    final radius = _curvePerimeter / (2 * pi);
-    curveRadius = radius;
-    if (isReverseCurve) {
-      return Offset(bounds.width / 2, -radius);
-    }
-    return Offset(bounds.width / 2, bounds.height + radius);
-  }
+  /// 曲线圆参考的中心点
+  @output
+  Offset refCurveCenter = .zero;
 
-  /// 曲线的锚点角度, 一般是上90° 下-90°
-  double get _curveAnchorAngle => isReverseCurve ? 90 : -90;
+  //MARK: - temp
 
-  /// 曲线开始的角度
-  double get _curveStartAngle {
-    final angle = curvature.abs().jdm;
-    //debugger();
-    return isReverseCurve
-        ? min(270, _curveAnchorAngle + angle / 2)
-        : max(-270, _curveAnchorAngle - angle / 2);
-  }
-
-  /// 测量每个字符绕着曲线中心点需要进行的曲线变换
-  void _measureCharTextCurvature() {
-    final list = charPainterList;
-    if (list == null || curvature == 0 || isNil(list)) {
-      return;
-    }
-    curveCenter = _curveRefCenter;
-
-    final startAngle = _curveStartAngle;
-    final painterWidth = _painterBounds.width;
-
-    //l.d("参考宽度:${_size.width} 曲线直径:$_curvePerimeter 曲线中心:$_curveRefCenter 开始角度:$startAngle");
-
-    double left = 2147483648;
-    double top = 2147483648;
-    double right = -2147483648;
-    double bottom = -2147483648;
-
-    //1px对应的角度值
-    final factor = curvature.jdm / painterWidth;
-    for (final line in list) {
-      for (final char in line) {
-        char.isInCurve = true;
-        final bounds = char.bounds + char.alignOffset;
-        final charAngle = startAngle + bounds.center.dx * factor;
-
-        final offsetCx = bounds.width * 1 / 6;
-        char.charCurveStartAngle =
-            startAngle + (bounds.center.dx - offsetCx) * factor;
-        char.charCurveEndAngle =
-            startAngle + (bounds.center.dx + offsetCx) * factor;
-        //debugger();
-
-        //曲线文本时, bounds就是字符的大小
-        //然后通过平移到锚点中心, 再旋转到目标位置
-        char.bounds = Rect.fromLTWH(0, 0, bounds.width, bounds.height);
-
-        //1: 先将元素移至锚点中心
-        final translateMatrix = Matrix4.identity()
-          ..translate(_curveRefCenter.dx - bounds.width / 2, bounds.top);
-
-        //2: 再旋转到目标位置
-        final rotateAngle = charAngle - _curveAnchorAngle;
-        final rotateMatrix = Matrix4.identity()
-          ..rotateBy(rotateAngle.hd, anchor: _curveRefCenter);
-
-        final Matrix4 matrix = rotateMatrix * translateMatrix;
-
-        char.paintBounds = matrix.mapRect(char.bounds);
-        char.paintMatrix = matrix;
-
-        //计算整体边界
-        left = min(left, char.paintBounds.left);
-        top = min(top, char.paintBounds.top);
-        right = max(right, char.paintBounds.right);
-        bottom = max(bottom, char.paintBounds.bottom);
-        //l.d("字符[${char.char}] 目标角度:$charAngle 旋转角度:$rotateAngle");
-      }
-    }
-    _painterBounds = Rect.fromLTRB(left, top, right, bottom);
-
-    //中心点移至锚点为0,0参考的曲线中心位置
-    curveCenter = curveCenter - _painterBounds.lt;
-  }
-
+  /// 曲线文本初始化
   @override
   void initPainter() {
     super.initPainter();
-    _measureCharTextCurvature();
+    final charList = charPainterList;
+    if (charList == null) {
+      return;
+    }
+
+    // 整体参考的曲线半径
+    refCurveRadius = curveRadius.abs();
+    // 曲线圆中心参考的开始位置
+    // - 横向就是Y值
+    // - 纵向就是X值
+    double curveCenterOffset = 0;
+
+    // 曲线参考的开始位置
+    if (orientation.isVertical) {
+      double offset = isReverseCurve ? painterBounds.width : 0;
+      switch (curvePlacementAlign) {
+        case .topCenter:
+          offset = isReverseCurve ? 0 : painterBounds.width;
+          break;
+        case .center:
+          offset = painterBounds.width / 2;
+          break;
+        default:
+          break;
+      }
+      curveCenterOffset = offset;
+    } else {
+      double offset = isReverseCurve ? 0 : painterBounds.height;
+      switch (curvePlacementAlign) {
+        case .topCenter:
+          offset = isReverseCurve ? painterBounds.height : 0;
+          break;
+        case .center:
+          offset = painterBounds.height / 2;
+          break;
+        default:
+          break;
+      }
+      curveCenterOffset = offset;
+    }
+    // 曲线参考的中心位置
+    refCurveCenter = orientation.isVertical
+        ? (isReverseCurve
+              ? Offset(
+                  curveCenterOffset + refCurveRadius,
+                  painterBounds.height / 2,
+                )
+              : Offset(
+                  curveCenterOffset - refCurveRadius,
+                  painterBounds.height / 2,
+                ))
+        : (isReverseCurve
+              ? Offset(
+                  painterBounds.width / 2,
+                  curveCenterOffset - refCurveRadius,
+                )
+              : Offset(
+                  painterBounds.width / 2,
+                  curveCenterOffset + refCurveRadius,
+                ));
+
+    //MARK: 1. 计算出每一行的曲线半径, 以及每个字符对应的旋转弧度和总的弧度
+    for (final line in charList) {
+      //每一行都对应不同的曲线半径
+      double lineSweepAngle = 0; //总共扫过的弧度
+      double lineLastValue = 0; //用于计算lineSweepAngle
+      for (final char in line) {
+        final charOriginBoundsRotate = char.charOriginBoundsRotate;
+        final charWidth = charOriginBoundsRotate.width;
+        final charHeight = charOriginBoundsRotate.height;
+
+        double lineCurveRadius = refCurveRadius;
+
+        //每一行都使用不同的半径
+        switch (curvePlacementAlign) {
+          //文本放置在里面
+          case .topCenter:
+            if (orientation.isVertical) {
+              lineCurveRadius += isReverseCurve
+                  ? curveCenterOffset - char.lineLeft
+                  : char.lineLeft - curveCenterOffset;
+            } else {
+              lineCurveRadius += isReverseCurve
+                  ? char.lineBottom - curveCenterOffset
+                  : curveCenterOffset - char.lineTop;
+            }
+            break;
+          case .center:
+            if (orientation.isVertical) {
+              lineCurveRadius -= curveCenterOffset - char.lineCenterX;
+            } else {
+              lineCurveRadius -= curveCenterOffset - char.lineCenterY;
+            }
+            break;
+          //文本放置在外面
+          default:
+            if (orientation.isVertical) {
+              lineCurveRadius += isReverseCurve
+                  ? curveCenterOffset - char.lineRight
+                  : char.lineLeft - curveCenterOffset;
+            } else {
+              lineCurveRadius += isReverseCurve
+                  ? char.lineTop - curveCenterOffset
+                  : curveCenterOffset - char.lineBottom;
+            }
+            break;
+        }
+        //曲线半径
+        char.lineCurveRadius = lineCurveRadius;
+        if (orientation.isVertical) {
+          //间隙也占弧度
+          final charTop = char.chartOffsetBounds.top;
+          char.charCurveGapAngle = _chordAngle(
+            charTop - lineLastValue,
+            lineCurveRadius,
+          );
+          lineLastValue = charTop + charHeight;
+          //字符占的弧度
+          char.charCurveAngle = _chordAngle(charHeight, lineCurveRadius);
+        } else {
+          //间隙也占弧度
+          final charLeft = char.chartOffsetBounds.left;
+          char.charCurveGapAngle = _chordAngle(
+            charLeft - lineLastValue,
+            lineCurveRadius,
+          );
+          lineLastValue = charLeft + charWidth;
+          //字符占的弧度
+          char.charCurveAngle = _chordAngle(charWidth, lineCurveRadius);
+        }
+        //字符的弧度
+        lineSweepAngle += char.charCurveGapAngle! + char.charCurveAngle!;
+      } //..end line
+      //MARK: 2. 计算每个字符的旋转矩阵
+      double startAngle = isReverseCurve
+          ? lineSweepAngle / 2
+          : -lineSweepAngle / 2; //行开始的弧度
+      for (final char in line) {
+        final radians = isReverseCurve
+            ? startAngle - char.charCurveGapAngle! - char.charCurveAngle! / 2
+            : startAngle + char.charCurveGapAngle! + char.charCurveAngle! / 2;
+        char.charCurveMatrix = createTranslateMatrix(
+          tx: orientation.isVertical
+              ? 0
+              : refCurveCenter.dx - char.chartOffsetBounds.cx,
+          ty: orientation.isVertical
+              ? refCurveCenter.dy - char.chartOffsetBounds.cy
+              : 0,
+        )..postConcat(createRotateMatrix(radians, anchor: refCurveCenter));
+        /*assert(() {
+          l.i(
+            "字符[${(char as CharPathPainter).char}] "
+            "间隙角度:${char.charCurveGapAngle?.jd} "
+            "自身角度:${char.charCurveAngle?.jd} "
+            "旋转角度:${radians.jd} "
+            "tx:${refCurveCenter.dx - char.chartOffsetBounds.cx} ",
+          );
+          return true;
+        }());*/
+        if (isReverseCurve) {
+          startAngle -= char.charCurveAngle! + char.charCurveGapAngle!;
+        } else {
+          startAngle += char.charCurveAngle! + char.charCurveGapAngle!;
+        }
+      }
+    }
+    //result, 宽高变化之后, 需要重新偏移中心点位置
+    _measureCharTextOutputBounds();
+    final offset = painterBounds.lt;
+    refCurveCenter -= offset;
+  }
+
+  @override
+  void painterText(Canvas canvas, Offset offset) {
+    super.painterText(canvas, offset);
+    assert(() {
+      if (debugPaintBounds) {
+        //--
+        final charList = charPainterList;
+        if (charList != null) {
+          for (final line in charList) {
+            for (final char in line) {
+              canvas.drawCircle(
+                refCurveCenter,
+                char.lineCurveRadius ?? 0,
+                Paint()
+                  ..style = PaintingStyle.stroke
+                  ..color = Colors.blueAccent,
+              );
+              /*final rect = Rect.fromLTWH(
+                refCurveCenter.dx - 10,
+                0,
+                20,
+                refCurveCenter.dy - refCurveRadius,
+              );
+              canvas.drawRect(
+                rect,
+                Paint()
+                  ..style = PaintingStyle.stroke
+                  ..color = Colors.greenAccent,
+              );
+              canvas.withMatrix(
+                createRotateMatrix(-45.hd, anchor: refCurveCenter),
+                () {
+                  canvas.drawRect(
+                    rect,
+                    Paint()
+                      ..style = PaintingStyle.stroke
+                      ..color = Colors.greenAccent,
+                  );
+                },
+              );*/
+              break;
+            }
+          }
+        }
+      }
+      return true;
+    }());
+    if (paintCurveCircle) {
+      canvas.drawCircle(refCurveCenter, refCurveRadius, curveCirclePaint);
+    }
   }
 
   @override
   void painterCustomLineStyle(Canvas canvas, Offset offset) {
     //绘制曲线上的删除线/下划线
-    if (isUnderline || isLineThrough) {
+    /*if (isUnderline || isLineThrough) {
       canvas.withTranslate(offset.dx, offset.dy, () {
         final paint = createBasePaint();
         double offsetLineBottom = 0;
@@ -1081,6 +1328,17 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
           }
         }
       });
+    }*/
+  }
+
+  //MARK: - base
+
+  /// 计算弦长在指定半径圆上对应的角度(弧度)
+  double _chordAngle(double chordLength, double radius) {
+    final angle = asin(chordLength / (2 * radius));
+    if (angle.isNaN) {
+      return 0;
     }
+    return 2 * angle;
   }
 }

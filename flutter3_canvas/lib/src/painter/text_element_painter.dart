@@ -13,6 +13,7 @@ class TextElementPainter extends ElementPainter {
   //--get--
 
   /// 是否是矢量文本元素
+  /// - [elementOutputPathList]
   bool get isVectorTextElement => textPainter?.useVectorText == true;
 
   /// 矢量单字符文本对应的[Path]数据, 此时的[Path]还未进行
@@ -39,6 +40,12 @@ class TextElementPainter extends ElementPainter {
     }
     return result;
   }
+
+  @override
+  Path? get elementOutputPath => elementOutputPathList.reduce((path, element) {
+    path.addPath(element, .zero);
+    return path;
+  });
 
   /// 进行了矩阵变换后的[vectorCharPathList]路径数据
   @override

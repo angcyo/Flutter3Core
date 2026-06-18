@@ -11,6 +11,12 @@ part of '../../flutter3_canvas.dart';
 ///   - [onPaintingSelfBefore]
 ///   - [onPaintingSelf]
 ///
+/// 数据输出
+/// - [elementOutputPath]
+/// - [elementOutputPathList]
+/// - [elementOutputBoundsPath]
+/// - [elementOutputImage]
+///
 class IElementPainter extends IPainter
     with
         DiagnosticableTreeMixin,

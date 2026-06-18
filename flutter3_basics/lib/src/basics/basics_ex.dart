@@ -2351,6 +2351,9 @@ extension IntEx on int {
 }
 
 extension DoubleEx on double {
+  /// 将当前的数, 与指定的数保持相同的符号
+  double keepSign(double? other) => other == null ? this : this * other.sign;
+
   /// 当[this==other]时, 则返回[or], 否则返回自身
   double equalOr(double other, double or) => equalTo(other) ? or : this;
 
