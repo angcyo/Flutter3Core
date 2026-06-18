@@ -8,7 +8,8 @@ part of '../../flutter3_basics.dart';
 
 /// 运行本机命令
 /// - [runInShell] 为true时, 在Windows上参数中有空格时, 会被shell解析为多个参数, 导致失败
-/// - [ProcessStartMode.detached] 脱离模式, 分离进程, 父进程退出, 子进程继续运行
+/// - [ProcessStartMode.detached] 脱离模式, 分离进程, 父进程退出, 子进程继续运行.
+///   - 此模式下不可以获取进程的任何信息, 子进程自生自灭
 ///
 /// - [Process.runSync]
 Future<ProcessResult> runCommand(
@@ -20,15 +21,20 @@ Future<ProcessResult> runCommand(
   String? processWorkingDir,
   ProcessStartMode? mode,
 }) async {
+  mode ??= (echoOutput
+      ? ProcessStartMode.inheritStdio
+      : ProcessStartMode.normal);
+  final isDetach = mode == ProcessStartMode.detached;
   final pr = await Process.start(
     executable,
     arguments,
     workingDirectory: processWorkingDir,
     runInShell: runInShell,
-    mode:
-        mode ??
-        (echoOutput ? ProcessStartMode.inheritStdio : ProcessStartMode.normal),
+    mode: mode,
   );
+  if (isDetach) {
+    return ProcessResult(pr.pid, 0, null, null);
+  }
 
   final results = await Future.wait([
     pr.exitCode,
