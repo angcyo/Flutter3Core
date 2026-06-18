@@ -50,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libGoDownload": MessageLookupByLibrary.simpleMessage("前往下载"),
     "libInstallNow": MessageLookupByLibrary.simpleMessage("立即安装"),
     "libKnown": MessageLookupByLibrary.simpleMessage("我知道了"),
+    "libLatestVersion": MessageLookupByLibrary.simpleMessage("已是最新版本"),
     "libLoading": MessageLookupByLibrary.simpleMessage("加载中..."),
     "libNewReleases": MessageLookupByLibrary.simpleMessage("发现新版本"),
     "libNext": MessageLookupByLibrary.simpleMessage("下一步"),

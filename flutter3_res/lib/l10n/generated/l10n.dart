@@ -269,6 +269,11 @@ class LibRes {
     return Intl.message('发现新版本', name: 'libNewReleases', desc: '', args: []);
   }
 
+  /// `已是最新版本`
+  String get libLatestVersion {
+    return Intl.message('已是最新版本', name: 'libLatestVersion', desc: '', args: []);
+  }
+
   /// `下次再说`
   String get libNextTime {
     return Intl.message('下次再说', name: 'libNextTime', desc: '', args: []);

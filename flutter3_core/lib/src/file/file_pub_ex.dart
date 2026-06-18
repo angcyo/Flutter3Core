@@ -600,6 +600,16 @@ Future<Directory> cacheFolder([
 }
 
 /// 快速获取一个缓存文件路径, 会自动创建文件夹.
+///
+/// # Android
+///
+/// `/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/cache/AutoCalibrate-2.4.0_apk_release_app.apk`
+///
+/// # macOS
+///
+/// `/Users/angcyo/Library/Containers/com.laserabc.factory.tools.desktop/Data/Library/Caches/com.laserabc.factory.tools.desktop/test.txt`
+///
+///
 /// - [cacheFolder]
 /// - [cacheFilePath]
 Future<String> cacheFilePath(

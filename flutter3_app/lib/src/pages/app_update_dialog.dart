@@ -136,6 +136,7 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   final LibAppVersionBean versionBean;
 
   /// 是否强制更新
+  @autoInjectMark
   final bool? forceUpdate;
 
   final double headerMarginTop;
@@ -165,14 +166,15 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final lRes = libRes(context);
-    final forceUpdate =
-        widget.forceUpdate == true || widget.versionBean.forceUpdate == true;
+    final bean = widget.versionBean;
+    final forceUpdate = widget.forceUpdate == true || bean.forceUpdate == true;
 
     //控制按钮
     Widget control = [
       if (forceUpdate != true)
+        //下次再说
         GradientButton(
-          onTap: () {
+          onTap: () async {
             context.pop();
           },
           color: globalTheme.whiteSubBgColor,
@@ -182,14 +184,14 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
             fontWeight: FontWeight.bold,
           ),
         ).expanded(),
-      if (widget.versionBean.jumpToMarket == true ||
-          widget.versionBean.outLink == true)
+      if (bean.jumpToMarket == true || bean.outLink == true)
+        //跳转下载
         GradientButton(
           onTap: () {
-            if (widget.versionBean.jumpToMarket == true) {
-              widget.versionBean.marketUrl?.launch();
-            } else if (widget.versionBean.outLink == true) {
-              widget.versionBean.downloadUrl?.launch();
+            if (bean.jumpToMarket == true) {
+              bean.marketUrl?.launch();
+            } else if (bean.outLink == true) {
+              bean.downloadUrl?.launch();
             }
           },
           radius: kMaxBorderRadius,
@@ -199,20 +201,21 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
           ),
         ).expanded()
       else
+        //直接下载
         GradientButton(
           onTap: () {
             switch (downloadStateMixin) {
               case DownloadState.none:
-                startDownloadMixin(widget.versionBean.downloadUrl ?? "");
+                startDownloadMixin(bean.downloadUrl ?? "");
                 break;
               case DownloadState.downloading:
                 break;
               case DownloadState.downloaded:
-                //安装apk
-                _startInstallApk();
+                //开始安装
+                _startInstall();
                 break;
               case DownloadState.downloadFailed:
-                startDownloadMixin(widget.versionBean.downloadUrl ?? "");
+                startDownloadMixin(bean.downloadUrl ?? "");
                 break;
               default:
                 break;
@@ -240,11 +243,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
     //内容
     Widget content = [
       Empty.height(widget.headerPaddingTop),
-      widget.versionBean.versionName
+      bean.versionName
           ?.connect(
             null,
-            widget.versionBean.versionName?.toLowerCase().startsWith("v") ==
-                    true
+            bean.versionName?.toLowerCase().startsWith("v") == true
                 ? null
                 : "v",
           )
@@ -252,10 +254,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
             style: globalTheme.textGeneralStyle,
             fontWeight: FontWeight.bold,
           ),
-      //widget.versionBean.versionDes?.toMarkdownWidget(context)
-      widget.versionBean.versionDes
+      bean.versionDes
+          ?.toMarkdownWidget(context)
+          /*bean.versionDes
           ?.text(style: globalTheme.textBodyStyle)
-          .scroll()
+          .scroll()*/
           .constrainedMax(
             minWidth: 300 /*$screenWidth / 3*/ /*double.infinity*/,
             maxHeight: $screenHeight / 3,
@@ -268,11 +271,13 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
 
     //头部
     Widget header = [
+      //背景
       AppPackageAssetsWidget(
         resKey: Assets.svg.appUpdateHeader,
         libPackage: Assets.package,
-      ).position(left: 0, right: 0),
-      (widget.versionBean.versionTile ?? lRes?.libNewReleases)
+      ).position(top: 0, left: 0, right: 0),
+      //标题
+      (bean.versionTile ?? lRes?.libNewReleases)
           ?.text(
             style: globalTheme.textGeneralStyle.copyWith(fontSize: 22),
             fontWeight: FontWeight.bold,
@@ -286,7 +291,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
       [
         content.container(
           color: globalTheme.whiteBgColor,
-          margin: EdgeInsets.only(top: widget.headerMarginTop),
+          margin: EdgeInsets.only(
+            top: widget.headerMarginTop + (isDesktopOrWeb ? 8 : 0),
+          ),
           padding: widget.dialogContentPadding,
           radius: kDefaultBorderRadiusXX,
         ),
@@ -309,9 +316,19 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
   }
 
   /// iOS 平台无法安装APK
-  void _startInstallApk() {
+  void _startInstall() {
     //debugger();
-    AndroidPackageInstaller.installApk(apkFilePath: downloadFilePathCacheMixin);
+    if (isAndroid) {
+      AndroidPackageInstaller.installApk(
+        apkFilePath: downloadFilePathCacheMixin,
+      );
+    } else if (isMacOS) {
+      runCommand("open", [downloadFilePathCacheMixin]);
+    } else if (isIos) {
+    } else if (isWeb) {
+    } else if (isWindows) {
+      runCommand("explorer", [downloadFilePathCacheMixin]);
+    }
   }
 }
 

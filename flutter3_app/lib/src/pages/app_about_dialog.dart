@@ -34,6 +34,7 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final libRes = context.libRes;
     return $platformPackageInfo
         .toWidget((ctx, info) {
           return widget.buildAdaptiveCenterDialog(
@@ -61,7 +62,9 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                       onUpdateAction: (update) {
                         hideLoading();
                         if (!update) {
-                          toast("已是最新版本".text());
+                          toast(
+                            libRes?.libLatestVersion.text(useDefStyle: false),
+                          );
                         }
                       },
                       /*debugLabel: "test",*/

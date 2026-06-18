@@ -554,17 +554,23 @@ Future<Uint8List> loadAssetBytes(
   return (await loadAssetByteData(key, prefix: prefix, package: package)).bytes;
 }
 
+/// 缓存不存在的key
+@tempFlag
+List<String> _noAssetKeyList = [];
+
 /// 判断指定的[key]是否存在
 Future<bool> isAssetKeyExists(String? key) async {
   key ??= key?.transformKey();
+  if (key == null || _noAssetKeyList.contains(key)) return false;
   try {
-    await rootBundle.load(key!);
+    await rootBundle.load(key);
     return true;
   } catch (e) {
     assert(() {
       l.w("无法加载资产: $key");
       return true;
     }());
+    _noAssetKeyList.add(key);
     return false;
   }
 }
