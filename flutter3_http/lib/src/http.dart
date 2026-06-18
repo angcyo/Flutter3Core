@@ -136,30 +136,32 @@ extension HttpStringEx on String {
   }
 
   /// this == path
-  /// [api]服务器忌口地址, 不指定则默认是[Http.getBaseUrl]
+  /// [host]服务器接口地址, 不指定则默认是[Http.getBaseUrl]
   /// - [$host]
   @callPoint
   String toApi([
-    String? api,
+    String? host,
     bool? isSecureProtocol,
     String protocol = "http",
   ]) {
-    if (startsWith('$protocol://') || startsWith('${protocol}s://')) {
+    if ((isSecureProtocol != true && startsWith('$protocol://')) ||
+        (isSecureProtocol == true && startsWith('${protocol}s://'))) {
       //this 已经是一个url, 则直接返回
       return this;
     }
 
     //主机
-    api ??= $host ?? '';
-    if (api.startsWith('$protocol://') || api.startsWith('${protocol}s://')) {
+    host ??= $host ?? '';
+    if ((isSecureProtocol != true && host.startsWith('$protocol://')) ||
+        (isSecureProtocol == true && host.startsWith('${protocol}s://'))) {
     } else {
-      api = isSecureProtocol == true
-          ? "${protocol}s://$api"
-          : "$protocol://$api";
+      host = isSecureProtocol == true
+          ? "${protocol}s://$host"
+          : "$protocol://$host";
     }
 
     //开始拼接
-    var base = api;
+    var base = host;
     var path = this;
     if (base.isNotEmpty) {
       if (base.endsWith('/')) {
