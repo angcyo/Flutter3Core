@@ -6,6 +6,19 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 菜单相关tile
 
+/// 默认的菜单样式
+const MenuStyle kMenuStyle = MenuStyle(
+  backgroundColor: WidgetStatePropertyAll(Colors.white),
+  elevation: WidgetStatePropertyAll<double?>(3.0),
+  shape: WidgetStatePropertyAll<OutlinedBorder>(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+    ),
+  ),
+  //菜单显示时, 对齐锚点的方式
+  alignment: .bottomCenter,
+);
+
 /// 左[label]...右[value]
 /// - 悬停时, 显示[value]菜单布局
 /// 使用[HoverAnchorLayout]实现的点击浮窗弹窗tile
@@ -234,6 +247,10 @@ class DesktopTextMenuTile extends StatefulWidget {
 
   //--
 
+  /// 是否激活, 否则自动识别
+  @autoInjectMark
+  final bool? enable;
+
   /// 是否处于选中状态, 会有背景装饰
   final bool isSelected;
 
@@ -252,6 +269,9 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// - 会拦截默认的弹出[popupBodyWidget]处理
   final GestureTapCallback? onTap;
 
+  /// 具有上下文的点击事件回调
+  final GestureContextTapCallback? onContextTap;
+
   /// 菜单最小宽度
   final double tileMinWidth;
 
@@ -269,12 +289,14 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.placeholderSize = const Size(24, 24),
     this.trailingWidget,
     //--
+    this.enable,
     this.isSelected = false,
     this.isChecked,
     this.tileMinWidth = 100,
     this.popupBodyWidget,
     this.autoClosePopup,
     this.onTap,
+    this.onContextTap,
     //--
     this.tilePadding,
   });
@@ -291,7 +313,10 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
     final radius = kDefaultBorderRadiusH;
 
     final isSelected = widget.isSelected || isShowPopupMixin;
-    final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
+    final isEnableTap =
+        widget.popupBodyWidget != null ||
+        widget.onTap != null ||
+        widget.onContextTap != null;
 
     Widget? trailingWidget = widget.trailingWidget;
     if (trailingWidget == null && widget.popupBodyWidget != null) {
@@ -322,7 +347,9 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
         .row()!
         .insets(vertical: kL)
         .colorFiltered(
-          color: isEnableTap ? null : globalTheme.textDisableStyle.color,
+          color: (widget.enable ?? isEnableTap)
+              ? null
+              : globalTheme.textDisableStyle.color,
         )
         .constrainedMin(minWidth: widget.tileMinWidth)
         .backgroundColor(
@@ -331,21 +358,25 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
         )
         .inkWell(
           widget.onTap ??
-              (widget.popupBodyWidget == null
-                  ? null
-                  : () {
-                      wrapShowPopupMixin(() async {
-                        await buildContext?.showPopupDialog(
-                          widget.popupBodyWidget!,
-                        );
-                      }).get((data, error) {
-                        if (widget.autoClosePopup == true) {
-                          buildContext?.popMenu();
-                        }
-                      });
-                    }),
+              (widget.onContextTap != null
+                  ? () {
+                      widget.onContextTap!(context);
+                    }
+                  : (widget.popupBodyWidget == null
+                        ? null
+                        : () {
+                            wrapShowPopupMixin(() async {
+                              await buildContext?.showPopupDialog(
+                                widget.popupBodyWidget!,
+                              );
+                            }).get((data, error) {
+                              if (widget.autoClosePopup == true) {
+                                buildContext?.popMenu();
+                              }
+                            });
+                          })),
           borderRadius: BorderRadius.circular(radius),
-          enable: isEnableTap,
+          enable: widget.enable ?? isEnableTap,
         )
         .material()
         .paddingOnly(horizontal: kM, vertical: kM, insets: widget.tilePadding)

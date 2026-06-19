@@ -709,6 +709,63 @@ class _RenderExclusiveMouseRegion extends RenderMouseRegion {
 
 //--
 
+/// 鼠标悬停装饰小部件, 使用[MouseRegion]实现
+class HoverDecorationWidget extends StatefulWidget {
+  /// 显示内容
+  final Widget? child;
+
+  /// 鼠标悬停时的装饰
+  final Decoration? decoration;
+
+  //--MouseRegion
+
+  final PointerEnterEventListener? onEnter;
+  final PointerHoverEventListener? onHover;
+  final PointerExitEventListener? onExit;
+
+  const HoverDecorationWidget({
+    super.key,
+    this.decoration,
+    this.child,
+    this.onEnter,
+    this.onHover,
+    this.onExit,
+  });
+
+  @override
+  State<HoverDecorationWidget> createState() => _HoverDecorationWidgetState();
+}
+
+class _HoverDecorationWidgetState extends State<HoverDecorationWidget> {
+  bool _isMouseOverButton = false;
+  final Decoration _placeholder = kEmptyDecoration;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: _isMouseOverButton
+          ? widget.decoration ?? _placeholder
+          : _placeholder,
+      child: MouseRegion(
+        onEnter: (event) {
+          _isMouseOverButton = true;
+          updateState();
+          widget.onEnter?.call(event);
+        },
+        onExit: (event) {
+          _isMouseOverButton = false;
+          updateState();
+          widget.onExit?.call(event);
+        },
+        onHover: (event) {
+          widget.onHover?.call(event);
+        },
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 extension HoverAnchorLayoutEx on Widget {
   /// 使用[HoverAnchorLayout]实现的悬停提示功能
   /// - [tooltip] 提示内容小部件
@@ -768,5 +825,19 @@ extension HoverAnchorLayoutEx on Widget {
     enableHoverShow: enableHoverShow,
     enableTapShow: enableTapTrigger,
     enableTapDismiss: enableTapDismiss,
+  );
+
+  /// 使用[HoverDecorationWidget]实现的悬停装饰功能
+  Widget hoverDecoration(
+    Decoration? decoration, {
+    PointerEnterEventListener? onEnter,
+    PointerHoverEventListener? onHover,
+    PointerExitEventListener? onExit,
+  }) => HoverDecorationWidget(
+    decoration: decoration,
+    onEnter: onEnter,
+    onHover: onHover,
+    onExit: onExit,
+    child: this,
   );
 }

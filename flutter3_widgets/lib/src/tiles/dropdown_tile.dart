@@ -13,7 +13,7 @@ part of '../../../flutter3_widgets.dart';
 /// - [DropdownTile] tile
 /// - [DropdownMenuTile] tile 内部[Overlay]
 /// - [DropdownButtonTile] tile 内部[PopupRoute]
-/// - [MenuAnchorTile] tile
+/// - [MenuAnchorTile] tile [MenuAnchor]实现
 ///
 class DropdownButtonTile extends StatefulWidget with TileMixin {
   /// 标签
@@ -199,7 +199,7 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
 /// - [DropdownTile] tile
 /// - [DropdownMenuTile] tile 内部[Overlay]
 /// - [DropdownButtonTile] tile 内部[PopupRoute]
-/// - [MenuAnchorTile] tile
+/// - [MenuAnchorTile] tile [MenuAnchor]实现
 class DropdownMenuTile extends StatefulWidget with TileMixin {
   /// 标签
   final String? label;
@@ -432,15 +432,8 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
       //菜单样式
       menuStyle:
           widget.menuStyle ??
-          MenuStyle(
+          kMenuStyle.copyWith(
             backgroundColor: WidgetStatePropertyAll(menuBgColor),
-            //菜单显示时, 对齐锚点的方式
-            elevation: const WidgetStatePropertyAll<double?>(3.0),
-            shape: const WidgetStatePropertyAll<OutlinedBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(4.0)),
-              ),
-            ),
             alignment: .bottomStart,
           ),
       //输入控制器
@@ -530,9 +523,9 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
-/// - [DropdownMenuTile] tile
+/// - [DropdownMenuTile] tile 内部[Overlay]
 /// - [DropdownButtonTile] tile
-/// - [MenuAnchorTile] tile
+/// - [MenuAnchorTile] tile [MenuAnchor]实现
 class MenuAnchorTile extends StatefulWidget {
   /// 标签
   final String? label;
@@ -654,9 +647,9 @@ class _MenuAnchorTileState extends State<MenuAnchorTile> with TileMixin {
 /// - [MenuAnchor] 系统
 ///
 /// - [DropdownTile] tile
-/// - [DropdownMenuTile] tile
+/// - [DropdownMenuTile] tile 内部[Overlay]
 /// - [DropdownButtonTile] tile
-/// - [MenuAnchorTile] tile
+/// - [MenuAnchorTile] tile [MenuAnchor]实现
 class DropdownTile extends StatefulWidget {
   //MARK: - config
 
