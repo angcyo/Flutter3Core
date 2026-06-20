@@ -15,7 +15,7 @@ class CanvasMenuManager
 
   CanvasMenuManager(this.canvasDelegate);
 
-  /// 构建菜单的[Widget], 返回null则不显示菜单
+  /// 构建菜单的[Widget], 返回空则降级到[buildMenuWidget]方法调用
   ///
   /// [CanvasDelegate.showMenus]中显示这些菜单
   ///
@@ -23,6 +23,7 @@ class CanvasMenuManager
   @callPoint
   List<Widget>? buildMenus({@viewCoordinate Offset? anchorPosition}) => null;
 
+  /// 返回null, 则不显示菜单
   /// - [CanvasDelegate.showWidgetMenu] 通过调用此方法, 显示这些[Widget]菜单
   /// - [CanvasElementManager.handleElementPointerEvent]驱动
   @callPoint

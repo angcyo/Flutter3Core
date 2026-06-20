@@ -953,7 +953,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       }());
       return null;
     }
-    return context.showMenus<T>(menus, position: position);
+    final globalTheme = GlobalTheme.of(context);
+    return context.showMenus<T>(
+      menus,
+      position: position,
+      color: globalTheme.dialogSurfaceBgColor,
+      elevation: kMenuStyle.elevation?.resolve({}),
+      shape: kMenuStyle.shape?.resolve({}),
+    );
   }
 
   /// 用来触发显示一个菜单路由
@@ -972,9 +979,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       }());
       return null;
     }
+    final globalTheme = GlobalTheme.of(context);
     return context.showWidgetMenu(
       menu,
       position: position,
+      color: globalTheme.dialogSurfaceBgColor,
+      elevation: kMenuStyle.elevation?.resolve({}),
+      shape: kMenuStyle.shape?.resolve({}),
       /*color: Color(0xff232327),*/
     );
   }
@@ -1573,6 +1584,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 构建画布右键菜单
+  /// - 可以获取选中的元素, 返回不同的菜单
+  /// - 可以识别菜单锚点的位置
+  /// 
   /// [canvasListeners]
   /// @return 返回菜单列表
   WidgetNullList dispatchBuildCanvasMenu({

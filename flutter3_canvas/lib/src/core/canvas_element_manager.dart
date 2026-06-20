@@ -232,17 +232,19 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         canvasStyle.enableCanvasMenu == true) {
       if (event.isMouseRightUp) {
         //鼠标右键点击, 显示菜单
-        final menus = canvasDelegate.canvasMenuManager.buildMenus(
-          anchorPosition: event.localPosition,
+        final localPosition = event.localPosition;
+        final canvasMenuManager = canvasDelegate.canvasMenuManager;
+        final menus = canvasMenuManager.buildMenus(
+          anchorPosition: localPosition,
         );
         if (!isNil(menus)) {
-          canvasDelegate.showMenus(menus, position: event.localPosition);
+          canvasDelegate.showMenus(menus, position: localPosition);
         } else {
-          final menu = canvasDelegate.canvasMenuManager.buildMenuWidget(
-            anchorPosition: event.localPosition,
+          final menu = canvasMenuManager.buildMenuWidget(
+            anchorPosition: localPosition,
           );
           if (!isNil(menu)) {
-            canvasDelegate.showWidgetMenu(menu!, position: event.localPosition);
+            canvasDelegate.showWidgetMenu(menu!, position: localPosition);
           }
         }
       }
