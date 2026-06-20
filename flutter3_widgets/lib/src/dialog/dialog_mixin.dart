@@ -876,7 +876,7 @@ extension DialogExtension on BuildContext {
     );
   }
 
-  /// 在指定位置弹出一个菜单
+  /// 在指定位置弹出一个菜单, 内部使用[PopupRoute]实现
   ///
   /// [showMenu]
   /// [PopupMenuButton]

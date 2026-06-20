@@ -4,7 +4,8 @@ part of 'menu_mix.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2026/01/19
 ///
-/// 鼠标右键弹出菜单的小部件
+/// 鼠标右键弹出菜单的小部件, 默认弹出位置为鼠标点击位置
+/// 内部使用[PopupRoute]实现
 ///
 /// - [PopMenuWidget]
 ///
@@ -44,6 +45,7 @@ class MouseRightMenuWidget extends StatefulWidget {
 class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     return PointerListenerWidget(
       child: widget.body,
       onPointer: (event) {
@@ -54,10 +56,19 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               widget.menus,
               onMenusTap: widget.onMenusTap,
               position: event.localPosition,
+              color: globalTheme.dialogSurfaceBgColor,
+              elevation: kMenuStyle.elevation?.resolve({}),
+              shape: kMenuStyle.shape?.resolve({}),
             );
           }
           if (widget.menu != null) {
-            context.showWidgetMenu(widget.menu!, position: event.localPosition);
+            context.showWidgetMenu(
+              widget.menu!,
+              position: event.localPosition,
+              color: globalTheme.dialogSurfaceBgColor,
+              elevation: kMenuStyle.elevation?.resolve({}),
+              shape: kMenuStyle.shape?.resolve({}),
+            );
           }
         } else {
           //l.d("event->$event");
