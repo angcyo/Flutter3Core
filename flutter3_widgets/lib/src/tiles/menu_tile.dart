@@ -7,7 +7,6 @@ part of '../../../flutter3_widgets.dart';
 /// 菜单相关tile
 /// - [LabelMenuTile]
 /// - [MenuTriggerWidget]
-/// - [MenuTriggerWidget]
 /// - [SubmenuTriggerWidget]
 /// - [DropdownMenuTile]
 /// - [DropdownButtonTile]

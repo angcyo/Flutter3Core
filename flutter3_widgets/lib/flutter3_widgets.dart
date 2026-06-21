@@ -102,6 +102,7 @@ part 'src/tiles/label_tile.dart';
 part 'src/tiles/label_info_mixin.dart';
 part 'src/tiles/label_unit_value_tile.dart';
 part 'src/tiles/segment_tile.dart';
+part 'src/tiles/overlay_tile.dart';
 part 'src/tiles/menu_tile.dart';
 part 'src/tiles/menu_anchor_tile.dart';
 part 'src/tiles/hover_mixin.dart';
