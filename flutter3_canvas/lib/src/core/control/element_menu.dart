@@ -5,8 +5,15 @@ part of '../../../flutter3_canvas.dart';
 /// @date 2024/07/30
 ///
 /// 元素菜单, 显示在选中元素上方
+/// 使能[CanvasStyle.enableElementControl]
+/// [CanvasElementControlManager.handlePointerEvent]驱动
+/// [ElementMenuControl.paintMenu]绘制菜单
 ///
-/// 通过[onCreateElementMenuAction]回调, 创建对应的菜单
+/// - [ElementPainter.isElementSupportControl] 子元素的菜单控制
+///
+/// - [ElementMenuControl.onCanvasSelectElementChanged]在此回调确定菜单列表
+///   - 通过[onCreateElementMenuAction]回调, 创建对应的菜单.
+/// - [ElementMenuControl.elementMenuList] 需要绘制的菜单列表
 ///
 /// [CanvasElementControlManager]的成员
 class ElementMenuControl
@@ -30,7 +37,8 @@ class ElementMenuControl
   List<ElementMenu>? Function(
     ElementMenuControl menuControl,
     List<ElementPainter>? children,
-  )? onCreateElementMenuAction;
+  )?
+  onCreateElementMenuAction;
 
   /// 菜单的偏移量
   @dp
@@ -54,7 +62,8 @@ class ElementMenuControl
   bool needHandleElementMenu() =>
       !canvasElementControlManager.isPointerDownElement /*未在移动元素*/ &&
       canvasElementControlManager
-          .elementMenuControl.isCanvasComponentEnable /*组件激活*/ &&
+          .elementMenuControl
+          .isCanvasComponentEnable /*组件激活*/ &&
       canvasElementControlManager.isSelectedElement /*选中了元素*/ &&
       canvasElementControlManager.elementSelectComponent
           .isElementSupportControl(ControlTypeEnum.menu) /*支持菜单操作*/ &&
@@ -66,8 +75,10 @@ class ElementMenuControl
   void paintMenu(Canvas canvas, PaintMeta paintMeta) {
     final menuBounds = _menuBounds;
     if (menuBounds != null) {
-      canvas.drawRRect(menuBounds.toRRect(canvasStyle.menuRadius),
-          Paint()..color = canvasStyle.menuBgColor);
+      canvas.drawRRect(
+        menuBounds.toRRect(canvasStyle.menuRadius),
+        Paint()..color = canvasStyle.menuBgColor,
+      );
 
       //menu
       final lastIndex = elementMenuList.lastIndex;
@@ -77,9 +88,10 @@ class ElementMenuControl
           //按下时的背景提示
           if (_touchMenu == menu) {
             canvas.drawCircle(
-                subMenuBounds.center,
-                min(subMenuBounds.width, subMenuBounds.height) / 2 - kM,
-                Paint()..color = Colors.white24);
+              subMenuBounds.center,
+              min(subMenuBounds.width, subMenuBounds.height) / 2 - kM,
+              Paint()..color = Colors.white24,
+            );
           }
           if (menu.painterFn != null) {
             menu.painterFn!(canvas, subMenuBounds, false);
@@ -96,11 +108,12 @@ class ElementMenuControl
           if (lastIndex != index) {
             //绘制分割线
             canvas.drawLine(
-                Offset(subMenuBounds.right, subMenuBounds.top + kH),
-                Offset(subMenuBounds.right, subMenuBounds.bottom - kH),
-                Paint()
-                  ..color = canvasStyle.menuLineColor
-                  ..strokeWidth = 1);
+              Offset(subMenuBounds.right, subMenuBounds.top + kH),
+              Offset(subMenuBounds.right, subMenuBounds.bottom - kH),
+              Paint()
+                ..color = canvasStyle.menuLineColor
+                ..strokeWidth = 1,
+            );
           }
         }
       });
@@ -167,17 +180,37 @@ class ElementMenuControl
     final path = Path();
     paint.isAntiAlias = true;
     paint.color = canvasStyle.menuBgColor;
-    Size size =
-        Size(canvasStyle.menuTriangleWidth, canvasStyle.menuTriangleHeight);
+    Size size = Size(
+      canvasStyle.menuTriangleWidth,
+      canvasStyle.menuTriangleHeight,
+    );
     path.lineTo(size.width * 0.66, size.height * 0.86);
-    path.cubicTo(size.width * 0.58, size.height * 1.05, size.width * 0.42,
-        size.height * 1.05, size.width * 0.34, size.height * 0.86);
+    path.cubicTo(
+      size.width * 0.58,
+      size.height * 1.05,
+      size.width * 0.42,
+      size.height * 1.05,
+      size.width * 0.34,
+      size.height * 0.86,
+    );
     path.cubicTo(size.width * 0.34, size.height * 0.86, 0, 0, 0, 0);
     path.cubicTo(0, 0, size.width, 0, size.width, 0);
-    path.cubicTo(size.width, 0, size.width * 0.66, size.height * 0.86,
-        size.width * 0.66, size.height * 0.86);
-    path.cubicTo(size.width * 0.66, size.height * 0.86, size.width * 0.66,
-        size.height * 0.86, size.width * 0.66, size.height * 0.86);
+    path.cubicTo(
+      size.width,
+      0,
+      size.width * 0.66,
+      size.height * 0.86,
+      size.width * 0.66,
+      size.height * 0.86,
+    );
+    path.cubicTo(
+      size.width * 0.66,
+      size.height * 0.86,
+      size.width * 0.66,
+      size.height * 0.86,
+      size.width * 0.66,
+      size.height * 0.86,
+    );
     canvas.drawPath(path, paint);
   }
 
@@ -214,7 +247,8 @@ class ElementMenuControl
   /// [CanvasElementControlManager.updateControlBounds]驱动
   @callPoint
   @CallFrom(
-      "CanvasElementControlManager.updateControlBounds;onCanvasSelectElementChanged")
+    "CanvasElementControlManager.updateControlBounds;onCanvasSelectElementChanged",
+  )
   void updateMenuLayoutBounds(ElementPainter anchorPainter) {
     final bounds = anchorPainter.elementsBounds;
     if (bounds != null) {
@@ -252,10 +286,14 @@ class ElementMenuControl
     //菜单最大的高度
     double maxHeight = 0;
     //整体的宽度
-    double allWidth =
-        elementMenuList.fold(menuPadding.horizontal, (previousValue, element) {
+    double allWidth = elementMenuList.fold(menuPadding.horizontal, (
+      previousValue,
+      element,
+    ) {
       maxHeight = max(
-          maxHeight, element.size.height + (element.padding?.vertical ?? 0));
+        maxHeight,
+        element.size.height + (element.padding?.vertical ?? 0),
+      );
       return previousValue +
           element.size.width +
           (element.padding?.horizontal ?? 0);
@@ -298,7 +336,7 @@ class ElementMenuControl
     }
   }
 
-//endregion --menu--
+  //endregion --menu--
 }
 
 /// [ElementMenuControl]中的菜单项

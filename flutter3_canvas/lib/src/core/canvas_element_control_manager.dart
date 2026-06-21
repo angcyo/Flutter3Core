@@ -1672,8 +1672,8 @@ class ElementSelectComponent extends ElementGroupPainter
 
   @override
   bool isElementSupportControl(ControlTypeEnum type) {
-    if (children?.length == 1) {
-      final first = children!.first;
+    final first = children?.firstOrNull;
+    if (first != null) {
       return first.isElementSupportControl(type);
     }
     return super.isElementSupportControl(type);
