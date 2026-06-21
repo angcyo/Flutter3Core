@@ -142,12 +142,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
           ? CrossAxisAlignment.center
           : CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
-      children: [
-        if (title != null) title,
-        if (message != null) message,
-        if (controlRow != null) controlRow,
-        if (controlColumn != null) ...controlColumn,
-      ],
+      children: [?title, ?message, ?controlRow, ...?controlColumn],
     );
 
     return buildCenterDialog(
@@ -157,6 +152,11 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
       blur: useBlur,
       radius: contentRadius,
       contentConstraints: contentConstraints,
+      onEnterAction: showConfirm == true
+          ? () {
+              _doConfirmTap(context);
+            }
+          : null,
     ).interceptPop(interceptPop);
   }
 

@@ -1027,7 +1027,8 @@ extension WidgetEx on Widget {
   Widget autoCloseDialog(
     BuildContext? context, {
     bool onlyDesktop = true,
-    FocusOnKeyEventCallback? onKeyEvent,
+    FocusOnKeyEventCallback? onKeyEvent /*按键回调*/,
+    VoidCallback? onEnterAction /*按回车键的回调*/,
     KeyEventResult otherKeyEventResult = KeyEventResult.ignored,
     Key? key,
     //--
@@ -1036,43 +1037,54 @@ extension WidgetEx on Widget {
     //--
     bool autofocus = true,
     //--
-    bool enable = true,
+    bool enableAutoClose = true /*激活esc关闭对话框*/,
+    bool? enableEnterConfirm /*激活⏎确定对话框*/,
     bool rootNavigator = false,
     String? tag,
     String? debugLabel,
-  }) => !enable
-      ? this
-      : focusScope(
-          tag: tag,
-          enable: onlyDesktop ? isDesktopOrWeb : true,
-          autofocus: autofocus,
-          onKeyEvent: (node, event) {
-            if (event.logicalKey == LogicalKeyboardKey.escape) {
-              if (event.isKeyDown) {
-                //系统也是使用[KeyDownEvent]而非[KeyUpEvent]
-                //debugger();
-                if (context?.canPop(rootNavigator: rootNavigator) == true) {
-                  assert(() {
-                    l.i(
-                      '${tag?.wsb ?? ""}尝试自动关闭弹窗,hasFocus:${node.hasFocus.toDC()}',
+  }) {
+    enableEnterConfirm ??= onEnterAction != null;
+    return (!enableAutoClose && !enableEnterConfirm && onKeyEvent == null)
+        ? this
+        : focusScope(
+            tag: tag,
+            enable: onlyDesktop ? isDesktopOrWeb : true,
+            autofocus: autofocus,
+            onKeyEvent: (node, event) {
+              if (enableAutoClose &&
+                  event.logicalKey == LogicalKeyboardKey.escape) {
+                if (event.isKeyDown) {
+                  //系统也是使用[KeyDownEvent]而非[KeyUpEvent]
+                  //debugger();
+                  if (context?.canPop(rootNavigator: rootNavigator) == true) {
+                    assert(() {
+                      l.i(
+                        '${tag?.wsb ?? ""}尝试自动关闭弹窗,hasFocus:${node.hasFocus.toDC()}',
+                      );
+                      return true;
+                    }());
+                    context?.maybePop(
+                      rootNavigator: rootNavigator,
+                      result: onResultAction?.call() ?? result,
                     );
-                    return true;
-                  }());
-                  context?.maybePop(
-                    rootNavigator: rootNavigator,
-                    result: onResultAction?.call() ?? result,
-                  );
+                  }
+                  return KeyEventResult.handled;
                 }
-                return KeyEventResult.handled;
+              } else if (enableEnterConfirm == true &&
+                  event.logicalKey == LogicalKeyboardKey.enter) {
+                if (event.isKeyDown) {
+                  onEnterAction?.call();
+                  return KeyEventResult.handled;
+                }
               }
-            }
-            if (onKeyEvent != null) {
-              return onKeyEvent(node, event);
-            }
-            //如果处理了所有的键盘事件, 此时child内部有输入框, 则可以会拦截键盘事件.
-            return otherKeyEventResult;
-          },
-        );
+              if (onKeyEvent != null) {
+                return onKeyEvent(node, event);
+              }
+              //如果处理了所有的键盘事件, 此时child内部有输入框, 则可以会拦截键盘事件.
+              return otherKeyEventResult;
+            },
+          );
+  }
 
   /// 拦截所有键盘事件
   Widget ignoreKeyEvent({

@@ -225,6 +225,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     dynamic result,
     //--
     bool? autoCloseDialog,
+    VoidCallback? onEnterAction,
   }) {
     return Center(
           child: buildDialogContainer(
@@ -242,7 +243,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           context,
           result: result,
           rootNavigator: dialogUseRootNavigator,
-          enable: autoCloseDialog ?? dialogBarrierDismissible,
+          enableAutoClose: autoCloseDialog ?? dialogBarrierDismissible,
+          onEnterAction: onEnterAction,
           tag: classHash(),
         );
   }
@@ -288,7 +290,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           onKeyEvent: onKeyEvent,
           result: result,
           tag: classHash(),
-          enable: autoCloseDialog ?? dialogBarrierDismissible,
+          enableAutoClose: autoCloseDialog ?? dialogBarrierDismissible,
         );
   }
 
@@ -311,7 +313,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           topRight: Radius.circular(radius),
         ),
       ),
-    ).autoCloseDialog(context, enable: dialogBarrierDismissible);
+    ).autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
   }
 
   /// 底部撑满显示的对话框样式
@@ -392,7 +394,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context)
         .blur(sigma: blur ? kL : null)
-        .autoCloseDialog(context, enable: dialogBarrierDismissible);
+        .autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
   }
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
@@ -691,7 +693,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(context, alignment: align, disable: fullScreen)
         .blur(sigma: blur ? kL : null)
-        .autoCloseDialog(context, enable: dialogBarrierDismissible);
+        .autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
   }
 
   /// 构建桌面端右边侧滑全屏高度显示的对话框布局
@@ -732,7 +734,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           onKeyEvent: onKeyEvent,
           result: result,
           tag: classHash(),
-          enable: autoCloseDialog ?? dialogBarrierDismissible,
+          enableAutoClose: autoCloseDialog ?? dialogBarrierDismissible,
         );
   }
 

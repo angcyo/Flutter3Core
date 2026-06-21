@@ -98,8 +98,8 @@ class DesktopMessageDialog extends AndroidNormalDialog {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (title != null) title,
-        if (message != null) message,
+        ?title,
+        ?message,
         //--
         [
               if (showCancel == true)
@@ -141,6 +141,11 @@ class DesktopMessageDialog extends AndroidNormalDialog {
       bodyColumn,
       padding: EdgeInsets.zero,
       blur: true,
+      onEnterAction: showConfirm == true
+          ? () {
+              _doConfirmTap(context);
+            }
+          : null,
     ).interceptPop(interceptPop);
   }
 }

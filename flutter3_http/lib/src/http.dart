@@ -144,16 +144,14 @@ extension HttpStringEx on String {
     bool? isSecureProtocol,
     String protocol = "http",
   ]) {
-    if ((isSecureProtocol != true && startsWith('$protocol://')) ||
-        (isSecureProtocol == true && startsWith('${protocol}s://'))) {
+    if (startsWith('$protocol://') || startsWith('${protocol}s://')) {
       //this 已经是一个url, 则直接返回
       return this;
     }
 
     //主机
     host ??= $host ?? '';
-    if ((isSecureProtocol != true && host.startsWith('$protocol://')) ||
-        (isSecureProtocol == true && host.startsWith('${protocol}s://'))) {
+    if (host.startsWith('$protocol://') || host.startsWith('${protocol}s://')) {
     } else {
       host = isSecureProtocol == true
           ? "${protocol}s://$host"
