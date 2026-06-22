@@ -386,9 +386,8 @@ mixin TileMixin {
     Color? splashColor,
     Color? disabledColor,
     MouseCursor? mouseCursor,
-    MaterialTapTargetSize? materialTapTargetSize =
-        MaterialTapTargetSize.shrinkWrap,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    MaterialTapTargetSize? materialTapTargetSize = .shrinkWrap,
+    DragStartBehavior dragStartBehavior = .start,
     double? iconSize,
     Widget? icon,
     Widget? activeIcon,

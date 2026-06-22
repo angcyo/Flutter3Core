@@ -200,10 +200,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   Future onSelfLoadDataWrap() async {
     try {
       await onLoadData();
-    } catch (e) {
+    } catch (e, s) {
       l.e(e);
       assert(() {
-        printError(e);
+        printError(e, s);
         debugger();
         return true;
       }());
