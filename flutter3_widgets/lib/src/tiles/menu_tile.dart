@@ -23,6 +23,8 @@ const MenuStyle kMenuStyle = MenuStyle(
   ),
   //菜单显示时, 对齐锚点的方式
   alignment: .bottomCenter,
+  //菜单边界与子菜单之间的填充
+  padding: WidgetStatePropertyAll(.zero),
 );
 
 /// 左[label]...右[value]

@@ -66,6 +66,9 @@ class MenuTriggerWidget extends StatefulWidget {
   /// - 桌面端默认[AlignmentGeometry.topRight]
   final AlignmentGeometry? alignment;
 
+  /// 对齐后, 额外的偏移量
+  final Offset? alignmentOffset;
+
   //MARK: menu items
 
   /// 菜单项
@@ -93,6 +96,7 @@ class MenuTriggerWidget extends StatefulWidget {
     //--menu
     this.menuStyle,
     this.alignment,
+    this.alignmentOffset,
     this.menuBgColor,
     //--items
     this.menuChildren,
@@ -176,8 +180,8 @@ class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
         childFocusNode: _widgetFocusNode,
         style: menuStyle,
         //菜单对齐之后, 额外的偏移量
-        alignmentOffset: .zero,
-        /*reservedPadding: insets(all: 8),*/
+        alignmentOffset: widget.alignmentOffset ?? .zero,
+        reservedPadding: .zero /*insets(all: 8)*/,
         menuChildren: _wrapHoverMenChildren(widget.menuChildren),
         builder: (context, menuController, child) {
           //--body
@@ -465,6 +469,7 @@ extension MenuTriggerWidgetEx on Widget {
     bool? isSelected,
     Decoration? selectedDecoration,
     AlignmentGeometry? alignment,
+    Offset? alignmentOffset,
     MouseCursor? cursor,
   }) {
     return MenuTriggerWidget(
@@ -478,6 +483,7 @@ extension MenuTriggerWidgetEx on Widget {
       selectedDecoration: selectedDecoration,
       onTap: onTap,
       alignment: alignment,
+      alignmentOffset: alignmentOffset,
       cursor: cursor,
       child: this,
     );
