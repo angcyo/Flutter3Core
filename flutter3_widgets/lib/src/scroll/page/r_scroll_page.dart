@@ -596,7 +596,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [value] 可以是单个值, 也可以是多个值(列表)
   /// 如果是多个值, 则所有命中[RItemTile.updateSignal]值的tile, 都将收到更新信号通知
   ///
-  /// - [onUpdateValueAction] 请在此方法中执行数据字段的更新, 防止id相同时, 其它字段不同, 界面读取不到新数据
+  /// - [onUpdateValueAction]
+  ///   - 请在此方法中执行旧(界面)数据字段的更新,
+  ///   - 防止id相同时, 其它字段不同, 界面读取不到新数据
   ///
   /// - [rebuildTile]
   /// - [updateTile]

@@ -311,13 +311,15 @@ extension WidgetListEx on WidgetNullList {
     double? gap,
     Widget? gapWidget,
     //--
-    bool lastExtend = false,
+    bool? firstExtend = false,
+    double? firstExcludeWidth,
+    bool? lastExtend = false,
   }) {
     WidgetList children = filterAndFillGap(gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
       return null;
     }
-    return lastExtend
+    return (lastExtend == true || firstExtend == true)
         ? LastExtendRow(
             key: key,
             mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
@@ -327,6 +329,9 @@ extension WidgetListEx on WidgetNullList {
             verticalDirection: verticalDirection ?? VerticalDirection.down,
             textBaseline: textBaseline,
             spacing: gap ?? 0,
+            firstExtend: firstExtend,
+            firstExcludeWidth: firstExcludeWidth,
+            lastExtend: lastExtend,
             children: children,
           )
         : Row(

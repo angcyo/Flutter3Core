@@ -28,6 +28,8 @@ class LogFileInterceptor extends Interceptor {
   /// 禁止日志写入文件
   static const String kNoLogFileKey = 'noLogFile';
 
+  static const String lineSeparator = "\n";
+
   //MARK: - stream
 
   static LiveStream<String?> requestLogOnceLive = $liveOnce<String>();

@@ -8,6 +8,15 @@ part of '../../flutter3_basics.dart';
 /// 这个小部件支持, 支持最后一个[Widget]的宽度超过剩余空间时, 自动使用最大的剩余空间重新测量
 ///
 class LastExtendRow extends Row {
+  /// 第一个元素超过总宽度时, 是否撑满宽度重新计算
+  final bool? firstExtend;
+
+  /// 需要排除的宽度
+  final double? firstExcludeWidth;
+
+  /// 最后一个元素超过总宽度时, 是否撑满宽度重新计算
+  final bool? lastExtend;
+
   const LastExtendRow({
     super.key,
     super.mainAxisAlignment,
@@ -18,6 +27,9 @@ class LastExtendRow extends Row {
     super.textBaseline, // NO DEFAULT: we don't know what the text's baseline should be
     super.spacing,
     super.children,
+    this.lastExtend,
+    this.firstExtend,
+    this.firstExcludeWidth,
   });
 
   @override
@@ -32,6 +44,9 @@ class LastExtendRow extends Row {
       textBaseline: textBaseline,
       clipBehavior: clipBehavior,
       spacing: spacing,
+      lastExtend: lastExtend,
+      firstExtend: firstExtend,
+      firstExcludeWidth: firstExcludeWidth,
     );
   }
 
@@ -49,11 +64,23 @@ class LastExtendRow extends Row {
       ..verticalDirection = verticalDirection
       ..textBaseline = textBaseline
       ..spacing = spacing
-      ..clipBehavior = clipBehavior;
+      ..clipBehavior = clipBehavior
+      ..lastExtend = lastExtend
+      ..firstExtend = firstExtend
+      ..firstExcludeWidth = firstExcludeWidth;
   }
 }
 
 class LastExtendRenderFlex extends RenderFlex {
+  /// 第一个元素超过总宽度时, 是否撑满宽度重新计算
+  bool? firstExtend;
+
+  /// 最后一个元素超过总宽度时, 是否撑满宽度重新计算
+  bool? lastExtend;
+
+  /// 需要排除的宽度
+  double? firstExcludeWidth;
+
   LastExtendRenderFlex({
     super.children,
     super.direction = Axis.horizontal,
@@ -65,6 +92,9 @@ class LastExtendRenderFlex extends RenderFlex {
     super.textBaseline,
     super.clipBehavior = Clip.none,
     super.spacing = 0,
+    this.lastExtend,
+    this.firstExtend,
+    this.firstExcludeWidth,
   });
 
   /// 是否溢出了
@@ -95,14 +125,19 @@ class LastExtendRenderFlex extends RenderFlex {
     for (final child in children) {
       childMaxHeight = math.max(childMaxHeight, child.size.height);
       //debugger();
-      if (child == children.last) {
-        //最后一个child
+      if ((firstExtend == true && child == children.first) ||
+          (lastExtend == true && child == children.last)) {
+        //第一个或/最后一个child
         final maxWidth = constraints.maxWidth - childUseWidth;
         //debugger();
         if (child.size.width > maxWidth) {
           _isOverflow = true;
           //最后一个child的宽度大于剩余宽度, 则重新测量
-          final lastChildConstraints = BoxConstraints(maxWidth: maxWidth);
+          final lastChildConstraints = BoxConstraints(
+            maxWidth:
+                maxWidth +
+                (child == children.first ? firstExcludeWidth ?? 0 : 0),
+          );
           final childSize = ChildLayoutHelper.layoutChild(
             child,
             lastChildConstraints,
