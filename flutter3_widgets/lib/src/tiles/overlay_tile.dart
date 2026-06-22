@@ -14,7 +14,9 @@ part of '../../../flutter3_widgets.dart';
 class OverlayTriggerWidget extends StatefulWidget {
   final Widget? child;
 
-  /// Overlay需要显示的内容
+  /// [Overlay]需要显示的内容
+  /// - 请自行控制约束大小
+  /// - 和[Material]
   final Widget? content;
 
   /// 是否激活悬停触发显示
@@ -34,6 +36,10 @@ class OverlayTriggerWidget extends StatefulWidget {
   @defInjectMark
   final Decoration? selectedDecoration;
 
+  /// 鼠标样式
+  @defInjectMark
+  final MouseCursor? cursor;
+
   //MARK: - Composited
 
   /// 对齐锚点的什么位置
@@ -41,6 +47,9 @@ class OverlayTriggerWidget extends StatefulWidget {
 
   /// 浮窗的什么位置
   final Alignment followerAnchor;
+
+  /// 对齐后, 额外的偏移量
+  final Offset? alignmentOffset;
 
   //MARK: - Overlay
 
@@ -56,9 +65,11 @@ class OverlayTriggerWidget extends StatefulWidget {
     this.isSelected,
     this.selectedDecoration,
     this.onTap,
+    this.cursor,
     //--
     this.targetAnchor = .topLeft,
     this.followerAnchor = .topLeft,
+    this.alignmentOffset,
     //--
     this.rootOverlay = false,
   });
@@ -85,12 +96,14 @@ class _OverlayTriggerWidgetState extends State<OverlayTriggerWidget> {
             link: _layerLink,
             // 当目标组件不在屏幕内时隐藏
             showWhenUnlinked: false,
-            offset: .zero /*const Offset(0, 55)*/,
+            offset: widget.alignmentOffset ?? .zero /*const Offset(0, 55)*/,
             // 对齐锚点的什么位置
             targetAnchor: widget.targetAnchor,
             // 浮窗的什么位置
             followerAnchor: widget.followerAnchor,
-            child: _wrapHoverChild(widget.content)?.bounds(),
+            child: _wrapHoverChild(
+              widget.content,
+            )?.align(widget.followerAnchor) /*.bounds()*/,
           ),
         );
       },
@@ -152,6 +165,7 @@ class _OverlayTriggerWidgetState extends State<OverlayTriggerWidget> {
     );
     //--mouse
     final result = MouseRegion(
+      cursor: widget.cursor ?? MouseCursor.defer,
       onEnter: (_) {
         _isMouseOverButtonLive << true;
         if (widget.hoverTrigger) {
@@ -213,5 +227,38 @@ class _OverlayTriggerWidgetState extends State<OverlayTriggerWidget> {
       );
     }
     return child;
+  }
+}
+
+extension OverlayTriggerWidgetEx on Widget {
+  /// [Overlay]覆盖层现实触发器
+  @dsl
+  OverlayTriggerWidget overlayTrigger({
+    Key? key,
+    Widget? content,
+    bool hoverTrigger = false,
+    Decoration? hoverDecoration,
+    GestureTapCallback? onTap,
+    bool? isSelected,
+    Decoration? selectedDecoration,
+    Alignment? targetAnchor,
+    Alignment? followerAnchor,
+    Offset? alignmentOffset,
+    MouseCursor? cursor,
+  }) {
+    return OverlayTriggerWidget(
+      key: key,
+      hoverTrigger: hoverTrigger,
+      content: content,
+      hoverDecoration: hoverDecoration,
+      isSelected: isSelected,
+      selectedDecoration: selectedDecoration,
+      targetAnchor: targetAnchor ?? .topLeft,
+      followerAnchor: followerAnchor ?? .topLeft,
+      alignmentOffset: alignmentOffset,
+      onTap: onTap,
+      cursor: cursor,
+      child: this,
+    );
   }
 }

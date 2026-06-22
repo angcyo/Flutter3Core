@@ -50,6 +50,7 @@ class MenuTriggerWidget extends StatefulWidget {
   final Decoration? selectedDecoration;
 
   /// 鼠标样式
+  @defInjectMark
   final MouseCursor? cursor;
 
   //MARK: menu style
@@ -456,7 +457,7 @@ class MenuTriggerScope extends InheritedWidget {
 }
 
 extension MenuTriggerWidgetEx on Widget {
-  /// 主菜单触发器
+  /// 主菜单显示触发器
   @dsl
   MenuTriggerWidget menuTrigger({
     Key? key,
@@ -489,7 +490,7 @@ extension MenuTriggerWidgetEx on Widget {
     );
   }
 
-  /// 子菜单触发器
+  /// 子菜单显示触发器
   @dsl
   SubmenuTriggerWidget submenuTrigger({
     Key? key,
