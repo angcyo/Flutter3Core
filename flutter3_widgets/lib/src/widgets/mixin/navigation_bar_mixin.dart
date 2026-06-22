@@ -128,6 +128,8 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     Color? selectedItemColor,
     Color? unselectedItemColor,
     //--
+    double selectedIconSize = 24.0,
+    double? unselectedIconSize,
     bool? showSelectedLabels,
     bool? showUnselectedLabels,
   }) {
@@ -137,19 +139,23 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     selectedItemColor ??= globalTheme.icoSelectedColor;
     unselectedItemColor ??= globalTheme.icoNormalColor;
     //--
+    final showLabel =
+        showSelectedLabels == true || showUnselectedLabels == true;
+    unselectedIconSize ??= selectedIconSize;
     final unselectedIconTheme = IconTheme.of(
       context,
-    ).copyWith(color: unselectedItemColor);
+    ).copyWith(color: unselectedItemColor, size: selectedIconSize);
     final selectedIconTheme = unselectedIconTheme.copyWith(
       color: selectedItemColor,
+      size: unselectedIconSize,
     );
 
-    final unselectedLabelStyle = globalTheme.textBodyStyle.copyWith(
-      color: unselectedItemColor,
-    );
-    final selectedLabelStyle = unselectedLabelStyle.copyWith(
-      color: selectedItemColor,
-    );
+    final unselectedLabelStyle = showLabel
+        ? globalTheme.textBodyStyle.copyWith(color: unselectedItemColor)
+        : null;
+    final selectedLabelStyle = showLabel
+        ? unselectedLabelStyle?.copyWith(color: selectedItemColor)
+        : null;
 
     return BottomNavigationBar(
       items: items,
@@ -157,6 +163,7 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
       currentIndex: currentNavigateIndexMixin,
       type: BottomNavigationBarType.fixed,
       backgroundColor: backgroundColor,
+      iconSize: selectedIconSize,
       //--
       selectedItemColor: selectedItemColor,
       unselectedItemColor: unselectedItemColor,
@@ -164,8 +171,8 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
       selectedLabelStyle: selectedLabelStyle,
       unselectedLabelStyle: unselectedLabelStyle,
       //--
-      selectedFontSize: selectedLabelStyle.fontSize ?? 14.0,
-      unselectedFontSize: unselectedLabelStyle.fontSize ?? 14.0,
+      selectedFontSize: selectedLabelStyle?.fontSize ?? 0,
+      unselectedFontSize: unselectedLabelStyle?.fontSize ?? 0,
       //--
       selectedIconTheme: selectedIconTheme,
       unselectedIconTheme: unselectedIconTheme,

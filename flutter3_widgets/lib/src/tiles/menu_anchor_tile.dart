@@ -49,6 +49,9 @@ class MenuTriggerWidget extends StatefulWidget {
   @defInjectMark
   final Decoration? selectedDecoration;
 
+  /// 鼠标样式
+  final MouseCursor? cursor;
+
   //MARK: menu style
 
   /// 菜单的样式
@@ -86,6 +89,7 @@ class MenuTriggerWidget extends StatefulWidget {
     this.isSelected,
     this.selectedDecoration,
     this.onTap,
+    this.cursor,
     //--menu
     this.menuStyle,
     this.alignment,
@@ -97,10 +101,10 @@ class MenuTriggerWidget extends StatefulWidget {
   });
 
   @override
-  State<MenuTriggerWidget> createState() => _MenuTriggerWidgetState();
+  State<MenuTriggerWidget> createState() => MenuTriggerWidgetState();
 }
 
-class _MenuTriggerWidgetState extends State<MenuTriggerWidget> {
+class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
   final FocusNode _widgetFocusNode = FocusNode(debugLabel: 'MenuTriggerWidget');
 
   /// 菜单的快捷键注册
@@ -203,6 +207,7 @@ class _MenuTriggerWidgetState extends State<MenuTriggerWidget> {
           }
           //--mouse
           final result = MouseRegion(
+            cursor: widget.cursor ?? MouseCursor.defer,
             onEnter: (_) {
               _isMouseOverButtonLive << true;
               if (widget.hoverTrigger && !menuController.isOpen) {
@@ -412,7 +417,7 @@ class _SubmenuTriggerWidgetState extends State<SubmenuTriggerWidget> {
 
 /// - 提供一个[MenuController]
 class MenuTriggerScope extends InheritedWidget {
-  static _MenuTriggerWidgetState? of(
+  static MenuTriggerWidgetState? of(
     BuildContext context, {
     bool depend = false,
   }) {
@@ -432,7 +437,7 @@ class MenuTriggerScope extends InheritedWidget {
     MenuTriggerScope.of(context, depend: depend)?._menuController.close();
   }
 
-  final _MenuTriggerWidgetState menuTriggerWidgetState;
+  final MenuTriggerWidgetState menuTriggerWidgetState;
 
   const MenuTriggerScope({
     super.key,
@@ -453,21 +458,27 @@ extension MenuTriggerWidgetEx on Widget {
     Key? key,
     List<Widget>? menuChildren,
     bool hoverTrigger = false,
+    bool? showMoreMenuTip,
     Widget? moreMenuTipWidget,
     Decoration? hoverDecoration,
     GestureTapCallback? onTap,
     bool? isSelected,
     Decoration? selectedDecoration,
+    AlignmentGeometry? alignment,
+    MouseCursor? cursor,
   }) {
     return MenuTriggerWidget(
       key: key,
       hoverTrigger: hoverTrigger,
       menuChildren: menuChildren,
+      showMoreMenuTip: showMoreMenuTip,
       moreMenuTipWidget: moreMenuTipWidget,
       hoverDecoration: hoverDecoration,
       isSelected: isSelected,
       selectedDecoration: selectedDecoration,
       onTap: onTap,
+      alignment: alignment,
+      cursor: cursor,
       child: this,
     );
   }
