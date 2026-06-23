@@ -445,8 +445,8 @@ class DesktopIconMenuTile extends StatefulWidget {
 
   //--
 
-  /// 点击后是否自动关闭弹窗
-  final bool autoClosePopup;
+  /// 点击后是否自动关闭当前所在的菜单, 建议在菜单中开启
+  final bool autoCloseMenu;
 
   /// 长按提示文本
   final String? tooltip;
@@ -464,7 +464,7 @@ class DesktopIconMenuTile extends StatefulWidget {
     this.onTap,
     this.popupAlignment,
     //--
-    this.autoClosePopup = true,
+    this.autoCloseMenu = false,
     this.tooltip,
   });
 
@@ -513,14 +513,14 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
           widget.onTap != null
               ? () {
                   final result = widget.onTap!();
-                  if (widget.autoClosePopup && result is Future) {
+                  if (widget.autoCloseMenu && result is Future) {
                     result.then((data) {
                       if (data is bool && data == true) {
                       } else {
                         buildContext?.popMenu();
                       }
                     });
-                  } else if (!widget.autoClosePopup ||
+                  } else if (!widget.autoCloseMenu ||
                       result is bool && result == true) {
                     // 拦截默认处理
                   } else {
@@ -536,7 +536,7 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
                       alignment: widget.popupAlignment,
                     );
                   }).get((data, error) {
-                    if (widget.autoClosePopup == true) {
+                    if (widget.autoCloseMenu == true) {
                       buildContext?.popMenu();
                     }
                   });
