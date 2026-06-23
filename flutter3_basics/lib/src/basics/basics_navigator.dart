@@ -620,10 +620,15 @@ extension NavigatorEx on BuildContext {
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = true,
+    bool maybePop = false,
   }) {
     //debugger();
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
-      navigatorOf(rootNavigator).pop(result);
+      if (maybePop) {
+        navigatorOf(rootNavigator).maybePop(result);
+      } else {
+        navigatorOf(rootNavigator).pop(result);
+      }
     }
   }
 
@@ -633,10 +638,12 @@ extension NavigatorEx on BuildContext {
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = true,
+    bool maybePop = false,
   }) => pop(
     result: result,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
+    maybePop: maybePop,
   );
 
   /// 弹出一个菜单路由
@@ -644,10 +651,12 @@ extension NavigatorEx on BuildContext {
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = false,
+    bool maybePop = false,
   }) => pop(
     result: result,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
+    maybePop: maybePop,
   );
 
   /// 弹出一个菜单路由

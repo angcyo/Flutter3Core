@@ -6,7 +6,7 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 分割按钮
 /// [child]..[optionWidget]
-///
+///                └─[popupBodyWidget]
 /// - split_button: ^0.1.0
 /// - split_button_m3e: ^0.2.1
 class SplitButton extends StatefulWidget {
@@ -213,5 +213,116 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
         );
       });
     }
+  }
+}
+
+/// 胶囊按钮 - 类似小程序右上角的按钮
+/// [start]..[end]
+class CapsuleButton extends StatefulWidget {
+  /// 开始的按钮
+  final Widget? start;
+
+  /// 结束的按钮
+  final Widget? end;
+
+  /// 点击事件, 默认询问关闭路由
+  @defInjectMark
+  final GestureTapCallback? onStartTap;
+
+  /// 点击事件, 默认关闭路由
+  @defInjectMark
+  final GestureTapCallback? onEndTap;
+
+  /// 整体宽度, 会平分给[start].[end] 默认80
+  @defInjectMark
+  final double? width;
+
+  /// 整体高度, 默认28
+  @defInjectMark
+  final double? height;
+
+  //--
+
+  /// 整体对齐方式, 默认[Alignment.centerRight]
+  @defInjectMark
+  final AlignmentGeometry? alignment;
+
+  /// 背景是否模糊
+  final bool enableBlur;
+
+  /// 外部额外的填充
+  final EdgeInsets? padding;
+
+  const CapsuleButton({
+    super.key,
+    this.start,
+    this.end,
+    this.onStartTap,
+    this.onEndTap,
+    this.width,
+    this.height,
+    //--
+    this.alignment,
+    this.enableBlur = false,
+    this.padding = const EdgeInsets.only(right: kX),
+  });
+
+  @override
+  State<CapsuleButton> createState() => _CapsuleButtonState();
+}
+
+class _CapsuleButtonState extends State<CapsuleButton> {
+  /// # Material 图标
+  /// https://fonts.google.com/icons?hl=zh-cn
+  ///
+  /// [Icons.more_horiz]
+  /// [Icons.radio_button_checked]
+  ///
+  /// [Icons.remove]
+  /// [Icons.remove_circle_outlined]
+  ///
+  /// [Icons.close]
+  @override
+  Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final borderColor = globalTheme.borderColor;
+    final width = widget.width ?? 80;
+    final height = widget.height ?? 28;
+
+    final start = widget.start ?? Icon(Icons.remove, size: 16);
+    final line = vLine(context, color: borderColor, indent: height / 4 / 2);
+    final end = widget.end ?? Icon(Icons.radio_button_checked, size: 16);
+
+    return Row(
+          mainAxisSize: .min,
+          mainAxisAlignment: .spaceBetween,
+          crossAxisAlignment: .center,
+          children: [
+            start
+                .size(width: width / 2, height: height)
+                .ink(
+                  widget.onStartTap ??
+                      () {
+                        buildContext?.popDialog(maybePop: true);
+                      },
+                ),
+            line,
+            end
+                .size(width: width / 2, height: height)
+                .ink(
+                  widget.onEndTap ??
+                      () {
+                        buildContext?.popDialog();
+                      },
+                ),
+          ],
+        )
+        .decoration(strokeDecoration(color: borderColor, radius: height / 2))
+        .blur(enable: widget.enableBlur)
+        .material()
+        .clipRadius(radius: height / 2)
+        .size(height: height)
+        .insets(insets: widget.padding)
+        .align(widget.alignment ?? Alignment.centerRight);
   }
 }
