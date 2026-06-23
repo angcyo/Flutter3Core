@@ -219,7 +219,10 @@ class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
             cursor: widget.cursor ?? MouseCursor.defer,
             onEnter: (_) {
               _isMouseOverButtonLive << true;
-              if (widget.hoverTrigger && !menuController.isOpen) {
+              if (widget.hoverTrigger &&
+                  (!menuController.isOpen ||
+                      _menuAnimationStatus == .reverse)) {
+                //菜单已打开, 或者正在关闭
                 menuController.open();
               }
             },
