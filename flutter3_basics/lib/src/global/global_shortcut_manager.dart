@@ -65,6 +65,13 @@ typedef ShortcutIntentAction =
     KeyEventResult Function(BuildContext? context, dynamic host, dynamic data);
 
 /// 快捷方式描述
+/// # 快捷键修饰符号
+/// ```
+/// _LocalizedShortcutLabeler.instance.getShortcutLabel(
+///    shortcut!,
+///    MaterialLocalizations.of(context),
+///  )
+/// ```
 class ShortcutDescription {
   //MARK: - shortcut
 
