@@ -83,6 +83,11 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   @configProperty
   double circleRadius = 4;
 
+  /// 绘制路径的颜色
+  @defInjectMark
+  @configProperty
+  Color? color;
+
   /// 完成后的输出回调
   /// - 自动调用[CanvasDelegate.detachOverlay]
   @configProperty
@@ -96,7 +101,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   @output
   IUnit outputUnit = IUnit.dp;
 
-  CanvasPenOverlayComponent() {
+  CanvasPenOverlayComponent({this.color}) {
     paintStrokeWidth = 1;
     cursorStyle = SystemMouseCursors.precise;
   }
@@ -107,7 +112,7 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
       //核心路径
       paint
         ..style = PaintingStyle.stroke
-        ..color = Colors.red;
+        ..color = color ?? Colors.red;
       canvas.drawPath(_path!, paint);
     }
     if (!_isEditMode && _hoverPath != null && !_isPointerDown) {
