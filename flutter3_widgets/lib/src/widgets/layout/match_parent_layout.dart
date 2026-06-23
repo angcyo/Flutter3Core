@@ -150,15 +150,17 @@ extension MatchParentLayoutEx on Widget {
     bool? childWrapWidth,
     bool? childWrapHeight,
     String? debugLabel,
-  }) => MatchParentLayout(
-    alignment: alignment,
-    matchWidth: matchBoth ?? matchWidth,
-    matchHeight: matchBoth ?? matchHeight,
-    childWrapWidth: childWrapWidth,
-    childWrapHeight: childWrapHeight,
-    debugLabel: debugLabel,
-    child: this,
-  );
+  }) => (matchBoth == true || matchWidth || matchHeight)
+      ? MatchParentLayout(
+          alignment: alignment,
+          matchWidth: matchBoth ?? matchWidth,
+          matchHeight: matchBoth ?? matchHeight,
+          childWrapWidth: childWrapWidth,
+          childWrapHeight: childWrapHeight,
+          debugLabel: debugLabel,
+          child: this,
+        )
+      : this;
 
   /// [matchParent]
   /// [matchParentWidth]
