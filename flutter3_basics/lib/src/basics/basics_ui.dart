@@ -1277,6 +1277,8 @@ extension WidgetEx on Widget {
   /// [AlignmentDirectional.center]
   Widget align(
     AlignmentGeometry alignment, {
+    bool enable = true,
+    //--
     double? widthFactor,
     double? heightFactor,
     //--
@@ -1285,17 +1287,19 @@ extension WidgetEx on Widget {
     double? maxWidth,
     double? maxHeight,
   }) {
-    return Align(
-      alignment: alignment,
-      widthFactor: widthFactor,
-      heightFactor: heightFactor,
-      child: this,
-    ).constrainedMin(
-      minWidth: minWidth,
-      minHeight: minHeight,
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-    );
+    return enable
+        ? Align(
+            alignment: alignment,
+            widthFactor: widthFactor,
+            heightFactor: heightFactor,
+            child: this,
+          ).constrainedMin(
+            minWidth: minWidth,
+            minHeight: minHeight,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+          )
+        : this;
   }
 
   /// 居中对齐
@@ -2426,6 +2430,7 @@ extension WidgetEx on Widget {
   ///
   /// - [fixedWidth] 是否固定宽度
   Widget desktopConstrained({
+    bool? enable = true,
     //
     bool fitDialog = true,
     @defInjectMark bool? fitDesktop,
@@ -2440,6 +2445,10 @@ extension WidgetEx on Widget {
     double? maxWidth,
     double? maxHeight,
   }) {
+    if (enable != true) {
+      return this;
+    }
+
     minWidth ??= minSize;
     minHeight ??= minSize;
     maxWidth ??= maxSize;
@@ -2470,6 +2479,15 @@ extension WidgetEx on Widget {
       minHeight ??= maxHeight;
       maxHeight ??= minHeight;
     }
+
+    //--
+    if (maxWidth != null && minWidth != null) {
+      minWidth = minOf(minWidth, maxWidth);
+    }
+    if (maxHeight != null && minHeight != null) {
+      minHeight = minOf(minHeight, maxHeight);
+    }
+
     return constrainedMin(
       minSize: minSize,
       minWidth: minWidth,
@@ -2760,46 +2778,69 @@ extension WidgetEx on Widget {
     bool? isSelected,
     Widget? selectedIcon,
     MouseCursor? mouseCursor,
+    //--
+    GestureContextTapCallback? onContextTap /*具有上下文的点击事件回调*/,
   }) {
-    Widget child = this;
+    Widget button = this;
     if (minSize == true) {
       iconSize ??= 28;
-      child = child.insets(all: 6, insets: padding);
+      button = button.insets(all: 6, insets: padding);
       padding = EdgeInsets.zero;
     }
-    return IconButton(
-      onPressed: enable ? onTap : null,
-      icon: child,
-      tooltip: tooltip,
-      enableFeedback: enableFeedback,
-      color: color,
-      disabledColor: disabledColor,
-      highlightColor: highlightColor,
-      splashColor: splashColor,
-      hoverColor: hoverColor,
-      focusColor: focusColor,
-      iconSize: iconSize,
-      splashRadius: splashRadius,
-      alignment: alignment,
-      padding: padding,
-      visualDensity:
-          visualDensity ??
-          (iconSize == null
-              ? null
-              : VisualDensity(
-                  vertical: VisualDensity.minimumDensity,
-                  horizontal: VisualDensity.minimumDensity,
-                )),
-      constraints:
-          constraints ??
-          (iconSize == null
-              ? null
-              : BoxConstraints.tightFor(width: iconSize, height: iconSize)),
-      style: style,
-      isSelected: isSelected,
-      selectedIcon: selectedIcon,
-      mouseCursor: mouseCursor,
-    );
+    //--
+    Widget buildButton([BuildContext? ctx]) {
+      return IconButton(
+        onPressed: enable
+            ? () {
+                onTap?.call();
+                if (ctx != null) {
+                  onContextTap?.call(ctx);
+                }
+              }
+            : null,
+        icon: button,
+        tooltip: tooltip,
+        enableFeedback: enableFeedback,
+        color: color,
+        disabledColor: disabledColor,
+        highlightColor: highlightColor,
+        splashColor: splashColor,
+        hoverColor: hoverColor,
+        focusColor: focusColor,
+        iconSize: iconSize,
+        splashRadius: splashRadius,
+        alignment: alignment,
+        padding: padding,
+        visualDensity:
+            visualDensity ??
+            (iconSize == null
+                ? null
+                : VisualDensity(
+                    vertical: VisualDensity.minimumDensity,
+                    horizontal: VisualDensity.minimumDensity,
+                  )),
+        constraints:
+            constraints ??
+            (iconSize == null
+                ? null
+                : BoxConstraints.tightFor(width: iconSize, height: iconSize)),
+        style: style,
+        isSelected: isSelected,
+        selectedIcon: selectedIcon,
+        mouseCursor: mouseCursor,
+      );
+    }
+
+    //--
+    if (onContextTap != null) {
+      return Builder(
+        builder: (ctx) {
+          return buildButton(ctx);
+        },
+      );
+    } else {
+      return buildButton();
+    }
   }
 
   /// 默认块状波纹效果

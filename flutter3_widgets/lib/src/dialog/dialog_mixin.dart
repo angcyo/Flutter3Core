@@ -434,17 +434,17 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool animatedSize = false,
     int scrollChildIndex = 1,
     double? height /*固定高度*/,
-    double? contentMinHeight,
-    double? contentMaxHeight = 0.8,
+    @autoInjectMark double? contentMinHeight,
+    @autoInjectMark double? contentMaxHeight = 0.8,
     BoxConstraints? contentConstraints /*内容约束*/,
     bool? blur,
     //--clip--↓
-    double? clipRadius,
-    double? clipTopRadius = kDefaultBorderRadiusXXX,
-    double? clipBottomRadius,
+    @autoInjectMark double? clipRadius,
+    @autoInjectMark double? clipTopRadius = kDefaultBorderRadiusXXX,
+    @autoInjectMark double? clipBottomRadius,
     Widget? stackBeforeWidget,
     Widget? stackAfterWidget,
-    bool fullScreen = false /*是否全屏*/,
+    @autoInjectMark bool fullScreen = false /*是否全屏*/,
     //--shadow--↓
     bool showTopShadow = true /*是否显示顶部阴影*/,
     //--column--↓
@@ -463,6 +463,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Listenable? contentUpdateSignal /*内容更新信号, 需要[useRScroll]支持*/,
     String? debugLabel,
     //--
+    bool? isInPopup /*是否在弹窗中显示当前的布局*/,
     bool? adaptiveDesktop /*适配桌面居中布局*/,
     bool? adaptiveDesktopSlideStyle /*桌面布局使用右边全屏RTL滑动样式布局?*/,
     double? contentMaxWidth /*内容最大宽度, 不指定自适应*/,
@@ -481,6 +482,11 @@ mixin DialogMixin implements TranslationTypeImpl {
           contentMaxWidth ??= kDesktopDialogMinWidth;
         }
       }
+    }
+    if (isInPopup == true) {
+      clipRadius ??= clipTopRadius ?? clipBottomRadius;
+      clipTopRadius ??= clipRadius;
+      clipBottomRadius ??= clipRadius;
     }
 
     blur ??= dialogBlur;
@@ -689,9 +695,13 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--
     return result
         .matchParent(matchHeight: fullScreen)
-        .align(align)
+        .align(align, enable: isInPopup != true)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .adaptiveTablet(context, alignment: align, disable: fullScreen)
+        .adaptiveTablet(
+          context,
+          alignment: align,
+          disable: fullScreen || isInPopup == true,
+        ) //适配平板
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
   }

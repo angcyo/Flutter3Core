@@ -14,8 +14,11 @@ import '../../flutter3_widgets.dart';
 ///
 
 part 'arrow_layout.dart';
+
 part 'arrow_popup_overlay.dart';
+
 part 'arrow_popup_route.dart';
+
 part 'popup_container_dialog.dart';
 
 /// 弹窗路由扩展
@@ -42,7 +45,7 @@ extension PopupEx on BuildContext {
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
-    Color? backgroundColor,
+    @defInjectMark Color? backgroundColor,
     double? radius,
     bool animate = true,
     Color? barriersColor = Colors.transparent,
@@ -232,7 +235,7 @@ extension PopupEx on BuildContext {
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
-    Color? backgroundColor,
+    @defInjectMark Color? backgroundColor,
     double? radius,
     Color? arrowColor,
     bool showArrow = true,

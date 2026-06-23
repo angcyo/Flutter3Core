@@ -19,6 +19,7 @@ part of './dialog.dart';
 /// [ActionsDialog]
 ///
 /// @return 点击取消按钮时, 返回false, 其它情况自行返回
+///
 class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 菜单列表,
   /// [BottomMenuItemTile]
@@ -53,6 +54,12 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 奸细的高度
   final double cancelGap;
 
+  //--
+
+  /// 是否在弹窗中显示当前的对话框
+  /// - 影响样式
+  final bool? isInPopup;
+
   const BottomMenuItemsDialog(
     this.items, {
     super.key,
@@ -64,6 +71,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
     this.surfaceColor = Colors.transparent,
     this.cancelGapColor,
     this.cancelGap = kH,
+    this.isInPopup,
   });
 
   /// 是否是透明背景样式
@@ -96,27 +104,31 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
     }
 
     return buildBottomChildrenDialog(
-      context,
-      [
-        body,
-        if (cancel != null)
-          isTransparentStyle
-              ? Empty.height(kX)
-              : hLine(
-                  context,
-                  thickness: cancelGap,
-                  color:
-                      cancelGapColor ??
-                      context.darkOr(
-                        globalTheme.lineDarkColor,
-                        globalTheme.lineColor,
-                      ),
-                ),
-        if (cancel != null) cancel,
-      ],
-      showDragHandle: false,
-      bgColor: surfaceColor,
-      clipTopRadius: isTransparentStyle ? null : clipRadius,
-    ).paddingAll(isTransparentStyle ? kX : 0);
+          context,
+          [
+            body,
+            if (cancel != null)
+              isTransparentStyle
+                  ? Empty.height(kX)
+                  : hLine(
+                      context,
+                      thickness: cancelGap,
+                      color:
+                          cancelGapColor ??
+                          context.darkOr(
+                            globalTheme.lineDarkColor,
+                            globalTheme.lineColor,
+                          ),
+                    ),
+            ?cancel,
+          ],
+          enablePullBack: isInPopup != true,
+          showDragHandle: false,
+          bgColor: surfaceColor,
+          clipTopRadius: isTransparentStyle ? null : clipRadius,
+          isInPopup: isInPopup,
+        )
+        .paddingAll(isTransparentStyle ? kX : 0)
+        .desktopConstrained(enable: isInPopup, maxWidth: kDialogMinWidth);
   }
 }
