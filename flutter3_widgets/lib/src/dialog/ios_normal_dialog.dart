@@ -75,12 +75,7 @@ class IosNormalDialog extends AndroidNormalDialog {
     final bodyColumn = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
-      children: [
-        if (title != null) title,
-        if (message != null) message,
-        if (hLine != null) hLine,
-        if (controlRow != null) controlRow,
-      ],
+      children: [?title, ?message, ?hLine, ?controlRow],
     );
 
     return buildCenterDialog(
@@ -89,6 +84,11 @@ class IosNormalDialog extends AndroidNormalDialog {
       padding: EdgeInsets.zero,
       contentConstraints: contentConstraints,
       blur: true,
+      onEnterAction: showConfirm == true
+          ? () {
+              _doConfirmTap(context);
+            }
+          : null,
     );
   }
 }

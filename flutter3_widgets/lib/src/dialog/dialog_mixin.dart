@@ -322,6 +322,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildBottomDialog2(
     BuildContext context,
     Widget child, {
+    double? width /*固定宽度*/,
     double? height /*固定高度*/,
     double radius = kDefaultBorderRadiusXX,
     Color? bgColor /*背景颜色, 不指定默认[globalTheme.surfaceBgColor]*/,
@@ -342,6 +343,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? blur,
     //--safeArea
     bool useSafeArea = true,
+    @defInjectMark bool? enableAutoClose /*激活esc关闭对话框*/,
+    bool? isInPopup /*是否在弹窗中显示当前的布局*/,
   }) {
     blur ??= dialogBlur;
 
@@ -357,8 +360,16 @@ mixin DialogMixin implements TranslationTypeImpl {
       }
     }
 
-    return body
-        .size(height: height)
+    if (isInPopup == true) {
+      clipRadius ??= clipTopRadius ?? clipBottomRadius;
+      clipTopRadius ??= clipRadius;
+      clipBottomRadius ??= clipRadius;
+    }
+
+    final align = Alignment.bottomCenter;
+
+    Widget result = body
+        .size(width: width, height: height)
         .safeArea(useSafeArea: useSafeArea, maintainBottomViewPadding: true)
         .material(color: bgColor ?? globalTheme.dialogSurfaceBgColor)
         .clipRadius(
@@ -371,30 +382,41 @@ mixin DialogMixin implements TranslationTypeImpl {
           radius: clipTopRadius == null ? 8 : clipTopRadius / 2,
           decorationColor: Colors.transparent,
           shadowOffset: const Offset(0, -4),
-        )
-        .pullBack(
-          enablePullBack: enablePullBack,
-          useScrollConsume: useScrollConsume,
-          pullMaxBound: pullMaxBound,
-          onPullBack:
-              onPullBack ??
-              (context) {
-                if (pullMaxBound == null) {
-                  //debugger();
-                  /*if (route?.isCurrent == true) {
+        );
+
+    //--
+    result = result.pullBack(
+      enablePullBack: enablePullBack,
+      useScrollConsume: useScrollConsume,
+      pullMaxBound: pullMaxBound,
+      onPullBack:
+          onPullBack ??
+          (context) {
+            if (pullMaxBound == null) {
+              //debugger();
+              /*if (route?.isCurrent == true) {
                     closeDialogIf(context, true, maybePop);
                   } else {*/
-                  navigator.removeRouteIf(route);
-                  /*}*/
-                }
-              },
-        )
+              navigator.removeRouteIf(route);
+              /*}*/
+            }
+          },
+    );
+
+    return result
         .matchParent(matchHeight: fullScreen)
-        .align(Alignment.bottomCenter)
+        .align(align, enable: isInPopup != true)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
-        .adaptiveTablet(context)
+        .adaptiveTablet(
+          context,
+          alignment: align,
+          disable: fullScreen || isInPopup == true,
+        )
         .blur(sigma: blur ? kL : null)
-        .autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
+        .autoCloseDialog(
+          context,
+          enableAutoClose: enableAutoClose ?? dialogBarrierDismissible,
+        );
   }
 
   /// 构建一个底部弹出的对话框, 支持一组小部件[WidgetList]
