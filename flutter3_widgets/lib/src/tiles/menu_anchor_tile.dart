@@ -200,12 +200,16 @@ class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
           //--click
           if (widget.childBuilder == null) {
             body = body.click(() {
-              //l.d(_widgetFocusNode.hasFocus);
-              if (menuController.isOpen ||
-                  _menuAnimationStatus.isForwardOrCompleted) {
-                menuController.close();
-              } else {
+              /*l.d(
+                "${_widgetFocusNode.hasFocus} ${menuController.isOpen} $_menuAnimationStatus",
+              );*/
+              if (_menuAnimationStatus == .forward ||
+                  _menuAnimationStatus == .dismissed) {
+                //菜单正在动画打开, 则直接打开
                 menuController.open();
+              } else if (_menuAnimationStatus == .reverse ||
+                  menuController.isOpen) {
+                menuController.close();
               }
               widget.onTap?.call();
             });
