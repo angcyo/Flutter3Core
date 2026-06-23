@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libBack": MessageLookupByLibrary.simpleMessage("Back"),
     "libCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "libCanvasAdaptive": MessageLookupByLibrary.simpleMessage("Adaptive"),
+    "libCanvasOptions": MessageLookupByLibrary.simpleMessage("Canvas Options"),
     "libChoose": MessageLookupByLibrary.simpleMessage("Please Select"),
     "libClickRetry": MessageLookupByLibrary.simpleMessage("Click to Retry"),
     "libConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
@@ -52,6 +53,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "libExternalShare": MessageLookupByLibrary.simpleMessage("External Share"),
     "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
     "libGoDownload": MessageLookupByLibrary.simpleMessage("Go to Download"),
+    "libHideAllElements": MessageLookupByLibrary.simpleMessage(
+      "Hide All Elements",
+    ),
     "libInstallNow": MessageLookupByLibrary.simpleMessage("Install Now"),
     "libKnown": MessageLookupByLibrary.simpleMessage("Got it"),
     "libLatestVersion": MessageLookupByLibrary.simpleMessage(
@@ -65,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libNextTime": MessageLookupByLibrary.simpleMessage("Remind me later"),
     "libNo": MessageLookupByLibrary.simpleMessage("No"),
     "libOpen": MessageLookupByLibrary.simpleMessage("Open"),
+    "libPaste": MessageLookupByLibrary.simpleMessage("Paste"),
     "libRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "libRename": MessageLookupByLibrary.simpleMessage("Rename"),
     "libSave": MessageLookupByLibrary.simpleMessage("Save"),
@@ -72,7 +77,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "libSaveSuccessful": MessageLookupByLibrary.simpleMessage(
       "Saved successfully",
     ),
+    "libSelectAll": MessageLookupByLibrary.simpleMessage("Select All"),
     "libShare": MessageLookupByLibrary.simpleMessage("Share"),
+    "libShowAllElements": MessageLookupByLibrary.simpleMessage(
+      "Show All Elements",
+    ),
     "libTips": MessageLookupByLibrary.simpleMessage("Tip"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("Upgrade failed"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("Start Upgrade"),
@@ -83,6 +92,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),
     "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
     "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "libZoomIn": MessageLookupByLibrary.simpleMessage("Zoom In"),
+    "libZoomOut": MessageLookupByLibrary.simpleMessage("Zoom Out"),
     "testResKey": MessageLookupByLibrary.simpleMessage(
       "testResKey Translation resources",
     ),

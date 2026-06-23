@@ -1471,7 +1471,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
-  /// 点击指定菜单时回调, 和[ElementMenu.onTap]同步回调
+  /// [ElementMenuControl]点击指定菜单时回调, 和[ElementMenu.onTap]同步回调
   void dispatchElementTapMenu(ElementMenu menu) {
     _eachCanvasListener((element) {
       element.onElementTapMenuAction?.call(menu);
@@ -1583,7 +1583,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     });
   }
 
-  /// 构建画布右键菜单
+  /// [CanvasMenuManager]构建画布右键菜单
   /// - 可以获取选中的元素, 返回不同的菜单
   /// - 可以识别菜单锚点的位置
   /// 

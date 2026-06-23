@@ -43,17 +43,18 @@ class CanvasMenuManager
     final globalTheme = GlobalTheme.of(context);
     final enableSelect = !isEmptyElement;
     final enablePaste = !isNil(canvasKeyManager._copyElementList);
+    final libRes = context?.libRes;
     //外部菜单
     final otherMenus = canvasDelegate.dispatchBuildCanvasMenu();
     return [
-      "粘贴"
+      (libRes?.libPaste ?? "粘贴")
           .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
           .menuStyleItem()
           .inkWell(() {
             canvasKeyManager.pasteSelectedElement();
           }, enable: enablePaste)
           .popMenu(enable: enablePaste),
-      "全选"
+      (libRes?.libSelectAll ?? "全选")
           .text(textColor: enableSelect ? null : globalTheme.disableTextColor)
           .menuStyleItem()
           .inkWell(() {
@@ -63,32 +64,36 @@ class CanvasMenuManager
       "100%".text().menuStyleItem().inkWell(() {
         canvasViewBox.scaleTo(sx: 1, sy: 1);
       }).popMenu(),
-      "放大".text().menuStyleItem().inkWell(() {
+      (libRes?.libZoomIn ?? "放大").text().menuStyleItem().inkWell(() {
         canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
       }).popMenu(),
-      "缩小".text().menuStyleItem().inkWell(() {
+      (libRes?.libZoomOut ?? "缩小").text().menuStyleItem().inkWell(() {
         canvasKeyManager.zoomOut(anchorPosition: anchorPosition);
       }).popMenu(),
-      "画布选项".text().menuStyleItem().inkWell(() {
+      (libRes?.libCanvasOptions ?? "画布选项").text().menuStyleItem().inkWell(() {
         canvasDelegate.showWidgetDialog(CanvasOptionsDialog(canvasDelegate));
       }).popMenu(),
       hLine(context).size(width: kMenuMinWidth),
       if (!canvasDelegate.isCurrentCanvasEmpty &&
           !canvasElementManager.isAllElementHidden())
-        "隐藏所有元素".text().menuStyleItem().inkWell(() {
-          canvasElementManager.visibleElementList(
-            canvasElementManager.elements,
-            visible: false,
-          );
-        }).popMenu(),
+        (libRes?.libHideAllElements ?? "隐藏所有元素").text().menuStyleItem().inkWell(
+          () {
+            canvasElementManager.visibleElementList(
+              canvasElementManager.elements,
+              visible: false,
+            );
+          },
+        ).popMenu(),
       if (!canvasDelegate.isCurrentCanvasEmpty &&
           canvasElementManager.isAnyElementHidden())
-        "显示所有元素".text().menuStyleItem().inkWell(() {
-          canvasElementManager.visibleElementList(
-            canvasElementManager.elements,
-            visible: true,
-          );
-        }).popMenu(),
+        (libRes?.libShowAllElements ?? "显示所有元素").text().menuStyleItem().inkWell(
+          () {
+            canvasElementManager.visibleElementList(
+              canvasElementManager.elements,
+              visible: true,
+            );
+          },
+        ).popMenu(),
       //--
       if (otherMenus.isNotEmpty) hLine(context).size(width: kMenuMinWidth),
       ...otherMenus,

@@ -71,6 +71,13 @@
   "libUpgradeSuccess": "升级成功",
   "libDowngradeSuccess": "降级成功",
   "libCanvasAdaptive": "自适应",
+  "libPaste": "粘贴",
+  "libSelectAll": "全选",
+  "libZoomIn": "放大",
+  "libZoomOut": "缩小",
+  "libCanvasOptions": "画布选项",
+  "libHideAllElements": "隐藏所有元素",
+  "libShowAllElements": "显示所有元素",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

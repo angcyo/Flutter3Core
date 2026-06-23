@@ -333,6 +333,51 @@ class LibRes {
   String get libCanvasAdaptive {
     return Intl.message('自适应', name: 'libCanvasAdaptive', desc: '', args: []);
   }
+
+  /// `粘贴`
+  String get libPaste {
+    return Intl.message('粘贴', name: 'libPaste', desc: '', args: []);
+  }
+
+  /// `全选`
+  String get libSelectAll {
+    return Intl.message('全选', name: 'libSelectAll', desc: '', args: []);
+  }
+
+  /// `放大`
+  String get libZoomIn {
+    return Intl.message('放大', name: 'libZoomIn', desc: '', args: []);
+  }
+
+  /// `缩小`
+  String get libZoomOut {
+    return Intl.message('缩小', name: 'libZoomOut', desc: '', args: []);
+  }
+
+  /// `画布选项`
+  String get libCanvasOptions {
+    return Intl.message('画布选项', name: 'libCanvasOptions', desc: '', args: []);
+  }
+
+  /// `隐藏所有元素`
+  String get libHideAllElements {
+    return Intl.message(
+      '隐藏所有元素',
+      name: 'libHideAllElements',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `显示所有元素`
+  String get libShowAllElements {
+    return Intl.message(
+      '显示所有元素',
+      name: 'libShowAllElements',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

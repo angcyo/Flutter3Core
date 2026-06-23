@@ -62,6 +62,13 @@
   "libUpgradeSuccess": "Upgrade succeeded",
   "libDowngradeSuccess": "Downgrade succeeded",
   "libCanvasAdaptive": "Adaptive",
+  "libPaste": "Paste",
+  "libSelectAll": "Select All",
+  "libZoomIn": "Zoom In",
+  "libZoomOut": "Zoom Out",
+  "libCanvasOptions": "Canvas Options",
+  "libHideAllElements": "Hide All Elements",
+  "libShowAllElements": "Show All Elements",
   "@libPlaceholder": {
     "placeholders": {
       "des": {
