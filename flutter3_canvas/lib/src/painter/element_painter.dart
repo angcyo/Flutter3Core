@@ -550,13 +550,13 @@ class ElementPainter extends IElementPainter {
   /// 只修改[PaintProperty.left].[PaintProperty.top]
   /// [PaintProperty.scaleX].[PaintProperty.scaleY]
   @api
-  void updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
+  bool updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
     if (bounds == null) {
       assert(() {
         l.d('无效的操作');
         return true;
       }());
-      return;
+      return false;
     }
     final property = paintProperty;
     if (property != null) {
@@ -570,8 +570,16 @@ class ElementPainter extends IElementPainter {
       /*paintProperty = property.copyWith()
         ..applyScaleWithCenter(scaleMatrix)
         ..applyTranslate(translate);*/
-      scaleElementWithCenter(matrix: scaleMatrix);
+      scaleElementWithCenter(matrix: scaleMatrix, notify: false);
       translateElement(translate);
+      return true;
+    } else {
+      assert(() {
+        l.d('无效的操作');
+        debugger();
+        return true;
+      }());
+      return false;
     }
   }
 
@@ -1548,6 +1556,8 @@ class ElementPainter extends IElementPainter {
     double? sx,
     double? sy,
     Matrix4? matrix,
+    //--
+    bool? notify,
     Object? fromObj,
     UndoType? fromUndoType,
     String? debugLabel,
@@ -1569,6 +1579,7 @@ class ElementPainter extends IElementPainter {
     if (paintProperty != null) {
       updatePaintProperty(
         paintProperty.copyWith()..applyScaleWithCenter(matrix),
+        notify: notify,
         fromObj: fromObj,
         fromUndoType: fromUndoType,
         debugLabel: debugLabel,
@@ -2457,6 +2468,8 @@ class ElementGroupPainter extends ElementPainter {
     double? sx,
     double? sy,
     Matrix4? matrix,
+    //--
+    bool? notify,
     Object? fromObj,
     UndoType? fromUndoType,
     String? debugLabel,
@@ -2465,6 +2478,7 @@ class ElementGroupPainter extends ElementPainter {
       sx: sx,
       sy: sy,
       matrix: matrix,
+      notify: notify,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
       debugLabel: debugLabel,
@@ -2474,6 +2488,7 @@ class ElementGroupPainter extends ElementPainter {
         sx: sx,
         sy: sy,
         matrix: matrix,
+        notify: notify,
         fromObj: fromObj ?? onlyElementGroupPainter,
         fromUndoType: fromUndoType,
         debugLabel: debugLabel,

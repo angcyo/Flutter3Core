@@ -34,6 +34,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   CanvasContentTemplate? contentTemplate;
 
   /// 画布内容有效区域, 可以用来检测元素是否超出了有效区域
+  /// - 通常会包含[canvasOptimumBounds]最佳区域
   /// [contentTemplate]
   @dp
   @sceneCoordinate
@@ -41,6 +42,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
       contentTemplate?.contentBackgroundInfo?.bounds;
 
   /// 画布内容最佳区域, 可以用来检测元素是否超出了最佳区域
+  /// - 最佳区域会在[canvasContentBounds]内容区域中
   /// [contentTemplate]
   @dp
   @sceneCoordinate

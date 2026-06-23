@@ -1161,6 +1161,37 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     }
   }
 
+  /// 将元素的边界更新为指定边界
+  /// - 缩放
+  /// - 平移
+  @api
+  @supportUndo
+  bool updateElementBounds(
+    ElementPainter? elementPainter,
+    @sceneCoordinate @dp Rect? bounds, {
+    UndoType undoType = UndoType.normal,
+  }) {
+    if (elementPainter == null || bounds == null) {
+      assert(() {
+        l.w("无效的操作[updateElementBounds]");
+        return true;
+      }());
+      return false;
+    }
+    if (undoType == UndoType.normal) {
+      final undoStateStack = elementPainter.createStateStack();
+      final result = elementPainter.updateBoundsTo(bounds);
+      final redoStateStack = elementPainter.createStateStack();
+      canvasDelegate.canvasUndoManager.addUntoState(
+        undoStateStack,
+        redoStateStack,
+      );
+      return result;
+    } else {
+      return elementPainter.updateBoundsTo(bounds);
+    }
+  }
+
   //endregion --选中选择api--
 }
 
