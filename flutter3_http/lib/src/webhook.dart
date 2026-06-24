@@ -135,7 +135,7 @@ class Webhook {
     //post请求
     final postBody = {
       if (sign != null) "timestamp": timestamp,
-      if (sign != null) "sign": sign,
+      "sign": ?sign,
       "msg_type": "interactive",
       "card": {
         "schema": "2.0",

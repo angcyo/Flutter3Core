@@ -434,7 +434,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     String? tag,
     String? debugLabel,
     StackTrace? stack,
-  }) async {
+  }) {
     //debugger();
     stack ??= StackTrace.current;
     final handle = resultHandle ?? HttpResultHandle();
