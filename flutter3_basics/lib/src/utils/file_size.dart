@@ -3,6 +3,21 @@ part of '../../flutter3_basics.dart';
 /// 2023-11-18
 /// https://pub.dev/packages/filesize
 /// https://github.com/synw/filesize
+///
+
+const int KB = 1024;
+const int MB = KB * KB;
+const int GB = KB * MB;
+const int TB = KB * GB;
+const int PB = KB * TB;
+/*const EB = KB * PB;
+const ZB = KB * EB;
+const YB = KB * ZB;
+const NB = KB * YB;
+const DB = KB * NB;
+const XB = KB * DB;
+const CB = KB * XB;
+const HB = KB * CB;*/
 
 extension FileSizeEx on num {
   /// 字节大小转换为人类可读的字符串

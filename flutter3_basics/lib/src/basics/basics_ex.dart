@@ -2172,6 +2172,19 @@ extension NumEx on num {
 }
 
 extension IntEx on int {
+  //MARK: byte size
+  int get kb => this * 1024;
+
+  int get mb => kb * 1024;
+
+  int get gb => mb * 1024;
+
+  int get tb => gb * 1024;
+
+  int get pb => tb * 1024;
+
+  //--
+
   /// 保证是奇数
   int get odd => this % 2 == 1 ? this : this + 1;
 
