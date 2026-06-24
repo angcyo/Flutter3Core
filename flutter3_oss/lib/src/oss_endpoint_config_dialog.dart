@@ -65,8 +65,15 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
     if (selected) {
       onTap = null;
     }
+    final ossEndpointLabel = ossEndpoint?.contains("heyuan") == true
+        ? "河源"
+        : ossEndpoint?.contains("hongkong") == true
+        ? "香港"
+        : null;
     return [
-          ossEndpoint?.text(style: globalTheme.textBodyStyle),
+          ossEndpoint
+              ?.connect(null, ossEndpointLabel?.wph.connect(" "))
+              .text(style: globalTheme.textBodyStyle),
           ossBucket?.text(style: globalTheme.textDesStyle),
         ]
         .column(crossAxisAlignment: .start)!
