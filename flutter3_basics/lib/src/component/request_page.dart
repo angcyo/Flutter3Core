@@ -279,4 +279,26 @@ class RequestPage {
       }
     });
   }
+
+  /// 排序比较
+  @api
+  int compareWith<T>(Comparable<T>? a, Comparable<T>? b) {
+    if (reversed == true) {
+      //倒序
+      if (a == null) {
+        return b == null ? 0 : -1;
+      } else if (b == null) {
+        return 1;
+      }
+      return b.compareTo(a as T);
+    } else {
+      //正序
+      if (a == null) {
+        return b == null ? 0 : 1;
+      } else if (b == null) {
+        return -1;
+      }
+      return a.compareTo(b as T);
+    }
+  }
 }

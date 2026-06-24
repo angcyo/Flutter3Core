@@ -134,7 +134,9 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
       dropdownColor: widget.dropdownColor,
       enableFeedback: true,
       alignment: widget.alignment,
-      padding: widget.padding ?? insets(h: kH),
+      padding:
+          widget.padding ??
+          insets(h: kH, v: widget.isDense == true ? kL : null),
       onChanged: (value) {
         /*initialValue = value;
             updateState();*/
@@ -233,7 +235,12 @@ class DropdownMenuTile extends StatefulWidget with TileMixin {
   //MARK: - menu
 
   /// 下拉菜单的样式
+  @defInjectMark
   final MenuStyle? menuStyle;
+
+  /// 下拉菜单的偏移量
+  @defInjectMark
+  final Offset? alignmentOffset;
 
   /// 下拉菜单样式的背景颜色
   @defInjectMark
@@ -305,6 +312,7 @@ class DropdownMenuTile extends StatefulWidget with TileMixin {
     this.selectOnly = false,
     this.enableFilter = true,
     this.menuStyle,
+    this.alignmentOffset,
     this.menuBgColor,
     this.itemAlignment = AlignmentDirectional.centerStart,
     //--
@@ -405,6 +413,7 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
       selectOnly: widget.selectOnly /*仅支持选择?*/,
       enableFilter: widget.enableFilter,
       enableSearch: true /*激活搜索高亮?*/,
+      /*scrollPadding: insets(all: 80),*/
       searchCallback: (entries, query) {
         //debugger();
         //返回需要高亮的index
@@ -426,9 +435,9 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
             }
           : null,*/
       initialSelection: widget.dropdownValue,
-      width: null /*double.infinity*/ /*显示的宽度*/,
+      width: null /*double.infinity*/ /*下拉菜单整体显示的宽度*/,
       menuHeight: null /*下拉菜单整体的高度*/,
-      expandedInsets: widget.expandedInsets /*撑满并且加内边距*/,
+      expandedInsets: widget.expandedInsets /*撑满并且加内边距, 作用于当前widget*/,
       //菜单样式
       menuStyle:
           widget.menuStyle ??
@@ -436,6 +445,8 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
             backgroundColor: WidgetStatePropertyAll(menuBgColor),
             alignment: .bottomStart,
           ),
+      //下拉菜单对齐后的额外偏移
+      alignmentOffset: widget.alignmentOffset ?? Offset(4, 0),
       //输入控制器
       requestFocusOnTap: _textEditingController != null,
       controller: _textEditingController,
@@ -742,6 +753,7 @@ extension DropdownMenuValueListEx on List {
     //--
     bool isDense = false,
     bool? isExpanded,
+    EdgeInsetsGeometry? tilePadding,
     //--input style
     bool? useOverlayStyle,
     bool enableInputFilter = true,
@@ -790,6 +802,7 @@ extension DropdownMenuValueListEx on List {
       onChanged: onChanged,
       isExpanded: isExpanded,
       isDense: isDense,
+      padding: tilePadding,
     );
   }
 }

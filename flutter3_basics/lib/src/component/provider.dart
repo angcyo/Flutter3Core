@@ -79,7 +79,7 @@ typedef WidgetOf = dynamic;
 /// - [tryTextWidget] 是否尝试使用[Text]小部件
 /// - [textSelectable] 是否可选择文本
 Widget? widgetOf(
-  BuildContext context,
+  BuildContext? context,
   dynamic data, {
   //--
   bool? tryTextWidget,
@@ -95,16 +95,19 @@ Widget? widgetOf(
   if (data is Widget) {
     return data;
   }
-  if (data is IWidgetProvider && data.provideWidget != null) {
-    return data.provideWidget?.call(context);
-  } else {
-    try {
+
+  if (context != null) {
+    if (data is IWidgetProvider && data.provideWidget != null) {
       return data.provideWidget?.call(context);
-    } catch (e, s) {
-      /*assert(() {
+    } else {
+      try {
+        return data.provideWidget?.call(context);
+      } catch (e, s) {
+        /*assert(() {
         printError(e, s);
         return true;
       }());*/
+      }
     }
   }
 
