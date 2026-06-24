@@ -1,5 +1,10 @@
 part of '../flutter3_app.dart';
 
+///
+/// Email:angcyo@126.com
+/// @author angcyo
+/// @date 2023/12/03
+///
 extension AppLogPathListEx on List<String> {
   /// 压缩文件/文件夹
   /// [output] zip文件输出全路径
@@ -29,9 +34,10 @@ extension AppLogPathListEx on List<String> {
   }
 }
 
+/// 分享指定文件夹
 extension AppLogDirectoryEx on Directory {
   /// 分享文件夹对应的日志
-  /// [shareAppLog]
+  /// - 有个全局的[shareAppLog]方法
   Future shareAppLog([String? logName]) async {
     final info = await $platformPackageInfo;
     final output = await cacheFilePath(
@@ -45,15 +51,11 @@ extension AppLogDirectoryEx on Directory {
 }
 
 ///
-/// Email:angcyo@126.com
-/// @author angcyo
-/// @date 2023/12/03
-///
 /// 快速分享app日志压缩文件, 分享日志
 /// - [logName] 指定日志的名称, 不指定使用默认
 /// - [includeFilePath] 是否要包含文件路径数据的分享
 /// - [clearTempPath] 是否要清理临时文件
-/// - [share] 是否要分享
+/// - [share] 是否要触发分享
 ///
 /// ```
 /// /storage/emulated/0/Android/data/com.laser.abc.beeb.app/cache/LOG_中国人_1.0.1_3_2025-11-18_14-28-32_179.zip

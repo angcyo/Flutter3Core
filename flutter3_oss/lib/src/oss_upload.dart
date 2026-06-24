@@ -20,6 +20,8 @@ part of '../flutter3_oss.dart';
 /// - [key] 上传文件的key(全路径), 不指定就是文件名
 /// - [baseUrl] 下载拼接使用的地址
 /// - [override] 是否覆盖源文件, 否则如果文件存在会报409错误
+/// - [onSendAction] 上传进度
+/// - [onReceiveAction] 下载进度
 ///
 /// ```
 /// DioException [connection error]: The connection errored: Failed host lookup: 'laserpecker-prod.https' This indicates an error which most likely cannot be solved by the library.
@@ -75,6 +77,9 @@ Future<String?> uploadAliyunOssFile(
 }
 
 /// 上传一个文件列表
+/// - [onSendAction] 上传进度
+/// - [onReceiveAction] 下载进度
+///
 /// [uploadAliyunOssFile]
 Future<List<String>> uploadAliyunOssFileList(
   List<String> pathList, {
