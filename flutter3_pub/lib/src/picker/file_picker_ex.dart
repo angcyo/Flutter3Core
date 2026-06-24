@@ -214,6 +214,26 @@ extension PickerImageEx on UiImage {
   }
 }
 
+extension PickerFileEx on File {
+  /// 调用系统弹窗, 选择文件路径, 保存文件数据
+  @desktopFlag
+  Future<File?> saveAs({
+    String? dialogTitle,
+    String? fileName,
+    String? initialDirectory,
+  }) async {
+    final filePath = await saveFile(
+      dialogTitle: dialogTitle ?? "Save As",
+      fileName: fileName ?? filename,
+      initialDirectory: initialDirectory,
+    );
+    if (!isNil(filePath)) {
+      return await copyToPath(filePath!);
+    }
+    return null;
+  }
+}
+
 extension PickerBytesEx on List<int> {
   /// 调用系统弹窗, 选择文件路径, 保存数据
   @desktopFlag

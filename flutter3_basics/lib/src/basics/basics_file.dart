@@ -695,10 +695,23 @@ extension FileEx on File {
     }
   }
 
+  /// 复制文件到指定的新路径
+  Future<File?> copyToPath(String path) async {
+    try {
+      return await copy(path);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      return null;
+    }
+  }
+
   /// 复制文件到指定的文件夹
   Future<bool> copyTo(String folder) async {
     try {
-      await copy(File("$folder/$filename").path);
+      await copyToPath(File("$folder/$filename").path);
       return true;
     } catch (e, s) {
       assert(() {
