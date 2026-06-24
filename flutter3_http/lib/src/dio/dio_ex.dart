@@ -336,6 +336,7 @@ extension DioStringEx on String {
   /// [data] 请求体 [DioMixin._transformData]
   /// [savePath] 保存路径
   /// [getSavePath] 异步获取保存路径
+  /// [onReceiveProgress] 下载进度回调
   /// [cancelToken] 取消请求的token
   /// [deleteOnError] 是否在下载失败时, 删除文件
   /// [overwrite] 是否覆盖已存在的文件

@@ -38,7 +38,7 @@ part of '../flutter3_oss.dart';
 /// - [uploadAliyunOssBytes]
 /// - [uploadAliyunOssFile]
 ///
-/// @return 返回文件可以下载的url地址
+/// @return 返回文件可以下载的uri编码后的url地址
 Future<String?> uploadAliyunOssFile(
   String filepath, {
   String? prefixKey,
@@ -73,7 +73,7 @@ Future<String?> uploadAliyunOssFile(
           onReceiveAction: onReceiveAction,
         ),
   );
-  return baseUrl?.connectUrl(key);
+  return baseUrl?.connectUrl(key).encodeUri();
 }
 
 /// 上传一个文件列表
@@ -114,7 +114,7 @@ Future<List<String>> uploadAliyunOssFileList(
         (prefixKey == null
             ? filepath.fileName()
             : "$prefixKey/${filepath.fileName()}");
-    result.add((baseUrl ?? "").connectUrl(key));
+    result.add((baseUrl ?? "").connectUrl(key).encodeUri());
     assetEntities.add(
       AssetFileEntity(
         filepath: filepath,
@@ -192,7 +192,7 @@ Future<String?> uploadAliyunOssBytes(
         ),
   );
   debugger();
-  return baseUrl?.connectUrl(key);
+  return baseUrl?.connectUrl(key).encodeUri();
 }
 
 //endregion bytes

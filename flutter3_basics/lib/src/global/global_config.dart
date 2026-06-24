@@ -92,6 +92,7 @@ Future<bool> openWebUrl(
 /// 快速打开file path
 /// - 支持文件路径
 /// - 支持文件夹路径
+/// - 支持本机能力
 @dsl
 Future<bool> openFilePath(
   String? filePath, [
