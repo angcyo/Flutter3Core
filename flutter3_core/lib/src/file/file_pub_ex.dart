@@ -612,6 +612,7 @@ Future<Directory> cacheFolder([
 /// # Windows
 ///
 /// `C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools\test.txt`
+/// `C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools\upload\20260529-152714_512x512.png`
 ///
 /// - [cacheFolder]
 /// - [cacheFilePath]

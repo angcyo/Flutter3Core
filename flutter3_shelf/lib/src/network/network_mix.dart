@@ -32,6 +32,9 @@ String? get $lastWifiIpCache {
 ///
 /// - 手机网络, 也会返回ip 10.143.37.113
 ///
+/// - [$getLocalIp]
+/// - [$getWifiIp]
+///
 Future<String?> $getWifiIp() async {
   final info = NetworkInfo();
   _lastWifiIpCache = await info.getWifiIP();

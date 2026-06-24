@@ -81,12 +81,14 @@ class Flutter3ShelfHttp {
 
   /// 上传文件的接口
   /// [savePath] 文件保存的路径, 默认是缓存路径
-  /// [onSaveFile] 当有文件上传后, 保存到本地时回调.返回值直接返回给客户端
+  /// [onSaveFileAction] 当有文件上传后, 保存到本地时回调. 返回值直接返回给客户端
   void upload({
     String route = "/upload",
     String? savePath,
     String title = "接收文件",
-    dynamic Function(String filePath)? onSaveFile,
+    String successLabel = "上传成功",
+    String restartLabel = "重新传输",
+    dynamic Function(String filePath)? onSaveFileAction /*返回值会传给前端*/,
   }) {
     _router.post(route, (shelf.Request request) async {
       if (request.formData() case var form?) {
@@ -105,24 +107,29 @@ class Flutter3ShelfHttp {
               ? await cacheFilePath(fileName, "upload")
               : "$savePath/$fileName";
           await bytes.writeToFile(filePath: saveFilePath);
-          result = onSaveFile?.call(saveFilePath);
+          assert(() {
+            l.d("接收到文件,保存至->$saveFilePath");
+            return true;
+          }());
+          result = onSaveFileAction?.call(saveFilePath);
         }
         //debugger();
-        final msg = count <= 1
-            ? "文件上传成功:${bytesCount.toSizeStr()}"
-            : "文件上传成功($count个文件, 总字节数:${bytesCount.toSizeStr()})";
         if (request.isAcceptHtml) {
           return result != null
               ? responseOkHtml(ShelfHtml.getResponseHtml(title, "$result"))
               : responseOkHtml(
                   ShelfHtml.getReceiveSucceedHtml(
                     title,
-                    isDebug ? msg : "上传成功",
-                    "重新传输",
+                    isDebug
+                        ? (count <= 1
+                              ? "文件上传成功: ${bytesCount.toSizeStr()}"
+                              : "文件上传成功($count个文件, 总字节数: ${bytesCount.toSizeStr()})")
+                        : successLabel,
+                    restartLabel,
                   ),
                 );
         } else {
-          return responseOk("${result ?? msg}");
+          return responseOk("${result ?? successLabel}");
         }
       }
       final text =
@@ -184,9 +191,9 @@ class Flutter3ShelfHttp {
     while (count <= retryCount) {
       try {
         //debugger();
-        final ip = await $getWifiIp();
+        final ip = (await $getLocalIp()) ?? (await $getWifiIp());
         if (checkNetwork && ip == null) {
-          throw "无网络, 请检查网络连接!";
+          throw "无法获取网络IP, 请检查网络连接!";
         }
         host = ip ?? host;
         //debugger();

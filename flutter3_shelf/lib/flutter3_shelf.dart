@@ -34,6 +34,7 @@ export 'src/mode/service_info_bean.dart';
 export 'src/mode/udp_client_info_bean.dart';
 export 'src/mode/udp_message_bean.dart';
 export 'src/mode/udp_packet_bean.dart';
+export 'src/shelf_html.dart';
 
 part 'src/flutter3_shelf_http.dart';
 part 'src/flutter3_shelf_web_socket.dart';

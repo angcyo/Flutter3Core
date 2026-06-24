@@ -398,10 +398,13 @@ Future<InternetAddress?> $getLocalInternetAddress({
 }
 
 /// 获取本机ip
-Future<String> $getLocalIp({
+///
+/// - [$getLocalIp]
+/// - [$getWifiIp]
+Future<String?> $getLocalIp({
   InternetAddressType type = InternetAddressType.IPv4,
 }) async {
-  return (await $getLocalInternetAddress(type: type))?.address ?? "";
+  return (await $getLocalInternetAddress(type: type))?.address;
   /*final interfaces = await NetworkInterface.list(
     type: type,
     includeLinkLocal: true,

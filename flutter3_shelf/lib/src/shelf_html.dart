@@ -385,7 +385,7 @@ setInterval(() => {
 </div>
 </body>
 </html>
-  ''';
+''';
 
   //--
 
@@ -475,6 +475,157 @@ setInterval(() => {
 <footer>
   <div class="bottom-display">{{bottomInfo}}</div>
 </footer>
+</body>
+</html>
+''';
+
+  /// 获取点击按钮上传文件的html
+  static String getUploadFileHtml({
+    String title = "发送文件",
+    String button = "点击上传图片",
+    String action = "/upload",
+  }) =>
+      '''
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>$title</title>
+    <!--移动端适配-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .centered-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* 样式用于垂直排列表单元素 */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .submit {
+            position: relative;
+            display: inline-block;
+            background: #D0EEFF;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #1E88C7;
+            min-width: 50%;
+            margin: 0 0 10px 10px;
+            text-decoration: none;
+            text-indent: 0;
+            line-height: 30px;
+        }
+
+        /*虚线边框, 灰色填充*/
+        .file-upload {
+            border: 2px dashed #ccc;
+            background: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+            margin: 0 40px;
+        }
+
+        /*加载动画div样式*/
+        .loading {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            pointer-events: none;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg); /* 从0度开始旋转 */
+            }
+            to {
+                transform: rotate(360deg); /* 旋转到360度 */
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="centered-content">
+    <div class="file-upload" id="file-upload">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+             width="80" height="80">
+            <path d="M872.448 939.008H151.552l-40.96-40.96V299.008l40.96-40.96h158.72v81.92H192.512v517.12h638.976V339.968H713.728v-81.92h158.72l40.96 40.96v599.04z"
+                  fill="#437DFF"></path>
+            <path d="M387.072 229.376l-34.816-50.176 138.24-94.208h34.816l131.072 94.208-35.84 50.176-113.664-81.92z"
+                  fill="#63F7DE"></path>
+            <path d="M473.088 137.216h61.44v370.688h-61.44z" fill="#63F7DE"></path>
+        </svg>
+        <p>$button</p>
+        <form action="$action" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" style="display: none" id="file">
+            <!--<input type="submit" value="发送" class="submit">-->
+        </form>
+        <div class="loading" id="loading">
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+                 width="50" height="50">
+                <path d="M469.333333 85.333333m42.666667 0l0 0q42.666667 0 42.666667 42.666667l0 128q0 42.666667-42.666667 42.666667l0 0q-42.666667 0-42.666667-42.666667l0-128q0-42.666667 42.666667-42.666667Z"
+                      fill="#000000" opacity=".8"></path>
+                <path d="M469.333333 725.333333m42.666667 0l0 0q42.666667 0 42.666667 42.666667l0 128q0 42.666667-42.666667 42.666667l0 0q-42.666667 0-42.666667-42.666667l0-128q0-42.666667 42.666667-42.666667Z"
+                      fill="#000000" opacity=".4"></path>
+                <path d="M938.666667 469.333333m0 42.666667l0 0q0 42.666667-42.666667 42.666667l-128 0q-42.666667 0-42.666667-42.666667l0 0q0-42.666667 42.666667-42.666667l128 0q42.666667 0 42.666667 42.666667Z"
+                      fill="#000000" opacity=".2"></path>
+                <path d="M298.666667 469.333333m0 42.666667l0 0q0 42.666667-42.666667 42.666667l-128 0q-42.666667 0-42.666667-42.666667l0 0q0-42.666667 42.666667-42.666667l128 0q42.666667 0 42.666667 42.666667Z"
+                      fill="#000000" opacity=".6"></path>
+                <path d="M783.530667 180.138667m30.169889 30.169889l0 0q30.169889 30.169889 0 60.339779l-90.509668 90.509668q-30.169889 30.169889-60.339779 0l0 0q-30.169889-30.169889 0-60.339779l90.509668-90.509668q30.169889-30.169889 60.339779 0Z"
+                      fill="#000000" opacity=".1"></path>
+                <path d="M330.965333 632.661333m30.16989 30.16989l0 0q30.169889 30.169889 0 60.339778l-90.509668 90.509668q-30.169889 30.169889-60.339779 0l0 0q-30.169889-30.169889 0-60.339778l90.509668-90.509668q30.169889-30.169889 60.339779 0Z"
+                      fill="#000000" opacity=".5"></path>
+                <path d="M843.861333 783.530667m-30.169889 30.169889l0 0q-30.169889 30.169889-60.339779 0l-90.509668-90.509668q-30.169889-30.169889 0-60.339779l0 0q30.169889-30.169889 60.339779 0l90.509668 90.509668q30.169889 30.169889 0 60.339779Z"
+                      fill="#000000" opacity=".3"></path>
+                <path d="M391.338667 330.965333m-30.16989 30.16989l0 0q-30.169889 30.169889-60.339778 0l-90.509668-90.509668q-30.169889-30.169889 0-60.339779l0 0q30.169889-30.169889 60.339778 0l90.509668 90.509668q30.169889 30.169889 0 60.339779Z"
+                      fill="#000000" opacity=".7"></path>
+            </svg>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('file-upload').addEventListener('click', function (e) {
+        document.getElementById('file').click();
+        if (document.getElementById('loading').style.display === 'flex') {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    });
+    document.getElementById('file').addEventListener('change', function () {
+        showLoading();
+        document.querySelector('form').submit();
+    });
+
+    function showLoading() {
+        document.getElementById('loading').style.display = 'flex';
+    }
+</script>
 </body>
 </html>
 ''';
