@@ -499,7 +499,7 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
         }());
         widget.onChanged?.call(value);
         if (widget.selectOnly) {
-          widget.onTextChanged?.call(value);
+          widget.onTextChanged?.call(strOf(value)!);
         }
       },
     );
@@ -775,7 +775,7 @@ extension DropdownMenuValueListEx on List {
       dropdownValue ??= values.firstOrNull;
       if (notifyFirst == true || dropdownValue != null) {
         onChanged?.call(dropdownValue);
-        onTextChanged?.call("$dropdownValue");
+        onTextChanged?.call(strOf(dropdownValue)!);
       }
     }
     if (useOverlayStyle == true) {

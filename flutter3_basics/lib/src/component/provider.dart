@@ -25,6 +25,28 @@ mixin IWidgetProvider {
   WidgetBuilder? get provideWidget => null;
 }
 
+/// 获取一个友好的文本
+String? strOf(dynamic data) {
+  //debugger();
+  if (data == null) {
+    return null;
+  }
+  if (data is String ||
+      data is bool ||
+      data is num ||
+      data is Iterable ||
+      data is Map) {
+    if (data is double) {
+      return data.toDigits();
+    }
+    return data.toString();
+  }
+  if (data is Enum) {
+    return data.name;
+  }
+  return data.toString();
+}
+
 /// 在一个数据中, 提取文本
 /// [ITextProvider]
 String? textOf(dynamic data, [BuildContext? context]) {
@@ -40,16 +62,16 @@ String? textOf(dynamic data, [BuildContext? context]) {
     if (data is double) {
       return data.toDigits();
     }
-    return "$data";
+    return data.toString();
   }
   if (data is ITextProvider) {
     if (context != null) {
-      return data.provideIntlText(context) ?? data.provideText;
+      return data.provideIntlText(context) ?? data.provideText ?? strOf(data);
     }
-    return data.provideText;
+    return data.provideText ?? strOf(data);
   } else {
     try {
-      return data.provideText;
+      return data.provideText ?? strOf(data);
     } catch (e, s) {
       /*assert(() {
         printError(e, s);
