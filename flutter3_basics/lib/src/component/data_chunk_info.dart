@@ -72,6 +72,13 @@ final class DataChunkInfo {
     return LTime.diffTime(startTime, endTime: endTime);
   }
 
+  /// 输出频率控制 Output frequency control
+  /// - [percent] 百分比进度 [0~100]
+  /// - [beat] 每5个进度输出一次
+  bool canOutput(int percent, {int beat = 5}) {
+    return count >= total || (percent % beat) == 0;
+  }
+
   @override
   String toString() {
     //debugger();
