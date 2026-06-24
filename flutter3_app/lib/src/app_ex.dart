@@ -330,6 +330,9 @@ extension ShareStringEx on String {
   /// [mimeType] 文件类型
   ///
   /// https://pub.dev/packages/share_plus
+  ///
+  /// - [PickerFileEx.saveAs]
+  ///
   @PlatformFlag("Android iOS MacOS Web Windows")
   Future<bool> shareFile({
     List<String>? otherFiles,
