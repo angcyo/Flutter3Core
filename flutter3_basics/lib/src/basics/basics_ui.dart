@@ -2777,7 +2777,7 @@ extension WidgetEx on Widget {
     ButtonStyle? style,
     bool? isSelected,
     Widget? selectedIcon,
-    MouseCursor? mouseCursor,
+    MouseCursor? cursor,
     //--
     GestureContextTapCallback? onContextTap /*具有上下文的点击事件回调*/,
   }) {
@@ -2827,7 +2827,7 @@ extension WidgetEx on Widget {
         style: style,
         isSelected: isSelected,
         selectedIcon: selectedIcon,
-        mouseCursor: mouseCursor,
+        mouseCursor: cursor,
       );
     }
 
