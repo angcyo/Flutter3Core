@@ -113,13 +113,11 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       constraints: null,
     );
     if (label != null && !isNil(widget.labelActions)) {
-      label = [
-        label,
-        ...?widget.labelActions,
-      ].row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center);
+      label = [label, ...?widget.labelActions].row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+      );
     }
 
     final numberStr = formatNumber(
@@ -128,19 +126,26 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       digits: widget.maxDigits,
     );
     final number = isDesktopOrWeb
-        ? buildNumberInputWidget(context, numberStr,
+        ? buildNumberInputWidget(
+            context,
+            numberStr,
             minValue: widget.minValue,
             maxValue: widget.maxValue,
             maxDigits: widget.maxDigits,
-            numType: widget._numType, onChanged: (value) {
-            if (value != null) {
-              _currentValue = value;
-              widget.onValueChanged?.call(_currentValue);
-              updateState();
-            }
-          })
-        : buildNumberWidget(context, numberStr,
-            onTap: widget.onNumberTap ??
+            numType: widget._numType,
+            onChanged: (value) {
+              if (value != null && value is num) {
+                _currentValue = value;
+                widget.onValueChanged?.call(_currentValue);
+                updateState();
+              }
+            },
+          )
+        : buildNumberWidget(
+            context,
+            numberStr,
+            onTap:
+                widget.onNumberTap ??
                 () async {
                   final value = await context.showWidgetDialog(
                     NumberKeyboardDialog(
@@ -155,19 +160,20 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
                   if (value != null) {
                     _changeValue(value);
                   }
-                });
+                },
+          );
     return [
-      [
-        label,
-        buildDesWidget(
-          context,
-          desWidget: widget.desWidget,
-          des: widget.des,
-          desPadding: widget.desPadding,
-        )
-      ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
-      number,
-    ]
+          [
+            label,
+            buildDesWidget(
+              context,
+              desWidget: widget.desWidget,
+              des: widget.des,
+              desPadding: widget.desPadding,
+            ),
+          ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
+          number,
+        ]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding ?? globalTheme.tilePadding)
         .material();
@@ -248,7 +254,8 @@ class SingleIncrementNumberWidget extends StatefulWidget
 }
 
 class _SingleIncrementNumberWidgetState
-    extends State<SingleIncrementNumberWidget> with NumberStateMixin {
+    extends State<SingleIncrementNumberWidget>
+    with NumberStateMixin {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -262,8 +269,12 @@ class _SingleIncrementNumberWidgetState
         context,
         step: -1,
         stepText: "-",
-        enable: greaterThan(currentNumberValue, widget.numberMinValue,
-                than: false) &&
+        enable:
+            greaterThan(
+              currentNumberValue,
+              widget.numberMinValue,
+              than: false,
+            ) &&
             lessThan(widget.numberMinValue, widget.numberMaxValue, than: false),
       ),
       currentNumberValueText
@@ -273,25 +284,30 @@ class _SingleIncrementNumberWidgetState
           )
           .constrainedMin(minWidth: widget.numberMinWidth)
           .click(() async {
-        final value = await context.showWidgetDialog(NumberKeyboardDialog(
-          number: currentNumberValue,
-          minValue: widget.numberMinValue,
-          maxValue: widget.numberMaxValue,
-          maxDigits: widget.numberMaxDigits,
-          numType: widget.numberValueTypeMixin,
-        ));
-        if (value != null) {
-          onNumberValueChanged(value);
-        }
-      }),
+            final value = await context.showWidgetDialog(
+              NumberKeyboardDialog(
+                number: currentNumberValue,
+                minValue: widget.numberMinValue,
+                maxValue: widget.numberMaxValue,
+                maxDigits: widget.numberMaxDigits,
+                numType: widget.numberValueTypeMixin,
+              ),
+            );
+            if (value != null) {
+              onNumberValueChanged(value);
+            }
+          }),
       buildIncrementStepWidget(
         context,
         step: 1,
         stepText: "+",
         enable:
             lessThan(currentNumberValue, widget.numberMaxValue, than: false) &&
-                greaterThan(widget.numberMaxValue, widget.numberMinValue,
-                    than: false),
+            greaterThan(
+              widget.numberMaxValue,
+              widget.numberMinValue,
+              than: false,
+            ),
       ),
     ].row();
 
@@ -306,7 +322,7 @@ class _SingleIncrementNumberWidgetState
           .wrapContentWidth()
           .paddingSymmetric(horizontal: kX, vertical: kL)
           .align(Alignment.centerRight)
-          .expanded()
+          .expanded(),
     ].row()!;
   }
 }
