@@ -391,8 +391,8 @@ class _LabelWheelTileState extends State<LabelWheelTile>
           radius: widget.popupRadius,
         ),
         radius: widget.popupRadius,
-        alignment: .bottomRight,
-        offsetAlignment: true,
+        targetAnchor: .bottomCenter,
+        followerAnchor: .topCenter,
         matchAnchorSize: true,
       );
       //debugger();

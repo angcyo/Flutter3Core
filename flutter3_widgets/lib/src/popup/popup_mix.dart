@@ -25,7 +25,8 @@ part 'popup_container_dialog.dart';
 extension PopupEx on BuildContext {
   /// 在指定锚点位置显示一个弹窗路由[PopupRoute]
   ///
-  /// - [alignment]弹窗需要对齐锚点的哪个方向
+  /// - [targetAnchor]对齐锚点的什么位置
+  /// - [followerAnchor]弹窗需要对齐锚点的哪个方向
   /// - [bodyMargin] 弹窗的在对应方向上的边距
   ///
   /// - [showArrowPopupRoute]
@@ -36,12 +37,12 @@ extension PopupEx on BuildContext {
     Rect? anchorRect,
     BuildContext? anchorChild,
     bool rootNavigator = false,
-    double bodyMargin = kH,
     double? edgeMargin /*距离容器的边界距离*/,
     //--
     Alignment? popupPreferredAlignment /*优先对齐方式*/,
-    Alignment? alignment /*对齐方式*/,
-    bool offsetAlignment = false /*根据[alignment]是否偏移自身的宽高*/,
+    Alignment targetAnchor = .topRight /*对齐锚点的什么位置*/,
+    Alignment? followerAnchor /*自身的什么位置*/,
+    Offset alignmentOffset = .zero /*对齐后的偏移*/,
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
@@ -89,8 +90,8 @@ extension PopupEx on BuildContext {
           (anchorRect, childRect) {
             Alignment bodyAlign;
             //debugger();
-            if (alignment != null) {
-              bodyAlign = alignment;
+            if (followerAnchor != null) {
+              bodyAlign = followerAnchor;
             } else {
               final anchorCx = anchorRect.center.dx;
               final anchorCy = anchorRect.center.dy;
@@ -114,84 +115,69 @@ extension PopupEx on BuildContext {
                 }
               }
             }
-            //检查是否空间充足
-            if (alignment == .bottomLeft ||
-                alignment == .bottomRight ||
-                alignment == .bottomCenter) {
-              //底部剩余空间
-              //debugger();
-              final bottomSpace = parentHeight - anchorRect.bottom;
-              if (bottomSpace < childRect.height) {
-                //底部空间不够
-                if (alignment == .bottomLeft) {
-                  bodyAlign = Alignment.topLeft;
-                } else if (alignment == .bottomRight) {
-                  bodyAlign = Alignment.topRight;
-                } else if (alignment == .bottomCenter) {
-                  bodyAlign = Alignment.topCenter;
-                }
-              }
-            } else if (alignment == .topLeft ||
-                alignment == .topRight ||
-                alignment == .topCenter) {
-              //顶部剩余空间
-              final topSpace = anchorRect.top;
-              if (topSpace < childRect.height) {
-                if (alignment == .topLeft) {
-                  bodyAlign = Alignment.bottomLeft;
-                } else if (alignment == .topRight) {
-                  bodyAlign = Alignment.bottomRight;
-                } else if (alignment == .topCenter) {
-                  bodyAlign = Alignment.bottomCenter;
-                }
-              }
+            //所有对齐方式, 参考left top 0,0 计算
+            //MARK: - target offset
+            //偏移到对齐锚点的位置
+            double offsetX = 0;
+            double offsetY = 0;
+            if (targetAnchor == .topLeft) {
+              offsetX = anchorRect.left;
+              offsetY = anchorRect.top;
+            } else if (targetAnchor == .topCenter) {
+              offsetX = anchorRect.center.dx;
+              offsetY = anchorRect.top;
+            } else if (targetAnchor == .topRight) {
+              offsetX = anchorRect.right;
+              offsetY = anchorRect.top;
+            } else if (targetAnchor == .centerLeft) {
+              offsetX = anchorRect.left;
+              offsetY = anchorRect.center.dy;
+            } else if (targetAnchor == .center) {
+              offsetX = anchorRect.center.dx;
+              offsetY = anchorRect.center.dy;
+            } else if (targetAnchor == .centerRight) {
+              offsetX = anchorRect.right;
+              offsetY = anchorRect.center.dy;
+            } else if (targetAnchor == .bottomLeft) {
+              offsetX = anchorRect.left;
+              offsetY = anchorRect.bottom;
+            } else if (targetAnchor == .bottomCenter) {
+              offsetX = anchorRect.center.dx;
+              offsetY = anchorRect.bottom;
+            } else if (targetAnchor == .bottomRight) {
+              offsetX = anchorRect.right;
+              offsetY = anchorRect.bottom;
             }
-            //MARK: - offset
+
+            //MARK: - follower offset
+            //偏移到自身的位置
             //debugger();
-            double offsetX = anchorRect.right + bodyMargin;
-            double offsetY = anchorRect.top;
+            /*double offsetX = anchorRect.right + bodyMargin;
+            double offsetY = anchorRect.top;*/
+            offsetX += alignmentOffset.dx;
+            offsetY += alignmentOffset.dy;
             if (bodyAlign == Alignment.topLeft) {
-              offsetX = anchorRect.left - childRect.w - bodyMargin;
-              offsetY = anchorRect.top;
-              if (offsetAlignment) {
-                offsetY -= childRect.height + bodyMargin;
-              }
+              //--
             } else if (bodyAlign == Alignment.topCenter) {
-              offsetX = anchorRect.center.dx - childRect.w / 2;
-              offsetY = anchorRect.top - childRect.h - bodyMargin;
-              if (offsetAlignment) {
-                offsetY -= childRect.height + bodyMargin;
-              }
+              offsetX -= childRect.w / 2;
             } else if (bodyAlign == Alignment.topRight) {
-              offsetX = anchorRect.right + bodyMargin;
-              offsetY = anchorRect.top;
-              if (offsetAlignment) {
-                offsetY -= childRect.height + bodyMargin;
-              }
+              offsetX -= childRect.w;
             } else if (bodyAlign == Alignment.centerRight) {
-              offsetX = anchorRect.right + bodyMargin;
-              offsetY = anchorRect.center.dy - childRect.h / 2;
+              offsetX -= childRect.w;
+              offsetY -= childRect.h / 2;
             } else if (bodyAlign == Alignment.bottomRight) {
-              offsetX = anchorRect.right + bodyMargin;
-              offsetY = anchorRect.bottom - childRect.h - bodyMargin;
-              if (offsetAlignment) {
-                offsetY += childRect.h + bodyMargin;
-              }
+              offsetX -= childRect.w;
+              offsetY -= childRect.h;
             } else if (bodyAlign == Alignment.bottomCenter) {
-              offsetX = anchorRect.center.dx - childRect.w / 2;
-              offsetY = anchorRect.bottom + bodyMargin;
-              if (offsetAlignment) {
-                offsetY += anchorRect.height + childRect.h;
-              }
+              offsetX -= childRect.w / 2;
+              offsetY -= childRect.h;
             } else if (bodyAlign == Alignment.bottomLeft) {
-              offsetX = anchorRect.left - childRect.w - bodyMargin;
-              offsetY = anchorRect.bottom - childRect.h;
-              if (offsetAlignment) {
-                offsetY += anchorRect.height + childRect.h;
-              }
+              offsetY -= childRect.h;
             } else if (bodyAlign == Alignment.centerLeft) {
-              offsetX = anchorRect.left - childRect.w - bodyMargin;
-              offsetY = anchorRect.centerY - childRect.h / 2;
+              offsetY -= childRect.h / 2;
+            } else if (bodyAlign == Alignment.center) {
+              offsetX -= childRect.w / 2;
+              offsetY -= childRect.h / 2;
             }
             //debugger();
             final offsetMargin = edgeMargin ?? 0;

@@ -533,7 +533,7 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
                   wrapShowPopupMixin(() async {
                     await buildContext?.showPopupDialog(
                       widget.popupBodyWidget!,
-                      alignment: widget.popupAlignment,
+                      followerAnchor: widget.popupAlignment,
                     );
                   }).get((data, error) {
                     if (widget.autoCloseMenu == true) {

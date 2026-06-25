@@ -209,7 +209,7 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
       wrapShowPopupMixin(() async {
         await context?.showPopupDialog(
           popupBodyWidget,
-          alignment: widget.popupAlignment ?? Alignment.topCenter,
+          followerAnchor: widget.popupAlignment ?? Alignment.topCenter,
         );
       });
     }
