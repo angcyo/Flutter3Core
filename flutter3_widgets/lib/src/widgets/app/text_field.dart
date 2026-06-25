@@ -228,6 +228,13 @@ class TextFieldConfig {
 
   //endregion 自动完成
 
+  //region 自动完成
+
+  /// 是否激活数字输入时, 按键盘↑ ↓按键时自动+-1
+  bool? enableNumberKeyInput;
+
+  //endregion 自动完成
+
   /// [SingleInputWidget] 的配置信息
   TextFieldConfig({
     String? text /*默认文本*/,
@@ -274,10 +281,10 @@ class TextFieldConfig {
     this.autoOptionsMaxHeight = 200,
     this.tag,
   }) : controller = controller ?? TextEditingController(text: text),
-       focusNode = focusNode ?? FocusNode(),
        suffixFocusNode = suffixFocusNode ?? FocusNode(skipTraversal: true),
        prefixFocusNode = prefixFocusNode ?? FocusNode(skipTraversal: true),
        obscureNode = ObscureNode(obscureText ?? false) {
+    this.focusNode = focusNode ?? FocusNode(onKeyEvent: handleKeyEvent);
     if (notifyDefaultTextChange) {
       final value = this.controller.value.text;
       notifyValueChanged(value);
@@ -479,6 +486,53 @@ class TextFieldConfig {
   }
 
   //endregion api
+
+  //region KeyEvent
+
+  /// 输入框处理键盘事件
+  @callPoint
+  KeyEventResult handleKeyEvent(FocusNode node, KeyEvent event) {
+    /*assert(() {
+      l.v(
+        '${classHash()} handleKeyEvent[${event.runtimeType}]->${event.logicalKey}',
+      );
+      return true;
+    }());*/
+    if (enableNumberKeyInput == true) {
+      final input = text;
+      final isDouble = input.contains(RegExp(r'\.'));
+      if (isDouble) {
+        final current = input.toDoubleOrNull() ?? 0.0;
+        if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          if (event is KeyDownEvent || event is KeyRepeatEvent) {
+            updateText((current + 0.1).toString(), restoreSelection: true);
+            return .handled;
+          }
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+          if (event is KeyDownEvent || event is KeyRepeatEvent) {
+            updateText((current - 0.1).toString(), restoreSelection: true);
+            return .handled;
+          }
+        }
+      } else {
+        final current = input.toIntOrNull() ?? 0;
+        if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          if (event is KeyDownEvent || event is KeyRepeatEvent) {
+            updateText((current + 1).toString(), restoreSelection: true);
+            return .handled;
+          }
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+          if (event is KeyDownEvent || event is KeyRepeatEvent) {
+            updateText((current - 1).toString(), restoreSelection: true);
+            return .handled;
+          }
+        }
+      }
+    }
+    return KeyEventResult.ignored;
+  }
+
+  //endregion KeyEvent
 
   //region Autocomplete
 
@@ -1489,6 +1543,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       selectionColor: cursorColor,
       selectionHandleColor: cursorColor,
     );
+    final keyboardType = widget.config.keyboardType ?? widget.keyboardType;
+    widget.config.enableNumberKeyInput ??= keyboardType == TextInputType.number;
     final child = TextSelectionTheme(
       data: textSelectionThemeData,
       child: DefaultSelectionStyle(
@@ -1539,7 +1595,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               widget.config.obscureNode.obscureText &&
               !widget.config.obscureNode._showObscureText,
           obscuringCharacter: widget.config.obscureNode.obscuringCharacter,
-          keyboardType: widget.config.keyboardType ?? widget.keyboardType,
+          keyboardType: keyboardType,
           inputFormatters:
               widget.inputFormatters ?? widget.config.inputFormatters,
           cursorColor: cursorColor,
