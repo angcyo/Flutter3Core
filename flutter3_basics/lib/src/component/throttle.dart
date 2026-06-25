@@ -14,9 +14,7 @@ class Throttle {
 
   Timer? _timer;
 
-  Throttle(
-    this.delay,
-  );
+  Throttle(this.delay);
 
   int? _lastCall;
 
@@ -44,7 +42,8 @@ extension ThrottleEx on dynamic {
   static final Map<int, Timer> _throttleMap = {};
   static final Map<int, int> _throttleTimeMap = {};
 
-  /// 限流, 短时间内的连续事件忽略
+  /// 限流, 短时间内的连续事件忽略.
+  /// 每个时间间隔必会执行一次
   ///
   /// ```
   /// doLast = true, doFirst = false; //相对于抖动仅触发最后一次

@@ -35,9 +35,7 @@ class Debounce {
   /// // Create a debounce instance with a 500 milliseconds delay.
   /// final debounce = Debounce(Duration(milliseconds: 500));
   /// ```
-  Debounce(
-    this.delay,
-  );
+  Debounce(this.delay);
 
   /// Calls the provided callback function with debouncing.
   ///
@@ -76,18 +74,27 @@ class Debounce {
 extension DebounceEx on dynamic {
   static final Map<int, Timer> _debounceMap = {};
 
-  /// 抖动, 延迟多少毫秒只执行一次
-  void debounce(
-    VoidCallback callback, {
+  /// 抖动, 延迟多少毫秒只执行最后一次
+  ///
+  /// - [doFirst] 立即执行第一次?
+  /// - [doLast] 最后一次是否执行?
+  void debounce(VoidCallback callback, {
     int millisecond = 200,
     int? key,
+    bool? doFirst,
+    bool? doLast = true,
   }) {
     //debugger();
     key ??= hashCode;
     Timer? timer = _debounceMap[key];
     if (timer?.isActive ?? false) timer?.cancel();
-    timer = Timer(Duration(milliseconds: millisecond), () {
+    if (doFirst == true) {
       callback.call();
+    }
+    timer = Timer(Duration(milliseconds: millisecond), () {
+      if (doLast == true) {
+        callback.call();
+      }
       _debounceMap.remove(key);
     });
     _debounceMap[key] = timer;
