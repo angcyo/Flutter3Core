@@ -113,7 +113,9 @@ Future<bool> openFilePath(
 /// 快速另存为保存/分享file path
 ///  - save as
 ///  - share
+/// 需要自定义[GlobalConfig.saveFileFn] 实现分享弹窗或save as弹窗
 @dsl
+@allPlatformFlag
 Future<bool> saveFilePath(
   String? filePath, [
   BuildContext? context,
