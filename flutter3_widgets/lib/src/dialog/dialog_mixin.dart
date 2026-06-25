@@ -96,6 +96,12 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// 是否背景模糊处理
   bool get dialogBlur => false;
 
+  /// 对话框是否要在弹窗中显示
+  /// - 影响布局
+  ///
+  /// [PopupEx.showPopupDialog]
+  bool? get dialogInPopup => null;
+
   /// 对话框的容器, 带圆角, 带[margin]
   /// - [decorationColor] 背景颜色
   /// - [margin] 整体外边距
@@ -347,6 +353,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? isInPopup /*是否在弹窗中显示当前的布局*/,
   }) {
     blur ??= dialogBlur;
+    isInPopup ??= dialogInPopup;
 
     final body = child;
 
@@ -445,7 +452,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Color? bgColor /*背景颜色, 不指定默认[globalTheme.surfaceBgColor]*/,
     bool showDragHandle = true,
     //--pull back
-    bool enablePullBack = true,
+    bool? enablePullBack,
     bool useScrollConsume = true,
     bool maybePop = false /*使用[maybePop]还是[pop]*/,
     double? pullMaxBound /*可以下拉的最大比例, 或者底部需要预留的高度*/,
@@ -462,13 +469,13 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? blur,
     //--clip--↓
     @autoInjectMark double? clipRadius,
-    @autoInjectMark double? clipTopRadius = kDefaultBorderRadiusXXX,
+    @autoInjectMark double? clipTopRadius,
     @autoInjectMark double? clipBottomRadius,
     Widget? stackBeforeWidget,
     Widget? stackAfterWidget,
     @autoInjectMark bool fullScreen = false /*是否全屏*/,
     //--shadow--↓
-    bool showTopShadow = true /*是否显示顶部阴影*/,
+    bool? showTopShadow /*是否显示顶部阴影*/,
     //--column--↓
     MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
     //CrossAxisAlignment.center, 需要考虑拖动手柄的样式
@@ -490,10 +497,18 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? adaptiveDesktopSlideStyle /*桌面布局使用右边全屏RTL滑动样式布局?*/,
     double? contentMaxWidth /*内容最大宽度, 不指定自适应*/,
   }) {
+    isInPopup ??= dialogInPopup;
+    blur ??= dialogBlur;
+
+    clipTopRadius ??= isInPopup == true
+        ? kDefaultBorderRadiusX
+        : kDefaultBorderRadiusXXX;
+    showTopShadow ??= isInPopup != true;
+    enablePullBack ??= isInPopup != true;
+    //--
     final useDesktopLayout = adaptiveDesktop == true && isDesktopOrWeb;
     if (useDesktopLayout) {
-      clipRadius ??= clipTopRadius ?? clipBottomRadius;
-      clipTopRadius ??= clipRadius;
+      clipRadius ??= clipTopRadius;
       clipBottomRadius ??= clipRadius;
       if (adaptiveDesktopSlideStyle == true) {
         clipRadius = 0;
@@ -506,12 +521,9 @@ mixin DialogMixin implements TranslationTypeImpl {
       }
     }
     if (isInPopup == true) {
-      clipRadius ??= clipTopRadius ?? clipBottomRadius;
-      clipTopRadius ??= clipRadius;
+      clipRadius ??= clipTopRadius;
       clipBottomRadius ??= clipRadius;
     }
-
-    blur ??= dialogBlur;
 
     Widget body;
     children = children.filterNull();
