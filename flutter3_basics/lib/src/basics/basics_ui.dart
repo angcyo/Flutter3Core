@@ -2430,7 +2430,7 @@ extension WidgetEx on Widget {
   ///
   /// - [fixedWidth] 是否固定宽度
   Widget desktopConstrained({
-    bool? enable = true,
+    bool? enable,
     //
     bool fitDialog = true,
     @defInjectMark bool? fitDesktop,
@@ -2445,6 +2445,7 @@ extension WidgetEx on Widget {
     double? maxWidth,
     double? maxHeight,
   }) {
+    enable ??= isDesktopOrWeb;
     if (enable != true) {
       return this;
     }
@@ -2669,8 +2670,8 @@ extension WidgetEx on Widget {
 
   /// 比例box [AspectRatio]
   /// 纵横比表示为宽度与高度的比率。例如，16:9宽高比的值为16.0/9.0。
-  Widget ratio(double aspectRatio) =>
-      AspectRatio(aspectRatio: aspectRatio, child: this);
+  Widget ratio(double aspectRatio, {bool enable = true}) =>
+      enable ? AspectRatio(aspectRatio: aspectRatio, child: this) : this;
 
   /// [Material]组件会影响[ModalRoute.barrierDismissible]属性
   /// 此组件在[OverlayEntry]中可能会影响手势传递.

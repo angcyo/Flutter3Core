@@ -26,9 +26,7 @@ class CoreFileType {
   /// [MimeEx]
   final String? mimeType;
 
-  CoreFileType(this.url)
-      : ext = url.extension(),
-        mimeType = url.mimeType();
+  CoreFileType(this.url) : ext = url.extension(), mimeType = url.mimeType();
 
   //--
 
@@ -93,8 +91,9 @@ extension MimeEx on String {
   /// 'txt': 'text/plain',
   bool get isTextMimeType => toLowerCase().startsWith('text/');
 
-  bool get isGCodeFile => toLowerCase().let((it) =>
-      it.endsWith(".gcode") || it.endsWith(".gc") || it.endsWith(".nc"));
+  bool get isGCodeFile => toLowerCase().let(
+    (it) => it.endsWith(".gcode") || it.endsWith(".gc") || it.endsWith(".nc"),
+  );
 
   bool get isSvgFile => toLowerCase().endsWith(".svg");
 
@@ -109,10 +108,7 @@ extension MimeEx on String {
   /// ```
   String? mimeType([List<int>? headerBytes]) {
     final path = toUri()?.path ?? this;
-    final mimeType = lookupMimeType(
-      path,
-      headerBytes: headerBytes,
-    );
+    final mimeType = lookupMimeType(path, headerBytes: headerBytes);
     if (mimeType == null) {
       return null;
     }
@@ -158,6 +154,7 @@ extension MimeEx on String {
 ///
 Image? getFileIconWidget(
   String? fileName, {
+  double? size,
   double? width,
   double? height,
 }) {
@@ -192,5 +189,9 @@ Image? getFileIconWidget(
   } else if (mime?.isZipMimeType == true || ext == '.zip') {
     key = pngAssets.coreFileIconZip.keyName;
   }
-  return loadCoreAssetImageWidget(key, width: width, height: height);
+  return loadCoreAssetImageWidget(
+    key,
+    width: size ?? width,
+    height: size ?? height,
+  );
 }
