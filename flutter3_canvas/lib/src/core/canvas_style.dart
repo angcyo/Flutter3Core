@@ -208,6 +208,9 @@ class CanvasStyle {
   /// 绘制信息是否单行格式
   bool paintInfoSingleLine = false;
 
+  /// 是否绘制选中元素的边界
+  bool paintSelectedElementBounds = false;
+
   //endregion basics
 
   //region config

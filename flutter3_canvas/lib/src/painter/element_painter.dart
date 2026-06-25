@@ -741,6 +741,7 @@ class ElementPainter extends IElementPainter {
 
   /// 是否在选中的元素内, 也就是是否被选中
   /// 元素是否被选中, 元素是否在元素列表中
+  /// - [containsElement]
   bool get isInElementSelectComponent =>
       canvasDelegate
           ?.canvasElementManager
@@ -748,6 +749,15 @@ class ElementPainter extends IElementPainter {
           .elementSelectComponent
           .children
           ?.contains(this) ==
+      true;
+
+  /// 元素是否被选中, 拆除了[ElementGroupPainter]
+  bool get isSelectComponentContains =>
+      canvasDelegate
+          ?.canvasElementManager
+          .canvasElementControlManager
+          .elementSelectComponent
+          .containsElement(this) ==
       true;
 
   /// 父元素
@@ -924,9 +934,11 @@ class ElementPainter extends IElementPainter {
         //l.w("[ElementPainter.onPaintingSelf]一帧耗时->${lTime.time()}");
       }
 
-      if (debug ||
-          canvasDelegate?.canvasElementManager.isElementSelected(this) ==
-              true) {
+      if (canvasDelegate?.canvasStyle.paintSelectedElementBounds == true &&
+          isInElementSelectComponent
+      /*canvasDelegate?.canvasElementManager.isElementSelected(this) ==
+              true*/
+      ) {
         //debugger();
         //绘制元素旋转的矩形边界
         paintPropertyRect(canvas, paintMeta, paint);
