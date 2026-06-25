@@ -263,6 +263,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasStateList.add(canvasStateData);
     if (notify) {
       canvasDelegate.dispatchCanvasMultiStateChanged(
+        canvasStateList,
         canvasStateData,
         CanvasStateType.add,
       );
@@ -289,6 +290,7 @@ class CanvasMultiManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasStateList.remove(canvasStateData);
     if (notify) {
       canvasDelegate.dispatchCanvasMultiStateChanged(
+        canvasStateList,
         canvasStateData,
         CanvasStateType.remove,
       );

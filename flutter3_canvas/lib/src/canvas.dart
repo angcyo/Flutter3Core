@@ -768,7 +768,11 @@ class CanvasListener {
   final void Function()? onCanvasContentChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasMultiStateChanged]
-  final void Function(CanvasStateData canvasStateData, CanvasStateType type)?
+  final void Function(
+    List<CanvasStateData> canvasStateList,
+    CanvasStateData canvasStateData,
+    CanvasStateType type,
+  )?
   onCanvasMultiStateChanged;
 
   /// [CanvasDelegate.dispatchCanvasMultiStateListChanged]

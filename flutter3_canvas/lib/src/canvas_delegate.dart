@@ -1537,12 +1537,17 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [canvasStateData] 画布状态数据
   /// [type] 新增画布/移除画布
   void dispatchCanvasMultiStateChanged(
+    List<CanvasStateData> canvasStateList,
     CanvasStateData canvasStateData,
     CanvasStateType type,
   ) {
     isCanvasStateChanged = true;
     _eachCanvasListener((element) {
-      element.onCanvasMultiStateChanged?.call(canvasStateData, type);
+      element.onCanvasMultiStateChanged?.call(
+        canvasStateList,
+        canvasStateData,
+        type,
+      );
     });
   }
 
@@ -1586,7 +1591,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [CanvasMenuManager]构建画布右键菜单
   /// - 可以获取选中的元素, 返回不同的菜单
   /// - 可以识别菜单锚点的位置
-  /// 
+  ///
   /// [canvasListeners]
   /// @return 返回菜单列表
   WidgetNullList dispatchBuildCanvasMenu({
