@@ -231,6 +231,7 @@ class TextFieldConfig {
   //region 自动完成
 
   /// 是否激活数字输入时, 按键盘↑ ↓按键时自动+-1
+  @autoInjectMark
   bool? enableNumberKeyInput;
 
   //endregion 自动完成
