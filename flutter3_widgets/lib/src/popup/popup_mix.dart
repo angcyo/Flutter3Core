@@ -112,85 +112,16 @@ extension PopupEx on BuildContext {
                 }
               }
             }
-            //所有对齐方式, 参考left top 0,0 计算
-            //MARK: - target offset
-            //偏移到对齐锚点的位置
-            double offsetX = 0;
-            double offsetY = 0;
-            if (targetAnchor == .topLeft) {
-              offsetX = anchorRect.left;
-              offsetY = anchorRect.top;
-            } else if (targetAnchor == .topCenter) {
-              offsetX = anchorRect.center.dx;
-              offsetY = anchorRect.top;
-            } else if (targetAnchor == .topRight) {
-              offsetX = anchorRect.right;
-              offsetY = anchorRect.top;
-            } else if (targetAnchor == .centerLeft) {
-              offsetX = anchorRect.left;
-              offsetY = anchorRect.center.dy;
-            } else if (targetAnchor == .center) {
-              offsetX = anchorRect.center.dx;
-              offsetY = anchorRect.center.dy;
-            } else if (targetAnchor == .centerRight) {
-              offsetX = anchorRect.right;
-              offsetY = anchorRect.center.dy;
-            } else if (targetAnchor == .bottomLeft) {
-              offsetX = anchorRect.left;
-              offsetY = anchorRect.bottom;
-            } else if (targetAnchor == .bottomCenter) {
-              offsetX = anchorRect.center.dx;
-              offsetY = anchorRect.bottom;
-            } else if (targetAnchor == .bottomRight) {
-              offsetX = anchorRect.right;
-              offsetY = anchorRect.bottom;
-            }
-
-            //MARK: - follower offset
-            //偏移到自身的位置
-            //debugger();
-            /*double offsetX = anchorRect.right + bodyMargin;
-            double offsetY = anchorRect.top;*/
-            offsetX += alignmentOffset.dx;
-            offsetY += alignmentOffset.dy;
-            if (bodyAlign == Alignment.topLeft) {
-              //--
-            } else if (bodyAlign == Alignment.topCenter) {
-              offsetX -= childRect.w / 2;
-            } else if (bodyAlign == Alignment.topRight) {
-              offsetX -= childRect.w;
-            } else if (bodyAlign == Alignment.centerRight) {
-              offsetX -= childRect.w;
-              offsetY -= childRect.h / 2;
-            } else if (bodyAlign == Alignment.bottomRight) {
-              offsetX -= childRect.w;
-              offsetY -= childRect.h;
-            } else if (bodyAlign == Alignment.bottomCenter) {
-              offsetX -= childRect.w / 2;
-              offsetY -= childRect.h;
-            } else if (bodyAlign == Alignment.bottomLeft) {
-              offsetY -= childRect.h;
-            } else if (bodyAlign == Alignment.centerLeft) {
-              offsetY -= childRect.h / 2;
-            } else if (bodyAlign == Alignment.center) {
-              offsetX -= childRect.w / 2;
-              offsetY -= childRect.h / 2;
-            }
-            //debugger();
-            final offsetMargin = edgeMargin ?? 0;
-            return Offset(
-              childRect.width >= parentWidth
-                  ? 0
-                  : offsetX.clamp(
-                      offsetMargin,
-                      parentWidth - offsetMargin - childRect.width,
-                    ),
-              childRect.height >= parentHeight
-                  ? 0
-                  : offsetY.clamp(
-                      offsetMargin,
-                      parentHeight - offsetMargin - childRect.height,
-                    ),
+            return AlignmentAnchorLayout.getFollowerAlignmentOffset(
+              anchorRect: anchorRect,
+              parentSize: Size(parentWidth, parentHeight),
+              childSize: childRect.size,
+              targetAnchor: targetAnchor,
+              followerAnchor: bodyAlign,
+              alignmentOffset: alignmentOffset,
+              edgeOffset: edgeMargin == null
+                  ? null
+                  : Offset(edgeMargin, edgeMargin),
             );
           },
     );

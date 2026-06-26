@@ -20,6 +20,15 @@ class AlignmentAnchorLayout extends StatefulWidget {
   /// 对齐后, 额外的偏移量
   final Offset? alignmentOffset;
 
+  /// 内容位置确定后的回调
+  final void Function(
+    Rect anchorRect,
+    Size parentSize,
+    Size childSize,
+    Offset childOffset,
+  )?
+  onChildUpdatePosition;
+
   //MARK: anchor
 
   /// 获取锚点的位置
@@ -37,7 +46,7 @@ class AlignmentAnchorLayout extends StatefulWidget {
     Alignment? targetAnchor,
     Alignment? followerAnchor,
     Offset? alignmentOffset,
-    Offset? edgeOffset,
+    Offset? edgeOffset /*开启溢出并保证最低偏移量*/,
   }) {
     //所有对齐方式, 参考left top 0,0 计算
     //MARK: - target offset
@@ -103,11 +112,17 @@ class AlignmentAnchorLayout extends StatefulWidget {
     final parentWidth = parentSize.width;
     final parentHeight = parentSize.height;
     //MARK: - 溢出计算
-    if (offsetX < 0) {
-      offsetX = edgeOffset?.dx ?? 0;
-    }
-    if (offsetY < 0) {
-      offsetY = edgeOffset?.dy ?? 0;
+    if (edgeOffset != null) {
+      if (offsetX < 0) {
+        offsetX = edgeOffset?.dx ?? 0;
+      } else if (offsetX + childSize.width > parentWidth) {
+        offsetX = parentWidth - childSize.width - (edgeOffset?.dx ?? 0);
+      }
+      if (offsetY < 0) {
+        offsetY = edgeOffset?.dy ?? 0;
+      } else if (offsetY + childSize.height > parentHeight) {
+        offsetY = parentHeight - childSize.height - (edgeOffset?.dy ?? 0);
+      }
     }
     return Offset(offsetX, offsetY);
   }
@@ -118,6 +133,7 @@ class AlignmentAnchorLayout extends StatefulWidget {
     this.targetAnchor,
     this.followerAnchor,
     this.alignmentOffset,
+    this.onChildUpdatePosition,
     //--
     this.getAnchorBoundsAction,
     this.anchorRect,
@@ -130,6 +146,10 @@ class AlignmentAnchorLayout extends StatefulWidget {
 }
 
 class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
+  /// 拖拽偏移
+  @tempFlag
+  Offset? _dragOffset;
+
   @override
   void initState() {
     super.initState();
@@ -140,13 +160,29 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final dragOffsetLive = OverlayEntryControlStateScope.of(
+      context,
+    )?.dragOffsetLive;
+    if (dragOffsetLive == null) {
+      return buildBody(context);
+    }
+    return dragOffsetLive.build((ctx, offset) {
+      if (offset is Offset) {
+        _dragOffset = offset;
+        _updateChildPosition();
+      }
+      return buildBody(context);
+    });
+  }
+
+  Widget buildBody(BuildContext context) {
     return Offstage(
       offstage: _offstage,
       child: Stack(
         children: [
           Positioned(
-            left: _childOffset.dx,
-            top: _childOffset.dy,
+            left: _childOffset?.dx,
+            top: _childOffset?.dy,
             child: Material(
               color: Colors.transparent,
               type: MaterialType.transparency,
@@ -177,48 +213,52 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
 
   /// 容器大小, 防止溢出
   @tempFlag
-  Size _parentSize = Size.zero;
+  Size? _parentSize;
 
   /// 内容大小
   @tempFlag
-  Size _childSize = Size.zero;
+  Size? _childSize;
 
   /// 锚点位置
   @tempFlag
-  Rect _anchorRect = Rect.zero;
+  Rect? _anchorRect;
 
   /// 计算后的位置偏移量
   @tempFlag
-  Offset _childOffset = Offset.zero;
+  Offset? _childOffset;
 
   /// 更新内容位置
   void _updateChildPosition() {
-    final anchorRect =
+    _anchorRect ??=
         widget.anchorRect ??
         widget.getAnchorBoundsAction?.call() ??
         widget.anchorChild?.findRenderObject()?.getGlobalBounds(
           widget.anchorAncestor,
         );
-    final parentSize =
+    _parentSize ??=
         widget.anchorAncestor?.renderSize ??
         context.findRenderObject()?.renderSize;
-    if (parentSize != null) {
-      _parentSize = parentSize;
-    }
-    if (anchorRect != null && _anchorRect != anchorRect) {
-      _anchorRect = anchorRect;
+    if (_anchorRect != null && _parentSize != null && _childSize != null) {
       _childOffset = AlignmentAnchorLayout.getFollowerAlignmentOffset(
         targetAnchor: widget.targetAnchor,
         followerAnchor: widget.followerAnchor,
-        alignmentOffset: widget.alignmentOffset ?? Offset.zero,
+        alignmentOffset:
+            (widget.alignmentOffset ?? Offset.zero) +
+            (_dragOffset ?? Offset.zero),
         edgeOffset: Offset(kX, kX),
-        anchorRect: anchorRect,
-        parentSize: _parentSize,
-        childSize: _childSize,
+        anchorRect: _anchorRect!,
+        parentSize: _parentSize!,
+        childSize: _childSize!,
       );
       _offstage = false;
+      widget.onChildUpdatePosition?.call(
+        _anchorRect!,
+        _parentSize!,
+        _childSize!,
+        _childOffset!,
+      );
       updateState();
-    } else {
+    } else if (!_offstage) {
       assert(() {
         l.w("无法获取锚点的位置!");
         debugger();

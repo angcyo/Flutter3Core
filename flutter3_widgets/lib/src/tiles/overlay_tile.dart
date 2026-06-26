@@ -230,10 +230,255 @@ class _OverlayTriggerWidgetState extends State<OverlayTriggerWidget> {
   }
 }
 
-extension OverlayTriggerWidgetEx on Widget {
+/// [OverlayEntry]控制小部件
+/// - 支持共享拖拽位置的偏移量
+/// - 支持动画显示
+/// - 支持动画隐藏
+class OverlayEntryControlWidget extends StatefulWidget {
+  /// 核心: 浮窗实体
+  final OverlayEntry? overlayEntry;
+
+  /// child, 动画控制的部分
+  final Widget? child;
+
+  //MARK: animate
+
+  /// 是否需要显示动画
+  final bool animate;
+
+  /// 动画时长
+  final Duration animateDuration;
+
+  /// 获取缩放动画对齐的偏移
+  /// - [Alignment]
+  /// - [FractionalOffset]
+  final Alignment? Function()? onGetScaleAnimateAlign;
+
+  const OverlayEntryControlWidget({
+    super.key,
+    this.overlayEntry,
+    this.child,
+    //--
+    this.animate = true,
+    this.animateDuration = const Duration(milliseconds: 150),
+    this.onGetScaleAnimateAlign,
+  });
+
+  @override
+  State<OverlayEntryControlWidget> createState() => OverlayEntryControlState();
+}
+
+class OverlayEntryControlState extends State<OverlayEntryControlWidget>
+    with SingleTickerProviderStateMixin {
+  //MARK: 共享数据
+
+  /// 共享: 拖拽偏移总量
+  /// - 用于实现拖拽移动浮窗
+  ///
+  /// 使用[OverlayDragTriggerWidget]触发拖拽
+  /// 具体的浮窗监听[dragOffsetLive]的变化刷新界面位置, 不监听则没有任何效果
+  final dragOffsetLive = $live(Offset.zero);
+
+  /// 浮窗实体
+  @tempFlag
+  OverlayEntry? _overlayEntry;
+
+  //MARK: animate
+
+  late final AnimationController animateController = AnimationController(
+    duration: widget.animateDuration,
+    reverseDuration: widget.animateDuration,
+    vsync: this,
+  );
+
+  Alignment? _scaleAlignment;
+
+  @override
+  void initState() {
+    super.initState();
+    _overlayEntry = widget.overlayEntry;
+    if (widget.animate) {
+      _scaleAlignment = widget.onGetScaleAnimateAlign?.call();
+      _waitScaleAlignment();
+    }
+  }
+
+  /// 等待下一帧
+  void _waitScaleAlignment() {
+    if (_scaleAlignment == null && widget.onGetScaleAnimateAlign != null) {
+      $nextFrame(() {
+        _scaleAlignment = widget.onGetScaleAnimateAlign?.call();
+        _waitScaleAlignment();
+      });
+    } else {
+      animateController.forward();
+      updateState();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant OverlayEntryControlWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.overlayEntry != oldWidget.overlayEntry) {
+      _overlayEntry = widget.overlayEntry;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget? child = widget.child;
+    if (widget.animate) {
+      child = FadeTransition(
+        opacity: animateController,
+        child: ScaleTransition(
+          alignment: _scaleAlignment ?? FractionalOffset(0, 0),
+          scale: animateController,
+          child: child,
+        ),
+      ).offstage(_scaleAlignment == null, true);
+    }
+    return OverlayEntryControlStateScope(
+      overlayEntryControlState: this,
+      child: child ?? empty,
+    );
+  }
+
+  /// 隐藏界面
+  /// - 支持动画
+  @api
+  bool hideOverlay() {
+    if (_overlayEntry == null) {
+      return false;
+    }
+    if (widget.animate) {
+      animateController.reverse().then((value) {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
+      });
+      return true;
+    } else {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      return true;
+    }
+  }
+}
+
+/// 提供一个[OverlayEntryControlState]用于操作浮窗
+class OverlayEntryControlStateScope extends InheritedWidget {
+  static OverlayEntryControlState? of(
+    BuildContext? context, {
+    bool depend = false,
+  }) {
+    if (depend) {
+      return context
+          ?.dependOnInheritedWidgetOfExactType<OverlayEntryControlStateScope>()
+          ?.overlayEntryControlState;
+    } else {
+      return context
+          ?.getInheritedWidgetOfExactType<OverlayEntryControlStateScope>()
+          ?.overlayEntryControlState;
+    }
+  }
+
+  /// 隐藏浮窗
+  static bool hideOverlay(BuildContext? context, {bool depend = false}) {
+    return OverlayEntryControlStateScope.of(
+          context,
+          depend: depend,
+        )?.hideOverlay() ==
+        true;
+  }
+
+  //--
+
+  final OverlayEntryControlState overlayEntryControlState;
+
+  const OverlayEntryControlStateScope({
+    super.key,
+    required this.overlayEntryControlState,
+    required super.child,
+  });
+
+  @override
+  bool updateShouldNotify(covariant OverlayEntryControlStateScope oldWidget) {
+    return overlayEntryControlState != oldWidget.overlayEntryControlState;
+  }
+}
+
+/// 浮窗拖拽触发小部件
+class OverlayDragTriggerWidget extends StatefulWidget {
+  /// 小部件
+  final Widget? child;
+
+  /// 默认的偏移量
+  final Offset? offset;
+
+  const OverlayDragTriggerWidget({super.key, this.child, this.offset});
+
+  @override
+  State<OverlayDragTriggerWidget> createState() =>
+      _OverlayDragTriggerWidgetState();
+}
+
+class _OverlayDragTriggerWidgetState extends State<OverlayDragTriggerWidget> {
+  /// 默认的偏移量
+  Offset defOffset = Offset.zero;
+
+  /// 当前拖拽位置, 关键值
+  Offset dragOffset = Offset.zero;
+
+  /// 总共需要的偏移
+  @output
+  Offset get positionOffset => dragOffset + defOffset;
+
+  @override
+  void didUpdateWidget(covariant OverlayDragTriggerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.offset != defOffset) {
+      defOffset = widget.offset ?? Offset.zero;
+      _onUpdateOverlayPosition();
+    }
+  }
+
+  @override
+  void initState() {
+    defOffset = widget.offset ?? Offset.zero;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final body = widget.child ?? empty;
+    return body
+        .gesture(
+          onPanUpdate: (details) {
+            dragOffset += details.delta;
+            _onUpdateOverlayPosition();
+          },
+          onPanStart: (details) {},
+          onPanEnd: (details) {
+            //
+          },
+          onTap: null,
+          behavior: .translucent,
+        )
+        .mouse(cursor: SystemMouseCursors.move);
+  }
+
+  /// 共享偏移数据
+  @overridePoint
+  void _onUpdateOverlayPosition() {
+    OverlayEntryControlStateScope.of(
+      context,
+    )?.dragOffsetLive.updateValue(positionOffset);
+  }
+}
+
+extension OverlayWidgetEx on Widget {
   /// [Overlay]覆盖层现实触发器
   @dsl
-  OverlayTriggerWidget overlayTrigger({
+  Widget overlayTrigger({
     Key? key,
     Widget? content,
     bool hoverTrigger = false,
@@ -245,7 +490,11 @@ extension OverlayTriggerWidgetEx on Widget {
     Alignment? followerAnchor,
     Offset? alignmentOffset,
     MouseCursor? cursor,
+    bool enable = true,
   }) {
+    if (!enable) {
+      return this;
+    }
     return OverlayTriggerWidget(
       key: key,
       hoverTrigger: hoverTrigger,
@@ -260,6 +509,16 @@ extension OverlayTriggerWidgetEx on Widget {
       cursor: cursor,
       child: this,
     );
+  }
+
+  /// 触发浮窗拖拽, 将数据共享到[OverlayEntryControlWidget], 监听偏移量更新界面, 刷新位置
+  ///
+  /// [OverlayDragTriggerWidget]
+  Widget overlayDragTrigger({Key? key, Offset? defOffset, bool enable = true}) {
+    if (!enable) {
+      return this;
+    }
+    return OverlayDragTriggerWidget(key: key, offset: defOffset, child: this);
   }
 }
 
@@ -279,6 +538,8 @@ extension OverlayEx on BuildContext {
     Alignment? targetAnchor,
     Alignment? followerAnchor,
     Offset? alignmentOffset,
+    //--
+    @defInjectMark Alignment? scaleAlignment /*缩放动画对齐方式*/,
   }) async {
     final that = this;
     final overlay = Overlay.of(that, rootOverlay: rootOverlay);
@@ -286,13 +547,26 @@ extension OverlayEx on BuildContext {
     OverlayEntry? overlayEntry;
     overlayEntry = OverlayEntry(
       builder: (context) {
-        return AlignmentAnchorLayout(
-          anchorChild: anchorChild ?? that,
-          anchorAncestor: overlay.context.findRenderObject(),
-          targetAnchor: targetAnchor,
-          followerAnchor: followerAnchor,
-          alignmentOffset: alignmentOffset,
-          child: contentBuilder?.call(context, overlayEntry!) ?? empty,
+        FractionalOffset? fractionalOffset;
+        return OverlayEntryControlWidget(
+          overlayEntry: overlayEntry,
+          onGetScaleAnimateAlign: () => fractionalOffset,
+          child: AlignmentAnchorLayout(
+            anchorChild: anchorChild ?? that,
+            anchorAncestor: overlay.context.findRenderObject(),
+            targetAnchor: targetAnchor,
+            followerAnchor: followerAnchor,
+            alignmentOffset: alignmentOffset,
+            onChildUpdatePosition: (_, parentSize, childSize, childOffset) {
+              final align = scaleAlignment ?? .centerLeft;
+              final offset = childOffset + align.alongSize(childSize);
+              fractionalOffset = FractionalOffset(
+                offset.dx / parentSize.width,
+                offset.dy / parentSize.height,
+              );
+            },
+            child: contentBuilder?.call(context, overlayEntry!) ?? empty,
+          ),
         );
       },
     );

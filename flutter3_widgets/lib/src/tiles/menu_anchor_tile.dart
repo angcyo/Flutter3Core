@@ -430,24 +430,26 @@ class _SubmenuTriggerWidgetState extends State<SubmenuTriggerWidget> {
 /// - 提供一个[MenuController]
 class MenuTriggerScope extends InheritedWidget {
   static MenuTriggerWidgetState? of(
-    BuildContext context, {
+    BuildContext? context, {
     bool depend = false,
   }) {
     if (depend) {
       return context
-          .dependOnInheritedWidgetOfExactType<MenuTriggerScope>()
+          ?.dependOnInheritedWidgetOfExactType<MenuTriggerScope>()
           ?.menuTriggerWidgetState;
     } else {
       return context
-          .getInheritedWidgetOfExactType<MenuTriggerScope>()
+          ?.getInheritedWidgetOfExactType<MenuTriggerScope>()
           ?.menuTriggerWidgetState;
     }
   }
 
   /// 关闭上层菜单
-  static void close(BuildContext context, {bool depend = false}) {
+  static void close(BuildContext? context, {bool depend = false}) {
     MenuTriggerScope.of(context, depend: depend)?._menuController.close();
   }
+
+  //--
 
   final MenuTriggerWidgetState menuTriggerWidgetState;
 

@@ -1415,7 +1415,7 @@ extension WidgetEx on Widget {
   /// - 没有大小
   /// - 不触发绘制
   ///
-  /// - [always] 总是离屏渲染
+  /// - [always] 总是使用离屏渲染组件
   ///
   /// - [invisible]
   /// - [offstage]
