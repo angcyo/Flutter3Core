@@ -560,13 +560,26 @@ extension WidgetEx on Widget {
       key == null ? this : KeyedSubtree(key: key, child: this);
 
   /// [Tooltip] 提示
-  Widget tooltip(String? tip, {InlineSpan? richMessage, bool? preferBelow}) =>
-      tip == null
+  /// - [preferBelow] 优先显示在底部
+  ///
+  /// - [TooltipTheme] 主题样式
+  /// - [Tooltip.dismissAllToolTips] 移除所有tooltip
+  Widget tooltip(
+    String? tip, {
+    TextStyle? textStyle,
+    InlineSpan? richMessage,
+    bool? preferBelow,
+    Decoration? decoration,
+    MouseCursor? cursor,
+  }) => tip == null
       ? this
       : Tooltip(
           message: tip,
+          textStyle: textStyle,
           richMessage: richMessage,
           preferBelow: preferBelow,
+          decoration: decoration,
+          mouseCursor: cursor,
           child: this,
         );
 
