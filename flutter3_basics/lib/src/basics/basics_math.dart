@@ -46,7 +46,7 @@ extension OffsetMathEx on Offset {
   }
 }
 
-/// c边的长度
+/// c边的长度, 求长度
 double c(double x1, double y1, double x2, double y2) {
   return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
 }
@@ -56,7 +56,7 @@ double cl(double x, double y) {
   return math.sqrt(math.pow(x, 2) + math.pow(y, 2));
 }
 
-/// 求2根线之间的角度, 夹角, 弧度
+/// 求2根线之间的角度, 夹角, 弧度, 求角度
 /// 返回的弧度有正负值
 /// [fp1].[fp2] 第一根线的2个点
 /// [sp1].[sp2] 第二根线的2个点
