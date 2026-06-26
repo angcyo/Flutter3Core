@@ -280,6 +280,9 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// 具有上下文的点击事件回调
   final GestureContextTapCallback? onContextTap;
 
+  /// [onContextTap]的基础上, 添加了按下的事件信息
+  final GestureContextTapDownCallback? onContextClickDown;
+
   /// 菜单最小宽度
   final double tileMinWidth;
 
@@ -305,6 +308,7 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.autoClosePopup,
     this.onTap,
     this.onContextTap,
+    this.onContextClickDown,
     //--
     this.tilePadding,
   });
@@ -324,7 +328,8 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
     final isEnableTap =
         widget.popupBodyWidget != null ||
         widget.onTap != null ||
-        widget.onContextTap != null;
+        widget.onContextTap != null ||
+        widget.onContextClickDown != null;
 
     Widget? trailingWidget = widget.trailingWidget;
     if (trailingWidget == null && widget.popupBodyWidget != null) {
@@ -383,6 +388,11 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
                               }
                             });
                           })),
+          onClickDown: widget.onContextClickDown == null
+              ? null
+              : (details) {
+                  widget.onContextClickDown!(context, details);
+                },
           borderRadius: BorderRadius.circular(radius),
           enable: widget.enable ?? isEnableTap,
         )

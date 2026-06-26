@@ -262,3 +262,41 @@ extension OverlayTriggerWidgetEx on Widget {
     );
   }
 }
+
+/// 浮窗上下文扩展
+///
+/// - [OverlayTriggerWidget]
+/// - [ArrowPopupOverlay]
+extension OverlayEx on BuildContext {
+  /// 在指定锚点位置显示浮窗 [Overlay]+[OverlayEntry]实现
+  /// - [OverlayEntry.remove] 手动移除
+  ///
+  /// - [PopupEx.showArrowPopupOverlay]
+  Future<OverlayEntry> showOverlay(
+    Widget? Function(BuildContext, OverlayEntry)? contentBuilder, {
+    BuildContext? anchorChild,
+    bool rootOverlay = false,
+    Alignment? targetAnchor,
+    Alignment? followerAnchor,
+    Offset? alignmentOffset,
+  }) async {
+    final that = this;
+    final overlay = Overlay.of(that, rootOverlay: rootOverlay);
+    //--
+    OverlayEntry? overlayEntry;
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        return AlignmentAnchorLayout(
+          anchorChild: anchorChild ?? that,
+          anchorAncestor: overlay.context.findRenderObject(),
+          targetAnchor: targetAnchor,
+          followerAnchor: followerAnchor,
+          alignmentOffset: alignmentOffset,
+          child: contentBuilder?.call(context, overlayEntry!) ?? empty,
+        );
+      },
+    );
+    overlay.insert(overlayEntry);
+    return overlayEntry;
+  }
+}

@@ -116,7 +116,7 @@ class FourPoint {
 }
 
 /// 定义一个包含2个点的数据结构
-class TwoPoint {
+class TwoPoint with EquatableMixin {
   static TwoPoint? fromListString(String? src) {
     if (src == null || src.isEmpty) {
       return null;
@@ -166,8 +166,17 @@ class TwoPoint {
     y2 = offset.dy;
   }
 
-  /// 2点之间的距离
-  double get distance => c(x1, y1, x2, y2);
+  /// 两点之间的弧度
+  double get radians => $a(x1, y1, x2, y2);
+
+  /// 2点之间的距离, 正值
+  double get distance => $c(x1, y1, x2, y2);
+
+  /// x之间的距离, 正值
+  double get xDistance => (x1 - x2).abs();
+
+  /// y之间的距离, 正值
+  double get yDistance => (y1 - y2).abs();
 
   /// 调整为横竖直线, 避免斜线
   @api
@@ -190,6 +199,9 @@ class TwoPoint {
 
   @override
   String toString() => listString;
+
+  @override
+  List<Object?> get props => [x1, y1, x2, y2];
 }
 
 extension FourPointStringEx on String {

@@ -2931,6 +2931,7 @@ extension WidgetEx on Widget {
   /// - [highlightColor] 高亮颜色, 手势按下时的高亮颜色
   /// - [hoverColor] 鼠标悬停时的颜色
   /// - [onLongPressPeriodic] 周期性的长按回调事件
+  /// - [onClickDown] 带按下事件信息的点击回调
   ///
   /// - [disableColor] 是否要禁用所有颜色效果
   ///
@@ -2941,6 +2942,8 @@ extension WidgetEx on Widget {
   /// - [inkWellCircle]
   Widget inkWell(
     GestureTapCallback? onTap, {
+    GestureTapDownCallback? onClickDown /*带按下事件信息的点击回调*/,
+    GestureTapDownCallback? onTapDown /*按下回调*/,
     BorderRadius? borderRadius /*边框的圆角*/,
     Color? splashColor,
     Color? highlightColor,
@@ -2966,8 +2969,20 @@ extension WidgetEx on Widget {
       hoverColor = Colors.transparent;
     }
     Timer? periodicTimer;
+    TapDownDetails? downDetails;
     Widget body = InkResponse(
-      onTap: onTap,
+      onTap: (onTap != null || onClickDown != null)
+          ? () {
+              onTap?.call();
+              if (downDetails != null) {
+                onClickDown?.call(downDetails!);
+              }
+            }
+          : null,
+      onTapDown: (details) {
+        downDetails = details;
+        onTapDown?.call(details);
+      },
       onLongPress: onLongPressPeriodic != null
           ? () {
               onLongPress?.call();
@@ -3833,7 +3848,7 @@ extension RenderObjectEx on RenderObject {
   /// 遍历所有的子节点[RenderObject]
   /// [visitor] 返回值表示是否继续遍历; true: 继续深度遍历; false: 停止深度遍历;
   /// [ContextEx.eachVisitChildElements]
-  eachVisitChildRenderObject(
+  void eachVisitChildRenderObject(
     ConditionalRenderObjectVisitorDepth visitor, {
     int depth = 0,
   }) {
@@ -3877,6 +3892,21 @@ extension RenderObjectEx on RenderObject {
       result.translate(-origin.dx, -origin.dy);
     }
     return result;
+  }
+
+  /// 获取直属的[T]类型的child, 如果有
+  /// [RenderBox]
+  T? findChild<T>() {
+    if (this is RenderObjectWithChildMixin) {
+      final child = (this as RenderObjectWithChildMixin).child;
+      if (child is T) {
+        return child as T;
+      }
+    }
+    if (this is T) {
+      return this as T;
+    }
+    return null;
   }
 }
 

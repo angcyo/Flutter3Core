@@ -447,48 +447,103 @@ class ElementAdsorbControl
   /// - 起点到终点的距离
   /// - 支持斜线绘制
   /// - 支持距离文本绘制
+  ///
+  /// - [paintEndpoint] 是否绘制起点和终点
+  /// - [paintTextBg] 是否绘制文本背景
   @api
   void paintDistance(
     Canvas canvas,
     PaintMeta paintMeta,
     DistanceValue distance, {
+    bool? paintEndpoint,
+    bool? paintAngle,
+    bool? paintTextBg,
+    @defInjectMark Color? color,
     @defInjectMark Color? textColor,
+    @defInjectMark Color? textBgColor,
   }) {
     paintMeta.withPaintMatrix(canvas, () {
+      final paintColor = color ?? canvasStyle.adsorbLineColor;
+      //绘制端点
+      if (paintEndpoint == true) {
+        canvas.drawCircle2(
+          distance.from,
+          5 / paintMeta.canvasScale,
+          strokeWidth: 1 / paintMeta.canvasScale,
+          strokeColor: paintColor,
+          fillColor: paintColor.withAlpha(40),
+        );
+        canvas.drawCircle2(
+          distance.to,
+          5 / paintMeta.canvasScale,
+          strokeWidth: 1 / paintMeta.canvasScale,
+          strokeColor: paintColor,
+          fillColor: paintColor.withAlpha(40),
+        );
+      }
       //先绘制线
       canvas.drawLine(
         distance.from,
         distance.to,
         Paint()
-          ..color = canvasStyle.adsorbLineColor
+          ..color = paintColor
           ..strokeWidth = 1 / paintMeta.canvasScale,
       );
       //在绘制距离文本
+      final paintTextColor =
+          textColor ??
+          (paintTextBg == true
+              ? Colors.white
+              : canvasStyle.adsorbTextColor.inverse(
+                  enable: canvasDelegate.isThemeDark,
+                ));
+      final paintTextBgColor = textBgColor ?? paintColor;
+
       canvas.drawText(
         axisUnit
             .format(distance.distance.toUnitFromDp(axisUnit))
             .connect(
-              distance.radians == 0 ||
-                      distance.radians == pi ||
-                      distance.radians == -pi ||
-                      distance.radians == pi / 2 ||
-                      distance.radians == -pi / 2
-                  ? '' //特定角度不显示
-                  : ' ${distance.radians.jd.toDigits()}°',
+              paintAngle != false
+                  ? distance.radians == 0 ||
+                            distance.radians == pi ||
+                            distance.radians == -pi ||
+                            distance.radians == pi / 2 ||
+                            distance.radians == -pi / 2
+                        ? '' //特定角度不显示
+                        : ' ${distance.radians.jd.toDigits()}°'
+                  : null,
             ),
-        textColor:
-            textColor ??
-            canvasStyle.adsorbTextColor.inverse(
-              enable: canvasDelegate.isThemeDark,
-            ),
+        textColor: paintTextColor,
         fontSize: canvasStyle.adsorbTextSize / paintMeta.canvasScale,
         getOffset: (painter) {
-          return distance.center -
+          final leftTop =
+              distance.center -
               Offset(
                 painter.size.width / 2,
                 painter.size.height +
                     canvasStyle.axisLabelOffset / paintMeta.canvasScale,
               );
+
+          if (paintTextBg == true) {
+            final padding = 8;
+            canvas.drawRRect(
+              RRect.fromRectXY(
+                Rect.fromLTWH(
+                  leftTop.dx - padding / 2,
+                  leftTop.dy - padding / 2,
+                  painter.size.width + padding,
+                  painter.size.height + padding,
+                ),
+                8,
+                8,
+              ),
+              Paint()
+                ..color = paintTextBgColor
+                ..style = PaintingStyle.fill,
+            );
+          }
+
+          return leftTop;
         },
       );
       /*assert(() {

@@ -14,11 +14,8 @@ import '../../flutter3_widgets.dart';
 ///
 
 part 'arrow_layout.dart';
-
 part 'arrow_popup_overlay.dart';
-
 part 'arrow_popup_route.dart';
-
 part 'popup_container_dialog.dart';
 
 /// 弹窗路由扩展
@@ -289,6 +286,9 @@ extension PopupEx on BuildContext {
   /// - [showArrowPopupRoute] 手势不可以穿透
   /// - [ArrowPopupOverlay]
   /// - [OverlayEntry.remove] 手动移除
+  ///
+  /// - [OverlayEx.showOverlay]
+  ///
   OverlayEntry showArrowPopupOverlay(
     Widget child, {
     Rect? anchorRect,
@@ -300,6 +300,7 @@ extension PopupEx on BuildContext {
     Color? barriersColor,
     AxisDirection? arrowDirection,
     bool enablePassEvent = true,
+    bool rootOverlay = false,
     ArrowPopupOverlayController? controller,
   }) {
     if (controller != null && !controller.canResponse) {
@@ -327,7 +328,7 @@ extension PopupEx on BuildContext {
         );
       },
     );
-    Overlay.of(this).insert(overlayEntry);
+    Overlay.of(this, rootOverlay: rootOverlay).insert(overlayEntry);
     return overlayEntry;
   }
 }

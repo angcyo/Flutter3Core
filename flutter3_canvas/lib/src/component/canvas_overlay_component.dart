@@ -8,6 +8,10 @@ part of '../../flutter3_canvas.dart';
 /// 通常用于在画布上临时绘制额外的信息
 /// 比如钢笔工具/绘制形状等
 ///
+/// - [CanvasPathOverlayComponent] 路径绘制
+/// - [CanvasPenOverlayComponent] 钢笔绘制
+/// - [CanvasMeasureComponent] 测距绘制
+///
 class CanvasOverlayComponent extends IElementPainter
     with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 回调方法
@@ -26,7 +30,7 @@ class CanvasOverlayComponent extends IElementPainter
   @configProperty
   MouseCursor? cursorStyle;
 
-  CanvasOverlayComponent() {
+  CanvasOverlayComponent({super.tag, this.cursorStyle}) {
     paintStrokeWidthSuppressCanvasScale = true;
   }
 
@@ -679,14 +683,61 @@ class CanvasTextOverlayComponent extends CanvasOverlayComponent {}
 
 /// 画布测距工具覆盖层
 /// - 用来绘制2点之间的距离和连线
+/// - 默认使用按下移动测量2个点
+/// - 支持点击2个点测距
 class CanvasMeasureComponent extends CanvasOverlayComponent {
-  /// 每条线段的集合
-  @output
-  final List<TwoPoint> pointList = [];
+  /// 自动完成按键
+  /// - 当此按键抬起时, 自动完成
+  /// - [CanvasDelegate.detachOverlay]
+  @configProperty
+  LogicalKeyboardKey? autoCompleteKey;
 
   /// 定义一个最小有效距离, 小于这个距离的数据无效
   @configProperty
   double minDistance = 0.005;
+
+  /// 是否绘制首尾圈圈
+  @configProperty
+  bool paintEndpoint;
+
+  /// 是否绘制文本背景
+  @configProperty
+  bool paintTextBg;
+
+  /// 是否绘制角度
+  @configProperty
+  bool paintAngle;
+
+  /// 是否使用点击测距, 否则就是鼠标移动测距
+  @configProperty
+  bool clickMeasure;
+
+  /// 当前测距信息回调
+  @dp
+  @sceneCoordinate
+  @configProperty
+  void Function(TwoPoint? point)? onMeasureAction;
+
+  /// 每条线段的集合
+  @dp
+  @sceneCoordinate
+  @output
+  final List<TwoPoint> pointList = [];
+
+  /// 当前的测距线段监听
+  @output
+  final currentPointLive = $live<TwoPoint>(null);
+
+  CanvasMeasureComponent({
+    super.tag,
+    super.cursorStyle,
+    this.autoCompleteKey,
+    this.paintAngle = true,
+    this.paintEndpoint = false,
+    this.paintTextBg = false,
+    this.clickMeasure = false,
+    this.onMeasureAction,
+  });
 
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
@@ -700,38 +751,92 @@ class CanvasMeasureComponent extends CanvasOverlayComponent {
             canvas,
             paintMeta,
             DistanceValue(from: point.$1, to: point.$2),
+            paintEndpoint: paintEndpoint,
+            paintTextBg: paintTextBg,
+            paintAngle: paintAngle,
           );
     }
   }
 
+  /// 第一个点
+  @tempFlag
+  @dp
+  @sceneCoordinate
+  Offset? _firstPoint;
+
   /// 当前编辑/需要创建的线段
   @tempFlag
-  TwoPoint? _currentPoint;
+  TwoPoint? get _currentPoint => currentPointLive.value;
+
+  set _currentPoint(TwoPoint? value) {
+    currentPointLive <= value;
+  }
 
   /// 当前的鼠标位置
   @tempFlag
+  @dp
+  @sceneCoordinate
   Offset _currentPosition = Offset.zero;
 
   @override
   bool handlePainterPointerEvent(PointerEvent event) {
     //l.d("PointerEvent->$event");
+    @dp
+    @sceneCoordinate
     final position =
         canvasViewBox?.toScenePoint(event.localPosition) ?? event.localPosition;
     _currentPosition = position;
     if (event.isPointerDown) {
-      _currentPoint = TwoPoint.fromOffset(position, position);
-      pointList.add(_currentPoint!);
-      canvasDelegate?.refresh();
-    } else if (event.isPointerMove) {
-      _currentPoint?.$2 = position;
-      if (isShiftPressed) {
-        _currentPoint?.adjustStraightLine;
+      if (canvasDelegate?.isDragMode == true) {
+        //画布拖拽中...
+      } else {
+        if (clickMeasure) {
+          if (_firstPoint == null) {
+            _firstPoint = position;
+            _currentPoint = TwoPoint.fromOffset(position, position);
+            pointList.add(_currentPoint!);
+            canvasDelegate?.refresh();
+            onMeasureAction?.call(_currentPoint);
+          } else {
+            //第2个点按下时, 结束当前测距
+            _currentPoint?.$2 = position;
+            if (isShiftPressed) {
+              _currentPoint?.adjustStraightLine;
+            }
+            currentPointLive.notify();
+            canvasDelegate?.refresh();
+            onMeasureAction?.call(_currentPoint);
+            _firstPoint = null;
+            _currentPoint = null;
+            onMeasureAction?.call(_currentPoint);
+          }
+        } else {
+          _currentPoint = TwoPoint.fromOffset(position, position);
+          pointList.add(_currentPoint!);
+          canvasDelegate?.refresh();
+          onMeasureAction?.call(_currentPoint);
+        }
       }
-      canvasDelegate?.refresh();
-    } else if (event.isPointerFinish) {
-      if ((_currentPoint?.distance ?? 0) <= minDistance) {
-        pointList.remove(_currentPoint);
+    } else if (event.isPointerMove || (clickMeasure && event.isPointerHover)) {
+      if (_currentPoint != null) {
+        _currentPoint?.$2 = position;
+        if (isShiftPressed) {
+          _currentPoint?.adjustStraightLine;
+        }
+        currentPointLive.notify();
         canvasDelegate?.refresh();
+        onMeasureAction?.call(_currentPoint);
+      }
+    } else if (event.isPointerFinish) {
+      if (clickMeasure) {
+        //no op
+      } else {
+        if ((_currentPoint?.distance ?? 0) <= minDistance) {
+          pointList.remove(_currentPoint);
+          canvasDelegate?.refresh();
+        }
+        _currentPoint = null;
+        onMeasureAction?.call(_currentPoint);
       }
     }
     return super.handlePainterPointerEvent(event);
@@ -747,19 +852,26 @@ class CanvasMeasureComponent extends CanvasOverlayComponent {
       if (_currentPoint != null) {
         if (event.isKeyDown) {
           _currentPoint?.adjustStraightLine;
+          currentPointLive.notify();
           canvasDelegate?.refresh();
+          onMeasureAction?.call(_currentPoint);
         } else if (event.isKeyUp) {
           _currentPoint?.$2 = _currentPosition;
+          currentPointLive.notify();
           canvasDelegate?.refresh();
+          onMeasureAction?.call(_currentPoint);
         }
       }
-    } else if (event.isKeyUp && event.isEscKey) {
-      if (_currentPoint != null) {
-        pointList.remove(_currentPoint);
-        canvasDelegate?.refresh();
-      }
-    } else if (event.isKeyUp &&
-        event.isKeyboardKey(canvasStyle?.measureKeyboardKey)) {
+    } else if (event.isKeyUp && event.isEscKey && _currentPoint != null) {
+      //esc键, 自动取消当前测距
+      pointList.remove(_currentPoint);
+      canvasDelegate?.refresh();
+      _firstPoint = null;
+      _currentPoint = null;
+      onMeasureAction?.call(_currentPoint);
+    } else if (autoCompleteKey != null &&
+        event.isKeyUp &&
+        event.isKeyboardKey(autoCompleteKey)) {
       canvasDelegate?.detachOverlay(overlay: this);
     }
     return true;

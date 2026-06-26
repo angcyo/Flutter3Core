@@ -1066,6 +1066,33 @@ extension CanvasEx on Canvas {
     });
   }
 
+  /// 在中心点[center]绘制一个半径[radius]的圆
+  /// - 支持描边
+  /// - 支持填充
+  void drawCircle2(
+    Offset center,
+    double radius, {
+    Color? strokeColor,
+    double? strokeWidth,
+    Paint? strokePaint,
+    Color? fillColor,
+    Paint? fillPaint,
+  }) {
+    if (fillPaint != null || fillColor != null) {
+      fillPaint ??= Paint()
+        ..color = fillColor ?? Colors.transparent
+        ..style = PaintingStyle.fill;
+      drawCircle(center, radius, fillPaint);
+    }
+    if (strokePaint != null || strokeColor != null) {
+      strokePaint ??= Paint()
+        ..color = strokeColor ?? Colors.transparent
+        ..strokeWidth = strokeWidth ?? 1
+        ..style = PaintingStyle.stroke;
+      drawCircle(center, radius, strokePaint);
+    }
+  }
+
   //endregion ---draw---
 
   //MARK: - debug

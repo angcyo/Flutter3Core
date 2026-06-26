@@ -102,6 +102,8 @@ class IElementPainter extends IPainter
 
   //endregion component
 
+  IElementPainter({super.tag});
+
   //region core
 
   /// 附加到[CanvasDelegate]

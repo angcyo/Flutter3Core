@@ -8,7 +8,7 @@ part of '../../../flutter3_widgets.dart';
 
 /// [RenderBox.size]
 typedef AfterLayoutCallback =
-    void Function(BuildContext parentContext, RenderBox childRenderBox);
+    void Function(BuildContext parentContext, RenderBox renderBox);
 
 /// 在小部件布局完成之后第一时间触发回调
 class AfterLayout extends SingleChildRenderObjectWidget {
@@ -25,6 +25,8 @@ class AfterLayout extends SingleChildRenderObjectWidget {
   /// for example because this is an animation,
   /// consider scheduling the frame in a post-frame callback using SchedulerBinding.addPostFrameCallback or using an AnimationController to trigger the animation.
   final AfterLayoutCallback? afterLayoutAction;
+
+  /// [afterLayoutAction]延迟一帧触发
   final AfterLayoutCallback? postAfterLayoutAction;
 
   const AfterLayout({

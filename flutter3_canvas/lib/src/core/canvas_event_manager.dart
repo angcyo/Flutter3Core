@@ -198,14 +198,19 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       return true;
     }());*/
 
-    if (event.isKeyDown &&
-        isKeyPressed(
-          key: canvasDelegate.canvasStyle.measureKeyboardKey,
-          matchKeyCount: true,
-        )) {
+    //距离测量
+    final measureKeyboardKey = canvasDelegate.canvasStyle.measureKeyboardKey;
+    if (measureKeyboardKey != null &&
+        event.isKeyDown &&
+        isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
       //触发测量模式
       if (canvasDelegate._overlayComponent == null) {
-        canvasDelegate.attachOverlay(CanvasMeasureComponent());
+        canvasDelegate.attachOverlay(
+          CanvasMeasureComponent(
+            autoCompleteKey: measureKeyboardKey,
+            clickMeasure: false,
+          ),
+        );
       }
     }
     final overlayComponent = canvasDelegate._overlayComponent;

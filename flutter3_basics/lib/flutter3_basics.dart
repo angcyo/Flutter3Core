@@ -217,6 +217,10 @@ typedef NumFormat = String? Function(num? number);
 /// [GestureTapCallback]
 typedef GestureContextTapCallback = void Function(BuildContext contet);
 
+/// [GestureContextTapCallback] 带按下事件信息的回调
+typedef GestureContextTapDownCallback =
+    void Function(BuildContext contet, TapDownDetails details);
+
 /// [GestureTapCallback] 异步手势回调
 /// [GestureContextTapCallback]
 typedef AsyncGestureContextTapCallback = FutureOr Function(BuildContext contet);

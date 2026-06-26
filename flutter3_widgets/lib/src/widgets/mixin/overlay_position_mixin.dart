@@ -5,6 +5,8 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2025/09/15
 ///
 /// 在浮窗中, 自由移动位置的混入
+///
+/// - [OverlayPositionState]
 mixin OverlayPositionMixin<T extends StatefulWidget>
     on TickerProviderStateMixin<T>, HookMixin, HookStateMixin<T> {
   /// 当前位置, 关键值
