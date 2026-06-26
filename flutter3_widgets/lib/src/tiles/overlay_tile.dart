@@ -235,6 +235,9 @@ class _OverlayTriggerWidgetState extends State<OverlayTriggerWidget> {
 /// - 支持动画显示
 /// - 支持动画隐藏
 class OverlayEntryControlWidget extends StatefulWidget {
+  /// 浮窗tag, 用于全局管理, 不指定, 不管理
+  final String? tag;
+
   /// 核心: 浮窗实体
   final OverlayEntry? overlayEntry;
 
@@ -256,6 +259,7 @@ class OverlayEntryControlWidget extends StatefulWidget {
 
   const OverlayEntryControlWidget({
     super.key,
+    this.tag,
     this.overlayEntry,
     this.child,
     //--
@@ -270,6 +274,24 @@ class OverlayEntryControlWidget extends StatefulWidget {
 
 class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     with SingleTickerProviderStateMixin {
+  /// 管理所有浮窗
+  static final _overlayEntryControlStateMap =
+      <String, OverlayEntryControlState>{};
+
+  /// 获取指定的控制状态
+  @api
+  static OverlayEntryControlState? getOverlayEntryControlStateByTag(
+    String? tag,
+  ) {
+    return _overlayEntryControlStateMap[tag];
+  }
+
+  /// 关闭指定浮窗
+  @api
+  static bool hideOverlayByTag(String? tag) {
+    return _overlayEntryControlStateMap[tag]?.hideOverlay() == true;
+  }
+
   //MARK: 共享数据
 
   /// 共享: 拖拽偏移总量
@@ -300,6 +322,9 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     if (widget.animate) {
       _scaleAlignment = widget.onGetScaleAnimateAlign?.call();
       _waitScaleAlignment();
+    }
+    if (widget.tag != null) {
+      _overlayEntryControlStateMap[widget.tag!] = this;
     }
   }
 
@@ -349,6 +374,9 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
   bool hideOverlay() {
     if (_overlayEntry == null) {
       return false;
+    }
+    if (widget.tag != null) {
+      _overlayEntryControlStateMap.remove(widget.tag);
     }
     if (widget.animate) {
       animateController.reverse().then((value) {
@@ -528,10 +556,16 @@ extension OverlayWidgetEx on Widget {
 /// - [ArrowPopupOverlay]
 extension OverlayEx on BuildContext {
   /// 在指定锚点位置显示浮窗 [Overlay]+[OverlayEntry]实现
+  ///
+  /// - [closeBefore]
+  ///   - null: 支持显示多个浮窗
+  ///   - true: 如果已存在浮窗, 则关闭, 并不显示新的.
+  ///   - false: 如果已存在浮窗, 则跳过
+  ///
   /// - [OverlayEntry.remove] 手动移除
   ///
   /// - [PopupEx.showArrowPopupOverlay]
-  Future<OverlayEntry> showOverlay(
+  OverlayEntry showOverlay(
     Widget? Function(BuildContext, OverlayEntry)? contentBuilder, {
     BuildContext? anchorChild,
     bool rootOverlay = false,
@@ -540,7 +574,21 @@ extension OverlayEx on BuildContext {
     Offset? alignmentOffset,
     //--
     @defInjectMark Alignment? scaleAlignment /*缩放动画对齐方式*/,
-  }) async {
+    //--
+    @defInjectMark String? tag /*唯一标识, 用于关闭指定浮窗*/,
+    bool? closeBefore = false,
+  }) {
+    if (closeBefore != null && tag != null) {
+      final overlayEntryControlState =
+          OverlayEntryControlState.getOverlayEntryControlStateByTag(tag);
+      final overlayEntry = overlayEntryControlState?._overlayEntry;
+      if (overlayEntryControlState != null && overlayEntry != null) {
+        if (closeBefore) {
+          overlayEntryControlState.hideOverlay();
+        }
+        return overlayEntry;
+      }
+    }
     final that = this;
     final overlay = Overlay.of(that, rootOverlay: rootOverlay);
     //--
@@ -548,7 +596,9 @@ extension OverlayEx on BuildContext {
     overlayEntry = OverlayEntry(
       builder: (context) {
         FractionalOffset? fractionalOffset;
+        final child = contentBuilder?.call(context, overlayEntry!) ?? empty;
         return OverlayEntryControlWidget(
+          tag: tag ?? child.runtimeType.toString(),
           overlayEntry: overlayEntry,
           onGetScaleAnimateAlign: () => fractionalOffset,
           child: AlignmentAnchorLayout(
@@ -565,7 +615,7 @@ extension OverlayEx on BuildContext {
                 offset.dy / parentSize.height,
               );
             },
-            child: contentBuilder?.call(context, overlayEntry!) ?? empty,
+            child: child,
           ),
         );
       },
