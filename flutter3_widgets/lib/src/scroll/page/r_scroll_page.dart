@@ -705,21 +705,28 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// - [deleteTile]
   /// - [removeTile]
   @api
-  void removeTile(dynamic value) {
-    deleteTile((tile, signal) {
+  WidgetList removeTile(dynamic value, {@defInjectMark bool? checkScroll}) {
+    return deleteTile((tile, signal) {
       return signal.value == value ||
           (value is Iterable && value.contains(signal.value));
-    });
+    }, checkScroll: checkScroll);
   }
 
   /// 在[pageWidgetList]中移除所有[RItemTile.updateSignal]满足条件的value
+  ///
+  /// - [checkScroll] 是否检查滚动位置, 触发加载更多
+  ///
   /// - [updateTile]
   /// - [deleteTile]
   /// - [removeTile]
   ///
   /// [pageWidgetList]
+  /// @return 被删除的小部件列表
   @api
-  void deleteTile(bool Function(Widget tile, Listenable signal) test) {
+  WidgetList deleteTile(
+    bool Function(Widget tile, Listenable signal) test, {
+    @defInjectMark bool? checkScroll,
+  }) {
     final WidgetList removeList = [];
     for (final element in pageWidgetList) {
       //debugger();
@@ -748,6 +755,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       if (pageWidgetList.isEmpty) {
         //显示空页面
         updateAdapterState(WidgetBuildState.empty);
+      } else if (checkScroll ?? false /*scrollController._isEnableLoadMore*/ ) {
+        scrollController.checkScrollPosition();
       }
     } else {
       assert(() {
@@ -755,6 +764,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         return true;
       }());
     }
+    return removeList;
   }
 
   //endregion 页面更新

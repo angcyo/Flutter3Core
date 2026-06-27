@@ -108,16 +108,19 @@ mixin RTileRebuildMixin {
 
   /// [RScrollPage.removeTile]
   @api
-  void removeTile(dynamic value) {
-    deleteTile((tile, signal) {
+  WidgetList removeTile(dynamic value, {@defInjectMark bool? checkScroll}) {
+    return deleteTile((tile, signal) {
       return signal.value == value ||
           (value is Iterable && value.contains(signal.value));
-    });
+    }, checkScroll: checkScroll);
   }
 
   /// [RScrollPage.deleteTile]
   @api
-  void deleteTile(bool Function(Widget tile, Listenable signal) test) {
+  WidgetList deleteTile(
+    bool Function(Widget tile, Listenable signal) test, {
+    @defInjectMark bool? checkScroll,
+  }) {
     final WidgetList removeList = [];
     for (final element in tileWidgetList) {
       //debugger();
@@ -142,5 +145,6 @@ mixin RTileRebuildMixin {
       tileWidgetList.removeAll(removeList);
       tileUpdateSignal.update();
     }
+    return removeList;
   }
 }
