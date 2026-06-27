@@ -160,7 +160,7 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     return BottomNavigationBar(
       items: items,
       elevation: elevation,
-      currentIndex: currentNavigateIndexMixin,
+      currentIndex: clamp(currentNavigateIndexMixin, 0, items.length - 1),
       type: BottomNavigationBarType.fixed,
       backgroundColor: backgroundColor,
       iconSize: selectedIconSize,
