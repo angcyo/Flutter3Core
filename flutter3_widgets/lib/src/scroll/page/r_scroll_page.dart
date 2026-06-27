@@ -308,6 +308,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           return true;
         }());
       }
+    } else if (stateData is Exception) {
+      //error
+      pageWidgetCountLive <= 0;
     }
     scrollController.finishRefresh(loadData, stateData);
   }
