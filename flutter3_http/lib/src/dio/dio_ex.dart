@@ -483,7 +483,7 @@ extension DioFutureResponseEx<T> on Future<T> {
       final err = handle.handleError(error);
       callback?.call(null, err);
       if (throwError == true) {
-        throw error;
+        throw err;
       }
     });
   }

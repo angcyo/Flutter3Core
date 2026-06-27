@@ -51,6 +51,8 @@ class RScrollController extends ScrollController {
   );
 
   /// 情感图状态切换拦截
+  ///
+  /// [buildAdapterStateWidget]
   WidgetBuildStateIntercept widgetStateIntercept = WidgetBuildStateIntercept();
 
   /// 请求的分页信息
@@ -225,7 +227,8 @@ class RScrollController extends ScrollController {
   ]) {
     //debugger();
     //stopScroll();
-    WidgetBuildState toState =
+    //获取目标的情感图状态
+    final toState =
         widgetState ??
         widgetStateIntercept.interceptorWidgetBuildState(
           requestPage,
@@ -331,7 +334,7 @@ class RScrollController extends ScrollController {
   /// - [notifyRebuildLoadMoreWidget]
   @api
   void notifyRebuildLoadMoreWidget() {
-    final WidgetStateBuildWidgetState? state = loadMoreKey.currentState;
+    final state = loadMoreKey.currentState;
     if (state == null) {
       assert(() {
         l.d("[${classHash()}]无法重建布局!");

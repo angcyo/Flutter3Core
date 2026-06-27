@@ -962,6 +962,8 @@ extension WidgetEx on Widget {
     bool keyDown = true,
     bool keyRepeat = false,
     bool keyUp = false,
+    //--其它事件注册
+    List<KeyEventRegister>? keyEventRegisterList,
   }) => enable
       ? KeyEventWidget(
           key: key,
@@ -975,6 +977,7 @@ extension WidgetEx on Widget {
               keyRepeat: keyRepeat,
               keyUp: keyUp,
             ),
+            ...?keyEventRegisterList,
           ],
           child: this,
         )

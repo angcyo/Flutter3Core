@@ -15,9 +15,6 @@ class RHttpException implements Exception {
   /// 异常对象
   final Object? error;
 
-  /// 是否是授权失败401的错误
-  bool get isAuthError => statusCode == 401;
-
   /// 请求的响应对象
   Response? get response {
     final err = error;
@@ -43,6 +40,23 @@ class RHttpException implements Exception {
 
   @override
   String toString() {
-    return 'RHttpException[$statusCode]->$message';
+    if (isDebug) {
+      return "RHttpException[$statusCode]'$message";
+    }
+    return message ?? HttpResultHandle.kDefHttpErrorMessage;
+  }
+}
+
+extension ExceptionHttpEx on Exception {
+  /// 是否是授权失败401的错误
+  bool get isAuthError {
+    final that = this;
+    if (that is RHttpException) {
+      return that.statusCode == 401;
+    }
+    if (that is DioException) {
+      return that.response?.statusCode == 401;
+    }
+    return false;
   }
 }

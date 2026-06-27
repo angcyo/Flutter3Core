@@ -49,8 +49,8 @@ class TokenInterceptor extends Interceptor {
           final uri = options.uri;
           final token = options.headers['Authorization'];
           final isRefreshToken = options.headers['refresh_token'] == "true";
-          l.w("[$uri]请求token失效, 请重新登录!");
-          debugger();
+          l.w("[$uri]请求token失效, 请重新登录->$token");
+          debugger(when: token != null);
           return true;
         }());
         return true;
@@ -121,7 +121,7 @@ class TokenInterceptor extends Interceptor {
     if (!isRefreshToken &&
         !noTokenVerify &&
         isTokenInvalidAction?.call(response) == true) {
-      debugger();
+      debugger(when: token != null);
       //token失效, 请求新的token, 刷新token请求
       final value = response.getQuery(kNoRefreshTokenKey);
       if (value != null && value.toBoolOrNull() == true) {

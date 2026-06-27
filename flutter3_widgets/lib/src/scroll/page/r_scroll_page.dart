@@ -782,15 +782,30 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 }
 
 /// 按键刷新界面 / 快捷键刷新界面
+/// - 支持搜索布局
+///
 /// # Windows
-///   F5 刷新界面
+///   F5: 刷新界面
+///   Ctrl + F: 显示搜索界面
 /// # macOS
-///   Command + R 刷新界面
+///   ⌘ R: 刷新界面
+///   ⌘ F: 显示搜索界面
+/// # 按键描述符
+/// _LocalizedShortcutLabeler.instance.getShortcutLabel( shortcut!, MaterialLocalizations.of(context),);
+///
 mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
   /// [build]->[buildScrollPage]->[pageRScrollView]->[RScrollView]
   @override
   Widget build(BuildContext context) {
     return super.build(context);
+  }
+
+  @override
+  void dispose() {
+    if (enableFilterMixin) {
+      OverlayEntryControlState.hideOverlayByTag(kSearchOverlayTag);
+    }
+    super.dispose();
   }
 
   @override
@@ -813,6 +828,84 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
             startRefresh();
             return .handled;
           },
+          keyEventRegisterList: [
+            if (enableFilterMixin)
+              KeyEventRegister(
+                [
+                  isMacOS
+                      ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyF]
+                      : [LogicalKeyboardKey.control, LogicalKeyboardKey.keyF],
+                ],
+                onKeyEventAction: (event) {
+                  showFilterInputOverlay();
+                  return .handled;
+                },
+              ),
+          ],
         );
+  }
+
+  //MARK: - 过滤功能
+
+  final kSearchOverlayTag = "RScrollPageRefreshMixinSearch";
+
+  /// 是否激活过滤功能
+  @configProperty
+  bool enableFilterMixin = false;
+
+  /// 需要过滤的内容文本
+  @output
+  String? filterTextMixin;
+
+  /// 显示过滤输入框
+  @api
+  @overridePoint
+  void showFilterInputOverlay({
+    BuildContext? context,
+    //--
+    Alignment? targetAnchor,
+    Alignment? followerAnchor,
+    Offset? alignmentOffset,
+  }) {
+    context ??= buildContext;
+    final globalTheme = GlobalTheme.of(context);
+    context?.showOverlay(
+      (ctx, entry) {
+        return SingleInputWidget(
+              config: TextFieldConfig(
+                hintText: "搜索内容",
+                text: filterTextMixin,
+                onChanged: (value) {
+                  filterTextMixin = value;
+                  debounce(() {
+                    rebuildScrollView();
+                  });
+                },
+                onKeyEvent: (node, event) {
+                  if (event.isEscKey) {
+                    OverlayEntryControlState.hideOverlayByTag(
+                      kSearchOverlayTag,
+                    );
+                  }
+                  return .ignored;
+                },
+              ),
+            )
+            .insets(all: kH)
+            .decoration(fillDecoration(color: globalTheme.dialogSurfaceBgColor))
+            .size(width: 260)
+            .elevation(kDefaultElevation)
+            .overlayDragTrigger();
+      },
+      tag: kSearchOverlayTag,
+      targetAnchor: targetAnchor ?? .topRight,
+      followerAnchor: followerAnchor ?? .topRight,
+      alignmentOffset: alignmentOffset ?? Offset(-30, 40),
+      closeBefore: true,
+      onHide: () {
+        filterTextMixin = null;
+        rebuildScrollView();
+      },
+    );
   }
 }
