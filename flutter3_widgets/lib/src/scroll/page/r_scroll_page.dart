@@ -93,13 +93,13 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 获取所有[pageWidgetList].[RItemTile.UpdateValueNotifier]
   List<Bean> getWidgetDataList<Bean>() {
     final List<Bean> result = [];
-    pageWidgetList.map((e) {
-      dynamic value = e.tileValue;
+    for (final widget in pageWidgetList) {
+      dynamic value = widget.tileValue;
       //--
       if (value != null) {
         result.add(value);
       }
-    });
+    }
     return result;
   }
 

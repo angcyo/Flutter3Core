@@ -571,7 +571,7 @@ extension WidgetEx on Widget {
     bool? preferBelow,
     Decoration? decoration,
     MouseCursor? cursor,
-  }) => tip == null
+  }) => tip == null || tip.isEmpty
       ? this
       : Tooltip(
           message: tip,
