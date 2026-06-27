@@ -23,12 +23,13 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
   Future<UiImage?> rasterizeElement({
     Rect? elementBounds,
     EdgeInsets? extend,
-  }) =>
-      CanvasPaintManager.rasterizeElementList(
-        toList(),
-        elementBounds: elementBounds,
-        extend: extend,
-      );
+    double? pixelRatio,
+  }) => CanvasPaintManager.rasterizeElementList(
+    toList(),
+    elementBounds: elementBounds,
+    extend: extend,
+    pixelRatio: pixelRatio,
+  );
 
   /// 获取[ElementPainter]对应的[ElementPainter.parentGroupPainter]
   List<ElementGroupPainter>? get parentPainterList =>
@@ -74,31 +75,30 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
     bool? topLeft,
     bool? leftTop,
   }) {
-    return toList()
-      ..sort((a, b) {
-        final aBounds = a.paintProperty?.getBounds(resetElementAngle);
-        final bBounds = b.paintProperty?.getBounds(resetElementAngle);
+    return toList()..sort((a, b) {
+      final aBounds = a.paintProperty?.getBounds(resetElementAngle);
+      final bBounds = b.paintProperty?.getBounds(resetElementAngle);
 
-        final aTop = aBounds?.top ?? 0;
-        final bTop = bBounds?.top ?? 0;
+      final aTop = aBounds?.top ?? 0;
+      final bTop = bBounds?.top ?? 0;
 
-        final aLeft = aBounds?.left ?? 0;
-        final bLeft = bBounds?.left ?? 0;
+      final aLeft = aBounds?.left ?? 0;
+      final bLeft = bBounds?.left ?? 0;
 
-        if (leftTop == true) {
-          // 从左到右, 从上到下
-          if (aLeft == bLeft) {
-            return aTop.compareTo(bTop);
-          }
-          return aLeft.compareTo(bLeft);
-        } else {
-          // 从上到下, 从左到右
-          if (aTop == bTop) {
-            return aLeft.compareTo(bLeft);
-          }
+      if (leftTop == true) {
+        // 从左到右, 从上到下
+        if (aLeft == bLeft) {
           return aTop.compareTo(bTop);
         }
-      });
+        return aLeft.compareTo(bLeft);
+      } else {
+        // 从上到下, 从左到右
+        if (aTop == bTop) {
+          return aLeft.compareTo(bLeft);
+        }
+        return aTop.compareTo(bTop);
+      }
+    });
   }
 
   /// 获取所有单的[ElementPainter]
@@ -108,16 +108,15 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
     final result = <ElementPainter>[];
     for (final e in this) {
       result.addAll(
-          e.getSingleElementList(includeGroupPainter: includeGroupPainter));
+        e.getSingleElementList(includeGroupPainter: includeGroupPainter),
+      );
     }
     return result;
   }
 
   /// [useElementBounds]当元素没有[Path]时, 是否使用元素的bounds代替
   @dp
-  List<Path> getAllElementOutputPathList({
-    bool useElementBounds = false,
-  }) {
+  List<Path> getAllElementOutputPathList({bool useElementBounds = false}) {
     final elementList = getAllSingleElement();
     final result = <Path>[];
     for (final element in elementList) {
@@ -166,14 +165,13 @@ extension CanvasElementPainterEx on ElementPainter {
     EdgeInsets? extend,
     int? maxWidth,
     int? maxHeight,
-  }) =>
-      CanvasPaintManager.rasterizeElement(
-        this,
-        elementBounds: elementBounds,
-        extend: extend,
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-      );
+  }) => CanvasPaintManager.rasterizeElement(
+    this,
+    elementBounds: elementBounds,
+    extend: extend,
+    maxWidth: maxWidth,
+    maxHeight: maxHeight,
+  );
 
   /// 获取[ElementGroupPainter]的子元素列表
   List<ElementPainter>? get childList => this is ElementGroupPainter

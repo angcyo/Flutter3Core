@@ -29,6 +29,8 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     BoxFit? fit,
     int? maxWidth,
     int? maxHeight,
+    //--
+    double? pixelRatio,
   }) async {
     /*assert(() {
       extend = EdgeInsets.zero;
@@ -86,7 +88,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         dstPadding: extend,
         fit: fit,
       );
-    });
+    }, pixelRatio);
     /*final base64 = await result.toBase64();
     debugger();*/
     return result;
@@ -97,6 +99,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter>? elements, {
     Rect? elementBounds,
     EdgeInsets? extend,
+    double? pixelRatio,
   }) async {
     if (isNil(elements)) {
       return null;
@@ -107,6 +110,7 @@ class CanvasPaintManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       group,
       elementBounds: elementBounds,
       extend: extend,
+      pixelRatio: pixelRatio,
     );
   }
 
