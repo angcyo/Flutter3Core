@@ -760,7 +760,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   //endregion 页面更新
 }
 
-/// F5 刷新界面混入
+/// 按键刷新界面 / 快捷键刷新界面
+/// # Windows
+///   F5 刷新界面
+/// # macOS
+///   Command + R 刷新界面
 mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
   /// [build]->[buildScrollPage]->[pageRScrollView]->[RScrollView]
   @override

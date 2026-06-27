@@ -358,7 +358,7 @@ mixin TileMixin {
   }*/
 
   /// 构建一个[Switch]开关小部件
-  /// [activeColor] 激活时圈圈的颜色
+  /// [activeThumbColor] 激活时圈圈的颜色
   /// [inactiveThumbColor] 未激活时圈圈的颜色
   /// [activeTrackColor] 激活时轨道的颜色
   ///
@@ -376,7 +376,7 @@ mixin TileMixin {
     bool value, {
     ValueChanged<bool>? onChanged,
     double? height = 30.0,
-    Color? activeColor,
+    Color? activeThumbColor,
     Color? activeTrackColor,
     Color? inactiveThumbColor,
     Color? inactiveTrackColor,
@@ -406,7 +406,7 @@ mixin TileMixin {
               return true;
             }());
           },
-      activeColor: activeColor,
+      activeThumbColor: activeThumbColor,
       activeTrackColor: activeTrackColor ?? globalTheme.accentColor,
       inactiveThumbColor: inactiveThumbColor,
       inactiveTrackColor: inactiveTrackColor,

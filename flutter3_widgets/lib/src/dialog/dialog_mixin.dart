@@ -496,6 +496,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool? adaptiveDesktop /*适配桌面居中布局*/,
     bool? adaptiveDesktopSlideStyle /*桌面布局使用右边全屏RTL滑动样式布局?*/,
     double? contentMaxWidth /*内容最大宽度, 不指定自适应*/,
+    //--
+    VoidCallback? onEnterAction /*按回车键的回调*/,
   }) {
     isInPopup ??= dialogInPopup;
     blur ??= dialogBlur;
@@ -680,7 +682,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         )
         .shadowDecorated(
           shadowColor: showTopShadow ? kShadowColor : null,
-          radius: clipTopRadius == null ? 8 : clipTopRadius / 2,
+          radius: clipTopRadius / 2,
           decorationColor: Colors.transparent,
           shadowOffset: const Offset(0, -4),
         );
@@ -737,7 +739,11 @@ mixin DialogMixin implements TranslationTypeImpl {
           disable: fullScreen || isInPopup == true,
         ) //适配平板
         .blur(sigma: blur ? kL : null)
-        .autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
+        .autoCloseDialog(
+          context,
+          enableAutoClose: dialogBarrierDismissible,
+          onEnterAction: onEnterAction,
+        );
   }
 
   /// 构建桌面端右边侧滑全屏高度显示的对话框布局
@@ -815,7 +821,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                 ),
                 textAlign: TextAlign.center,
               ))
-          ?.expanded(),
+          .expanded(),
       ConfirmButton(
         useIcon: true,
         useThemeColor: useConfirmThemeColor,

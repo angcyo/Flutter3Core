@@ -152,6 +152,16 @@ extension ObjectEx on Object {
   /// [Object]的hash值
   String classHash() => "$runtimeType(${hash()})";
 
+  /// 当前字符串是否是有效的json字符串
+  bool get isJsonString {
+    try {
+      toStringOrJson().toJson();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// 优先使用[Object]的[toJson]方法转成[String]
   /// 如果没有[toJson]方法,则直接使用[toString]方法
   String toStringOrJson() {
@@ -160,6 +170,18 @@ extension ObjectEx on Object {
       return json.toString();
     } catch (e) {
       return toString();
+    }
+  }
+
+  /// 如果是Json字符串, 则格式化输出
+  String formatIfJson({String? indent = '  '}) {
+    final text = toStringOrJson();
+    try {
+      final json = jsonDecode(text);
+      final jsonString = JsonEncoder.withIndent(indent).convert(json);
+      return jsonString;
+    } catch (e) {
+      return text;
     }
   }
 
@@ -1331,11 +1353,18 @@ extension StringEx on String {
     if (i18nString == null || i18nString.isEmpty) {
       return this;
     }
-    final i18nMap = json.decode(i18nString);
-    if (i18nMap is Map) {
-      //globalConfig.locale
-      lang = lang ?? GlobalConfig.def.locale?.languageCode;
-      return i18nMap[lang] ?? this;
+    try {
+      final i18nMap = json.decode(i18nString);
+      if (i18nMap is Map) {
+        //globalConfig.locale
+        lang = lang ?? GlobalConfig.def.locale?.languageCode;
+        return i18nMap[lang] ?? this;
+      }
+    } catch (e) {
+      assert(() {
+        l.w("无法解析i18nString[$i18nString]->$e");
+        return true;
+      }());
     }
     return this;
   }

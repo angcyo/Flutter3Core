@@ -140,6 +140,17 @@ class TextFieldConfig {
   /// [SingleInputWidget.keyboardType]
   TextInputType? keyboardType;
 
+  /// 最小/最大行数
+  /// [SingleInputWidget.minLines]
+  int? minLines;
+
+  /// [SingleInputWidget.maxLines]
+  int? maxLines;
+
+  /// 最大输入长度
+  /// [SingleInputWidget.maxLength]
+  int? maxLength;
+
   //endregion 覆盖TextField的属性,优先级低
 
   //region 回调方法
@@ -266,7 +277,10 @@ class TextFieldConfig {
     this.onEditingComplete,
     this.onFocusAction,
     this.keepSelectionRange = false,
-    //--
+    this.minLines,
+    this.maxLines,
+    this.maxLength,
+    //MARK: auto complete
     this.autoOptionsBuilder,
     this.autoDisplayStringForOption = RawAutocomplete.defaultStringForOption,
     this.autoOptionsViewOpenDirection = OptionsViewOpenDirection.down,
@@ -988,7 +1002,7 @@ class SingleInputWidget extends StatefulWidget {
     this.focusBorderWidth,
     this.disableBorderWidth,
     this.minLines,
-    this.maxLines = 1,
+    this.maxLines,
     this.maxLength,
     this.inputBuildCounter,
     this.showInputCounter,
@@ -1057,7 +1071,7 @@ class SingleInputWidget extends StatefulWidget {
     this.focusBorderWidth,
     this.disableBorderWidth,
     this.minLines,
-    this.maxLines = 1,
+    this.maxLines,
     this.maxLength,
     this.inputBuildCounter,
     this.showInputCounter,
@@ -1128,7 +1142,7 @@ class SingleInputWidget extends StatefulWidget {
     this.focusBorderWidth,
     this.disableBorderWidth,
     this.minLines,
-    this.maxLines = 1,
+    this.maxLines,
     this.maxLength,
     this.inputBuildCounter,
     this.showInputCounter = false,
@@ -1584,9 +1598,9 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
               globalTheme.textGeneralStyle,
           textAlign: widget.textAlign,
           expands: false,
-          maxLines: widget.maxLines,
-          minLines: widget.minLines,
-          maxLength: widget.maxLength,
+          maxLines: widget.maxLines ?? widget.config.maxLines ?? 1,
+          minLines: widget.minLines ?? widget.config.minLines,
+          maxLength: widget.maxLength ?? widget.config.maxLength,
           /*maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,*/
           buildCounter: widget.showInputCounter == false
               ? noneInputBuildCounter
@@ -1760,7 +1774,7 @@ class BorderSingleInputWidget extends StatefulWidget {
   final TextInputType? keyboardType;
 
   /// 最大行数
-  final int maxLines;
+  final int? maxLines;
 
   /// 最大长度
   final int? maxLength;
@@ -1786,7 +1800,7 @@ class BorderSingleInputWidget extends StatefulWidget {
     this.autofocus,
     this.inputFormatters,
     this.keyboardType,
-    this.maxLines = 1,
+    this.maxLines,
     this.maxLength = kDefaultInputLength,
     this.showInputCounter = false,
     this.onChanged,
@@ -1845,7 +1859,7 @@ extension TextFieldConfigEx on TextFieldConfig {
   /// [SingleInputWidget] 输入框的小部件
   Widget toTextField({
     int? maxLength,
-    int? maxLines = 1,
+    int? maxLines,
     int? minLines,
     String? hintText,
   }) {
