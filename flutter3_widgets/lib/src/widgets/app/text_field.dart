@@ -23,6 +23,9 @@ class TextFieldConfig {
   /// [FocusNode.requestFocus]
   FocusNode? focusNode;
 
+  /// 键盘事件处理
+  FocusOnKeyEventCallback? onKeyEvent;
+
   /// 后缀按钮的焦点控制
   FocusNode? suffixFocusNode;
 
@@ -276,6 +279,7 @@ class TextFieldConfig {
     this.onContextValueChanged,
     this.onEditingComplete,
     this.onFocusAction,
+    this.onKeyEvent,
     this.keepSelectionRange = false,
     this.minLines,
     this.maxLines,
@@ -513,7 +517,8 @@ class TextFieldConfig {
       );
       return true;
     }());*/
-    if (enableNumberKeyInput == true) {
+    final result = onKeyEvent?.call(node, event);
+    if (result != .handled && enableNumberKeyInput == true) {
       final input = text;
       final isDouble = input.contains(RegExp(r'\.'));
       if (isDouble) {
@@ -544,7 +549,7 @@ class TextFieldConfig {
         }
       }
     }
-    return KeyEventResult.ignored;
+    return result ?? KeyEventResult.ignored;
   }
 
   //endregion KeyEvent

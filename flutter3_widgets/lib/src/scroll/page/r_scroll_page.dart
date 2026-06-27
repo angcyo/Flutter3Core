@@ -341,7 +341,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       }());
     }
     //重建界面
-    scrollController.notifyRebuildScrollViewWidget();
+    rebuildScrollView();
   }
 
   /// 处理[onLoadData]加载了的数据
@@ -462,6 +462,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   /// 显示下拉刷新
+  /// - 触发刷新加载数据
   /// [loadDataEnd]
   @api
   @updateMark
@@ -481,6 +482,13 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   @updateMark
   void startRefreshState() {
     scrollController.startRefresh(useWidgetState: true);
+  }
+
+  /// 仅重建界面
+  @api
+  @updateMark
+  void rebuildScrollView() {
+    scrollController.notifyRebuildScrollViewWidget();
   }
 
   /// 更新情感图状态

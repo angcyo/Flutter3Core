@@ -80,6 +80,26 @@ extension ThrottleEx on dynamic {
       _throttleTimeMap[key] = nowTime();
     }
   }
+
+  /// 限流, 仅执行第一次, 后续冷却之后, 才能继续执行
+  /// - [millisecond] 默认CD冷却1S
+  void throttleFirst(
+    VoidCallback callback, {
+    int millisecond = 1000,
+    int? key,
+  }) {
+    key ??= hashCode;
+    Timer? timer = _throttleMap[key];
+    if (timer != null) {
+      //CD 冷却中...
+    } else {
+      callback.call();
+      timer = Timer(Duration(milliseconds: millisecond), () {
+        _throttleMap.remove(key);
+      });
+      _throttleMap[key] = timer;
+    }
+  }
 }
 
 /// https://pub.dev/packages/dev_prokit

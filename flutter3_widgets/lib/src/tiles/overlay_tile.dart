@@ -244,6 +244,12 @@ class OverlayEntryControlWidget extends StatefulWidget {
   /// child, 动画控制的部分
   final Widget? child;
 
+  /// 浮窗显示的回调
+  final VoidAction? onShow;
+
+  /// 浮窗隐藏的回调
+  final VoidAction? onHide;
+
   //MARK: animate
 
   /// 是否需要显示动画
@@ -262,6 +268,8 @@ class OverlayEntryControlWidget extends StatefulWidget {
     this.tag,
     this.overlayEntry,
     this.child,
+    this.onHide,
+    this.onShow,
     //--
     this.animate = true,
     this.animateDuration = const Duration(milliseconds: 150),
@@ -325,6 +333,7 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     }
     if (widget.tag != null) {
       _overlayEntryControlStateMap[widget.tag!] = this;
+      widget.onShow?.call();
     }
   }
 
@@ -382,11 +391,13 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
       animateController.reverse().then((value) {
         _overlayEntry?.remove();
         _overlayEntry = null;
+        widget.onHide?.call();
       });
       return true;
     } else {
       _overlayEntry?.remove();
       _overlayEntry = null;
+      widget.onHide?.call();
       return true;
     }
   }
@@ -563,6 +574,7 @@ extension OverlayEx on BuildContext {
   ///   - false: 如果已存在浮窗, 则跳过
   ///
   /// - [OverlayEntry.remove] 手动移除
+  /// - [OverlayEntryControlState.hideOverlayByTag] 隐藏指定标签的浮窗
   ///
   /// - [PopupEx.showArrowPopupOverlay]
   OverlayEntry showOverlay(
@@ -573,6 +585,7 @@ extension OverlayEx on BuildContext {
     Alignment? followerAnchor,
     Offset? alignmentOffset,
     //--
+    VoidAction? onHide /*隐藏浮窗时的回调*/,
     @defInjectMark Alignment? scaleAlignment /*缩放动画对齐方式*/,
     //--
     @defInjectMark String? tag /*唯一标识, 用于关闭指定浮窗*/,
@@ -600,6 +613,7 @@ extension OverlayEx on BuildContext {
         return OverlayEntryControlWidget(
           tag: tag ?? child.runtimeType.toString(),
           overlayEntry: overlayEntry,
+          onHide: onHide,
           onGetScaleAnimateAlign: () => fractionalOffset,
           child: AlignmentAnchorLayout(
             anchorChild: anchorChild ?? that,
@@ -608,7 +622,7 @@ extension OverlayEx on BuildContext {
             followerAnchor: followerAnchor,
             alignmentOffset: alignmentOffset,
             onChildUpdatePosition: (_, parentSize, childSize, childOffset) {
-              final align = scaleAlignment ?? .centerLeft;
+              final align = scaleAlignment ?? followerAnchor ?? .centerLeft;
               final offset = childOffset + align.alongSize(childSize);
               fractionalOffset = FractionalOffset(
                 offset.dx / parentSize.width,
