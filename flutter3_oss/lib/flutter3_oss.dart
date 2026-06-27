@@ -152,7 +152,7 @@ void initAliyunOssSts({
       OssClient._ossBucket == ossBucket &&
       OssClient._ossEndpoint == ossEndpoint) {
     assert(() {
-      l.w("[initAliyunOssSts]不需要重新初始化.");
+      l.w("[initAliyunOssSts]未改变,不需要重新初始化.");
       return true;
     }());
     return;
