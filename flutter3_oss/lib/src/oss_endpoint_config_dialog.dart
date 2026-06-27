@@ -47,8 +47,12 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
                 item.ossEndpoint == currentData?.ossEndpoint &&
                 item.ossBucket == currentData?.ossBucket,
             onTap: () {
-              OssClient.ossConfigLive << item;
-              updateState();
+              if (item.ossEndpoint == currentData?.ossEndpoint) {
+                widget.closeDialogIf(context);
+              } else {
+                OssClient.ossConfigLive << item;
+                updateState();
+              }
             },
           ),
       ].rScroll(shrinkWrap: true),
@@ -62,9 +66,6 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
     GestureTapCallback? onTap,
     bool selected = false,
   }) {
-    if (selected) {
-      onTap = null;
-    }
     final ossEndpointLabel = ossEndpoint?.contains("heyuan") == true
         ? "河源"
         : ossEndpoint?.contains("hongkong") == true

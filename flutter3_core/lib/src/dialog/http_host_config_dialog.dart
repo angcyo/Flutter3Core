@@ -41,8 +41,12 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
             item.host,
             selected: item.host == $host,
             onTap: () {
-              $host = item.host;
-              updateState();
+              if (item.host == $host) {
+                widget.closeDialogIf(context);
+              } else {
+                $host = item.host;
+                updateState();
+              }
             },
           ),
       ].rScroll(shrinkWrap: true),
@@ -56,9 +60,6 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
     GestureTapCallback? onTap,
     bool selected = false,
   }) {
-    if (selected) {
-      onTap = null;
-    }
     return [
           name?.text(style: globalTheme.textBodyStyle),
           host?.text(style: globalTheme.textDesStyle),
