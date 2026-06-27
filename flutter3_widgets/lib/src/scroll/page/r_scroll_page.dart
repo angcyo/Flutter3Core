@@ -73,8 +73,22 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   }
 
   /// 当前界面的数据, 用来放到滚动体里面
-  /// [pageRScrollView]
+  /// - [pageRScrollView]
+  ///
+  /// - [pageWidgetList]
+  /// - [pageBeanList]
   WidgetList pageWidgetList = [];
+
+  /// 获取[pageWidgetList]对应的数据结构列表
+  /// [getWidgetDataList]
+  ///
+  /// - [pageWidgetList]
+  /// - [pageBeanList]
+  List? get pageBeanList => getWidgetDataList();
+
+  /// 滚动内容数量监听
+  @streamMark
+  final pageWidgetCountLive = $live<int>(0);
 
   /// 获取所有[pageWidgetList].[RItemTile.UpdateValueNotifier]
   List<Bean> getWidgetDataList<Bean>() {
@@ -280,11 +294,13 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData);
+        pageWidgetCountLive <= pageWidgetList.size();
       } else if (loadData.firstOrNull is Widget) {
         if (requestPage.isFirstPage) {
           pageWidgetList.clear();
         }
         pageWidgetList.addAll(loadData.cast<Widget>());
+        pageWidgetCountLive <= pageWidgetList.size();
       } else if (loadData.isNotEmpty) {
         assert(() {
           l.w('无法处理的数据类型:${loadData.runtimeType}');
@@ -310,8 +326,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     final insertIndex = index < 0 ? pageWidgetList.length + index : index;
     if (loadData is Iterable<Widget>) {
       pageWidgetList.insertAll(insertIndex, loadData);
+      pageWidgetCountLive <= pageWidgetList.size();
     } else if (loadData.firstOrNull is Widget) {
       pageWidgetList.insertAll(insertIndex, loadData.cast<Widget>());
+      pageWidgetCountLive <= pageWidgetList.size();
     } else if (loadData.isNotEmpty) {
       assert(() {
         l.w('无法处理的数据类型:${loadData.runtimeType}');
@@ -400,6 +418,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         pageWidgetList.clear();
       }
       pageWidgetList.addAll(widgetList);
+      pageWidgetCountLive <= pageWidgetList.size();
     }
     _scrollViewUpdateSignal.update();
   }
@@ -723,6 +742,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     }
     if (removeList.isNotEmpty) {
       pageWidgetList.removeAll(removeList);
+      pageWidgetCountLive <= pageWidgetList.size();
       _scrollViewUpdateSignal.update();
 
       if (pageWidgetList.isEmpty) {
