@@ -120,7 +120,7 @@ dependencies:
   # https://github.com/llfbandit/app_links/blob/main/doc/README_ios.md
   # https://github.com/llfbandit/app_links/blob/main/doc/README_windows.md
   # https://github.com/llfbandit/app_links/blob/main/doc/README_macos.md
-  app_links: ^7.1.2
+  app_links: ^7.2.0
 
   # https://pub.dev/packages/flutter_move_task_back
   # flutter_move_task_back: ^1.0.0 #ANDROID
