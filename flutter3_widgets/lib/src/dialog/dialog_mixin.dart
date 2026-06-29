@@ -97,10 +97,23 @@ mixin DialogMixin implements TranslationTypeImpl {
   bool get dialogBlur => false;
 
   /// 对话框是否要在弹窗中显示
-  /// - 影响布局
+  /// - 影响布局样式
   ///
   /// [PopupEx.showPopupDialog]
   bool? get dialogInPopup => null;
+
+  /// 对话框是否要在弹窗中显示
+  /// - 影响布局样式
+  /// - 影响页面关闭的方式[OverlayEntryControlStateScope.hideOverlay]
+  ///
+  /// [OverlayEx.showOverlay]
+  bool? get dialogInOverlay => null;
+
+  /// 对话框是否是弹窗样式
+  /// - [dialogInPopup]
+  /// - [dialogInOverlay]
+  bool get dialogIsPopupStyle =>
+      dialogInPopup == true || dialogInOverlay == true;
 
   /// 对话框的容器, 带圆角, 带[margin]
   /// - [decorationColor] 背景颜色
@@ -350,10 +363,10 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--safeArea
     bool useSafeArea = true,
     @defInjectMark bool? enableAutoClose /*激活esc关闭对话框*/,
-    bool? isInPopup /*是否在弹窗中显示当前的布局*/,
+    bool? isPopupStyle /*是否使用弹窗样式布局*/,
   }) {
     blur ??= dialogBlur;
-    isInPopup ??= dialogInPopup;
+    isPopupStyle ??= dialogIsPopupStyle;
 
     final body = child;
 
@@ -367,7 +380,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       }
     }
 
-    if (isInPopup == true) {
+    if (isPopupStyle == true) {
       clipRadius ??= clipTopRadius ?? clipBottomRadius;
       clipTopRadius ??= clipRadius;
       clipBottomRadius ??= clipRadius;
@@ -412,12 +425,12 @@ mixin DialogMixin implements TranslationTypeImpl {
 
     return result
         .matchParent(matchHeight: fullScreen)
-        .align(align, enable: isInPopup != true)
+        .align(align, enable: isPopupStyle != true)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(
           context,
           alignment: align,
-          disable: fullScreen || isInPopup == true,
+          disable: fullScreen || isPopupStyle == true,
         )
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(
@@ -492,21 +505,21 @@ mixin DialogMixin implements TranslationTypeImpl {
     Listenable? contentUpdateSignal /*内容更新信号, 需要[useRScroll]支持*/,
     String? debugLabel,
     //--
-    bool? isInPopup /*是否在弹窗中显示当前的布局*/,
+    bool? isPopupStyle /*是否使用弹窗样式布局*/,
     bool? adaptiveDesktop /*适配桌面居中布局*/,
     bool? adaptiveDesktopSlideStyle /*桌面布局使用右边全屏RTL滑动样式布局?*/,
     double? contentMaxWidth /*内容最大宽度, 不指定自适应*/,
     //--
     VoidCallback? onEnterAction /*按回车键的回调*/,
   }) {
-    isInPopup ??= dialogInPopup;
+    isPopupStyle ??= dialogIsPopupStyle;
     blur ??= dialogBlur;
 
-    clipTopRadius ??= isInPopup == true
+    clipTopRadius ??= isPopupStyle == true
         ? kDefaultBorderRadiusX
         : kDefaultBorderRadiusXXX;
-    showTopShadow ??= isInPopup != true;
-    enablePullBack ??= isInPopup != true;
+    showTopShadow ??= isPopupStyle != true;
+    enablePullBack ??= isPopupStyle != true;
     //--
     final useDesktopLayout = adaptiveDesktop == true && isDesktopOrWeb;
     if (useDesktopLayout) {
@@ -522,7 +535,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         }
       }
     }
-    if (isInPopup == true) {
+    if (isPopupStyle == true) {
       clipRadius ??= clipTopRadius;
       clipBottomRadius ??= clipRadius;
     }
@@ -731,12 +744,12 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--
     return result
         .matchParent(matchHeight: fullScreen)
-        .align(align, enable: isInPopup != true)
+        .align(align, enable: isPopupStyle != true)
         .animatedSize(duration: animatedSize ? kDefaultAnimationDuration : null)
         .adaptiveTablet(
           context,
           alignment: align,
-          disable: fullScreen || isInPopup == true,
+          disable: fullScreen || isPopupStyle == true,
         ) //适配平板
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(
@@ -849,6 +862,9 @@ mixin DialogMixin implements TranslationTypeImpl {
     dynamic result,
   }) async {
     if (close && context?.isMounted == true) {
+      if (dialogInOverlay == true) {
+        return OverlayEntryControlStateScope.hideOverlay(context);
+      }
       if (maybePop) {
         return await context?.maybePop(
               rootNavigator: dialogUseRootNavigator,

@@ -8,7 +8,7 @@ import '../../flutter3_core.dart';
 /// @date 2024/03/26
 ///
 /// 文件菜单对话框
-class DebugFileMenuDialog extends StatelessWidget {
+class DebugFileMenuDialog extends StatelessWidget with DialogMixin {
   /// 文件路径, 支持文件/文件夹夹路径
   final String? filePath;
 
@@ -19,9 +19,11 @@ class DebugFileMenuDialog extends StatelessWidget {
 
   /// 是否在弹窗中显示当前的对话框
   /// - 影响样式
+  @override
   final bool? dialogInPopup;
 
-  /// 页面的关闭方式
+  /// 影响样式和页面的关闭方式
+  @override
   final bool? dialogInOverlay;
 
   const DebugFileMenuDialog(
@@ -38,9 +40,8 @@ class DebugFileMenuDialog extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     final isFile = filePath?.isFileSync() ?? false;
     const size = 25.0;
-    final isPopupStyle = dialogInPopup == true || dialogInOverlay == true;
     return [
-          if (!isPopupStyle) buildDragHandle(context),
+          if (!dialogIsPopupStyle) buildDragHandle(context),
           if (isFile)
             IconTextTile(
               iconWidget: loadCoreAssetSvgPicture(
@@ -119,11 +120,11 @@ class DebugFileMenuDialog extends StatelessWidget {
         ]
         .column()!
         .container(color: globalTheme.whiteBgColor)
-        .pullBack(enablePullBack: isPopupStyle != true)
+        .pullBack(enablePullBack: dialogIsPopupStyle != true)
         .matchParent(matchHeight: false)
-        .align(Alignment.bottomCenter, enable: isPopupStyle != true)
-        .desktopConstrained(enable: isPopupStyle, maxWidth: 380)
-        .clipRadius(enable: isPopupStyle == true);
+        .align(Alignment.bottomCenter, enable: dialogIsPopupStyle != true)
+        .desktopConstrained(enable: dialogIsPopupStyle, maxWidth: 380)
+        .clipRadius(enable: dialogIsPopupStyle == true);
   }
 
   void close(BuildContext context) {
