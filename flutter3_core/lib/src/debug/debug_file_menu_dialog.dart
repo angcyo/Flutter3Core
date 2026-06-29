@@ -98,6 +98,14 @@ class DebugFileMenuDialog extends StatelessWidget {
               close(context);
             },
           ),
+          IconTextTile(
+            iconWidget: Empty.size(size),
+            text: "复制路径",
+            onTap: () {
+              filePath?.copy();
+              close(context);
+            },
+          ),
           if (isDesktopOrWeb)
             IconTextTile(
               iconWidget: Empty.size(size),
