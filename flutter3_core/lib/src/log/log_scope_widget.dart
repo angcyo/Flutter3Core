@@ -405,15 +405,18 @@ class LogPanelIntentAction extends ContextAction<LogPanelIntent> {
 
 /// 扩展
 extension LogPanelWidgetEx on Widget {
-  /// 使用一个日志面板包裹
+  /// F12 使用一个日志面板包裹
   Widget wrapLogPanel({LogScopeController? control}) {
     control ??= $logController;
     final child = LogPanelContainer(control: control, child: this);
     if (isDesktopOrWeb) {
       return child.shortcutActions([
         ShortcutAction(
+          //意图
           intent: LogPanelIntent(control),
+          //快捷键
           shortcut: SingleActivator(LogicalKeyboardKey.f12),
+          //执行动作
           action: LogPanelIntentAction(),
         ),
       ]);

@@ -52,6 +52,7 @@ class ReceiveIntent {
 
   ReceiveIntent._() {
     if (isDesktopOrWeb) {
+      //MARK: -- Desktop --
       //在桌面上使用 app_links
       //https://pub.dev/packages/app_links
       final appLinks = AppLinks(); // AppLinks is singleton
@@ -87,6 +88,7 @@ class ReceiveIntent {
       });
       return;
     }
+    //MARK: -- Mobile --
     //MARK: - first
     // 首次打开软件时, 检查平台分享数据
     ReceiveSharingIntentPlus.getInitialMedia().get((value, _) {
@@ -154,25 +156,55 @@ class ReceiveIntent {
   }
 
   /// 处理[Uri]
-  void _handleUri(Uri uri) {
+  bool _handleUri(Uri uri, {bool? toastError = true}) {
     if (uri.scheme == "content") {
       uri_to_file.toFile("$uri").get((file, _) {
         if (file is File) {
           fileStream.add([file]);
         }
       });
+      return true;
     } else {
       try {
         final file = File.fromUri(uri);
         fileStream.add([file]);
+        return true;
       } catch (e, s) {
         assert(() {
           printError(e, s);
           return true;
         }());
-        toastInfo("不支持处理: $uri");
+        if (toastError == true) {
+          toastInfo("不支持处理[${uri.scheme}]: $uri");
+        }
       }
     }
+    return false;
+  }
+
+  /// 处理一个路径
+  /// - 支持文件路径
+  bool handlePath(String? path, {bool? toastError = true}) {
+    if (path == null) {
+      return false;
+    }
+    if (path.isFileExistsSync()) {
+      fileStream.add([File(path)]);
+      return true;
+    }
+    try {
+      final uri = Uri.parse(path);
+      return _handleUri(uri, toastError: toastError);
+    } catch (e, s) {
+      assert(() {
+        printError(e, s);
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo("不支持处理[${path.runtimeType}]: $path");
+      }
+    }
+    return false;
   }
 }
 

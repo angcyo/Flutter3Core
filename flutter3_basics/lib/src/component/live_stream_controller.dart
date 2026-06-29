@@ -37,8 +37,7 @@ class LiveStreamController<T> {
 
   final StreamController<T> controller = StreamController<T>.broadcast();
 
-  LiveStreamController(
-    T initialValue, {
+  LiveStreamController(T initialValue, {
     this.autoClearValue = false,
     this.onUpdateValueAction,
   }) : latestValue = initialValue;
@@ -111,7 +110,7 @@ class LiveStreamController<T> {
       onUpdateValueAction?.call(newValue);
     } catch (e) {
       assert(() {
-        print(e);
+        l.e(e);
         return true;
       }());
     }
@@ -151,28 +150,32 @@ class LiveStreamController<T> {
   /// 监听流
   /// - [allowBackward] 是否允许回溯, 是否发送最后一个值
   /// - [autoCancel] 当[onData]返回true时, 是否自动取消监听
+  /// - [autoClear] 是否自动取消清除数据
   ///
   /// - [StreamSubscription.cancel]
   @callPoint
-  StreamSubscription<T> listen(
-    dynamic Function(T data) onData, {
+  StreamSubscription<T> listen(dynamic Function(T data) onData, {
     Function? onError,
     void Function()? onDone,
     bool? cancelOnError,
     bool allowBackward = true,
     bool autoCancel = false,
+    bool autoClear = false,
   }) {
     if (!autoClearValue && allowBackward) {
       onData(latestValue);
     }
-    if (autoCancel) {
+    if (autoCancel || autoClear) {
       StreamSubscription<T>? subscription;
       subscription = controller.stream.listen(
-        (event) async {
+            (event) async {
           final cancel = await onData(event);
-          if (cancel is bool && cancel) {
+          if (autoCancel && cancel is bool && cancel) {
             //debugger();
             subscription?.cancel();
+          }
+          if (autoClear) {
+            add(null as dynamic);
           }
         },
         onError: onError,
@@ -212,7 +215,8 @@ class LiveStreamController<T> {
       add(latestValue);
     } else {
       assert(() {
-        l.w("无效的[addSub]操作, 之前的数据类型不是[List]->${latestValue?.runtimeType}");
+        l.w("无效的[addSub]操作, 之前的数据类型不是[List]->${latestValue
+            ?.runtimeType}");
         return true;
       }());
     }
@@ -226,7 +230,8 @@ class LiveStreamController<T> {
       add(latestValue);
     } else {
       assert(() {
-        l.w("无效的[removeSub]操作, 之前的数据类型不是[List]->${latestValue?.runtimeType}");
+        l.w("无效的[removeSub]操作, 之前的数据类型不是[List]->${latestValue
+            ?.runtimeType}");
         return true;
       }());
     }
@@ -428,22 +433,24 @@ LiveStream<T?> $live<T>([
   T? initialValue,
   bool autoClearValue = false,
   ValueCallback<T?>? onUpdateValueAction,
-]) => LiveStream<T?>(
-  initialValue,
-  autoClearValue: autoClearValue,
-  onUpdateValueAction: onUpdateValueAction,
-);
+]) =>
+    LiveStream<T?>(
+      initialValue,
+      autoClearValue: autoClearValue,
+      onUpdateValueAction: onUpdateValueAction,
+    );
 
 /// [LiveStreamController]
 LiveStream<T?> $liveOnce<T>([
   T? initialValue,
   bool autoClearValue = true,
   ValueCallback<T?>? onUpdateValueAction,
-]) => LiveStream<T?>(
-  initialValue,
-  autoClearValue: autoClearValue,
-  onUpdateValueAction: onUpdateValueAction,
-);
+]) =>
+    LiveStream<T?>(
+      initialValue,
+      autoClearValue: autoClearValue,
+      onUpdateValueAction: onUpdateValueAction,
+    );
 
 extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
@@ -459,36 +466,36 @@ extension LiveStreamControllerEx<T> on LiveStreamController<T> {
   /// [RebuildWidget]
   ///
   /// [RebuildEx.buildFn]
-  Widget buildFn(
-    Widget? Function() builder, {
+  Widget buildFn(Widget? Function() builder, {
     bool allowBackward = true,
     String? debugLabel,
-  }) => StreamBuilder(
-    stream: stream,
-    initialData: allowBackward ? latestValue : null,
-    builder: (_, _) {
-      debugger(when: !isIos && debugLabel != null);
-      return builder() ?? empty;
-    },
-  );
+  }) =>
+      StreamBuilder(
+        stream: stream,
+        initialData: allowBackward ? latestValue : null,
+        builder: (_, _) {
+          debugger(when: !isIos && debugLabel != null);
+          return builder() ?? empty;
+        },
+      );
 
   /// [RebuildWidget]
   ///
   /// [RebuildEx.buildDataFn]
-  Widget buildDataFn(
-    Widget? Function(T? data) builder, {
+  Widget buildDataFn(Widget? Function(T? data) builder, {
     bool allowBackward = true,
-  }) => StreamBuilder(
-    stream: stream,
-    initialData: allowBackward ? latestValue : null,
-    builder: (_, snapshot) {
-      return builder(snapshot.data) ?? empty;
-    },
-  );
+  }) =>
+      StreamBuilder(
+        stream: stream,
+        initialData: allowBackward ? latestValue : null,
+        builder: (_, snapshot) {
+          return builder(snapshot.data) ?? empty;
+        },
+      );
 }
 
 extension LiveStreamControllerIterableEx<T>
-    on Iterable<LiveStreamController<T>> {
+on Iterable<LiveStreamController<T>> {
   /// [StreamGroup]
   /// [StreamZip]
   ///
@@ -496,11 +503,12 @@ extension LiveStreamControllerIterableEx<T>
   ///
   /// [RebuildIterableEx.buildFn]
   /// [LiveStreamControllerIterableEx.buildFn]
-  Widget buildFn(Widget? Function() builder) => StreamBuilder(
-    stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
-    initialData: null,
-    builder: (_, _) {
-      return builder() ?? empty;
-    },
-  );
+  Widget buildFn(Widget? Function() builder) =>
+      StreamBuilder(
+        stream: StreamGroup.mergeBroadcast(map((e) => e.stream)),
+        initialData: null,
+        builder: (_, _) {
+          return builder() ?? empty;
+        },
+      );
 }

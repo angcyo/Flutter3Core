@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter3_basics/flutter3_basics.dart';
+import 'dart:io';
+
+import 'package:flutter/widgets.dart';
+
+import '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -122,10 +125,15 @@ class LogScopeController {
 
   /// 开关显示日志面板
   @api
+  @debugFlag
   void togglePanel() {
-    isShowPanelLive <= !(isShowPanelLive.value == true);
+    final oldShow = isShowPanelLive.value == true;
+    isShowPanelLive <= !oldShow;
     if (isShowPanelLive.value == true) {
-      //op
+      //显示日志
+      l.t(Platform.resolvedExecutable);
+      l.t("${Platform.executableArguments}");
+      l.t("${LogScope.testArgs}");
     } else {
       //关闭日志时, 清空数据
       logDataListLive << [];
@@ -191,6 +199,9 @@ class LogScope extends InheritedWidget {
 
   /// - 通道类型
   static const String kChannel = "channel";
+
+  @debugFlag
+  static List<String>? testArgs;
 
   /// 获取当前树上的[LogScopeController]控制器
   @api

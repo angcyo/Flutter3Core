@@ -237,6 +237,7 @@ const fromFramework = FromFramework('表示当前代码来自框架');
 const darkFlag = AnnotationMeta('标识自动适配暗色主题');
 const animateFlag = AnnotationMeta('标识当前操作执行动画');
 const tempFlag = AnnotationMeta('临时存储的缓存');
+const debugFlag = AnnotationMeta('调试点, 建议立即删除.');
 const dynamicGet = AnnotationMeta('表示当前的属性会通过(xxx as dynamic)的方式动态读取');
 const isolateFlag = AnnotationMeta('标识当前操作是耗时的, 需要放到[Isolate]中');
 //MARK: - platform
