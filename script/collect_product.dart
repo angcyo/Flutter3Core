@@ -73,6 +73,8 @@ void main(List<String> arguments) async {
   //收集的产物数量
   int collectProductCount = 0;
 
+  //MARK: - Android apk
+
   final androidApkName = config["android_apk_name"];
   if (androidApkName is String) {
     //收集 apk
@@ -94,6 +96,8 @@ void main(List<String> arguments) async {
       }
     }
   }
+
+  //MARK: - Android aab
 
   final androidAppbundleName = config["android_appbundle_name"];
   if (androidAppbundleName is String) {
@@ -118,6 +122,8 @@ void main(List<String> arguments) async {
     }
   }
 
+  //MARK: - iOS
+
   final iosIpaName = config["ios_ipa_name"];
   if (iosIpaName is String) {
     //收集 ipa
@@ -140,6 +146,8 @@ void main(List<String> arguments) async {
       }
     }
   }
+
+  //MARK: - macOS
 
   final macosAppName = config["macos_app_name"];
   if (macosAppName is String) {
@@ -221,6 +229,8 @@ void main(List<String> arguments) async {
     }
   }
 
+  //MARK: - windows
+
   final windowsExeName = config["windows_exe_name"];
   if (windowsExeName is String) {
     //收集 exe
@@ -294,6 +304,8 @@ void main(List<String> arguments) async {
       }
     }
   }
+
+  //MARK: - result
 
   //输出结果
   if (exitProductCount == 0 && collectProductCount == 0) {
