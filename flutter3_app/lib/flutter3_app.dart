@@ -9,6 +9,7 @@ import 'package:app_links/app_links.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_app/src/pages/app_about_dialog.dart';
 import 'package:flutter3_core/flutter3_core.dart';

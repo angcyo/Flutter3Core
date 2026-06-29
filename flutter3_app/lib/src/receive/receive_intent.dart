@@ -206,6 +206,25 @@ class ReceiveIntent {
     }
     return false;
   }
+
+  /// 监听原生打开文件
+  /// - 当前只有 macOS 适配了
+  @initialize
+  void initNativeOpenFile() async {
+    if (!isMacOS) {
+      return;
+    }
+    const channel = MethodChannel('com.angcyo.native.app/app_open_file');
+    final path = await channel.invokeMethod<String>('getInitialFile');
+    if (path != null) {
+      handlePath(path);
+    }
+    channel.setMethodCallHandler((call) async {
+      if (call.method == 'onAppOpenFile' && call.arguments is String) {
+        handlePath(call.arguments as String);
+      }
+    });
+  }
 }
 
 /// 接收平台数据
