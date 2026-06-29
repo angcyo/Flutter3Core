@@ -51,7 +51,7 @@ class TabLayoutController extends TabController {
     PageController? pageController,
   }) {
     assert(() {
-      l.d("Offset:$offset");
+      l.d("[${classHash()}]Offset:$offset");
       return true;
     }());
     duration ??= animationDuration;
