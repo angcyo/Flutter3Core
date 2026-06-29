@@ -89,9 +89,17 @@ extension FileStringEx on String {
   String get parentPath => FileSystemEntity.parentOf(this);
 
   /// 复制文件到指定全路径
+  /// - 支持文件
+  /// - 支持文件夹
+  ///
   Future<File?> copyTo(String targetPath) async {
     try {
-      return await File(this).copy(targetPath);
+      final file = File(this);
+      if (file.isDirectorySync()) {
+        await Directory(this).copyDirectory(Directory(targetPath));
+        return File(targetPath);
+      }
+      return await file.copy(targetPath);
     } catch (e) {
       //
     }

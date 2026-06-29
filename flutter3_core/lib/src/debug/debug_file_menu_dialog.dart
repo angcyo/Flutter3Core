@@ -110,6 +110,15 @@ class DebugFileMenuDialog extends StatelessWidget with DialogMixin {
           if (isDesktopOrWeb)
             IconTextTile(
               iconWidget: Empty.size(size),
+              text: "另存为...",
+              onTap: () {
+                close(context);
+                saveFilePath(filePath);
+              },
+            ),
+          if (isDesktopOrWeb)
+            IconTextTile(
+              iconWidget: Empty.size(size),
               text: "打开所在文件夹",
               onTap: () {
                 final path = isFile ? filePath?.parentPath : filePath;
