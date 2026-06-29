@@ -19,9 +19,14 @@ extension ActionsEx on Widget {
   Widget shortcutActions(
     List<ShortcutAction> actions, {
     Key? key,
+    bool enable = true,
     ActionDispatcher? dispatcher,
     String? debugLabel,
   }) {
+    if (!enable) {
+      return this;
+    }
+
     final actionsMap = <Type, Action<Intent>>{};
     final shortcutMap = <ShortcutActivator, Intent>{};
     for (final action in actions) {

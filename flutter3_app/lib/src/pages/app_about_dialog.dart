@@ -105,7 +105,7 @@ class AboutAction extends ContextAction<AboutIntent> {
 }
 
 extension AppAboutEx on Widget {
-  /// 监听F1键, 显示帮助对话框
+  /// - 监听F1键, 显示帮助对话框
   @desktopFlag
   Widget wrapAboutDialog() {
     if (isDesktopOrWeb) {
@@ -114,6 +114,16 @@ extension AppAboutEx on Widget {
           intent: const AboutIntent(),
           shortcut: SingleActivator(LogicalKeyboardKey.f1),
           action: AboutAction(),
+        ),
+        ShortcutAction(
+          intent: const DebugIntent(),
+          shortcut: SingleActivator(
+            LogicalKeyboardKey.f1,
+            control: true,
+            alt: true,
+            shift: true,
+          ),
+          action: DebugIntentAction(),
         ),
       ]);
     }

@@ -223,7 +223,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   /// 全局App上下文变化监听
   /// - [addOnGlobalAppContextChanged]
-  Set<ContextAction> onGlobalAppContextChangedActions = {};
+  Set<ContextCallback> onGlobalAppContextChangedActions = {};
 
   /// 更新全局App上下文, 同时通知监听者
   /// - [onGlobalAppContextChangedActions]
@@ -250,7 +250,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - [updateGlobalAppContext]
   /// - [addOnGlobalAppContextChanged]
   @api
-  void addOnGlobalAppContextChanged(ContextAction action) {
+  void addOnGlobalAppContextChanged(ContextCallback action) {
     onGlobalAppContextChangedActions.add(action);
     final context = globalAppContext;
     if (context != null) {
@@ -1056,8 +1056,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
 //region 全局
 
-/// 注册一个全局App上下文改变的监听[ContextAction]
-void $onGlobalAppContextChanged(ContextAction action) {
+/// 注册一个全局App上下文改变的监听[ContextCallback]
+void $onGlobalAppContextChanged(ContextCallback action) {
   GlobalConfig.def.addOnGlobalAppContextChanged(action);
 }
 

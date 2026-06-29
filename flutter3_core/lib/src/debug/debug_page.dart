@@ -39,11 +39,7 @@ class DebugPage extends StatefulWidget {
           return true;
         }());
         //context.findNavigatorState()?.pushWidget(const DebugPage());
-        try {
-          context.pushWidget(const DebugPage());
-        } catch (e) {
-          GlobalConfig.def.globalAppContext?.pushWidget(const DebugPage());
-        }
+        DebugIntentAction().invoke(DebugIntent(), context);
       },
       multiLongPressDuration: 2.seconds,
       onMultiLongPressDurationAction: () {
@@ -55,7 +51,18 @@ class DebugPage extends StatefulWidget {
         ScreenCaptureOverlay.showScreenCaptureOverlay();
       },
       child: body,
-    );
+    ).shortcutActions([
+      ShortcutAction(
+        intent: const DebugIntent(),
+        shortcut: SingleActivator(
+          LogicalKeyboardKey.f1,
+          control: true,
+          alt: true,
+          shift: true,
+        ),
+        action: DebugIntentAction(),
+      ),
+    ]);
   }
 
   /// debug
@@ -444,6 +451,21 @@ class _DebugHiveEditPageState extends State<DebugHiveEditPage>
 
   @override
   Widget build(BuildContext context) => buildScaffold(context);
+}
+
+class DebugIntent extends Intent {
+  const DebugIntent();
+}
+
+class DebugIntentAction extends ContextAction<DebugIntent> {
+  @override
+  Object? invoke(DebugIntent intent, [BuildContext? context]) {
+    try {
+      return context!.pushWidget(const DebugPage());
+    } catch (e) {
+      return GlobalConfig.def.globalAppContext?.pushWidget(const DebugPage());
+    }
+  }
 }
 
 extension DebugPageWidgetEx on Widget {
