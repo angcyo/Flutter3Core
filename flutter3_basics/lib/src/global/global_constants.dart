@@ -96,6 +96,9 @@ const kMenuMinWidth = 160.0;
 /// - [Dialog.build] 代码中写死了最小宽度
 const kDialogMinWidth = 280.0;
 
+/// 弹窗最小宽度
+const kPopupMinWidth = 260.0;
+
 /// 桌面[Dialog]最小宽度
 @desktopLayout
 const kDesktopDialogMinWidth = kDialogMinWidth * 2;

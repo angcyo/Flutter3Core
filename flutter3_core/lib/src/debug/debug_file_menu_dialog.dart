@@ -123,7 +123,10 @@ class DebugFileMenuDialog extends StatelessWidget with DialogMixin {
         .pullBack(enablePullBack: dialogIsPopupStyle != true)
         .matchParent(matchHeight: false)
         .align(Alignment.bottomCenter, enable: dialogIsPopupStyle != true)
-        .desktopConstrained(enable: dialogIsPopupStyle, maxWidth: 380)
+        .desktopConstrained(
+          enable: dialogIsPopupStyle,
+          maxWidth: kPopupMinWidth,
+        )
         .clipRadius(enable: dialogIsPopupStyle == true);
   }
 
