@@ -621,8 +621,13 @@ extension NavigatorEx on BuildContext {
     bool rootNavigator = false,
     bool checkDismissal = true,
     bool maybePop = false,
+    bool doRun = true,
   }) {
     //debugger();
+    if (!doRun) {
+      //不执行
+      return;
+    }
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
       if (maybePop) {
         navigatorOf(rootNavigator).maybePop(result);
@@ -652,11 +657,13 @@ extension NavigatorEx on BuildContext {
     bool rootNavigator = false,
     bool checkDismissal = false,
     bool maybePop = false,
+    bool doRun = true,
   }) => pop(
     result: result,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
     maybePop: maybePop,
+    doRun: doRun,
   );
 
   /// 弹出一个菜单路由
