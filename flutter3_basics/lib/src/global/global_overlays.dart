@@ -180,6 +180,7 @@ OverlayEntry? toastInfo(
         LastExtendRow(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
+          lastExtend: true,
           children: [
             iconWidget ??
                 Icon(

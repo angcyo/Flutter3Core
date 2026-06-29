@@ -35,6 +35,12 @@ part of '../flutter3_oss.dart';
 /// DioException [bad response]: This exception was thrown because the response has a status code of 409 and RequestOptions.validateStatus was configured to throw for this status code.
 /// ```
 ///
+/// # OSS 不允许在公网下载apk文件
+///
+/// ```
+/// /// The APK file is not allowed to be distributed in a public network using the OSS endpoint, please use CNAME instead.
+/// ```
+///
 /// - [uploadAliyunOssBytes]
 /// - [uploadAliyunOssFile]
 ///

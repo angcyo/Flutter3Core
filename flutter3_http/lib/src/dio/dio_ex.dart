@@ -307,6 +307,7 @@ extension DioStringEx on String {
 
   /// 下载
   ///
+  ///
   /// ```
   /// final savePath = await cacheFilePath(url.fileName());
   /// url
@@ -344,7 +345,7 @@ extension DioStringEx on String {
   ///
   /// [Dio.download]
   ///
-  Future<Response> download({
+  Future<Response?> download({
     String? savePath,
     Future<String>? getSavePath,
     BuildContext? context,
@@ -358,6 +359,8 @@ extension DioStringEx on String {
     Options? options,
     Map<String, dynamic>? headers,
     bool debugLog = false, //debug模式下, 是否打印日志
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
     final url = transformUrl();
     final dio = RDio.get(context: context).dio;
@@ -374,37 +377,51 @@ extension DioStringEx on String {
     } else {
       l.d("准备下载: $url -> $saveFilePath");
     }
-    final response = dio.download(
-      transformUrl(),
-      saveFilePath,
-      onReceiveProgress: (count, total) {
-        if (count >= total) {
-          l.i("下载完成: $url -> $savePath");
-        }
-        assert(() {
-          if (debugLog) {
-            if (total > 0) {
-              // 日志限流
-              l.d(
-                "下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n$url -> $saveFilePath",
-              );
-            } else {
-              l.d("下载进度:$count ${count.toSizeStr()} \n$url -> $saveFilePath");
-            }
+    try {
+      final response = await dio.download(
+        transformUrl(),
+        saveFilePath,
+        onReceiveProgress: (count, total) {
+          if (count >= total) {
+            l.i("下载完成: $url -> $savePath");
           }
-          return true;
-        }());
-        onReceiveProgress?.call(count, total);
-      },
-      lengthHeader: lengthHeader,
-      deleteOnError: deleteOnError,
-      queryParameters: queryParameters,
-      cancelToken: cancelToken,
-      data: data,
-      options: _mergeOptions(options, headers),
-    );
-    //debugger();
-    return response;
+          assert(() {
+            if (debugLog) {
+              if (total > 0) {
+                // 日志限流
+                l.d(
+                  "下载进度:$count/$total ${count.toSizeStr()}/${total.toSizeStr()} ${(count / total * 100).toDigits(digits: 2)}% \n$url -> $saveFilePath",
+                );
+              } else {
+                l.d("下载进度:$count ${count.toSizeStr()} \n$url -> $saveFilePath");
+              }
+            }
+            return true;
+          }());
+          onReceiveProgress?.call(count, total);
+        },
+        lengthHeader: lengthHeader,
+        deleteOnError: deleteOnError,
+        queryParameters: queryParameters,
+        cancelToken: cancelToken,
+        data: data,
+        options: _mergeOptions(options, headers),
+      );
+      //debugger();
+      return response;
+    } catch (e) {
+      assert(() {
+        l.e("下载失败: $url -> $saveFilePath \n$e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 }
 
