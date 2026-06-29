@@ -295,6 +295,9 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
   }
 
   /// 关闭指定浮窗
+  ///
+  /// - [OverlayEntryControlState.hideOverlayByTag] - 关闭指定浮窗
+  /// - [OverlayEntryControlStateScope.hideOverlay] - 关闭最近的浮窗
   @api
   static bool hideOverlayByTag(String? tag) {
     return _overlayEntryControlStateMap[tag]?.hideOverlay() == true;
@@ -568,10 +571,12 @@ extension OverlayWidgetEx on Widget {
 extension OverlayEx on BuildContext {
   /// 在指定锚点位置显示浮窗 [Overlay]+[OverlayEntry]实现
   ///
-  /// - [closeBefore]
+  /// - [closeBefore]. 需要[tag]支持
   ///   - null: 支持显示多个浮窗
   ///   - true: 如果已存在浮窗, 则关闭, 并不显示新的.
   ///   - false: 如果已存在浮窗, 则跳过
+  /// - [consumeOutsideTap] 是否消耗外部点击
+  /// - [hideOverlayOutsideTap] 点击浮窗外, 是否关闭浮窗. 需要[tag]支持.
   ///
   /// - [OverlayEntry.remove] 手动移除
   /// - [OverlayEntryControlState.hideOverlayByTag] 隐藏指定标签的浮窗
@@ -590,8 +595,10 @@ extension OverlayEx on BuildContext {
     //--
     @defInjectMark String? tag /*唯一标识, 用于关闭指定浮窗*/,
     bool? closeBefore = false,
+    bool? consumeOutsideTap,
+    bool? hideOverlayOutsideTap,
   }) {
-    if (closeBefore != null && tag != null) {
+    if (closeBefore != null) {
       final overlayEntryControlState =
           OverlayEntryControlState.getOverlayEntryControlStateByTag(tag);
       final overlayEntry = overlayEntryControlState?._overlayEntry;
@@ -599,7 +606,9 @@ extension OverlayEx on BuildContext {
         if (closeBefore) {
           overlayEntryControlState.hideOverlay();
         }
-        return overlayEntry;
+        if (hideOverlayOutsideTap == null) {
+          return overlayEntry;
+        }
       }
     }
     final that = this;
@@ -610,8 +619,9 @@ extension OverlayEx on BuildContext {
       builder: (context) {
         FractionalOffset? fractionalOffset;
         final child = contentBuilder?.call(context, overlayEntry!) ?? empty;
+        tag ??= child.runtimeType.toString();
         return OverlayEntryControlWidget(
-          tag: tag ?? child.runtimeType.toString(),
+          tag: tag ?? tag,
           overlayEntry: overlayEntry,
           onHide: onHide,
           onGetScaleAnimateAlign: () => fractionalOffset,
@@ -629,7 +639,15 @@ extension OverlayEx on BuildContext {
                 offset.dy / parentSize.height,
               );
             },
-            child: child,
+            child: TapRegion(
+              consumeOutsideTaps: consumeOutsideTap == true,
+              onTapOutside: (event) {
+                if (hideOverlayOutsideTap == true) {
+                  OverlayEntryControlState.hideOverlayByTag(tag);
+                }
+              },
+              child: child,
+            ),
           ),
         );
       },

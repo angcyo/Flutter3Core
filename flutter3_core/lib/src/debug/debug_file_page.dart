@@ -15,7 +15,15 @@ class DebugFilePage extends StatefulWidget {
   @defInjectMark
   final bool? isSaveSelectedPath;
 
-  const DebugFilePage({super.key, this.initPath, this.isSaveSelectedPath});
+  /// 是否只是浏览文件
+  final bool? isBrowseOnly;
+
+  const DebugFilePage({
+    super.key,
+    this.initPath,
+    this.isSaveSelectedPath,
+    this.isBrowseOnly,
+  });
 
   @override
   State<DebugFilePage> createState() => _DebugFilePageState();
@@ -72,17 +80,19 @@ class _DebugFilePageState extends State<DebugFilePage>
               loadPathMixin(currentLoadFolderPath?.parentPath);
             })
             .tooltip(currentLoadFolderPath)
+            .insets(right: widget.isBrowseOnly == true ? kH : null)
             .expanded(),
-        GradientButton.min(
-          onTap: _handleResult,
-          enable: selectFilePath != null,
-          padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
-          child:
-              (isSaveSelectedPath
-                      ? (LibRes.maybeOf(context)?.libSave ?? "保存")
-                      : (LibRes.maybeOf(context)?.libConfirm ?? "确定"))
-                  .text(),
-        ).insets(h: kH),
+        if (widget.isBrowseOnly != true)
+          GradientButton.min(
+            onTap: _handleResult,
+            enable: selectFilePath != null,
+            padding: const EdgeInsets.symmetric(horizontal: kX, vertical: kL),
+            child:
+                (isSaveSelectedPath
+                        ? (LibRes.maybeOf(context)?.libSave ?? "保存")
+                        : (LibRes.maybeOf(context)?.libConfirm ?? "确定"))
+                    .text(),
+          ).insets(h: kH),
       ].row()!.safeArea(),
     );
   }

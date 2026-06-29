@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter3_widgets/flutter3_widgets.dart';
 
 import '../../assets_generated/assets.gen.dart';
 import '../../flutter3_core.dart';
@@ -16,10 +15,21 @@ class DebugFileMenuDialog extends StatelessWidget {
   /// 删除文件回调
   final VoidAction? onDeleteAction;
 
+  //--
+
+  /// 是否在弹窗中显示当前的对话框
+  /// - 影响样式
+  final bool? dialogInPopup;
+
+  /// 页面的关闭方式
+  final bool? dialogInOverlay;
+
   const DebugFileMenuDialog(
     this.filePath, {
     super.key,
     this.onDeleteAction,
+    this.dialogInOverlay,
+    this.dialogInPopup,
   });
 
   @override
@@ -28,69 +38,91 @@ class DebugFileMenuDialog extends StatelessWidget {
     final globalTheme = GlobalTheme.of(context);
     final isFile = filePath?.isFileSync() ?? false;
     const size = 25.0;
+    final isPopupStyle = dialogInPopup == true || dialogInOverlay == true;
     return [
-      buildDragHandle(context),
-      if (isFile)
-        IconTextTile(
-          iconWidget: loadCoreAssetSvgPicture(
-            Assets.svg.fileBrowseOpen,
-            width: size,
-            height: size,
-            tintColor: context.isThemeDark ? globalTheme.icoNormalColor : null,
+          if (!isPopupStyle) buildDragHandle(context),
+          if (isFile)
+            IconTextTile(
+              iconWidget: loadCoreAssetSvgPicture(
+                Assets.svg.fileBrowseOpen,
+                width: size,
+                height: size,
+                tintColor: context.isThemeDark
+                    ? globalTheme.icoNormalColor
+                    : null,
+              ),
+              text: "打开文件",
+              onTap: () {
+                close(context);
+                if (filePath?.mimeType()?.isImageMimeType == true) {
+                  context.showWidgetDialog(
+                    SingleImageDialog(filePath: filePath),
+                    useSafeArea: false,
+                  );
+                } else {
+                  context.showWidgetDialog(
+                    SingleTextDialog(filePath: filePath),
+                  );
+                }
+              },
+            ),
+          if (isFile)
+            IconTextTile(
+              iconWidget: loadCoreAssetSvgPicture(
+                Assets.svg.fileBrowseShare,
+                width: size,
+                height: size,
+                tintColor: context.isThemeDark
+                    ? globalTheme.icoNormalColor
+                    : null,
+              ),
+              text: "分享文件",
+              onTap: () {
+                globalConfig.shareDataFn?.call(context, filePath?.file());
+                close(context);
+              },
+            ),
+          IconTextTile(
+            iconWidget: loadCoreAssetSvgPicture(
+              Assets.svg.fileBrowseDelete,
+              width: size,
+              height: size,
+              tintColor: context.isThemeDark
+                  ? globalTheme.icoNormalColor
+                  : null,
+            ),
+            text: isFile ? "删除文件" : "删除文件夹",
+            onTap: () {
+              filePath?.deleteSync();
+              onDeleteAction?.call();
+              close(context);
+            },
           ),
-          text: "打开文件",
-          onTap: () {
-            close(context);
-            if (filePath?.mimeType()?.isImageMimeType == true) {
-              context.showWidgetDialog(
-                  SingleImageDialog(
-                    filePath: filePath,
-                  ),
-                  useSafeArea: false);
-            } else {
-              context.showWidgetDialog(SingleTextDialog(
-                filePath: filePath,
-              ));
-            }
-          },
-        ),
-      if (isFile)
-        IconTextTile(
-          iconWidget: loadCoreAssetSvgPicture(
-            Assets.svg.fileBrowseShare,
-            width: size,
-            height: size,
-            tintColor: context.isThemeDark ? globalTheme.icoNormalColor : null,
-          ),
-          text: "分享文件",
-          onTap: () {
-            globalConfig.shareDataFn?.call(context, filePath?.file());
-            close(context);
-          },
-        ),
-      IconTextTile(
-        iconWidget: loadCoreAssetSvgPicture(
-          Assets.svg.fileBrowseDelete,
-          width: size,
-          height: size,
-          tintColor: context.isThemeDark ? globalTheme.icoNormalColor : null,
-        ),
-        text: isFile ? "删除文件" : "删除文件夹",
-        onTap: () {
-          filePath?.deleteSync();
-          onDeleteAction?.call();
-          close(context);
-        },
-      ),
-    ]
+          if (isDesktopOrWeb)
+            IconTextTile(
+              iconWidget: Empty.size(size),
+              text: "打开所在文件夹",
+              onTap: () {
+                final path = isFile ? filePath?.parentPath : filePath;
+                openFilePath(path);
+                close(context);
+              },
+            ),
+        ]
         .column()!
         .container(color: globalTheme.whiteBgColor)
-        .pullBack()
+        .pullBack(enablePullBack: isPopupStyle != true)
         .matchParent(matchHeight: false)
-        .align(Alignment.bottomCenter);
+        .align(Alignment.bottomCenter, enable: isPopupStyle != true)
+        .desktopConstrained(enable: isPopupStyle, maxWidth: 380)
+        .clipRadius(enable: isPopupStyle == true);
   }
 
   void close(BuildContext context) {
-    Navigator.of(context).pop();
+    if (dialogInOverlay == true) {
+      OverlayEntryControlStateScope.hideOverlay(context);
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 }

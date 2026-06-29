@@ -103,7 +103,7 @@ class _ToastWidgetState extends State<ToastWidget> {
       child: result,
     );
     if (widget.elevation != null) {
-      result = result.elevation(widget.elevation!);
+      result = result.elevation(elevation: widget.elevation!);
     }
     //添加屏幕内边距
     result = Padding(padding: widget.margin ?? EdgeInsets.zero, child: result);

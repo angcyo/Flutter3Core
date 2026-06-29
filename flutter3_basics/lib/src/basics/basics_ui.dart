@@ -1784,13 +1784,20 @@ extension WidgetEx on Widget {
   /// 添加一个高度阴影
   /// [PhysicalModel]
   /// [kBoxShadow]
-  Widget elevation(double elevation, {Color? color, Color? shadowColor}) {
-    return PhysicalModel(
-      color: color ?? Colors.transparent,
-      shadowColor: shadowColor ?? Colors.black12,
-      elevation: elevation,
-      child: this,
-    );
+  Widget elevation({
+    double elevation = kDefaultElevation,
+    Color? color,
+    Color? shadowColor,
+    bool enable = true,
+  }) {
+    return enable
+        ? PhysicalModel(
+            color: color ?? Colors.transparent,
+            shadowColor: shadowColor ?? Colors.black12,
+            elevation: elevation,
+            child: this,
+          )
+        : this;
   }
 
   /// 使用一个容器包裹当前的小部件
@@ -2860,7 +2867,7 @@ extension WidgetEx on Widget {
     }
   }
 
-  /// 默认块状波纹效果
+  /// 默认块状波纹效果, 长按下时, 是一个圆圈涟漪的效果. 推荐使用[inkWell]
   /// 支持圆角波纹效果, 有的时候可能需要包裹在[Material]部件中才有预期效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
@@ -2870,7 +2877,8 @@ extension WidgetEx on Widget {
   /// [decoration] 强行指定装饰
   ///
   /// [material]
-  /// [inkWellCircle]
+  /// [inkWell] 方形: 推荐使用此方法替代
+  /// [inkWellCircle] 圆:
   Widget ink(
     GestureTapCallback? onTap, {
     bool enable = true,

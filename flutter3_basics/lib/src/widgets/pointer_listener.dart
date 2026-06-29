@@ -7,6 +7,8 @@ part of '../../flutter3_basics.dart';
 ///
 /// 回调
 typedef PointerEventListener = void Function(PointerEvent event);
+typedef PointerEventContentListener =
+    void Function(BuildContext context, PointerEvent event);
 
 /// 用来回调[PointerEvent]事件
 /// [Listener]

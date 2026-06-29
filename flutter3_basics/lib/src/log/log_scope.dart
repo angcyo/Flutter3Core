@@ -11,7 +11,7 @@ import '../../flutter3_basics.dart';
 /// - [LogScopeData] 日志数据
 /// - [LogScopeController] 日志面板控制器
 /// - [LogScope] 用来提供[LogScopeController]
-/// - [LogPanelContainer] 用来承载[LogScope]
+/// - [LogPanelContainer] 用来承载[LogScope]的容器页面
 
 /// 日志数据
 /// - [LogScopeController]

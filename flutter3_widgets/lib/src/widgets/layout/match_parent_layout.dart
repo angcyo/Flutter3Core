@@ -149,17 +149,20 @@ extension MatchParentLayoutEx on Widget {
     AlignmentDirectional alignment = AlignmentDirectional.center,
     bool? childWrapWidth,
     bool? childWrapHeight,
+    bool enable = true,
     String? debugLabel,
-  }) => (matchBoth == true || matchWidth || matchHeight)
-      ? MatchParentLayout(
-          alignment: alignment,
-          matchWidth: matchBoth ?? matchWidth,
-          matchHeight: matchBoth ?? matchHeight,
-          childWrapWidth: childWrapWidth,
-          childWrapHeight: childWrapHeight,
-          debugLabel: debugLabel,
-          child: this,
-        )
+  }) => enable
+      ? (matchBoth == true || matchWidth || matchHeight)
+            ? MatchParentLayout(
+                alignment: alignment,
+                matchWidth: matchBoth ?? matchWidth,
+                matchHeight: matchBoth ?? matchHeight,
+                childWrapWidth: childWrapWidth,
+                childWrapHeight: childWrapHeight,
+                debugLabel: debugLabel,
+                child: this,
+              )
+            : this
       : this;
 
   /// [matchParent]

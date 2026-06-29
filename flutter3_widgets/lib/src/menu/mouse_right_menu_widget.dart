@@ -14,7 +14,11 @@ part of 'menu_mix.dart';
 /// - [DesktopIconMenuTile]
 class MouseRightMenuWidget extends StatefulWidget {
   /// 真实内容
-  final Widget? body;
+  final Widget? child;
+
+  /// action
+  final PointerEventListener? onMouseRightTap;
+  final PointerEventContentListener? onMouseRightContentTap;
 
   //MARK: - menu
 
@@ -32,7 +36,10 @@ class MouseRightMenuWidget extends StatefulWidget {
 
   const MouseRightMenuWidget({
     super.key,
-    this.body,
+    this.child,
+    this.onMouseRightTap,
+    this.onMouseRightContentTap,
+    //--
     this.menus,
     this.onMenusTap,
     this.menu,
@@ -47,7 +54,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     return PointerListenerWidget(
-      child: widget.body,
+      child: widget.child,
       onPointer: (event) {
         if (event.isMouseRightDown) {
           //l.i("event->$event");
@@ -70,6 +77,8 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               shape: kMenuStyle.shape?.resolve({}),
             );
           }
+          widget.onMouseRightTap?.call(event);
+          widget.onMouseRightContentTap?.call(context, event);
         } else {
           //l.d("event->$event");
         }
@@ -79,18 +88,37 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
 }
 
 extension MouseRightMenuWidgetEx on Widget {
+  /// 鼠标右键触发
+  Widget mouseRightTrigger({
+    Key? key,
+    PointerEventListener? onMouseRightTap,
+    PointerEventContentListener? onMouseRightContentTap,
+    bool enable = true,
+  }) {
+    return enable
+        ? MouseRightMenuWidget(
+            key: key,
+            onMouseRightTap: onMouseRightTap,
+            onMouseRightContentTap: onMouseRightContentTap,
+            child: this,
+          )
+        : this;
+  }
+
   /// 鼠标右键菜单
   Widget mouseRightMenu({
+    Key? key,
     List<Widget>? menus,
     List<VoidCallback>? onMenusTap /*菜单对应的点击事件*/,
     //--菜单整体
     Widget? menu,
   }) {
     return MouseRightMenuWidget(
-      body: this,
+      key: key,
       menus: menus,
       onMenusTap: onMenusTap,
       menu: menu,
+      child: this,
     );
   }
 }

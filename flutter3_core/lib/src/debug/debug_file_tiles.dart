@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 
@@ -115,15 +117,36 @@ class DebugFileTile extends StatelessWidget {
           onClick?.call(context);
         });
 
-    result = result.longClick(() {
-      //长按分享文件
-      //l.d('长按');
-      //globalConfig.shareDataFn?.call(context, file);
-      context.showWidgetDialog(
-        DebugFileMenuDialog(this.path, onDeleteAction: onDeleteAction),
-        type: TranslationType.translation,
-      );
-    });
+    result = result
+        .longClick(() {
+          //长按分享文件
+          //l.d('长按');
+          //globalConfig.shareDataFn?.call(context, file);
+          context
+              .showWidgetDialog(
+                DebugFileMenuDialog(this.path, onDeleteAction: onDeleteAction),
+                type: TranslationType.translation,
+              )
+              .get((data, error) {
+                debugger(when: error != null);
+              });
+        })
+        .mouseRightTrigger(
+          onMouseRightContentTap: (ctx, event) {
+            context.showOverlay(
+              (ctx, entry) {
+                return DebugFileMenuDialog(
+                  this.path,
+                  onDeleteAction: onDeleteAction,
+                  dialogInOverlay: true,
+                ).elevation().material();
+              },
+              alignmentOffset: event.localPosition,
+              scaleAlignment: .topLeft,
+              hideOverlayOutsideTap: true,
+            );
+          },
+        );
 
     return result;
   }

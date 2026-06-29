@@ -7,14 +7,14 @@ part of '../../flutter3_widgets.dart';
 
 /// 手势偏移距离回调
 /// [offset] 手势每次移动的距离 >0:向下拉 <0:向上拉
-typedef ScrollUserOffsetAction = double Function(
-    ScrollMetrics position, double offset);
+typedef ScrollUserOffsetAction =
+    double Function(ScrollMetrics position, double offset);
 
 /// 手势结束速度回调
 /// [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
 /// 返回true, 表示拦截默认处理
-typedef ScrollDragEndAction = bool Function(
-    ScrollMetrics position, double velocity);
+typedef ScrollDragEndAction =
+    bool Function(ScrollMetrics position, double velocity);
 
 /// 下拉返回的小部件
 /// 支持滚动和非滚动子组件
@@ -110,7 +110,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
   /// 下拉的效果矩阵
   Matrix4 get _pullBackTransform => Matrix4.identity()
     ..translate(
-        0.0, (_pullBackValue + _overPullBackValue) * (_childHeight ?? 0));
+      0.0,
+      (_pullBackValue + _overPullBackValue) * (_childHeight ?? 0),
+    );
 
   /// [0~1] 0:未开始下拉 1:完全下拉到底部
   AnimationController? _pullBackController;
@@ -220,7 +222,8 @@ class _PullBackWidgetState extends State<PullBackWidget>
   }
 
   void _initController(double upperBound) {
-    final controller = widget.pullBackController ??
+    final controller =
+        widget.pullBackController ??
         AnimationController(
           duration: kDefaultAnimationDuration,
           vsync: this,
@@ -319,8 +322,9 @@ class _PullBackWidgetState extends State<PullBackWidget>
     }
 
     //监听通知
-    body =
-        body.listenerNotification<PullBackControlNotification>((notification) {
+    body = body.listenerNotification<PullBackControlNotification>((
+      notification,
+    ) {
       final old = _enablePullBack;
       if (old && !notification.enable) {
         _handleDragEnd(null, 0);
@@ -563,9 +567,7 @@ class PullBackControlNotification extends Notification {
 class _PullBackScrollBehavior extends MaterialScrollBehavior {
   final ScrollPhysics? _physics;
 
-  const _PullBackScrollBehavior({
-    ScrollPhysics? physics,
-  }) : _physics = physics;
+  const _PullBackScrollBehavior({ScrollPhysics? physics}) : _physics = physics;
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
@@ -585,11 +587,9 @@ class PullBackScrollPhysics extends AlwaysScrollableScrollPhysics {
   final ScrollDragEndAction? dragEndAction;
 
   const PullBackScrollPhysics({
-    super.parent =
-        const ClampingScrollPhysics() /*const BouncingScrollPhysics(
+    super.parent = const ClampingScrollPhysics() /*const BouncingScrollPhysics(
       parent: RangeMaintainingScrollPhysics(),
-    )*/
-    ,
+    )*/,
     this.consumeUserOffsetAction,
     this.dragEndAction,
   });
@@ -638,15 +638,13 @@ Widget buildDragHandle(
   return SizedBox(
     width: width,
     height: height + padding + padding,
-    child: SizedBox(
-      width: width,
-      height: height,
-    )
+    child: SizedBox(width: width, height: height)
         .backgroundDecoration(
           fillDecoration(
-              color: context.isThemeDark
-                  ? globalTheme.icoNormalColor
-                  : Colors.black12),
+            color: context.isThemeDark
+                ? globalTheme.icoNormalColor
+                : Colors.black12,
+          ),
         )
         .align(Alignment.center),
   );
@@ -676,7 +674,8 @@ extension PullBackWidgetExtension on Widget {
       useScrollConsume: useScrollConsume,
       pullBackController: pullBackController,
       useMaybePop: useMaybePop,
-      onPullBack: onPullBack ??
+      onPullBack:
+          onPullBack ??
           (context) {
             if (useMaybePop) {
               context.maybePop();

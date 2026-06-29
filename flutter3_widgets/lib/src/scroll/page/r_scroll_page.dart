@@ -894,7 +894,7 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
             .insets(all: kH)
             .decoration(fillDecoration(color: globalTheme.dialogSurfaceBgColor))
             .size(width: 260)
-            .elevation(kDefaultElevation)
+            .elevation()
             .overlayDragTrigger();
       },
       tag: kSearchOverlayTag,

@@ -98,8 +98,9 @@ class IconTextTile extends StatelessWidget with TileMixin {
       result = [
         iconWidget,
         textWidget?.expanded(
-            enable: iconWidget != null || trailingWidget != null),
-        trailingWidget
+          enable: iconWidget != null || trailingWidget != null,
+        ),
+        trailingWidget,
       ].row(gap: gap)!;
     }
 
@@ -107,7 +108,7 @@ class IconTextTile extends StatelessWidget with TileMixin {
         .colorFiltered(color: enable ? tintColor : disableTintColor)
         .paddingInsets(padding)
         .constrainedMin(minHeight: kMinItemInteractiveHeight)
-        .ink(enable && enableTap ? onTap : null)
+        .inkWell(enable && enableTap ? onTap : null)
         .material();
 
     return result;

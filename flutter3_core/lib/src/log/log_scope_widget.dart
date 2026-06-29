@@ -23,6 +23,8 @@ import 'log_message_mix.dart';
 /// - [LogScope] 用来提供[LogScopeController]
 /// - [LogPanelContainer] 用来承载[LogScope]
 /// 日志面板布局
+///
+/// - [tabEntryList] 所有标签以及对应的内容页面
 class LogPanelContainer extends StatefulWidget {
   /// 控制器
   final LogScopeController? control;
@@ -128,6 +130,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
           /*folderPath: fileFolderPath,*/
           initPath: fileFolderPath,
           key: ValueKey(fileFolderPath),
+          isBrowseOnly: true,
         );
       },
     ),
@@ -147,6 +150,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
           /*folderPath: cacheFolderPath,*/
           initPath: cacheFolderPath,
           key: ValueKey(cacheFolderPath),
+          isBrowseOnly: true,
         );
       },
     ),
