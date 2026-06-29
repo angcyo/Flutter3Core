@@ -188,6 +188,22 @@ class TextFieldConfig {
   ///
   /// 在此方法中[buildWrapAutocomplete]使用[Autocomplete]小部件包裹
   ///
+  /// ```
+  /// config: TextFieldConfig(
+  ///      autoOptionsBuilder: (config, textEditingValue) {
+  ///        l.d("autoOptionsBuilder[${config.hasFocus}]->$textEditingValue");
+  ///        if (isNil(textEditingValue.text)) {
+  ///          return [];
+  ///        }
+  ///        return [
+  ///          "autoOptionsBuilder->${textEditingValue.text}",
+  ///          textEditingValue.text,
+  ///          "->${textEditingValue.text}<-",
+  ///        ];
+  ///      },
+  ///    ),
+  /// ```
+  ///
   /// @return 返回值即自动完成的提示选项列表
   final FutureOr<Iterable<Object>> Function(
     TextFieldConfig config,
@@ -634,7 +650,12 @@ class TextFieldConfig {
               borderRadius: autoOverlayBorderRadius,
             );
           },
-      onSelected: onAutoOptionSelected,
+      onSelected: (option) {
+        if (option is String) {
+          notifyValueChanged(text);
+        }
+        onAutoOptionSelected?.call(option);
+      },
     );
   }
 
