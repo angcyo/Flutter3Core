@@ -20,8 +20,9 @@ void main(List<String> args) async {
     return;
   }
 
-  final outputPath = '$rootPath/macos/Runner/';
-  final dir = Directory("$outputPath$iconsetName");
+  final outputPath = '$rootPath/macos/Runner';
+  final iconsetPath = '$outputPath/$iconsetName';
+  final dir = Directory(iconsetPath);
   if (await dir.exists()) await dir.delete(recursive: true);
   await dir.create();
 
@@ -45,14 +46,14 @@ void main(List<String> args) async {
         '$currentSize',
         sourceIcon,
         '--out',
-        '$iconsetName/icon_$name.png',
+        '$iconsetPath/icon_$name.png',
       ]);
     }
   }
 
   print('⏳ 正在生成成品 .icns 文件...');
-  final outputIcns = '$outputPath$outputName.icns';
-  await Process.run('iconutil', ['-c', 'icns', iconsetName, '-o', outputIcns]);
+  final outputIcns = '$outputPath/$outputName.icns';
+  await Process.run('iconutil', ['-c', 'icns', iconsetPath, '-o', outputIcns]);
 
   await dir.delete(recursive: true);
   print('✨ 成功！成品已输出至: $outputIcns');
