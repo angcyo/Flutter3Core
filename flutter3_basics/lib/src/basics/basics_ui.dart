@@ -2955,6 +2955,7 @@ extension WidgetEx on Widget {
     GestureTapCallback? onTap, {
     GestureTapDownCallback? onClickDown /*带按下事件信息的点击回调*/,
     GestureTapDownCallback? onTapDown /*按下回调*/,
+    double? borderRadiusNum,
     BorderRadius? borderRadius /*边框的圆角*/,
     Color? splashColor,
     Color? highlightColor,
@@ -2978,6 +2979,9 @@ extension WidgetEx on Widget {
       splashColor = Colors.transparent;
       highlightColor = Colors.transparent;
       hoverColor = Colors.transparent;
+    }
+    if (borderRadius == null && borderRadiusNum != null) {
+      borderRadius = BorderRadius.all(Radius.circular(borderRadiusNum));
     }
     Timer? periodicTimer;
     TapDownDetails? downDetails;
