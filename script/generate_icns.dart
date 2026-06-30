@@ -7,10 +7,11 @@ import 'dart:io';
 /// 用来生成macOS .icns 文件
 /// - macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png 默认使用此输入图片
 void main(List<String> args) async {
+  final rootPath = Directory.current.path;
   // 1. 配置你的 1024x1024 PNG 源文件路径
   final sourceIcon =
       args.firstOrNull ??
-      'macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png';
+      '$rootPath/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png';
   final outputName = args.length > 1 ? args[1] : 'AppIcon';
   final iconsetName = "$outputName.iconset";
 
@@ -19,7 +20,7 @@ void main(List<String> args) async {
     return;
   }
 
-  final outputPath = 'macos/Runner/';
+  final outputPath = '$rootPath/macos/Runner/';
   final dir = Directory("$outputPath$iconsetName");
   if (await dir.exists()) await dir.delete(recursive: true);
   await dir.create();
