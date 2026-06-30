@@ -7,6 +7,9 @@ part of '../../flutter3_widgets.dart';
 /// 多标签管理
 /// - [TabEntryInfo] 被管理的标签信息
 /// - [TabsManagerWidget] 管理多个标签的小部件
+///
+/// - [selectTab] 使用索引选择标签
+/// - [switchTab] 切换到指定标签
 class TabsManagerController {
   /// 从[BuildContext]中获取到[TabsManagerController]
   static TabsManagerController? of(
