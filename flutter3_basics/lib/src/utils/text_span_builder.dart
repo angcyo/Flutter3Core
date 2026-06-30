@@ -6,7 +6,8 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/10/23
 ///
-
+/// - [buildTextSpan] 输出[TextSpan]
+/// - [build] 输出[Widget]
 class TextSpanBuilder {
   final List<InlineSpan> _textSpans = <InlineSpan>[];
 
@@ -150,10 +151,12 @@ class TextSpanBuilder {
   /// [InlineSpan]
   /// -> [TextSpan]
   /// -> [WidgetSpan]
+  @output
   TextSpan buildTextSpan() => TextSpan(children: _textSpans);
 
   /// 使用[TextSpan]构建[Widget]
   /// - [logBuffer] 将[TextSpan]的文本内容写入[StringBuffer]
+  @output
   Widget build({
     Key? key,
     TextStyle? style,
