@@ -85,6 +85,10 @@ extension FileStringEx on String {
     return parentPath.ensureDirectory();
   }
 
+  /// - 获取文件所在的文件夹路径
+  /// - 获取文件夹本身的路径
+  String get fileFolderPath => isDirectorySync() ? this : parentPath;
+
   /// 父路径
   String get parentPath => FileSystemEntity.parentOf(this);
 
