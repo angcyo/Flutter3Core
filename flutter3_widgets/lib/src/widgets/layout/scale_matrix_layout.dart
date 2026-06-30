@@ -35,6 +35,8 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
   )?
   onLayoutAction;
 
+  final String? debugLabel;
+
   const ScaleMatrixContainerLayout({
     super.key,
     super.children,
@@ -43,6 +45,7 @@ class ScaleMatrixContainerLayout extends MultiChildRenderObjectWidget {
     this.aspectRatio,
     this.onHandlePointerEvent,
     this.onLayoutAction,
+    this.debugLabel,
   });
 
   @override
@@ -237,6 +240,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
   //--
 
   /// 计算出来的矩阵
+  /// - [RenderTransform]
   Matrix4? _effectiveTransform;
 
   Matrix4? get effectiveTransform => _effectiveTransform;
@@ -467,11 +471,12 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     return childOffset;
   }
 
+  /// - [RenderTransform]
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
-    final Matrix4? transform = _effectiveTransform;
-    if (transform != null) {
-      transform.multiply(transform);
+    final Matrix4? effectiveTransform = _effectiveTransform;
+    if (effectiveTransform != null) {
+      transform.multiply(effectiveTransform);
     }
   }
 }
