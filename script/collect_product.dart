@@ -285,6 +285,7 @@ void main(List<String> arguments) async {
                   '/DMyAppExeName=$exeFileName',
                   issFile.path,
                 ],
+                dir: currentPath,
                 printLog: false,
               );
               if (result?.exitCode == 0) {
