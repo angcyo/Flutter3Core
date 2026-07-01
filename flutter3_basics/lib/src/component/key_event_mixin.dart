@@ -140,63 +140,16 @@ mixin KeyEventMixin {
 
     if (event.isKeyDownOrRepeat || event.isKeyUp) {
       for (final register in _keyEventRegisterList) {
-        if ((event.isKeyDown && register.keyDown) ||
-            (event.isKeyRepeat && register.keyRepeat) ||
-            (event.isKeyUp && register.keyUp)) {
-          //需要处理 按下事件
-          //需要处理 重复事件
-          //需要处理 抬起事件
-        } else {
-          continue;
-        }
-        final onKeyEvent = register.onKeyEventAction;
-        if (onKeyEvent == null) {
-          continue;
-        }
-        //--
-        final eventGroupKeys = register.eventGroupKeys;
-        //debugger(when: event.isKeyUp);
-        if (eventGroupKeys != null) {
-          //中断
-          bool interrupt = false;
-          for (final keys in eventGroupKeys) {
-            if ((((register.keyDown && event.isKeyDown) ||
-                        (register.keyRepeat && event.isKeyRepeat)) &&
-                    isKeysPressedAll(
-                      keys,
-                      matchKeyCount: register.matchKeyCount,
-                      physicalPressedKeys: _physicalKeysPressed,
-                    )) ||
-                (register.keyUp &&
-                    event.isKeyUp &&
-                    isSameLogicalKey(
-                      keys.filterLogicalKeysPressed.lastOrNull,
-                      event.logicalKey,
-                    ))) {
-              handle = onKeyEvent(
-                KeyEventHitInfo(
-                  keys,
-                  isKeyDown: event.isKeyDown,
-                  isKeyRepeat: event.isKeyRepeat,
-                  isKeyUp: event.isKeyUp,
-                ),
-              );
-              /*assert(() {
-                l.d("按键命中->[${keys.connect(
-                    " + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
-                return true;
-              }());*/
-              if (handle != KeyEventResult.ignored) {
-                if (register.stopPropagation) {
-                  interrupt = true;
-                }
-                break;
-              }
-            }
-          }
-          if (interrupt) {
-            break;
-          }
+        final result = register.handleKeyEvent(
+          event,
+          physicalPressedKeys: _physicalKeysPressed,
+        );
+        if ((result == .handled && register.stopPropagation) ||
+            result == .skipRemainingHandlers) {
+          handle = .handled;
+          break;
+        } else if (result == .handled) {
+          handle = .handled;
         }
       }
     }
@@ -254,6 +207,69 @@ class KeyEventRegister {
     this.keyUp = false,
     this.tag,
   });
+
+  /// 处理按键事件
+  KeyEventResult handleKeyEvent(
+    KeyEvent event, {
+    Set<PhysicalKeyboardKey>? physicalPressedKeys,
+  }) {
+    final register = this;
+    KeyEventResult handle = KeyEventResult.ignored;
+    if ((event.isKeyDown && register.keyDown) ||
+        (event.isKeyRepeat && register.keyRepeat) ||
+        (event.isKeyUp && register.keyUp)) {
+      //需要处理 按下事件
+      //需要处理 重复事件
+      //需要处理 抬起事件
+    } else {
+      return handle;
+    }
+    final onKeyEvent = register.onKeyEventAction;
+    if (onKeyEvent == null) {
+      return handle;
+    }
+    //--
+    final eventGroupKeys = register.eventGroupKeys;
+    //debugger(when: event.isKeyUp);
+    if (eventGroupKeys != null) {
+      for (final keys in eventGroupKeys) {
+        if ((((register.keyDown && event.isKeyDown) ||
+                    (register.keyRepeat && event.isKeyRepeat)) &&
+                isKeysPressedAll(
+                  keys,
+                  matchKeyCount: register.matchKeyCount,
+                  physicalPressedKeys: physicalPressedKeys,
+                )) ||
+            (register.keyUp &&
+                event.isKeyUp &&
+                isSameLogicalKey(
+                  keys.filterLogicalKeysPressed.lastOrNull,
+                  event.logicalKey,
+                ))) {
+          handle = onKeyEvent(
+            KeyEventHitInfo(
+              keys,
+              isKeyDown: event.isKeyDown,
+              isKeyRepeat: event.isKeyRepeat,
+              isKeyUp: event.isKeyUp,
+            ),
+          );
+          /*assert(() {
+                l.d("按键命中->[${keys.connect(
+                    " + ", (e) => e.debugName ?? e.keyLabel)}] $handle");
+                return true;
+              }());*/
+          if (handle != KeyEventResult.ignored) {
+            if (register.stopPropagation) {
+              handle == KeyEventResult.skipRemainingHandlers;
+            }
+            break;
+          }
+        }
+      }
+    }
+    return handle;
+  }
 }
 
 /// 键盘事件, 命中的信息
@@ -390,10 +406,18 @@ class KeyEventWidget extends StatefulWidget {
   /// 内容
   final Widget child;
 
+  final String? tag;
+
+  final bool autofocus;
+  final ValueChanged<bool>? onFocusChange;
+
   const KeyEventWidget({
     super.key,
     required this.keyEventRegisterList,
     required this.child,
+    this.autofocus = true,
+    this.onFocusChange,
+    this.tag,
   });
 
   @override
@@ -418,14 +442,16 @@ class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
     return Focus(
       focusNode: null,
       parentNode: null,
-      autofocus: true,
+      autofocus: widget.autofocus,
       canRequestFocus: null,
       skipTraversal: null,
-      onFocusChange: isDebug
-          ? (value) {
-              l.i('[${classHash()}] focus change $value');
-            }
-          : null,
+      onFocusChange:
+          widget.onFocusChange ??
+          (isDebug
+              ? (value) {
+                  l.i('${widget.tag?.wsb}[${classHash()}]focus change $value');
+                }
+              : null),
       onKeyEvent: (node, event) {
         assert(() {
           //l.i('[${classHash()}] key event $event');

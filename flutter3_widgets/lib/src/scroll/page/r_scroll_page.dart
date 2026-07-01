@@ -351,7 +351,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   ///   - [removeTile] 通过数据删除[RItemTile]
   ///   - [updateTile] 通过数据更新[RItemTile]
   ///   - [updateTileList]
-  ///   - [updateAllTile]
+  ///   - [rebuildAllTile]
   /// - [enableRebuild] 是否支持动态更新数据
   /// - [insetIndex] 是否是插入数据
   @api
@@ -484,10 +484,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     scrollController.startRefresh(useWidgetState: true);
   }
 
-  /// 仅重建界面
+  /// 仅重建滚动列表界面
+  /// - 更新子tile, 需要使用[rebuildAllTile]
   @api
   @updateMark
-  void rebuildScrollView() {
+  void rebuildScrollView({bool? rebuildAllTile}) {
+    if (rebuildAllTile == true) {
+      this.rebuildAllTile();
+    }
     scrollController.notifyRebuildScrollViewWidget();
   }
 
@@ -677,7 +681,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// - [updateTile]
   /// - [rebuildTile]
   @api
-  void updateAllTile() {
+  void rebuildAllTile() {
     rebuildTile((tile, signal) => true);
   }
 
@@ -802,11 +806,37 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
 
   @override
   void dispose() {
-    if (enableFilterMixin) {
+    if (enableInputFilterMixin) {
       OverlayEntryControlState.hideOverlayByTag(kSearchOverlayTag);
     }
     super.dispose();
   }
+
+  /// 刷新快捷键
+  late KeyEventRegister refreshKeyEventRegister = KeyEventRegister(
+    [
+      isMacOS
+          ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyR]
+          : [LogicalKeyboardKey.f5],
+    ],
+    onKeyEventAction: (event) {
+      startRefresh();
+      return .handled;
+    },
+  );
+
+  /// 输入过滤快捷键
+  late KeyEventRegister inputFilterKeyEventRegister = KeyEventRegister(
+    [
+      isMacOS
+          ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyF]
+          : [LogicalKeyboardKey.control, LogicalKeyboardKey.keyF],
+    ],
+    onKeyEventAction: (event) {
+      showInputFilterOverlay();
+      return .handled;
+    },
+  );
 
   @override
   Widget pageRScrollView({
@@ -821,26 +851,12 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
           enableLoadMore: enableLoadMore,
         )
         .keyEvent(
-          isMacOS
-              ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyR]
-              : [LogicalKeyboardKey.f5],
-          (event) {
-            startRefresh();
-            return .handled;
-          },
+          null,
+          null,
+          tag: runtimeType.toString(),
           keyEventRegisterList: [
-            if (enableFilterMixin)
-              KeyEventRegister(
-                [
-                  isMacOS
-                      ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyF]
-                      : [LogicalKeyboardKey.control, LogicalKeyboardKey.keyF],
-                ],
-                onKeyEventAction: (event) {
-                  showFilterInputOverlay();
-                  return .handled;
-                },
-              ),
+            refreshKeyEventRegister,
+            if (enableInputFilterMixin) inputFilterKeyEventRegister,
           ],
         );
   }
@@ -850,17 +866,19 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
   final kSearchOverlayTag = "RScrollPageRefreshMixinSearch";
 
   /// 是否激活过滤功能
+  /// - [RScrollPageRefreshMixin.pageRScrollView]中注册对应的快捷键
+  /// - [showInputFilterOverlay] 显示对应的过滤输入框
   @configProperty
-  bool enableFilterMixin = false;
+  bool enableInputFilterMixin = false;
 
   /// 需要过滤的内容文本
   @output
-  String? filterTextMixin;
+  String? inputFilterTextMixin;
 
   /// 显示过滤输入框
   @api
   @overridePoint
-  void showFilterInputOverlay({
+  void showInputFilterOverlay({
     BuildContext? context,
     //--
     Alignment? targetAnchor,
@@ -871,26 +889,31 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
     final globalTheme = GlobalTheme.of(context);
     context?.showOverlay(
       (ctx, entry) {
-        return SingleInputWidget(
-              config: TextFieldConfig(
-                hintText: "搜索内容",
-                text: filterTextMixin,
-                onChanged: (value) {
-                  filterTextMixin = value;
-                  debounce(() {
-                    rebuildScrollView();
-                  });
-                },
-                onKeyEvent: (node, event) {
-                  if (event.isEscKey) {
-                    OverlayEntryControlState.hideOverlayByTag(
-                      kSearchOverlayTag,
-                    );
-                  }
-                  return .ignored;
-                },
-              ),
-            )
+        final config = TextFieldConfig(
+          hintText: "搜索内容",
+          text: inputFilterTextMixin,
+          autofocus: true,
+          onChanged: (value) {
+            inputFilterTextMixin = value;
+            debounce(() {
+              rebuildScrollView(rebuildAllTile: true);
+            });
+          },
+          onKeyEvent: (node, event) {
+            if (event.isEscKey) {
+              OverlayEntryControlState.hideOverlayByTag(kSearchOverlayTag);
+            } else if (enableInputFilterMixin) {
+              return inputFilterKeyEventRegister.handleKeyEvent(event);
+            }
+            return .ignored;
+          },
+        );
+        if (config.autofocus == true) {
+          $nextFrame(() {
+            config.requestFocus();
+          });
+        }
+        return SingleInputWidget(config: config)
             .insets(all: kH)
             .decoration(fillDecoration(color: globalTheme.dialogSurfaceBgColor))
             .size(width: 260)
@@ -903,8 +926,8 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
       alignmentOffset: alignmentOffset ?? Offset(-30, 40),
       closeBefore: true,
       onHide: () {
-        filterTextMixin = null;
-        rebuildScrollView();
+        inputFilterTextMixin = null;
+        rebuildScrollView(rebuildAllTile: true);
       },
     );
   }

@@ -319,7 +319,19 @@ class TextFieldConfig {
        suffixFocusNode = suffixFocusNode ?? FocusNode(skipTraversal: true),
        prefixFocusNode = prefixFocusNode ?? FocusNode(skipTraversal: true),
        obscureNode = ObscureNode(obscureText ?? false) {
-    this.focusNode = focusNode ?? FocusNode(onKeyEvent: handleKeyEvent);
+    if (focusNode != null) {
+      final oldKeyEvent = focusNode.onKeyEvent;
+      focusNode.onKeyEvent = (node, event) {
+        final keyResult = oldKeyEvent?.call(node, event);
+        if (keyResult == null || keyResult != KeyEventResult.handled) {
+          return handleKeyEvent(node, event);
+        }
+        return keyResult;
+      };
+      this.focusNode = focusNode;
+    } else {
+      this.focusNode = FocusNode(onKeyEvent: handleKeyEvent);
+    }
     if (notifyDefaultTextChange) {
       final value = this.controller.value.text;
       notifyValueChanged(value);

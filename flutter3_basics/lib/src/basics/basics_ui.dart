@@ -949,10 +949,13 @@ extension WidgetEx on Widget {
   /// - [eventGroupKeys] N组按键, 匹配任意一个则通过
   /// [KeyEventWidget]
   Widget keyEvent(
-    List<KeyboardKey> keys,
+    List<KeyboardKey>? keys,
     KeyEventHandleAction? onKeyEventAction, {
     //--
     bool enable = true,
+    bool autofocus = true,
+    ValueChanged<bool>? onFocusChange,
+    String? tag,
     //--
     Key? key,
     List<List<KeyboardKey>>? eventGroupKeys,
@@ -967,16 +970,21 @@ extension WidgetEx on Widget {
   }) => enable
       ? KeyEventWidget(
           key: key,
+          tag: tag,
+          autofocus: autofocus,
+          onFocusChange: onFocusChange,
           keyEventRegisterList: [
-            KeyEventRegister(
-              eventGroupKeys ?? [keys],
-              onKeyEventAction: onKeyEventAction,
-              stopPropagation: stopPropagation,
-              matchKeyCount: matchKeyCount,
-              keyDown: keyDown,
-              keyRepeat: keyRepeat,
-              keyUp: keyUp,
-            ),
+            if ((keys != null && keys.isNotEmpty) ||
+                (eventGroupKeys != null && eventGroupKeys.isNotEmpty))
+              KeyEventRegister(
+                eventGroupKeys ?? [keys!],
+                onKeyEventAction: onKeyEventAction,
+                stopPropagation: stopPropagation,
+                matchKeyCount: matchKeyCount,
+                keyDown: keyDown,
+                keyRepeat: keyRepeat,
+                keyUp: keyUp,
+              ),
             ...?keyEventRegisterList,
           ],
           child: this,
@@ -989,11 +997,17 @@ extension WidgetEx on Widget {
     List<KeyEventRegister> keyEventRegisterList, {
     //--
     bool enable = true,
+    bool autofocus = true,
+    ValueChanged<bool>? onFocusChange,
+    String? tag,
     //--
     Key? key,
   }) => enable
       ? KeyEventWidget(
           key: key,
+          tag: tag,
+          autofocus: autofocus,
+          onFocusChange: onFocusChange,
           keyEventRegisterList: keyEventRegisterList,
           child: this,
         )

@@ -12,6 +12,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui';
 
+import 'package:flutter3_basics/src/component/substring_highlight.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';

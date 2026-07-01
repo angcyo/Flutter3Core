@@ -277,16 +277,16 @@ extension ObjectEx on Object {
     int? maxLines,
     TextOverflow? overflow,
     bool? softWrap,
-    String? highlight,
+    //--highlight
     Color? highlightColor,
     TextStyle? highlightTextStyle,
+    String? highlight,
     List<String>? highlightList,
     bool caseSensitive = false,
-    String wordDelimiters = ' .,;?!<>[]~`@#\$%^&*()+-=|\/_',
     // default is to match substrings (hence the package name!)
     bool words = false,
-    bool selectable = false,
     //--
+    bool selectable = false,
     bool useDefStyle = true /*是否使用默认的文本样式*/,
     String? debugLabel,
   }) {
@@ -361,107 +361,21 @@ extension ObjectEx on Object {
         color: highlightColor ?? Colors.red,
       );
 
-      final text = toString();
-      final textLC = caseSensitive ? text : text.toLowerCase();
-
-      // corner case: if both term and terms array are passed then combine
-      final List<String> termList = [highlight ?? '', ...?highlightList];
-
-      // remove empty search terms ('') because they cause infinite loops
-      final List<String> termListLC = termList
-          .where((s) => s.isNotEmpty)
-          .map((s) => caseSensitive ? s : s.toLowerCase())
-          .toList();
-
-      List<InlineSpan> children = [];
-
-      int start = 0;
-      int idx = 0; // walks text (string that is searched)
-      while (idx < textLC.length) {
-        // print('=== idx=$idx');
-        nonHighlightAdd(int end) => children.add(
-          TextSpan(text: text.substring(start, end), style: highlightTextStyle),
-        );
-
-        // find index of term that's closest to current idx position
-        int iNearest = -1;
-        int idxNearest = __int64MaxValue;
-        for (int i = 0; i < termListLC.length; i++) {
-          // print('*** i=$i');
-          int at;
-          if ((at = textLC.indexOf(termListLC[i], idx)) >= 0) //MAGIC//CORE
-          {
-            // print('idx=$idx i=$i at=$at => FOUND: ${termListLC[i]}');
-
-            if (words) {
-              if (at > 0 &&
-                  // is preceding character a delimiter?
-                  !wordDelimiters.contains(textLC[at - 1])) {
-                // print('disqualify preceding: idx=$idx i=$i');
-                continue; // preceding character isn't delimiter so disqualify
-              }
-
-              int followingIdx = at + termListLC[i].length;
-              if (followingIdx < textLC.length &&
-                  !wordDelimiters.contains(
-                    textLC[followingIdx],
-                  )) // is character following the search term a delimiter?
-              {
-                // print('disqualify following: idx=$idx i=$i');
-                continue; // following character isn't delimiter so disqualify
-              }
-            }
-
-            // print('term #$i found at=$at (${termListLC[i]})');
-            if (at < idxNearest) {
-              // print('PEG');
-              iNearest = i;
-              idxNearest = at;
-            }
-          }
-        }
-
-        if (iNearest >= 0) {
-          // found one of the terms at or after idx
-          // iNearest is the index of the closest term at or after idx that matches
-
-          // print('iNearest=$iNearest @ $idxNearest');
-          if (start < idxNearest) {
-            // we found a match BUT FIRST output non-highlighted text that comes BEFORE this match
-            nonHighlightAdd(idxNearest);
-            start = idxNearest;
-          }
-
-          // output the match using desired highlighting
-          int termLen = termListLC[iNearest].length;
-          children.add(
-            TextSpan(
-              text: text.substring(start, idxNearest + termLen),
-              style: highlightTextStyle,
-            ),
-          );
-          start = idx = idxNearest + termLen;
-        } else {
-          if (words) {
-            idx++;
-            nonHighlightAdd(idx);
-            start = idx;
-          } else {
-            // if none match at all (ever!)
-            // --or--
-            // one or more matches but during this iteration there are NO MORE matches
-            // in either case, add reminder of text as non-highlighted text
-            nonHighlightAdd(textLC.length);
-            break;
-          }
-        }
-      }
+      final children = SubstringHighlight.build(
+        toString(),
+        words: words,
+        caseSensitive: caseSensitive,
+        term: highlight,
+        terms: highlightList,
+        textStyle: innerTextStyle,
+        textStyleHighlight: highlightTextStyle,
+      );
 
       //debugger(when: debugLabel != null);
       //高亮处理
       if (selectable) {
         return SelectableText.rich(
-          TextSpan(children: children, style: highlightTextStyle),
+          TextSpan(children: children, style: innerTextStyle),
           style: innerTextStyle,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -470,7 +384,7 @@ extension ObjectEx on Object {
         );
       }
       return Text.rich(
-        TextSpan(children: children, style: highlightTextStyle),
+        TextSpan(children: children, style: innerTextStyle),
         style: innerTextStyle,
         textAlign: textAlign,
         maxLines: maxLines,
