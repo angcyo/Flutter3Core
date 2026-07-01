@@ -6,6 +6,13 @@ part of '../flutter3_oss.dart';
 ///
 /// OSS 端点切换对话框
 class OssEndpointConfigDialog extends StatefulWidget with DialogMixin {
+  @hiveFlag
+  static HiveStringValue $ossEndpointHive = $hiveString(
+    "_key_oss_endpoint_config",
+  );
+  @hiveFlag
+  static HiveStringValue $ossBucketHive = $hiveString("_key_oss_bucket_config");
+
   const OssEndpointConfigDialog({super.key});
 
   @override
@@ -28,7 +35,7 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
             color: globalTheme.accentColor,
             shadows: [kBoxShadow],
           ),
-          "OSS Endpoint 切换(临时)".text(style: globalTheme.textTitleStyle),
+          "OSS Endpoint 切换".text(style: globalTheme.textTitleStyle),
         ].row(gap: kH)?.insets(all: kX),
         hLine(context),
         _buildItemTile(
@@ -50,6 +57,8 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
               if (item.ossEndpoint == currentData?.ossEndpoint) {
                 widget.closeDialogIf(context);
               } else {
+                OssEndpointConfigDialog.$ossEndpointHive << item.ossEndpoint;
+                OssEndpointConfigDialog.$ossBucketHive << item.ossBucket;
                 OssClient.ossConfigLive << item;
                 updateState();
               }

@@ -2,13 +2,13 @@ part of '../../../flutter3_core.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
-/// @date 2025/12/05
+/// @date 2026/07/01
 ///
-/// - get 自动从hive中读取
-/// - set 自动存入hive
+/// - [HiveStringValue]
+/// - [HiveValue]
 @immutable
 @hiveFlag
-final class HiveStringValue {
+final class HiveValue<T> {
   /// 关键key
   final String key;
 
@@ -16,29 +16,29 @@ final class HiveStringValue {
   final String? relayKey;
 
   /// 默认值
-  final String? def;
+  final T? def;
 
-  const HiveStringValue(this.key, {this.def, this.relayKey});
+  const HiveValue(this.key, {this.def, this.relayKey});
 
   //MARK: - setter
 
-  /// 赋值操作符
-  String? operator <<(String? value) {
+  /// 赋值
+  T? operator <<(T? value) {
     key.hivePut(value);
     relayKey?.hivePut(value);
     return value;
   }
 
   /// 赋值
-  String? set(String? value) => this << value;
+  T? set(T? value) => this << value;
 
   //MARK: - getter
 
   /// 获取
-  String? get value => key.hiveGet() ?? def;
+  T? get value => key.hiveGet() ?? def;
 
   /// 获取
-  String? get() => value;
+  T? get() => value;
 
   //MARK: - other
 
@@ -47,7 +47,7 @@ final class HiveStringValue {
 
   @override
   bool operator ==(Object other) {
-    if (other is HiveStringValue) {
+    if (other is HiveValue) {
       return other.value == value;
     }
     return this == other;
@@ -57,6 +57,6 @@ final class HiveStringValue {
   int get hashCode => value?.hashCode ?? super.hashCode;
 }
 
-/// [HiveStringValue]
-HiveStringValue $hiveString(String? key, {String? def, String? relayKey}) =>
-    HiveStringValue(key ?? $uuid, def: def, relayKey: relayKey);
+/// [HiveValue]
+HiveValue<T> $hiveValue<T>(String? key, {T? def, String? relayKey}) =>
+    HiveValue(key ?? $uuid, def: def, relayKey: relayKey);

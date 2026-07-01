@@ -9,6 +9,9 @@ part of '../../flutter3_core.dart';
 /// - [HttpHostConfigDialog]
 /// - [OssEndpointConfigDialog]
 class HttpHostConfigDialog extends StatefulWidget with DialogMixin {
+  @hiveFlag
+  static HiveStringValue $configHostHive = $hiveString("_key_http_host_config");
+
   const HttpHostConfigDialog({super.key});
 
   @override
@@ -29,7 +32,7 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
             color: globalTheme.accentColor,
             shadows: [kBoxShadow],
           ),
-          "API服务器地址切换(临时)".text(style: globalTheme.textTitleStyle),
+          "API服务器地址切换".text(style: globalTheme.textTitleStyle),
         ].row(gap: kH)?.insets(all: kX),
         hLine(context),
         _buildItemTile(globalTheme, "当前服务器", $host, selected: true),
@@ -44,6 +47,7 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
               if (item.host == $host) {
                 widget.closeDialogIf(context);
               } else {
+                HttpHostConfigDialog.$configHostHive << item.host;
                 $host = item.host;
                 updateState();
               }
