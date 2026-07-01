@@ -38,6 +38,12 @@ Future<UiImage?> saveScreenCapture([
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
 /// ```
+///
+/// # Windows
+/// ```
+/// C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools
+/// ```
+///
 /// - [getApplicationDocumentsDirectory]
 /// - [getApplicationCacheDirectory]
 ///
@@ -88,6 +94,11 @@ Future<Directory> fileDirectory() async {
 /// 获取一个cache类型的文件夹, 用于存储缓存文件
 /// ```
 /// WidgetsFlutterBinding.ensureInitialized(); //Binding has not yet been initialized.
+/// ```
+///
+/// # Windows
+/// ```
+/// C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools
 /// ```
 ///
 /// - [fileDirectory]

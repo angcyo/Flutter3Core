@@ -352,11 +352,11 @@ Future _initAppDebugInfo() async {
       //合规之后的初始化
       final packageInfo = await $platformPackageInfo;
       final deviceInfo = await $platformDeviceInfo;
-      final fileDirectory_ = await fileDirectory();
-      final cacheDirectory_ = await cacheDirectory();
+      final fileDir = await fileDirectory();
+      final cacheDir = await cacheDirectory();
       final deviceInfoData = deviceInfo.data..remove("systemFeatures");
 
-      final directoryText = "${fileDirectory_.path}\n${cacheDirectory_.path}";
+      final directoryText = "File: ${fileDir.path}\nCache: ${cacheDir.path}";
 
       //widget
       final textStyle = GlobalConfig.def.globalTheme.textPlaceStyle;
