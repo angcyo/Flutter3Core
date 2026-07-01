@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-import '../../flutter3_basics.dart';
+part of '../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -10,6 +8,9 @@ import '../../flutter3_basics.dart';
 /// https://pub.dev/packages/substring_highlight
 ///
 class SubstringHighlight {
+  /// 单词分割符
+  static const String kWordDelimiters = r' .,;?!<>[]~`@#$%^&*()+-=|/_';
+
   /// 创建高亮文本
   /// - [text] 入参字符串
   /// - [caseSensitive] 是否区分大小写
@@ -21,18 +22,22 @@ class SubstringHighlight {
   /// - [words] 是否匹配整个单词
   @api
   static List<InlineSpan> build(
-    String text, {
-    bool caseSensitive = false,
+    String? text, {
     String? term,
     List<String>? terms,
     //--
     TextStyle? textStyle,
     TextStyle? textStyleHighlight,
     //--
-    String wordDelimiters = r' .,;?!<>[]~`@#$%^&*()+-=|/_',
+    bool caseSensitive = false,
     bool words = false,
+    //--
+    String wordDelimiters = kWordDelimiters,
   }) {
-    final String textLC = caseSensitive ? text : text.toLowerCase();
+    if (text == null || text.isEmpty) {
+      return [];
+    }
+    final textLC = caseSensitive ? text : text.toLowerCase();
 
     // corner case: if both term and terms array are passed then combine
     final List<String> termList = [term ?? '', ...(terms ?? [])];
@@ -131,6 +136,86 @@ class SubstringHighlight {
 
     return children;
   }
-}
 
-final int __int64MaxValue = double.maxFinite.toInt();
+  /// 是否匹配到了
+  @api
+  static bool match(
+    String? text, {
+    String? term,
+    List<String>? terms,
+    //--
+    bool caseSensitive = false,
+    bool words = false,
+    //--
+    String wordDelimiters = kWordDelimiters,
+  }) {
+    if (text == null || text.isEmpty) {
+      return false;
+    }
+    final String textLC = caseSensitive ? text : text.toLowerCase();
+    // corner case: if both term and terms array are passed then combine
+    final List<String> termList = [term ?? '', ...(terms ?? [])];
+    // remove empty search terms ('') because they cause infinite loops
+    final List<String> termListLC = termList
+        .where((s) => s.isNotEmpty)
+        .map((s) => caseSensitive ? s : s.toLowerCase())
+        .toList();
+
+    int start = 0;
+    int idx = 0; // walks text (string that is searched)
+    while (idx < textLC.length) {
+      // find index of term that's closest to current idx position
+      int iNearest = -1;
+      int idxNearest = __int64MaxValue;
+      for (int i = 0; i < termListLC.length; i++) {
+        // print('*** i=$i');
+        int at;
+        if ((at = textLC.indexOf(termListLC[i], idx)) >= 0) //MAGIC//CORE
+        {
+          // print('idx=$idx i=$i at=$at => FOUND: ${termListLC[i]}');
+
+          if (words) {
+            if (at > 0 &&
+                !wordDelimiters.contains(
+                  textLC[at - 1],
+                )) // is preceding character a delimiter?
+            {
+              // print('disqualify preceding: idx=$idx i=$i');
+              continue; // preceding character isn't delimiter so disqualify
+            }
+
+            int followingIdx = at + termListLC[i].length;
+            if (followingIdx < textLC.length &&
+                !wordDelimiters.contains(
+                  textLC[followingIdx],
+                )) // is character following the search term a delimiter?
+            {
+              // print('disqualify following: idx=$idx i=$i');
+              continue; // following character isn't delimiter so disqualify
+            }
+          }
+
+          // print('term #$i found at=$at (${termListLC[i]})');
+          if (at < idxNearest) {
+            // print('PEG');
+            iNearest = i;
+            idxNearest = at;
+          }
+        }
+      }
+
+      if (iNearest >= 0) {
+        return true;
+      } else {
+        if (words) {
+          idx++;
+          start = idx;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return false;
+  }
+}

@@ -69,6 +69,13 @@
   "libCanvasOptions": "Canvas Options",
   "libHideAllElements": "Hide All Elements",
   "libShowAllElements": "Show All Elements",
+  "libClear": "Clear",
+  "libClose": "Close",
+  "libFind": "Find",
+  "libShowPassword": "Show Password",
+  "libHidePassword": "Hide Password",
+  "libMatchCase": "Match Case",
+  "libMatchWord": "Match Word",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

@@ -12,7 +12,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui';
 
-import 'package:flutter3_basics/src/component/substring_highlight.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
@@ -111,6 +110,7 @@ part 'src/component/mutex_key.dart';
 part 'src/component/r_exception.dart';
 part 'src/component/request_page.dart';
 part 'src/component/stack_list.dart';
+part 'src/component/substring_highlight.dart';
 part 'src/component/string_cache.dart';
 part 'src/component/string_iterator.dart';
 part 'src/component/throttle.dart';
@@ -311,7 +311,11 @@ String join(
   ].whereNotNull().join(separator);
 }
 
-//--
+//MARK: - assets
+
+/// Png图片资源
+$AssetsPngGen libPngAssets = Assets.png;
+$AssetsSvgGen libSvgAssets = Assets.svg;
 
 /// 情感状态: 加载失败的图片资源key
 String libAssetsStateLoadErrorKey = Assets.png.stateLoadError.keyName;

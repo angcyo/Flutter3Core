@@ -164,7 +164,7 @@ flutter_gen:
 flutter:
   #generate: true # Add this line to enable code generation
   assets:
-    #- assets/svg/
+    - assets/svg/
     - assets/png/
     #- assets/json/
 # To add assets to your package, add an assets section, like this:

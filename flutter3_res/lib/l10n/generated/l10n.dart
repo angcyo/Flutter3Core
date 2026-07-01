@@ -378,6 +378,41 @@ class LibRes {
       args: [],
     );
   }
+
+  /// `清除`
+  String get libClear {
+    return Intl.message('清除', name: 'libClear', desc: '', args: []);
+  }
+
+  /// `关闭`
+  String get libClose {
+    return Intl.message('关闭', name: 'libClose', desc: '', args: []);
+  }
+
+  /// `查找`
+  String get libFind {
+    return Intl.message('查找', name: 'libFind', desc: '', args: []);
+  }
+
+  /// `显示密码`
+  String get libShowPassword {
+    return Intl.message('显示密码', name: 'libShowPassword', desc: '', args: []);
+  }
+
+  /// `隐藏密码`
+  String get libHidePassword {
+    return Intl.message('隐藏密码', name: 'libHidePassword', desc: '', args: []);
+  }
+
+  /// `匹配大小写`
+  String get libMatchCase {
+    return Intl.message('匹配大小写', name: 'libMatchCase', desc: '', args: []);
+  }
+
+  /// `匹配单词`
+  String get libMatchWord {
+    return Intl.message('匹配单词', name: 'libMatchWord', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

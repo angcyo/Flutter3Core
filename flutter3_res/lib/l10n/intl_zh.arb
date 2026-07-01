@@ -78,6 +78,13 @@
   "libCanvasOptions": "画布选项",
   "libHideAllElements": "隐藏所有元素",
   "libShowAllElements": "显示所有元素",
+  "libClear": "清除",
+  "libClose": "关闭",
+  "libFind": "查找",
+  "libShowPassword": "显示密码",
+  "libHidePassword": "隐藏密码",
+  "libMatchCase": "匹配大小写",
+  "libMatchWord": "匹配单词",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

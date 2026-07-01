@@ -875,6 +875,16 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
   @output
   String? inputFilterTextMixin;
 
+  /// 是否匹配大小写
+  /// CaseSensitive
+  /// MatchCase
+  @output
+  bool inputFilterMatchCaseMixin = false;
+
+  /// 是否匹配单词
+  @output
+  bool inputFilterMatchWordMixin = false;
+
   /// 显示过滤输入框
   @api
   @overridePoint
@@ -887,10 +897,11 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
   }) {
     context ??= buildContext;
     final globalTheme = GlobalTheme.of(context);
+    final libRes = context?.libRes;
     context?.showOverlay(
       (ctx, entry) {
         final config = TextFieldConfig(
-          hintText: "搜索内容",
+          hintText: libRes?.libFind,
           text: inputFilterTextMixin,
           autofocus: true,
           onChanged: (value) {
@@ -913,10 +924,75 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
             config.requestFocus();
           });
         }
-        return SingleInputWidget(config: config)
+        return SingleInputWidget(
+              config: config,
+              suffixIconConstraints: null,
+              suffixIconBuilder: (ctx, child) {
+                return [
+                  child,
+                  //严格大小写匹配
+                  IconButton(
+                    color: globalTheme.icoNormalColor,
+                    /*padding: widget.suffixIconPadding,
+                    constraints: widget.suffixIconConstraints,*/
+                    focusNode: config.suffixFocusNode,
+                    isSelected: inputFilterMatchCaseMixin,
+                    onPressed: () {
+                      inputFilterMatchCaseMixin = !inputFilterMatchCaseMixin;
+                      rebuildScrollView(rebuildAllTile: true);
+                      ctx.tryUpdateState();
+                    },
+                    tooltip: libRes?.libMatchCase,
+                    icon: "Aa".text(
+                      textColor: inputFilterMatchCaseMixin
+                          ? globalTheme.accentColor
+                          : null,
+                      bold: true,
+                    ),
+                  ),
+                  //严格单词匹配
+                  IconButton(
+                    color: globalTheme.icoNormalColor,
+                    /*padding: widget.suffixIconPadding,
+                    constraints: widget.suffixIconConstraints,*/
+                    focusNode: config.suffixFocusNode,
+                    isSelected: inputFilterMatchWordMixin,
+                    onPressed: () {
+                      inputFilterMatchWordMixin = !inputFilterMatchWordMixin;
+                      rebuildScrollView(rebuildAllTile: true);
+                      ctx.tryUpdateState();
+                    },
+                    tooltip: libRes?.libMatchWord,
+                    icon: "ab".text(
+                      textColor: inputFilterMatchWordMixin
+                          ? globalTheme.accentColor
+                          : null,
+                      bold: true,
+                      isUnderline: true,
+                    ),
+                  ),
+                ].row(mainAxisSize: .min);
+              },
+            )
+            .expanded()
+            .rowOf(
+              IconButton(
+                tooltip: libRes?.libClose,
+                onPressed: () {
+                  OverlayEntryControlState.hideOverlayByTag(kSearchOverlayTag);
+                },
+                icon: Icon(
+                  Icons.close,
+                  size: kSuffixIconSize,
+                  /*图标的颜色*/
+                  color: globalTheme.icoNormalColor,
+                ),
+              ),
+              gap: kH,
+            )
             .insets(all: kH)
             .decoration(fillDecoration(color: globalTheme.dialogSurfaceBgColor))
-            .size(width: 260)
+            .size(width: 360)
             .elevation()
             .overlayDragTrigger();
       },

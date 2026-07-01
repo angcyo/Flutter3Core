@@ -871,15 +871,25 @@ class SingleInputWidget extends StatefulWidget {
   final Widget? suffix;
 
   /// 后缀/前缀图标的大小
+  /// - [kSuffixIconSize]
+  @defInjectMark
   final double? prefixIconSize;
+  @defInjectMark
   final double? suffixIconSize;
 
   /// 后缀/前缀图标的约束
+  /// - [kSuffixIconConstraints]
+  @defInjectMark
   final BoxConstraints? suffixIconConstraints;
+
+  /// - [kPrefixIconConstraints]
+  @defInjectMark
   final BoxConstraints? prefixIconConstraints;
 
   /// 后缀/前缀图标的padding
+  /// @defInjectMark
   final EdgeInsetsGeometry? suffixIconPadding;
+  @defInjectMark
   final EdgeInsetsGeometry? prefixIconPadding;
 
   /// 后缀/前缀图标的构建器
@@ -1254,7 +1264,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   }
 
   /// 后缀图标
+  /// - 自动显示清除按钮
+  /// - 自动显示查看密码按钮
   Widget? _buildSuffixIcon(BuildContext context) {
+    final libRes = context.libRes;
     Widget? result;
     if (_showSuffixIcon) {
       final globalTheme = GlobalTheme.of(context);
@@ -1278,11 +1291,14 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             widget.config.obscureNode.toggle();
             setState(() {});
           },
+          tooltip: widget.config.obscureNode.showObscureText
+              ? libRes?.libShowPassword
+              : libRes?.libHidePassword,
           icon: Icon(
-            size: widget.suffixIconSize,
             widget.config.obscureNode.showObscureText
                 ? Icons.visibility
                 : Icons.visibility_off,
+            size: widget.suffixIconSize,
           ),
         );
       } else {
@@ -1296,9 +1312,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           onPressed: () {
             _updateFieldText("");
           },
+          tooltip: libRes?.libClear,
           icon: Icon(
-            size: widget.suffixIconSize,
             Icons.cancel_rounded,
+            size: widget.suffixIconSize,
             /*图标的颜色*/
             color: globalTheme.icoNormalColor,
           ),

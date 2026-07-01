@@ -1,3 +1,5 @@
+// dart format width=80
+
 /// GENERATED CODE - DO NOT MODIFY BY HAND
 /// *****************************************************
 ///  FlutterGen
@@ -5,7 +7,7 @@
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-// ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
+// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
 import 'package:flutter/widgets.dart';
 
@@ -13,27 +15,64 @@ class $AssetsPngGen {
   const $AssetsPngGen();
 
   /// File path: assets/png/state_load_error.png
-  AssetGenImage get stateLoadError =>
-      const AssetGenImage('assets/png/state_load_error.png');
+  AssetGenImage get stateLoadError => const AssetGenImage(
+    'assets/png/state_load_error.png',
+    size: const Size(360.0, 360.0),
+  );
 
   /// File path: assets/png/state_no_data.png
-  AssetGenImage get stateNoData =>
-      const AssetGenImage('assets/png/state_no_data.png');
+  AssetGenImage get stateNoData => const AssetGenImage(
+    'assets/png/state_no_data.png',
+    size: const Size(360.0, 360.0),
+  );
+
+  /// Directory path: packages/flutter3_basics/assets/png
+  String get path => 'packages/flutter3_basics/assets/png';
 
   /// List of all assets
   List<AssetGenImage> get values => [stateLoadError, stateNoData];
 }
 
+class $AssetsSvgGen {
+  const $AssetsSvgGen();
+
+  /// File path: assets/svg/match_case.svg
+  String get matchCase => 'packages/flutter3_basics/assets/svg/match_case.svg';
+
+  /// File path: assets/svg/match_word.svg
+  String get matchWord => 'packages/flutter3_basics/assets/svg/match_word.svg';
+
+  /// Directory path: packages/flutter3_basics/assets/svg
+  String get path => 'packages/flutter3_basics/assets/svg';
+
+  /// List of all assets
+  List<String> get values => [matchCase, matchWord];
+}
+
 class Assets {
-  Assets._();
+  const Assets._();
+
+  static const String package = 'flutter3_basics';
 
   static const $AssetsPngGen png = $AssetsPngGen();
+  static const $AssetsSvgGen svg = $AssetsSvgGen();
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+    this.animation,
+  });
 
   final String _assetName;
+
+  static const String package = 'flutter3_basics';
+
+  final Size? size;
+  final Set<String> flavors;
+  final AssetGenImageAnimation? animation;
 
   Image image({
     Key? key,
@@ -53,10 +92,11 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
-    String? package,
-    FilterQuality filterQuality = FilterQuality.low,
+    @Deprecated('Do not specify package for a generated library asset')
+    String? package = package,
+    FilterQuality filterQuality = FilterQuality.medium,
     int? cacheWidth,
     int? cacheHeight,
   }) {
@@ -90,16 +130,25 @@ class AssetGenImage {
 
   ImageProvider provider({
     AssetBundle? bundle,
-    String? package,
+    @Deprecated('Do not specify package for a generated library asset')
+    String? package = package,
   }) {
-    return AssetImage(
-      _assetName,
-      bundle: bundle,
-      package: package,
-    );
+    return AssetImage(_assetName, bundle: bundle, package: package);
   }
 
   String get path => _assetName;
 
-  String get keyName => _assetName;
+  String get keyName => 'packages/flutter3_basics/$_assetName';
+}
+
+class AssetGenImageAnimation {
+  const AssetGenImageAnimation({
+    required this.isAnimation,
+    required this.duration,
+    required this.frames,
+  });
+
+  final bool isAnimation;
+  final Duration duration;
+  final int frames;
 }

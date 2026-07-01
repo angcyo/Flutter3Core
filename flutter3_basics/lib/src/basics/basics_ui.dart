@@ -804,6 +804,7 @@ extension WidgetEx on Widget {
   /// 鼠标事件监听
   /// [MouseRegion] 鼠标区域
   /// [TapRegion]   手势区域
+  /// [TextFieldTapRegion].[EditableText]手势区域
   ///
   /// [MouseTracker].[MouseTrackerAnnotation]
   /// 只要实现[MouseTrackerAnnotation], 并且[HitTestEntry]命中返回, 即可获取鼠标事件.
@@ -854,6 +855,49 @@ extension WidgetEx on Widget {
           cursor: cursor,
           opaque: opaque,
           hitTestBehavior: hitTestBehavior,
+          child: this,
+        )
+      : this;
+
+  /// 共享点击区域
+  /// [MouseRegion] 鼠标区域
+  /// [TapRegion]   手势区域
+  /// [TextFieldTapRegion].[EditableText]手势区域
+  Widget tapRegion(
+    Object? groupId, {
+    bool enable = true,
+    TapRegionCallback? onTapOutside,
+    TapRegionCallback? onTapInside,
+    TapRegionUpCallback? onTapUpOutside,
+    TapRegionUpCallback? onTapUpInside,
+    bool consumeOutsideTaps = false,
+  }) => enable
+      ? TapRegion(
+          groupId: groupId,
+          onTapOutside: onTapOutside,
+          onTapInside: onTapInside,
+          onTapUpOutside: onTapUpOutside,
+          onTapUpInside: onTapUpInside,
+          consumeOutsideTaps: consumeOutsideTaps,
+          child: this,
+        )
+      : this;
+
+  /// [TextFieldTapRegion].[EditableText]手势区域
+  Widget textFieldTapRegion({
+    bool enable = true,
+    TapRegionCallback? onTapOutside,
+    TapRegionCallback? onTapInside,
+    TapRegionUpCallback? onTapUpOutside,
+    TapRegionUpCallback? onTapUpInside,
+    bool consumeOutsideTaps = false,
+  }) => enable
+      ? TextFieldTapRegion(
+          onTapOutside: onTapOutside,
+          onTapInside: onTapInside,
+          onTapUpOutside: onTapUpOutside,
+          onTapUpInside: onTapUpInside,
+          consumeOutsideTaps: consumeOutsideTaps,
           child: this,
         )
       : this;
