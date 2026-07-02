@@ -239,16 +239,30 @@ class TextFieldConfig {
   /// 构建弹出窗口, 选项小部件构建
   final AutocompleteOptionItemWidgetBuilder? autoOptionItemBuilder;
 
-  //--
+  //MARK: - RawAutocomplete 样式
 
-  //样式
+  /// 样式
+  /// - [buildWrapAutocomplete]
   final double autoOverlayElevation;
+
+  /// 弹窗窗口背景颜色
+  /// - [buildWrapAutocomplete]
+  @defInjectMark
   final Color? autoOverlayColor;
+
+  /// - [buildWrapAutocomplete]
   final Color? autoOverlayShadowColor;
+
+  /// 弹窗窗口形状样式
+  /// - [buildWrapAutocomplete]
   final ShapeBorder? autoOverlayShape;
+
+  /// 弹窗窗口圆角样式
+  /// - [buildWrapAutocomplete]
   final BorderRadiusGeometry? autoOverlayBorderRadius;
 
   /// 弹窗窗口最大高度
+  /// - [buildWrapAutocomplete]
   final double autoOptionsMaxHeight;
 
   /// 自定义的标签数据
@@ -261,6 +275,7 @@ class TextFieldConfig {
   //region 自动完成
 
   /// 是否激活数字输入时, 按键盘↑ ↓按键时自动+-1
+  @configProperty
   @autoInjectMark
   bool? enableNumberKeyInput;
 
@@ -604,7 +619,7 @@ class TextFieldConfig {
     return RawAutocomplete<Object>(
       textEditingController: controller,
       focusNode: focusNode,
-      fieldViewBuilder /*构建输入框*/ :
+      fieldViewBuilder: /*构建输入框*/
           (
             BuildContext context,
             TextEditingController textEditingController,
@@ -617,10 +632,11 @@ class TextFieldConfig {
       displayStringForOption: autoDisplayStringForOption,
       /*initialValue: value //不能和[textEditingController]同时指定,*/
       optionsViewOpenDirection /*弹出方向*/ : autoOptionsViewOpenDirection,
-      optionsBuilder /*自动提示选项*/ : (TextEditingValue textEditingValue) async {
+      optionsBuilder: (TextEditingValue textEditingValue) async {
+        /*自动提示选项*/
         return autoOptionsBuilder!(this, textEditingValue);
       },
-      optionsViewBuilder /*构建下拉选项内容小部件*/ :
+      optionsViewBuilder: /*构建下拉选项内容小部件*/
           (
             BuildContext ctx,
             AutocompleteOnSelected<Object> onSelected,
@@ -656,7 +672,8 @@ class TextFieldConfig {
               optionItemBuilder: autoOptionItemBuilder,
               anchorBounds: anchorBounds,
               elevation: autoOverlayElevation,
-              color: autoOverlayColor,
+              color:
+                  autoOverlayColor ?? kMenuStyle.backgroundColor?.resolve({}),
               shadowColor: autoOverlayShadowColor,
               shape: autoOverlayShape,
               borderRadius: autoOverlayBorderRadius,
@@ -1765,6 +1782,7 @@ class AutocompleteOptionsWidget<T extends Object> extends StatelessWidget {
                   Scrollable.ensureVisible(context, alignment: 0.5);
                 }, debugLabel: 'AutocompleteOptions.ensureVisible');
               }
+              //弹窗选中构建
               return optionItemBuilder?.call(context, highlight, option) ??
                   Container(
                     color: highlight ? Theme.of(context).focusColor : null,
