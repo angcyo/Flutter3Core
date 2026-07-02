@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import '_script_common.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/02/10
@@ -81,7 +83,7 @@ void main() async {
     }
     if (updateFile) {
       configFile.writeAsStringSync(
-        "# ${DateTime.now()}\n# Create by angcyo (dart run ${Platform.script.path.replaceFirst("$rootPath/", "")})\n${newLines.join("\n")}",
+        "# ${DateTime.now()}\n# Create by angcyo (dart run ${Platform.script.path.replaceFirst(isWindows ? "/${rootPath.replaceAll("\\", "/")}/" : "$rootPath/", "")})\n${newLines.join("\n")}",
       );
     }
   });
