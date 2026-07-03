@@ -283,6 +283,8 @@ extension PointerEventEx on PointerEvent {
   bool get isTrackpadEventKind => kind == PointerDeviceKind.trackpad;
 
   /// 是否是手指操作相关事件
+  /// - [isPanPointerEvent]
+  /// - [isTouchPointerEvent]
   bool get isTouchPointerEvent =>
       synthesized == false /*非合成的事件*/ &&
       (isPointerDown || isPointerMove || isPointerFinish);
@@ -393,6 +395,8 @@ extension PointerEventEx on PointerEvent {
   //-- trackpad event
 
   /// 是否是触控板事件
+  /// - [isPanPointerEvent]
+  /// - [isTouchPointerEvent]
   bool get isPanPointerEvent =>
       isPanZoomStart || isPanZoomUpdate || isPanZoomEnd;
 

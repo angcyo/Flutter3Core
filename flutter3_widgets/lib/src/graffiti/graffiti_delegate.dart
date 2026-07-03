@@ -5,6 +5,13 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/06/25
 ///
 /// 涂鸦代理类, 核心操作类
+///
+/// - [GraffitiEventManager.updatePointEventHandler] 设置画布, 默认是没有画笔的
+///
+/// # 输出对象
+/// - [outputImage]
+/// - [outputSvgPath]
+///
 class GraffitiDelegate with Diagnosticable implements TickerProvider {
   //region ---core---
 
@@ -13,14 +20,20 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
   ValueNotifier<int> repaint = ValueNotifier(0);
 
   /// 绘制管理
+  /// - 绘制的入口
   late GraffitiPaintManager graffitiPaintManager = GraffitiPaintManager(this);
 
   /// 事件管理
+  /// - 设置画笔
+  ///
+  /// - [PointEventHandler]
   late GraffitiEventManager graffitiEventManager = GraffitiEventManager(this);
 
   /// 元素管理
-  late GraffitiElementManager graffitiElementManager =
-      GraffitiElementManager(this);
+  /// - 画布创建的元素在这里管理
+  late GraffitiElementManager graffitiElementManager = GraffitiElementManager(
+    this,
+  );
 
   /// 回退栈管理
   late GraffitiUndoManager graffitiUndoManager = GraffitiUndoManager(this);
@@ -55,6 +68,7 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
   @entryPoint
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     graffitiEventManager.handleEvent(event, entry);
+    dispatchPointerEvent(event);
   }
 
   /// 布局完成后的入口点
@@ -103,6 +117,13 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
     graffitiListeners.remove(listener);
   }
 
+  /// 清除所有元素
+  @api
+  @supportUndo
+  void clearElements([UndoType undoType = UndoType.normal]) {
+    graffitiElementManager.clearElements();
+  }
+
   /// 输出图片
   @output
   UiImage? get outputImage {
@@ -110,7 +131,9 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
     final image = drawImageSync(bounds.size, (canvas) {
       canvas.drawInRect(Offset.zero & bounds.size, bounds, () {
         graffitiElementManager.paintElements(
-            canvas, const PaintMeta(host: elementOutputHost));
+          canvas,
+          const PaintMeta(host: elementOutputHost),
+        );
       });
     });
     /*assert(() {
@@ -173,17 +196,29 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
 
   /// 回退栈发生改变时回调
   void dispatchGraffitiUndoChanged(
-      GraffitiUndoManager undoManager, UndoType fromType) {
+    GraffitiUndoManager undoManager,
+    UndoType fromType,
+  ) {
     _eachGraffitiListener((element) {
       element.onGraffitiUndoChangedAction?.call(undoManager);
     });
   }
 
   /// 更新手势处理后的回调
+  /// - 画笔切换时回调
   void dispatchPointEventHandlerChanged(
-      PointEventHandler? from, PointEventHandler? to) {
+    PointEventHandler? from,
+    PointEventHandler? to,
+  ) {
     _eachGraffitiListener((element) {
       element.onPointEventHandlerChanged?.call(from, to);
+    });
+  }
+
+  /// 派发手势事件
+  void dispatchPointerEvent(@viewCoordinate PointerEvent event) {
+    _eachGraffitiListener((element) {
+      element.onPointerEvent?.call(event);
     });
   }
 
@@ -208,14 +243,16 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
 
   @override
   Ticker createTicker(TickerCallback onTick) {
-    _ticker =
-        Ticker(onTick, debugLabel: 'created by ${describeIdentity(this)}');
+    _ticker = Ticker(
+      onTick,
+      debugLabel: 'created by ${describeIdentity(this)}',
+    );
     return _ticker!;
   }
 
   //endregion ---Ticker---
 
-//region ---diagnostic---
+  //region ---diagnostic---
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -223,7 +260,7 @@ class GraffitiDelegate with Diagnosticable implements TickerProvider {
     properties.add(DiagnosticsProperty<Ticker?>('ticker', _ticker));
   }
 
-//endregion ---diagnostic---
+  //endregion ---diagnostic---
 }
 
 /// 涂鸦配置类

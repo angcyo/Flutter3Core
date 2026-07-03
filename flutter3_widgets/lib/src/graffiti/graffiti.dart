@@ -11,14 +11,14 @@ class GraffitiWidget extends LeafRenderObjectWidget {
   const GraffitiWidget(this.graffitiDelegate, {super.key});
 
   @override
-  RenderObject createRenderObject(BuildContext context) => GraffitiRenderBox(
-        context,
-        graffitiDelegate..delegateContext = context,
-      );
+  RenderObject createRenderObject(BuildContext context) =>
+      GraffitiRenderBox(context, graffitiDelegate..delegateContext = context);
 
   @override
   void updateRenderObject(
-      BuildContext context, GraffitiRenderBox renderObject) {
+    BuildContext context,
+    GraffitiRenderBox renderObject,
+  ) {
     super.updateRenderObject(context, renderObject);
     graffitiDelegate.delegateContext = context;
     renderObject
@@ -44,22 +44,23 @@ class GraffitiRenderBox extends RenderBox {
   BuildContext context;
   GraffitiDelegate graffitiDelegate;
 
-  GraffitiRenderBox(
-    this.context,
-    this.graffitiDelegate,
-  );
+  GraffitiRenderBox(this.context, this.graffitiDelegate);
 
   @override
   bool get isRepaintBoundary => true;
 
   @override
   void performLayout() {
-    double? width =
-        constraints.maxWidth == double.infinity ? null : constraints.maxWidth;
-    double? height =
-        constraints.maxHeight == double.infinity ? null : constraints.maxHeight;
-    size =
-        Size(width ?? height ?? screenWidth, height ?? width ?? screenHeight);
+    double? width = constraints.maxWidth == double.infinity
+        ? null
+        : constraints.maxWidth;
+    double? height = constraints.maxHeight == double.infinity
+        ? null
+        : constraints.maxHeight;
+    size = Size(
+      width ?? height ?? screenWidth,
+      height ?? width ?? screenHeight,
+    );
 
     graffitiDelegate.layout(size);
   }
@@ -112,7 +113,7 @@ class GraffitiRenderBox extends RenderBox {
 class GraffitiListener {
   /// [GraffitiDelegate.dispatchGraffitiPaint]
   final void Function(GraffitiDelegate delegate, int paintCount)?
-      onGraffitiPaint;
+  onGraffitiPaint;
 
   /// [GraffitiDelegate.dispatchGraffitiElementListChanged]
   final void Function(
@@ -120,20 +121,25 @@ class GraffitiListener {
     List<GraffitiPainter> to,
     List<GraffitiPainter> op,
     UndoType undoType,
-  )? onGraffitiElementListChangedAction;
+  )?
+  onGraffitiElementListChangedAction;
 
   /// [GraffitiDelegate.dispatchGraffitiUndoChanged]
   final void Function(GraffitiUndoManager undoManager)?
-      onGraffitiUndoChangedAction;
+  onGraffitiUndoChangedAction;
 
   /// [GraffitiDelegate.dispatchPointEventHandlerChanged]
   final void Function(PointEventHandler? from, PointEventHandler? to)?
-      onPointEventHandlerChanged;
+  onPointEventHandlerChanged;
+
+  /// [GraffitiDelegate.dispatchPointerEvent]
+  final void Function(@viewCoordinate PointerEvent event)? onPointerEvent;
 
   GraffitiListener({
     this.onGraffitiPaint,
     this.onGraffitiUndoChangedAction,
     this.onPointEventHandlerChanged,
     this.onGraffitiElementListChangedAction,
+    this.onPointerEvent,
   });
 }

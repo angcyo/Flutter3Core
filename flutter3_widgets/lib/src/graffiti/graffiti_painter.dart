@@ -102,7 +102,7 @@ class GraffitiFountainPenPainter extends GraffitiPainter
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     //canvas.drawPoints(ui.PointMode.polygon, points, paint);
-    if (path != null) {
+    if (path != null && !path!.isEmpty) {
       canvas.drawPath(path!, paint);
     }
   }

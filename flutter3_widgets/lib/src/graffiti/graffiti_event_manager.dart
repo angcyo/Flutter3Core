@@ -49,6 +49,9 @@ class PointEventHandler {
   @autoInjectMark
   GraffitiEventManager? eventManager;
 
+  GraffitiElementManager? get graffitiElementManager =>
+      eventManager?.graffitiDelegate.graffitiElementManager;
+
   /// 判断是否移动了的阈值
   @dp
   double moveThreshold = 3;
@@ -135,6 +138,9 @@ abstract class GraffitiPainterHandler<T extends GraffitiPainter>
 
   T? painter;
 
+  /// 创建对应的绘制元素
+  /// - [onStartPointerEvent] 创建元素
+  /// - [onFinishPointerEvent] 添加到元素管理器中
   @overridePoint
   T? createPainter();
 
@@ -144,8 +150,7 @@ abstract class GraffitiPainterHandler<T extends GraffitiPainter>
     painter = createPainter();
     painter?.paint.strokeWidth = painterWidth;
     painter?.addPointEventMeta(eventMeta);
-    eventManager?.graffitiDelegate.graffitiElementManager
-        .addAfterElement(painter);
+    graffitiElementManager?.addAfterElement(painter);
   }
 
   @override
@@ -157,9 +162,8 @@ abstract class GraffitiPainterHandler<T extends GraffitiPainter>
   @override
   @overridePoint
   void onFinishPointerEvent(PointEventMeta eventMeta) {
-    eventManager?.graffitiDelegate.graffitiElementManager
-        .removeAfterElement(painter);
-    eventManager?.graffitiDelegate.graffitiElementManager.addElement(painter);
+    graffitiElementManager?.removeAfterElement(painter);
+    graffitiElementManager?.addElement(painter);
   }
 }
 

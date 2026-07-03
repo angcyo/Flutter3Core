@@ -278,13 +278,19 @@ class GraffitiElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 清空元素
-  @supportUndo
   @api
+  @supportUndo
   void clearElements([UndoType undoType = UndoType.normal]) {
     removeElementList(elements.clone(), undoType: undoType);
   }
 
   /// 释放资源
   @entryPoint
-  void release() {}
+  void release() {
+    /*for (var element in elements) {
+      element.detachFromGraffitiDelegate(graffitiDelegate);
+    }
+    elements.clear();
+    graffitiDelegate.dispatchGraffitiElementListChanged();*/
+  }
 }
