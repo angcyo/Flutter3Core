@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -11,6 +10,7 @@ export 'package:opencv_dart/opencv.dart';
 part 'src/camera_calibrate.dart';
 part 'src/image_frame_info.dart';
 part 'src/opencv.dart';
+part 'src/opencv_dnn.dart';
 part 'src/opencv_image.dart';
 part 'src/opencv_mat.dart';
 part 'src/opencv_mat_image.dart';

@@ -81,10 +81,23 @@ Future<ui.Image> drawImage(
 /// 使用[Canvas]绘制图片
 /// [double.round] 四舍五入
 /// [double.ceil] 向上取整
-ui.Image drawImageSync(@dp Size size, CanvasAction callback) {
+ui.Image drawImageSync(
+  @dp Size size,
+  CanvasAction callback, [
+  double? pixelRatio,
+]) {
+  final radio = pixelRatio ?? 1;
+  final width = size.width * radio;
+  final height = size.height * radio;
   final ui.Picture picture = drawPicture(callback, cullSize: size);
-  //debugger();
-  return picture.toImageSync(size.width.imageInt, size.height.imageInt);
+  if (radio == 1) {
+    return picture.toImageSync(width.imageInt, height.imageInt);
+  }
+  final ui.Picture result = drawPicture((canvas) {
+    canvas.scale(radio, radio);
+    canvas.drawPicture(picture);
+  }, cullSize: ui.Size(width, height));
+  return result.toImageSync(width.imageInt, height.imageInt);
 }
 
 extension StringPaintEx on String {
@@ -943,7 +956,7 @@ extension CanvasEx on Canvas {
   /// - [alignment]
   void drawImageInRect(
     ui.Image? image, {
-    Rect? dst,
+    required Rect? dst,
     Color? tintColor,
     ui.ColorFilter? colorFilter,
     BoxFit? fit,

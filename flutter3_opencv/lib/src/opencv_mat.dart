@@ -21,6 +21,19 @@ extension MatEx on cv.Mat {
     return (width, height);
   }
 
+  /// 调整图片大小
+  /// - [cvResizeMat]
+  cv.Mat resize({
+    required int? width,
+    required int? height,
+    int interpolation = cv.INTER_LINEAR,
+  }) => cvResizeMat(
+    this,
+    width: width,
+    height: height,
+    interpolation: interpolation,
+  );
+
   /// 获取对应的3*3矩阵
   ///
   /// ## 可视化输出的数据
@@ -292,6 +305,103 @@ extension MatEx on cv.Mat {
     //cv.approxPolyDP()
 
     //cv.findHomographyUsac(srcPoints, dstPoints, params)
+  }
+
+  //MARK: - draw
+
+  /// 绘制矩形
+  /// - [cv.LINE_4] (4 连通线)
+  /// - [cv.LINE_8] (8 连通线)
+  /// - [cv.LINE_AA] (Anti-Aliasing，抗锯齿线)
+  cv.Mat cvDrawRectangle({
+    UiRect? uiRect,
+    cv.Rect? rect,
+    int? x,
+    int? y,
+    int? width,
+    int? height,
+    //--
+    UiColor? uiColor,
+    cv.Scalar? color,
+    //--
+    int thickness = 1,
+    int lineType = cv.LINE_8,
+    int shift = 0,
+  }) {
+    return cv.rectangle(
+      this,
+      rect ??
+          cv.Rect(
+            x ?? uiRect?.left.imageInt ?? 0,
+            y ?? uiRect?.top.imageInt ?? 0,
+            width ?? uiRect?.width.imageInt ?? width ?? 0,
+            height ?? uiRect?.height.imageInt ?? height ?? 0,
+          ),
+      color ??
+          cv.Scalar.fromRgb(
+            uiColor?.red ?? 0,
+            uiColor?.green ?? 255,
+            uiColor?.blue ?? 0,
+          ),
+      thickness: thickness,
+      lineType: lineType,
+      shift: shift,
+    );
+  }
+
+  /// 绘制文本
+  /// - [bottomLeftOrigin]
+  ///   - true: 则x,y对应文本的左上角
+  ///   - false: 则x,y对应文本的左下角
+  ///
+  /// # 无衬线字体（Sans-Serif，类似黑体）
+  /// - [cv.FONT_HERSHEY_PLAIN]    最简单、最小的无衬线字体。没有多余的修饰，渲染速度极快，适合在很小的框上写字。
+  /// - [cv.FONT_HERSHEY_SIMPLEX]  OpenCV 的默认字体。单笔画（Simplex）无衬线字体，字号比 PLAIN 正常，最常用。
+  /// - [cv.FONT_HERSHEY_DUPLEX]   双笔画（Duplex）。顾名思义，它用两条线来画一个字，看起来比 SIMPLEX 更粗、更醒目。
+  ///
+  /// # 衬线字体（Serif，类似宋体/Times）
+  /// - [cv.FONT_HERSHEY_COMPLEX] 复杂字体。带有衬线（字母边缘的装饰性小尾巴），比无衬线字体更美观，但计算量稍大。
+  /// - [cv.FONT_HERSHEY_TRIPLEX] 三笔画（Triplex）衬线字体。最粗、最华丽的 OpenCV 自带字体。
+  /// - [cv.FONT_HERSHEY_COMPLEX_SMALL] COMPLEX 的缩小版。
+  ///
+  /// # 手写体（Script）
+  /// - [cv.FONT_HERSHEY_SCRIPT_SIMPLEX] 单笔画的英文花体/手写体。
+  /// - [cv.FONT_HERSHEY_SCRIPT_COMPLEX] 带有更多细节的复杂手写体。
+  ///
+  /// - [cv.FONT_ITALIC] 倾斜/斜体标志。 [cv.FONT_HERSHEY_SIMPLEX | cv.FONT_ITALIC]
+  cv.Mat cvDrawText(
+    String? text, {
+    int? x,
+    int? y,
+    int? fontFace /*字体*/,
+    double fontScale = 1,
+    //--
+    UiColor? uiColor,
+    cv.Scalar? color,
+    //--
+    int thickness = 1,
+    int lineType = cv.LINE_8,
+    bool bottomLeftOrigin = false,
+  }) {
+    if (text == null || text.isEmpty) {
+      return this;
+    }
+    return cv.putText(
+      this,
+      text,
+      cv.Point(x ?? 0, y ?? 0),
+      fontFace ?? cv.FONT_HERSHEY_SIMPLEX,
+      fontScale,
+      color ??
+          cv.Scalar.fromRgb(
+            uiColor?.red ?? 0,
+            uiColor?.green ?? 255,
+            uiColor?.blue ?? 0,
+          ),
+      thickness: thickness,
+      lineType: lineType,
+      bottomLeftOrigin: bottomLeftOrigin,
+    );
   }
 }
 

@@ -11,6 +11,9 @@ extension MatUiImageEx on UiImage {
   @alias
   Future<cv.Mat> get cvMat async => await toMatAsync();
 
+  /// [cv.IMREAD_COLOR] 彩色图片, 透明图片也是3通道 BGR
+  Future<cv.Mat> get cvBGRMat async => await toMatAsync(flags: cv.IMREAD_COLOR);
+
   /// 获取灰度颜色对应的[cv.Mat]
   /// - 输出[cv.MatType.CV_8UC1]
   ///

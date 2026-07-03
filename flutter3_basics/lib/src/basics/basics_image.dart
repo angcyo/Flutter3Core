@@ -466,6 +466,58 @@ extension ImageEx on UiImage {
 
   //--
 
+  /// 调整图片大小
+  Future<UiImage> resizeAsync({
+    double? size,
+    double? width,
+    double? height,
+    Paint? paint,
+    double? pixelRatio,
+  }) async {
+    width ??= size;
+    height ??= size;
+    if (width == null && height == null) {
+      return this;
+    }
+    width ??= this.width.toDouble();
+    height ??= this.height.toDouble();
+    final image = await drawImage(Size(width, height), (canvas) {
+      canvas.drawImageRect(
+        this,
+        Rect.fromLTWH(0, 0, this.width.toDouble(), this.height.toDouble()),
+        Rect.fromLTWH(0, 0, width!, height!),
+        paint ?? Paint(),
+      );
+    }, pixelRatio);
+    return image;
+  }
+
+  /// 调整图片大小
+  UiImage resize({
+    double? size,
+    double? width,
+    double? height,
+    Paint? paint,
+    double? pixelRatio,
+  }) {
+    width ??= size;
+    height ??= size;
+    if (width == null && height == null) {
+      return this;
+    }
+    width ??= this.width.toDouble();
+    height ??= this.height.toDouble();
+    final image = drawImageSync(Size(width, height), (canvas) {
+      canvas.drawImageRect(
+        this,
+        Rect.fromLTWH(0, 0, this.width.toDouble(), this.height.toDouble()),
+        Rect.fromLTWH(0, 0, width!, height!),
+        paint ?? Paint(),
+      );
+    }, pixelRatio);
+    return image;
+  }
+
   /// 裁剪图片, 获取图片指定区域的图片
   /// - [clipRect] 剪切区域, 以及输出的图片大小, 在图片的什么位置开始裁剪.
   /// - [clip] 需要裁剪的区域, 在图片中的1:1坐标系, 裁剪出什么形状.

@@ -119,6 +119,12 @@ Future<cv.Mat> cvImgDecodeMatAsync(
 /// 编码Mat成成图片字节数组
 Uint8List? cvImgEncodeMat(cv.InputArray img, {String ext = ".png"}) {
   final (success, bytes) = cv.imencode(ext, img);
+  assert(() {
+    if (!success) {
+      l.w("$img -> 无法将Mat转换成图片, 请检查数据格式是否正确");
+    }
+    return true;
+  }());
   return success ? bytes : null;
 }
 
