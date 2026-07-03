@@ -473,7 +473,7 @@ class FlowLayoutRender extends RenderBox
     //清除缓存
     _childUsedWidth = 0;
     _childUsedHeight = 0;
-    measureChild(/*debugLabel: debugLabel*/);
+    measureChild(debugLabel: debugLabel);
     layoutChild(/*debugLabel: debugLabel*/);
 
     final childSize = Size(_childUsedWidth, _childUsedHeight);
@@ -493,7 +493,7 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考宽度, weight属性的参考值
   double get refMaxWidth {
-    debugger(when: !isIos && debugLabel != null);
+    //debugger(when: !isIos && debugLabel != null);
     double maxWidth;
     final constraints = this.constraints;
     if (constraints.hasTightWidth) {
@@ -532,7 +532,7 @@ class FlowLayoutRender extends RenderBox
 
   /// 最大的参考高度, 用来垂直对齐参考
   double get refMaxHeight {
-    debugger(when: !isIos && debugLabel != null);
+    //debugger(when: !isIos && debugLabel != null);
     double maxHeight;
     final constraints = this.constraints;
     if (constraints.hasTightHeight) {
@@ -671,10 +671,13 @@ class FlowLayoutRender extends RenderBox
       } else {
         //默认约束
       }
-      //debugger();
+      //debugger(when: debugLabel != null);
       if (childParentData.matchParentMaxWidth == true) {
         childConstraints = BoxConstraints(
-          minWidth: childConstraints.minWidth,
+          minWidth: childParentData.weight != null
+              ? (constraints.maxWidth - paddingHorizontal) *
+                    childParentData.weight!
+              : childConstraints.minWidth,
           maxWidth: constraints.maxWidth,
           minHeight: childConstraints.minHeight,
           maxHeight: childConstraints.maxHeight,
