@@ -351,7 +351,7 @@ extension MatEx on cv.Mat {
 
   /// 绘制文本
   /// - [bottomLeftOrigin]
-  ///   - true: 则x,y对应文本的左上角
+  ///   - true: 则x,y对应文本的左上角. 还会翻转?
   ///   - false: 则x,y对应文本的左下角
   ///
   /// # 无衬线字体（Sans-Serif，类似黑体）
