@@ -256,16 +256,17 @@ class GraffitiFountainShapePenHandler extends GraffitiFountainPenHandler
       //开始智能识别图形
       final painter = this.painter;
       if (painter is GraffitiFountainPenPainter) {
-        return onShapeFitted(painter, _pointList);
+        return onGraffitiShapeFittedHandler(painter, _pointList);
       }
       return false;
     }
     return super.onTouchDetectorPointerEvent(event, touchType);
   }
 
+  /// 停留一段时候后, 尝试识别图形
   /// 重写此方法, 实现图形识别
   @overridePoint
-  bool onShapeFitted(
+  bool onGraffitiShapeFittedHandler(
     GraffitiFountainPenPainter painter,
     List<PointEventMeta> pointList,
   ) {

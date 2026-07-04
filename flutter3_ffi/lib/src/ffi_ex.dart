@@ -140,6 +140,7 @@ extension FfiListDoubleEx on List<double> {
   }
 
   /// 转成[Vec_double_t]
+  /// - [StructPointer.ref] 获取[Vec_double_t]结构体
   ffi.Pointer<Vec_double_t> toVecDouble() {
     final bytes = this;
     //创建一个指针, 用来ffi传递

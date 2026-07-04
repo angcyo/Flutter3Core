@@ -55,9 +55,11 @@ class GraffitiPainter extends IPainter
 
   /// 输出的矢量数据
   @output
+  @overridePoint
   Path? outputPath;
 
   @output
+  @overridePoint
   String? outputPathString;
 
   //endregion ---output---
@@ -83,11 +85,36 @@ class GraffitiFountainPenPainter extends GraffitiPainter
     with CurvePointEventMixin {
   final List<PointEventMeta> pointListCache = [];
 
-  /// 绘制的对象
-  Path? path;
+  /// 手势形成路径数据
+  @tempFlag
+  Path? pointPath;
 
-  /// 输出的矢量数据
-  StringBuffer? pathBuffer;
+  /// 输出的矢量svg path数据
+  @tempFlag
+  StringBuffer? pointPathBuffer;
+
+  //MARK: -
+
+  /// 需要替换的绘制路径
+  @configProperty
+  Path? paintPath;
+
+  /// 需要替换的绘制路径矢量svg path数据
+  @configProperty
+  StringBuffer? paintPathBuffer;
+
+  //MARK: output
+
+  @output
+  @override
+  Path? get outputPath => paintPath ?? pointPath;
+
+  @output
+  @override
+  String? get outputPathString => outputPathBuffer?.toString();
+
+  @output
+  StringBuffer? get outputPathBuffer => paintPathBuffer ?? pointPathBuffer;
 
   GraffitiFountainPenPainter() {
     paint
@@ -97,13 +124,11 @@ class GraffitiFountainPenPainter extends GraffitiPainter
   }
 
   @override
-  String? get outputPathString => pathBuffer?.toString();
-
-  @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     //canvas.drawPoints(ui.PointMode.polygon, points, paint);
-    if (path != null && !path!.isEmpty) {
-      canvas.drawPath(path!, paint);
+    final path = paintPath ?? pointPath;
+    if (path != null && !path.isEmpty) {
+      canvas.drawPath(path, paint);
     }
   }
 
@@ -120,17 +145,17 @@ class GraffitiFountainPenPainter extends GraffitiPainter
     final curveBezierMeta = calculateCurveBezierMeta(pointListCache);
     if (curveBezierMeta != null) {
       //--
-      if (path == null) {
-        path = Path();
-        path?.moveTo(curveBezierMeta.start.x, curveBezierMeta.start.y);
-        pathBuffer = StringBuffer();
-        pathBuffer?.write(
+      if (pointPath == null) {
+        pointPath = Path();
+        pointPath?.moveTo(curveBezierMeta.start.x, curveBezierMeta.start.y);
+        pointPathBuffer = StringBuffer();
+        pointPathBuffer?.write(
           'M ${formatValue(curveBezierMeta.start.x)} ${formatValue(curveBezierMeta.start.y)}',
         );
       }
 
       //--
-      path?.cubicTo(
+      pointPath?.cubicTo(
         curveBezierMeta.c1.x,
         curveBezierMeta.c1.y,
         curveBezierMeta.c2.x,
@@ -138,7 +163,7 @@ class GraffitiFountainPenPainter extends GraffitiPainter
         curveBezierMeta.end.x,
         curveBezierMeta.end.y,
       );
-      pathBuffer?.write(
+      pointPathBuffer?.write(
         'C ${formatValue(curveBezierMeta.c1.x)} ${formatValue(curveBezierMeta.c1.y)} '
         '${formatValue(curveBezierMeta.c2.x)} ${formatValue(curveBezierMeta.c2.y)} '
         '${formatValue(curveBezierMeta.end.x)} ${formatValue(curveBezierMeta.end.y)}',

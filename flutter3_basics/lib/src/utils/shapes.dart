@@ -9,6 +9,150 @@ part of '../../flutter3_basics.dart';
 class Shapes {
   Shapes._();
 
+  /// - 线: [1.0, slope, intercept]
+  /// - 圆: [2.0, cx, cy, radius]
+  /// - 三角形: [3.0, p1, p2, p3]
+  /// - 矩形: [4.0, min_x, min_y, max_x, max_y, max_x]
+  /// - OBB矩形: [5.0, p1, p2, p3, p4]
+  /// - 椭圆: [6.0, center_x, center_y, axis_a, axis_b, angle]
+  /// - 五边形: [7.0, cx, cy, radius, angle, p...]
+  /// - 五角星: [8.0, center_x, center_y, outer_radius, inner_radius, angle,]
+  /// - 心形: [9.0, cx, cy, width, height]
+  /// - 箭头: [10.0, sx, sy, tx, ty, lx, ly, rx, ry]
+  /// - V箭头: [11.0, tx, ty, lx, ly, rx, ry]
+  /// - 多边形: [12.0, p...]
+  /// - 其它: [0.0]
+  static Path? buildFromValues(
+    List<double>? values, {
+    double? lineX1,
+    double? lineX2,
+    //--
+    StringBuffer? pathBuilder,
+    int digits = 6,
+  }) {
+    if (values == null || values.isEmpty || values.length < 2) {
+      return null;
+    }
+    final type = values.first;
+    if (type == 1 && values.length >= 3) {
+      return buildLinePath(
+        slope: values[1],
+        intercept: values[2],
+        x1: lineX1 ?? 0,
+        x2: lineX2 ?? 0,
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 2 && values.length >= 4) {
+      return buildCirclePath(
+        cx: values[1],
+        cy: values[2],
+        radius: values[3],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 3 && values.length >= 7) {
+      return buildTrianglePath(
+        x1: values[1],
+        y1: values[2],
+        x2: values[3],
+        y2: values[4],
+        x3: values[5],
+        y3: values[6],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 4 && values.length >= 5) {
+      return buildRectPath(
+        minX: values[1],
+        minY: values[2],
+        maxX: values[3],
+        maxY: values[4],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 5 && values.length >= 9) {
+      return buildOBBPath(
+        x1: values[1],
+        y1: values[2],
+        x2: values[3],
+        y2: values[4],
+        x3: values[5],
+        y3: values[6],
+        x4: values[7],
+        y4: values[8],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 6 && values.length >= 6) {
+      return buildEllipsePath(
+        cx: values[1],
+        cy: values[2],
+        axisA: values[3],
+        axisB: values[4],
+        angle: values[5],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 7 && values.length >= 5) {
+      return buildPentagonPath(
+        points: values.sublist(1),
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 8 && values.length >= 6) {
+      return buildStarPath(
+        cx: values[1],
+        cy: values[2],
+        outerRadius: values[3],
+        innerRadius: values[4],
+        angle: values[5],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 9 && values.length >= 5) {
+      return buildHeartPath(
+        cx: values[1],
+        cy: values[2],
+        w: values[3],
+        h: values[4],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 10 && values.length >= 9) {
+      return buildArrowPath(
+        sx: values[1],
+        sy: values[2],
+        tx: values[3],
+        ty: values[4],
+        lx: values[5],
+        ly: values[6],
+        rx: values[7],
+        ry: values[8],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 11 && values.length >= 7) {
+      return buildVArrowPath(
+        tx: values[1],
+        ty: values[2],
+        lx: values[3],
+        ly: values[4],
+        rx: values[5],
+        ry: values[6],
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    } else if (type == 12 && values.length >= 5) {
+      return buildPolygonPath(
+        points: values.sublist(1),
+        pathBuilder: pathBuilder,
+        digits: digits,
+      );
+    }
+    return null;
+  }
+
   /// 根据斜率, 偏移创建一条线 y = slope * x + intercept
   /// - [slope] 斜率
   /// - [intercept] 截距
