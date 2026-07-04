@@ -358,6 +358,51 @@ class Shapes {
     return path;
   }
 
+  /// 创建箭头→
+  static Path buildArrowPath({
+    //起始点
+    required double sx,
+    required double sy,
+    //尖头点
+    required double tx,
+    required double ty,
+    //左翼点
+    required double lx,
+    required double ly,
+    //右翼点
+    required double rx,
+    required double ry,
+    //--
+    Path? path,
+    StringBuffer? pathBuilder,
+    int digits = 6,
+  }) {
+    path ??= Path();
+    //--主干线
+    path.moveTo(sx, sy);
+    pathBuilder?.write(
+      'M${sx.toDigits(digits: digits)} ${sy.toDigits(digits: digits)} ',
+    );
+    path.lineTo(tx, ty);
+    pathBuilder?.write(
+      'L${tx.toDigits(digits: digits)} ${ty.toDigits(digits: digits)} ',
+    );
+    //--
+    path.moveTo(lx, ly);
+    pathBuilder?.write(
+      'M${lx.toDigits(digits: digits)} ${ly.toDigits(digits: digits)} ',
+    );
+    path.lineTo(tx, ty);
+    pathBuilder?.write(
+      'L${tx.toDigits(digits: digits)} ${ty.toDigits(digits: digits)} ',
+    );
+    path.lineTo(rx, ry);
+    pathBuilder?.write(
+      'L${rx.toDigits(digits: digits)} ${ry.toDigits(digits: digits)} ',
+    );
+    return path;
+  }
+
   /// 创建V箭头
   static Path buildVArrowPath({
     //尖头点
