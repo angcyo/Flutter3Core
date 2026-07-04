@@ -2312,6 +2312,12 @@ extension IntEx on int {
 }
 
 extension DoubleEx on double {
+  /// 弧度对应的余弦值
+  double cos() => math.cos(this);
+
+  /// 弧度对应的正弦值
+  double sin() => math.sin(this);
+
   /// 将当前的数, 与指定的数保持相同的符号
   double keepSign(double? other) => other == null ? this : this * other.sign;
 
@@ -2619,6 +2625,10 @@ extension IterableEx<E> on Iterable<E> {
   /// 过滤掉null
   List<R> filterNull<R>() =>
       where((element) => element != null).cast<R>().toList();
+
+  /// 过滤掉null or empty
+  List<R> filterNullOrEmpty<R>() =>
+      where((element) => !isNil(element)).cast<R>().toList();
 
   /// 如果列表为空, 则返回新的列表
   List<E> orNull(List<E> r, {bool filterNull = true}) {

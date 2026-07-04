@@ -166,6 +166,7 @@ part 'src/utils/process_util.dart';
 part 'src/utils/socket_mix.dart';
 part 'src/utils/string_utils.dart';
 part 'src/utils/text_span_builder.dart';
+part 'src/utils/shapes.dart';
 part 'src/widgets/data_provider.dart';
 part 'src/widgets/empty.dart';
 part 'src/widgets/path_widget.dart';

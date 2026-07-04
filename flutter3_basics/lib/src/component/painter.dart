@@ -211,6 +211,8 @@ class PointEventMeta {
   /// 当前点的线宽, 如果有.
   final double? width;
 
+  //MARK: get
+
   double get x => position.dx;
 
   double get y => position.dy;
@@ -218,10 +220,11 @@ class PointEventMeta {
   const PointEventMeta(this.position, this.timestamp, {this.width});
 
   ///copyWith
-  PointEventMeta copyWith({Offset? position, int? timestamp}) {
+  PointEventMeta copyWith({Offset? position, int? timestamp, double? width}) {
     return PointEventMeta(
       position ?? this.position,
       timestamp ?? this.timestamp,
+      width: width ?? this.width,
     );
   }
 

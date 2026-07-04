@@ -66,30 +66,43 @@ class PointEventHandler {
   /// 最后一次手势时间戳
   int _lastTimestamp = 0;
 
+  /// 手势是否正在处理中
+  @output
+  bool isTouching = false;
+
   /// 手势入口点
   @entryPoint
   @overridePoint
   void handleEvent(PointerEvent event) {
+    if (!event.isTouchPointerEvent) {
+      return;
+    }
     final localPosition = event.localPosition;
     final eventMeta = PointEventMeta(localPosition, nowTimestamp());
     if (event.isPointerDown) {
+      isTouching = true;
       onStartPointerEvent(eventMeta);
       _lastPosition = localPosition;
-    } else if (event.isPointerMove) {
-      if (_lastPosition == null ||
-          (localPosition - _lastPosition!).distance > moveThreshold) {
-        final timestamp = nowTimestamp();
-        if (timestamp - _lastTimestamp > moveThrottle) {
-          onPointerEventMove(eventMeta);
-          _lastTimestamp = timestamp;
-          _lastPosition = localPosition;
+    }
+    if (isTouching) {
+      if (event.isPointerMove) {
+        if (_lastPosition == null ||
+            (localPosition - _lastPosition!).distance > moveThreshold) {
+          final timestamp = nowTimestamp();
+          if (timestamp - _lastTimestamp > moveThrottle) {
+            onPointerEventMove(eventMeta);
+            _lastTimestamp = timestamp;
+            _lastPosition = localPosition;
+          }
         }
+        eventManager?.graffitiDelegate.refresh();
       }
-    } else if (event.isPointerFinish) {
+    }
+    if (event.isPointerFinish) {
       onPointerEventMove(eventMeta);
       onFinishPointerEvent(eventMeta);
+      isTouching = false;
     }
-    eventManager?.graffitiDelegate.refresh();
   }
 
   /// 开始按下
@@ -199,6 +212,67 @@ class GraffitiFountainPenHandler extends GraffitiPainterHandler {
 
   @override
   GraffitiPainter? createPainter() => GraffitiFountainPenPainter();
+}
+
+/// 绘制后, 长按自动识别对应的形状
+/// - 仅支持有限的几何图形
+/// - [GraffitiFountainPenHandler]
+class GraffitiFountainShapePenHandler extends GraffitiFountainPenHandler
+    with TouchDetectorMixin {
+  GraffitiFountainShapePenHandler() {
+    checkLongPress = true;
+    enableMoveLongPress = true;
+  }
+
+  @tempFlag
+  final List<PointEventMeta> _pointList = [];
+
+  @override
+  void handleEvent(PointerEvent event) {
+    addTouchDetectorPointerEvent(event);
+    super.handleEvent(event);
+  }
+
+  @override
+  void onStartPointerEvent(PointEventMeta eventMeta) {
+    _pointList.clear();
+    _pointList.add(eventMeta);
+    super.onStartPointerEvent(eventMeta);
+  }
+
+  @override
+  void onPointerEventMove(PointEventMeta eventMeta) {
+    _pointList.add(eventMeta);
+    super.onPointerEventMove(eventMeta);
+  }
+
+  @override
+  bool onTouchDetectorPointerEvent(
+    PointerEvent event,
+    TouchDetectorType touchType,
+  ) {
+    if (touchType == .longPress) {
+      isTouching = false;
+      //开始智能识别图形
+      final painter = this.painter;
+      if (painter is GraffitiFountainPenPainter) {
+        return onShapeFitted(painter, _pointList);
+      }
+      return false;
+    }
+    return super.onTouchDetectorPointerEvent(event, touchType);
+  }
+
+  /// 重写此方法, 实现图形识别
+  @overridePoint
+  bool onShapeFitted(
+    GraffitiFountainPenPainter painter,
+    List<PointEventMeta> pointList,
+  ) {
+    //painter.pointListCache;
+    //_pointList.map((e) => e.position)
+    return false;
+  }
 }
 
 /// 毛笔对象, 输出的数据是图片, 速度越快, 宽度越细
