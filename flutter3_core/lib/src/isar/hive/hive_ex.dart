@@ -215,3 +215,26 @@ mixin HiveHookMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 }
+
+extension TextFieldConfigHiveEx on TextFieldConfig {
+  /// 监听TextField输入框的值, 自动保存至hive中
+  TextFieldConfig hive(
+    String key, {
+    bool notifyFirst = true,
+    bool notifyHiveChanged = true,
+  }) {
+    onInnerChanged = (value) {
+      key.hivePut(value, notifyHiveChanged);
+    };
+    final String? value = key.hiveGet(text);
+    if (value != null && value != text) {
+      text = value;
+      if (notifyFirst) {
+        postFrame(() {
+          notifyValueChanged(value);
+        });
+      }
+    }
+    return this;
+  }
+}

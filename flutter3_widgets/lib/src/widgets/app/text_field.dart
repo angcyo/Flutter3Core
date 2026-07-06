@@ -160,6 +160,10 @@ class TextFieldConfig {
 
   /// 回调
 
+  /// 内部使用
+  /// - [onChanged]
+  ValueChanged<String>? onInnerChanged;
+
   /// [TextField.onChanged]
   final ValueChanged<String>? onChanged;
 
@@ -359,6 +363,7 @@ class TextFieldConfig {
   /// - [_onSelfValueChanged]
   @callPoint
   void notifyValueChanged(String value, {BuildContext? context}) {
+    onInnerChanged?.call(value);
     onChanged?.call(value);
     onConfigChanged?.call(this, value);
     if (context != null) {
