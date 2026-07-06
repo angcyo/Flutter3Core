@@ -163,8 +163,11 @@ Rect applyAlignRect(
 }
 
 /// 与[applyAlignRect]类似, 只不过返回值是[Matrix4]
-/// [anchorOffset]. [alignment]对齐后缩放的锚点偏移量, 可以不指定
-///
+/// - [anchorOffset]. [alignment]对齐后缩放的锚点偏移量, 可以不指定
+/// - [fit]
+///   [BoxFit.contain] 尽可能显示最大尺寸, 等比
+///   [BoxFit.cover] 尽可能覆盖目标容器, 等比
+///   [BoxFit.scaleDown] 尽可能缩小尺寸, 等比
 /// [parentSize] 最终容器大小
 /// [childSize] 当前child大小
 ///

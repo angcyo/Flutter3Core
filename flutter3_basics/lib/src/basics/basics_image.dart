@@ -499,6 +499,10 @@ extension ImageEx on UiImage {
     double? height,
     Paint? paint,
     double? pixelRatio,
+    //--
+    BoxFit? fit,
+    Color? bgColor,
+    Color? tintColor,
   }) {
     width ??= size;
     height ??= size;
@@ -508,11 +512,18 @@ extension ImageEx on UiImage {
     width ??= this.width.toDouble();
     height ??= this.height.toDouble();
     final image = drawImageSync(Size(width, height), (canvas) {
-      canvas.drawImageRect(
+      /*canvas.drawImageRect(
         this,
         Rect.fromLTWH(0, 0, this.width.toDouble(), this.height.toDouble()),
         Rect.fromLTWH(0, 0, width!, height!),
         paint ?? Paint(),
+      );*/
+      canvas.drawImageInRect(
+        this,
+        dst: Rect.fromLTWH(0, 0, width!, height!),
+        fit: fit,
+        bgColor: bgColor,
+        tintColor: tintColor,
       );
     }, pixelRatio);
     return image;

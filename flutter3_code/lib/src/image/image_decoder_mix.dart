@@ -48,3 +48,18 @@ Future<List<UiImage>?> decoderImageFrames({
 
   return result;
 }
+
+/// - [decoderImageFrames]
+Future<List<UiImage>?> decoderImageFramesList(List<String>? paths) async {
+  if (paths == null || paths.isEmpty) {
+    return null;
+  }
+  List<UiImage> result = [];
+  for (final path in paths) {
+    final frames = await decoderImageFrames(filePath: path);
+    if (frames != null) {
+      result.addAll(frames);
+    }
+  }
+  return result;
+}

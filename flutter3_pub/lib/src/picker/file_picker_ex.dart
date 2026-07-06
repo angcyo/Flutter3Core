@@ -62,10 +62,12 @@ Future<PlatformFile?> pickFile({
 /// [withData] 是否返回数据,而非文件. 在web端时需要.
 /// [withReadStream] 是否返回文件流
 /// [readSequential] 可以选择在 Web 上设置以在导入过程中保持导入文件顺序。
+///
+///  - [PlatformFile.path]
 @allPlatformFlag
 Future<FilePickerResult?> pickFiles({
   FileType type = FileType.any,
-  bool allowMultiple = false,
+  bool allowMultiple = true,
   String? dialogTitle,
   String? initialDirectory,
   List<String>? allowedExtensions,

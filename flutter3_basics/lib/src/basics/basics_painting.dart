@@ -600,7 +600,7 @@ extension CanvasEx on Canvas {
     Color? tintColor,
     ui.ColorFilter? colorFilter,
     BoxFit? fit,
-    Alignment? alignment = Alignment.center,
+    Alignment? alignment = .center,
     String? debugLabel,
   }) {
     if (dst == null || src == null) {
@@ -951,20 +951,26 @@ extension CanvasEx on Canvas {
   }
 
   /// 将[ui.Image]绘制在目标矩形[dst]内
+  /// - [bgColor] 背景色
+  /// - [tintColor] 着色
   ///
   /// - [fit]
   /// - [alignment]
   void drawImageInRect(
     ui.Image? image, {
     required Rect? dst,
+    Color? bgColor,
     Color? tintColor,
     ui.ColorFilter? colorFilter,
     BoxFit? fit,
-    Alignment? alignment = Alignment.center,
+    Alignment? alignment = .center,
     Paint? paint,
   }) {
     if (image == null) {
       return;
+    }
+    if (bgColor != null) {
+      drawColor(bgColor, .src);
     }
     final imageSize = Size(image.width + 0.0, image.height + 0.0);
     drawInRect(
