@@ -103,6 +103,12 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   /// 是否显示顶部的阴影
   final bool showTopShadow;
 
+  @override
+  double? get dialogMaxWidth => isDesktopOrWeb ? kDesktopPopupWidth : null;
+
+  @override
+  TranslationType get translationType => .translationFade;
+
   const NumberKeyboardDialog({
     super.key,
     required this.number,
@@ -271,7 +277,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
         )!
-        .adaptiveTablet(context)
+        .adaptiveTablet(
+          context,
+          maxWidth: widget.dialogMaxWidth,
+          maxHeight: widget.dialogMaxHeight,
+        )
         .willPop(() async {
           return widget.canPop;
         })

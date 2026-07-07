@@ -218,6 +218,10 @@ class LabelWheelTile extends StatefulWidget {
   /// 弹窗的圆角
   final double? popupRadius;
 
+  //--
+
+  final String? debugLabel;
+
   const LabelWheelTile({
     super.key,
     this.label,
@@ -240,6 +244,7 @@ class LabelWheelTile extends StatefulWidget {
     this.showTrailingWidget,
     this.usePopupRoute,
     this.popupRadius = kDefaultBorderRadiusL,
+    this.debugLabel,
   });
 
   @override
@@ -256,6 +261,7 @@ class _LabelWheelTileState extends State<LabelWheelTile>
 
   @override
   Widget build(BuildContext context) {
+    debugger(when: widget.debugLabel != null);
     final globalTheme = GlobalTheme.of(context);
 
     final label = buildLabelWidget(
@@ -265,9 +271,16 @@ class _LabelWheelTileState extends State<LabelWheelTile>
       labelWidget: widget.labelWidget,
     );
 
+    //是否显示箭头
+    final showTrailingWidget =
+        widget.showTrailingWidget ??
+        (widget.onContainerTap != null ||
+            isMore(widget.values) ||
+            isMore(widget.valuesWidget));
+
     final rightWidget =
         widget.rightWidget ??
-        (widget.values != null
+        (showTrailingWidget
             ? loadCoreAssetSvgPicture(
                 Assets.svg.coreNext,
                 tintColor: widget.values?.isEmpty == true
@@ -275,13 +288,6 @@ class _LabelWheelTileState extends State<LabelWheelTile>
                     : globalTheme.icoNormalColor,
               )
             : null);
-
-    //是否显示箭头
-    final showTrailingWidget =
-        widget.showTrailingWidget ??
-        (widget.onContainerTap != null ||
-            isMore(widget.values) ||
-            isMore(widget.valuesWidget));
 
     //popup
     final usePopupRoute = widget.usePopupRoute ?? isDesktopOrWeb;
@@ -312,7 +318,7 @@ class _LabelWheelTileState extends State<LabelWheelTile>
               radius: kDefaultBorderRadiusXX,
             )
             .paddingInsets(kContentPadding)
-            .ignorePointer(isNil(widget.values));
+            .ignorePointer(!showTrailingWidget);
 
     return [
       label,

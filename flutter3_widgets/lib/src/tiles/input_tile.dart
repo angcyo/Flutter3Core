@@ -221,8 +221,8 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.inputPadding = const EdgeInsets.only(
       left: kH,
       right: kH,
-      top: kL,
-      bottom: kL,
+      top: kH,
+      bottom: kH,
     ),
     this.inputKeyboardType,
     //--

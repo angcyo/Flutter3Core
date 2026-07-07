@@ -105,7 +105,7 @@ const kDesktopDialogMinWidth = kDialogMinWidth * 2;
 
 /// 桌面弹窗的宽度 560.0
 @desktopLayout
-const kDesktopPopupWidth = kDialogMinWidth;
+const kDesktopPopupWidth = 480.0;
 
 //--
 

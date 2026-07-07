@@ -6,7 +6,7 @@ part of '../../flutter3_basics.dart';
 
 //region BoxDecoration
 
-/// 空的[Decoration]
+/// 空的[Decoration], 空装饰, 占位装饰
 final Decoration kEmptyDecoration = PaintDecoration(null);
 
 /// 自定义绘制装饰器

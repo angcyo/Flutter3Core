@@ -12,6 +12,12 @@ part of './dialog.dart';
 /// - [DialogMixin]
 /// - [DesktopDialogMixin]
 ///
+/// - [dialogBarrierDismissible]
+/// - [dialogUseRootNavigator]
+/// - [dialogBlur]
+/// - [dialogInOverlay]
+/// - [dialogInPopup]
+/// - [dialogIsPopupStyle]
 mixin DialogMixin implements TranslationTypeImpl {
   /// [Dialog]对话框外点击是否关闭
   @override
@@ -80,17 +86,25 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// - [dialogConstraints]
   double get dialogMinWidth => kDialogMinWidth;
 
+  /// 对话框的最大宽度限制
+  double? get dialogMaxWidth => null;
+
   /// 对话框的最小高度限制
   /// - [dialogConstraints]
   double get dialogMinHeight => 0;
+
+  /// 对话框的最大高度限制
+  double? get dialogMaxHeight => null;
 
   /// 对话框的最大宽度/高度限制
   /// 系统[Dialog]最小宽度280.0
   BoxConstraints get dialogConstraints => BoxConstraints(
     minWidth: dialogMinWidth,
-    maxWidth: max(dialogMinWidth, min(screenWidth, screenHeight)),
+    maxWidth:
+        dialogMaxWidth ?? max(dialogMinWidth, min(screenWidth, screenHeight)),
     minHeight: dialogMinHeight,
-    maxHeight: max(dialogMinHeight, min(screenWidth, screenHeight)),
+    maxHeight:
+        dialogMaxHeight ?? max(dialogMinHeight, min(screenWidth, screenHeight)),
   );
 
   /// 是否背景模糊处理
@@ -750,6 +764,8 @@ mixin DialogMixin implements TranslationTypeImpl {
           context,
           alignment: align,
           disable: fullScreen || isPopupStyle == true,
+          maxWidth: dialogMaxWidth,
+          maxHeight: dialogMaxHeight,
         ) //适配平板
         .blur(sigma: blur ? kL : null)
         .autoCloseDialog(

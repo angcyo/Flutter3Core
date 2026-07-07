@@ -2132,6 +2132,7 @@ extension WidgetEx on Widget {
   }
 
   /// 装饰[DecoratedBox]
+  ///  - [kEmptyDecoration]
   Widget decoration(Decoration? decoration, {bool enable = true}) {
     if (decoration == null || enable != true) {
       return this;
@@ -2423,7 +2424,20 @@ extension WidgetEx on Widget {
   /// [ConstrainedBox]
   /// [constrainedMin]
   /// [constrainedMax]
-  Widget constrainedBox(BoxConstraints? constraints, {Key? key}) {
+  Widget constrainedBox(
+    BoxConstraints? constraints, {
+    Key? key,
+    double? maxWidth,
+    double? maxHeight,
+  }) {
+    constraints ??= (maxWidth != null || maxHeight != null)
+        ? BoxConstraints(
+            minWidth: 0.0,
+            maxWidth: maxWidth ?? double.infinity,
+            minHeight: 0.0,
+            maxHeight: maxHeight ?? double.infinity,
+          )
+        : null;
     return constraints == null
         ? this
         : ConstrainedBox(key: key, constraints: constraints, child: this);
@@ -2925,7 +2939,7 @@ extension WidgetEx on Widget {
     }
   }
 
-  /// 默认块状波纹效果, 长按下时, 是一个圆圈涟漪的效果. 推荐使用[inkWell]
+  /// 默认块状波纹效果, 支持带背景装饰[decoration]设置的[inkWell]
   /// 支持圆角波纹效果, 有的时候可能需要包裹在[Material]部件中才有预期效果
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
@@ -2935,17 +2949,19 @@ extension WidgetEx on Widget {
   /// [decoration] 强行指定装饰
   ///
   /// [material]
-  /// [inkWell] 方形: 推荐使用此方法替代
-  /// [inkWellCircle] 圆:
+  /// [inkWell]
+  /// [inkWellCircle]
   Widget ink(
     GestureTapCallback? onTap, {
     bool enable = true,
-    //--
-    double? radius = 0,
+    MouseCursor? cursor,
+    double? inkRadius,
     Color? backgroundColor,
-    BorderRadius? borderRadius,
-    BoxShape shape = BoxShape.rectangle,
     Decoration? decoration,
+    //--
+    BoxShape shape = BoxShape.rectangle,
+    double? radius /*圆角*/,
+    BorderRadius? borderRadius,
     //--
     EdgeInsetsGeometry? padding,
     double? width,
@@ -2957,13 +2973,14 @@ extension WidgetEx on Widget {
     if (!enable) {
       //禁用组件
       if (isDesktopOrWeb || mouseIsConnected) {
-        return mouse(cursor: SystemMouseCursors.forbidden);
+        return mouse(cursor: cursor ?? SystemMouseCursors.forbidden);
       }
       return this;
     }
-    final isCircle = shape == BoxShape.circle;
+    final isCircle = shape == .circle;
     if (isCircle) {
       radius = Material.defaultSplashRadius;
+      inkRadius = Material.defaultSplashRadius;
     }
     final bRadius =
         borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 0));
@@ -2984,11 +3001,12 @@ extension WidgetEx on Widget {
         onTap,
         onLongPress: onLongPress,
         borderRadius: bRadius,
-        radius: radius,
+        radius: inkRadius,
         customBorder: /*isCircle ? const CircleBorder() : */ null,
         /*highlightShape: shape,*/
         highlightColor: highlightColor,
         splashColor: splashColor,
+        cursor: cursor,
       ),
     );
   }
@@ -3019,10 +3037,11 @@ extension WidgetEx on Widget {
     Color? highlightColor,
     Color? hoverColor,
     BoxShape highlightShape = BoxShape.rectangle,
-    double? radius /*飞溅的半径*/,
+    double? radius /*飞溅的半径, 太小的话就是一个小圆圈*/,
     ShapeBorder? customBorder,
     GestureLongPressCallback? onLongPress,
     bool enable = true,
+    MouseCursor? cursor,
     //--
     bool disableColor = false,
     //--
@@ -3031,6 +3050,9 @@ extension WidgetEx on Widget {
   }) {
     if (!enable) {
       //禁用组件
+      if (isDesktopOrWeb || mouseIsConnected) {
+        return mouse(cursor: cursor ?? SystemMouseCursors.forbidden);
+      }
       return this;
     }
     if (disableColor) {
@@ -3079,7 +3101,7 @@ extension WidgetEx on Widget {
               periodicTimer = null;
             }
           : null,
-      mouseCursor: null,
+      mouseCursor: cursor,
       radius: radius,
       /*focusColor: Colors.blue,*/
       splashColor: splashColor,
@@ -3378,12 +3400,22 @@ extension WidgetEx on Widget {
     AlignmentGeometry alignment = Alignment.bottomCenter,
     BoxConstraints? constraints,
     bool disable = false,
+    double? maxWidth,
+    double? maxHeight,
   }) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
     if (!disable && (globalConfig.isInTabletModel || isDesktopOrWeb)) {
       //平板模式
       final globalTheme = GlobalTheme.of(context);
+      constraints ??= (maxWidth != null || maxHeight != null)
+          ? BoxConstraints(
+              minWidth: 0.0,
+              maxWidth: maxWidth ?? double.infinity,
+              minHeight: 0.0,
+              maxHeight: maxHeight ?? double.infinity,
+            )
+          : null;
       return constrainedBox(
         constraints ?? globalTheme.tabletDialogConstraints,
       ).align(alignment);
