@@ -17,8 +17,8 @@ part of '../../flutter3_basics.dart';
 ///
 class StringTemplateParser {
   /// 返回需要替换的模板字符串
-  String Function(String template) replaceTemplateAction =
-      (template) => template;
+  String Function(String template) replaceTemplateAction = (template) =>
+      template;
 
   /// 返回需要替换的变量字符串
   String? Function(String variable) replaceVariableAction = (variable) => null;
@@ -26,12 +26,12 @@ class StringTemplateParser {
   /// 是否是相同的模板字符
   bool Function(String? before, String after) isSameTemplateCharAction =
       (before, after) {
-    if (before == null) {
-      return true;
-    } else {
-      return before == after;
-    }
-  };
+        if (before == null) {
+          return true;
+        } else {
+          return before == after;
+        }
+      };
 
   /// 特殊模板列表, 关键字列表
   /// ```
@@ -211,18 +211,20 @@ class DateTemplateParser extends StringTemplateParser {
   /// "am" -> _string(R.string.lib_am)
   /// "pm" -> _string(R.string.lib_pm)
   /// else -> null
+  @configProperty
   Map<String, String?>? replaceVariableMap;
 
   /// 替换的资源, 国际化
   /// 星期一到星期日
+  @configProperty
   List<String> weekdayList = [
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
-    "Saturday"
-        "Sunday",
+    "Saturday",
+    "Sunday",
   ];
 
   DateTemplateParser() {
@@ -231,9 +233,23 @@ class DateTemplateParser extends StringTemplateParser {
     templateList.add("weekOfYear");
 
     replaceVariableAction = (variable) {
-      return replaceVariableMap == null
-          ? variable
-          : replaceVariableMap?[variable];
+      String? res = replaceVariableMap?[variable];
+      if (res == null) {
+        final isZh = GlobalConfig.def.isZh;
+        res = switch (variable) {
+          "year" => isZh ? "年" : "Year",
+          "month" => isZh ? "月" : "Month",
+          "day" => isZh ? "日" : "Day",
+          "hour" => isZh ? "时" : "Hour",
+          "minute" => isZh ? "分" : "Minute",
+          "second" => isZh ? "秒" : "Second",
+          "millisecond" => isZh ? "毫秒" : "Millisecond",
+          "am" => isZh ? "上午" : "AM",
+          "pm" => isZh ? "下午" : "PM",
+          _ => null,
+        };
+      }
+      return res ?? variable;
     };
 
     replaceTemplateAction = (template) {
@@ -316,7 +332,7 @@ class DateTemplateParser extends StringTemplateParser {
             DateTime.friday => "Fri",
             DateTime.saturday => "Sat",
             DateTime.sunday => "Sun",
-            _ => "${calendar.weekday}"
+            _ => "${calendar.weekday}",
           };
 
         //星期几全称
@@ -394,11 +410,7 @@ class DateTemplateParser extends StringTemplateParser {
 
   /// 设置当前时间, 指定日期时间
   /// [time] 指定13位时间戳
-  void setDate({
-    String? date,
-    String? datePattern,
-    int? time,
-  }) {
+  void setDate({String? date, String? datePattern, int? time}) {
     if (date != null) {
       calendar = date.toDateTime(datePattern);
     } else if (time != null) {

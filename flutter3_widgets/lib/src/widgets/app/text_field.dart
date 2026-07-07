@@ -943,14 +943,18 @@ class SingleInputWidget extends StatefulWidget {
   ///
   final TextInputType? keyboardType;
 
-  /// 输入的文本格式化, 限制输入的字符
+  /// # 输入的文本格式化, 限制输入的字符
   /// ```
   /// FilteringTextInputFormatter.deny('\n'); // 禁止输入换行符, 也就是单行输入
   /// FilteringTextInputFormatter.allow(RegExp(r'[0-9]')); // 仅支持数字输入
   /// ```
-  /// 限制仅支持小数输入
+  /// # 限制仅支持小数输入
   /// ```
   /// FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*'))
+  /// ```
+  /// # 限制只能输入限定字符
+  /// ```
+  /// FilteringTextInputFormatter.allow(RegExp(r"[#,0./'`-]")
   /// ```
   ///
   /// [FilteringTextInputFormatter.singleLineFormatter] 单行输入

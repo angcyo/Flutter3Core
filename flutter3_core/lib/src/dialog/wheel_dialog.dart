@@ -46,7 +46,10 @@ class WheelDialog extends StatefulWidget
   final Color? wheelSelectedIndexColor;
 
   @override
-  TranslationType get translationType => TranslationType.translation;
+  double? get dialogMaxWidth => isDesktopOrWeb ? kDesktopPopupWidth : null;
+
+  @override
+  TranslationType get translationType => .translationFade;
 
   /// title
   final bool enableTitleLine;

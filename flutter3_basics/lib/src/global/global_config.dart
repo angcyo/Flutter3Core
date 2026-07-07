@@ -337,6 +337,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   bool get isThemeDark =>
       !isThemeLight() /*themeData?.brightness == Brightness.dark*/;
 
+  /// 是否是中文语言
+  bool get isZh => (locale ?? platformLocale).isZh;
+
   /// 当前是否是亮色主题模式
   @api
   bool isThemeLight([BuildContext? context]) {
