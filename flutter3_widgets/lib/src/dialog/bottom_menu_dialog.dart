@@ -60,6 +60,8 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// - 影响样式
   final bool? isInPopup;
 
+  final dynamic popResult;
+
   const BottomMenuItemsDialog(
     this.items, {
     super.key,
@@ -72,6 +74,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
     this.cancelGapColor,
     this.cancelGap = kH,
     this.isInPopup,
+    this.popResult = false,
   });
 
   /// 是否是透明背景样式
@@ -95,7 +98,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
               //no op
             },
             closeAfterTap: true,
-            popResult: false,
+            popResult: popResult,
             child: (cancelText ?? LibRes.of(context).libCancel).text(),
           ));
     }

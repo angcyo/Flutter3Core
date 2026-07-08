@@ -59,7 +59,7 @@ extension MimeEx on String {
   /// [CoreFileType]对象
   CoreFileType get fileType => CoreFileType(this);
 
-  /// mimeType是否是图片类型, svg也属性图片类型
+  /// 当前的[mimeType]是否是图片类型, svg也属性图片类型
   /// 可能需要先调用[mimeType]方法
   ///
   /// ```
@@ -142,6 +142,9 @@ extension MimeEx on String {
         mimeType()?.isSvgMimeType == true;
   }
 
+  /// 当前路径对应的文件是否是图片
+  ///- [isImage]
+  ///- [isImageMimeType]
   bool get isImage => mimeType()?.isImageMimeType == true;
 }
 
