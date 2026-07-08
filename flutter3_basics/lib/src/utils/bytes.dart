@@ -57,14 +57,20 @@ class BytesWriter {
   bool _canWrite() => limitMaxLength == null || _bytes.length < limitMaxLength!;
 
   /// 写入一个字节
-  void writeByte(int value) {
+  void writeByte(int? value) {
+    if (value == null) {
+      return;
+    }
     if (_canWrite()) {
       _bytes.add(value);
     }
   }
 
   /// 写入一个无符号字节
-  void writeUByte(int value) {
+  void writeUByte(int? value) {
+    if (value == null) {
+      return;
+    }
     if (_canWrite()) {
       _bytes.add(value & 0xff);
     }
@@ -73,7 +79,10 @@ class BytesWriter {
   /// 写入一个32位的整数, 4个字节
   /// [length] 需要写入的字节长度, 默认4个字节
   /// [endian] 字节序, 默认大端序, 低位在前, 高位在后
-  void writeInt(int value, [int length = 4, Endian? endian]) {
+  void writeInt(int? value, [int length = 4, Endian? endian]) {
+    if (value == null) {
+      return;
+    }
     endian ??= this.endian;
     if (endian == Endian.big) {
       //大端序, 默认
