@@ -69,7 +69,7 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
     '[${classHash()}]didChangeMetrics'
             ' screen:${screenWidth.toDigits(ensureInt: true)}x${screenHeight.toDigits(ensureInt: true)} ${screenInch.toDigits(ensureInt: true)}\''
             ' device:${deviceWidth.toDigits(ensureInt: true)}x${deviceHeight.toDigits(ensureInt: true)} ${deviceInch.toDigits(ensureInt: true)}\' [$dpr]'
-            ' viewInsets:${platformMediaQueryData.viewInsets} viewPadding:${platformMediaQueryData.viewPadding}'
+            ' viewInsets:${platformMediaQueryData.viewInsets.log} viewPadding:${platformMediaQueryData.viewPadding.log} ${platformMediaQueryData.platformBrightness}'
         .writeToLog(level: L.verbose);
     super.didChangeMetrics();
   }
@@ -271,6 +271,24 @@ extension ViewInsetsCallbackWidgetEx on Widget {
       onChanged: onChanged,
       child: this,
     );
+  }
+}
+
+extension MediaQueryDataLogEx on MediaQueryData {
+  String get log {
+    return 'viewInsets:${viewInsets.log} viewPadding:${viewPadding.log} $platformBrightness';
+  }
+}
+
+extension EdgeInsetsLogEx on EdgeInsets {
+  String get log {
+    return 'ltrb:${left.toInt()} ${top.toInt()} ${right.toInt()} ${bottom.toInt()}';
+  }
+}
+
+extension SizeLogEx on Size {
+  String get log {
+    return 'wh:${width.toInt()} ${height.toInt()}';
   }
 }
 

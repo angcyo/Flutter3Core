@@ -281,7 +281,7 @@ class DebugPage extends StatefulWidget {
       builder.append(
         "${_currentLocale ?? ""} ${screenWidthPixel.round()}*${screenHeightPixel.round()}/${deviceWidthPixel.round()}*${deviceHeightPixel.round()} $dpr",
       );
-      builder.append("$platformMediaQueryDataList");
+      builder.append("${platformMediaQueryDataList.map((e) => e.log)}");
       //--
       builder
         ..newLineIfNotEmpty()
