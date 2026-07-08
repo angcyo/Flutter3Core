@@ -675,6 +675,7 @@ extension WidgetEx on Widget {
   /// - [cursor] 设置鼠标样式, 需要使用[MouseRegion]
   ///   - [WidgetStateMouseCursor.clickable] 手形
   ///   - [WidgetStateMouseCursor.adaptiveClickable] 自适应 Web端:手形 其它端:basic
+  ///     - [SystemMouseCursors.click] 手形
   ///     - [SystemMouseCursors.basic]
   Widget click(
     GestureTapCallback? onTap, {
