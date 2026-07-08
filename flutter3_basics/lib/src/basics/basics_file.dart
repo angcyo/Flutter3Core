@@ -414,6 +414,76 @@ extension FileEx on File {
     return lines;
   }
 
+  /// 读取文件尾部多少行内容
+  /// - [linesCount] 读取的行数
+  /// - [reversed] 是否倒序结果
+  Future<List<String>?> readLastLines({
+    int? linesCount,
+    bool? reversed,
+    int bufferSize = 4096,
+    Encoding encoding = utf8,
+  }) async {
+    linesCount ??= __int64MaxValue;
+    // 以只读模式打开随机访问文件
+    final raf = await open(mode: FileMode.read);
+    final totalLength = await raf.length();
+
+    int position = totalLength;
+    List<int> leftOverBytes = [];
+    List<String> resultLines = [];
+
+    try {
+      // 循环向前移动指针读取，直到满足行数或读到文件头
+      while (position > 0 && resultLines.length < linesCount) {
+        // 计算本次应当读取的块大小
+        int bytesToRead = bufferSize;
+        if (position - bytesToRead < 0) {
+          bytesToRead = position; // 如果不够一个 buffer，读到文件头即可
+        }
+
+        position -= bytesToRead;
+        // 移动指针到指定位置
+        await raf.setPosition(position);
+
+        // 读取当前的字节块
+        Uint8List chunk = await raf.read(bytesToRead);
+
+        // 将新读到的块与之前剩余的字节（来自更后面的部分）拼接
+        List<int> currentBytes = [...chunk, ...leftOverBytes];
+
+        // 将字节转为字符串（注意：如果 chunk 正好切断了中文 UTF-8 字符，可能会有乱码，
+        // 复杂的生产环境需要更严谨的 UTF-8 解码器处理，这里展示核心逻辑）
+        String currentText = utf8.decode(currentBytes, allowMalformed: true);
+
+        // 按行切分
+        List<String> lines = currentText.split('\n');
+
+        // 如果还没读到文件头，第一行可能是不完整的（被 chunk 截断了），留到下一次循环处理
+        if (position > 0 && lines.isNotEmpty) {
+          // 重新计算未处理的剩余字节，以便精准拼接
+          String incompleteLine = lines.first;
+          leftOverBytes = utf8.encode(incompleteLine);
+          lines.removeAt(0);
+        } else {
+          leftOverBytes = [];
+        }
+
+        // 将新读出的行逆序加入结果集（因为我们是从后往前读）
+        resultLines.addAll(lines.reversed);
+      }
+    } finally {
+      // 必须关闭文件句柄
+      await raf.close();
+    }
+
+    // 返回最后的 N 行（恢复成正常正向顺序）
+    final list = resultLines.take(linesCount).toList();
+    if (reversed != true) {
+      return list.reversed.toList();
+    }
+    return list;
+  }
+
   /// 写入图片到文件
   Future<File?> writeImage(
     UiImage? image, {
