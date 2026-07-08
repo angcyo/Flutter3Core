@@ -126,8 +126,10 @@ mixin DialogMixin implements TranslationTypeImpl {
   /// 对话框是否是弹窗样式
   /// - [dialogInPopup]
   /// - [dialogInOverlay]
-  bool get dialogIsPopupStyle =>
-      dialogInPopup == true || dialogInOverlay == true;
+  bool? get dialogIsPopupStyle =>
+      (dialogInPopup == null && dialogInOverlay == null)
+      ? null
+      : (dialogInPopup == true || dialogInOverlay == true);
 
   /// 对话框的容器, 带圆角, 带[margin]
   /// - [decorationColor] 背景颜色
@@ -803,7 +805,7 @@ mixin DialogMixin implements TranslationTypeImpl {
                 color: decorationColor ?? globalTheme.dialogSurfaceBgColor,
                 /*boxShadow: [kBoxShadow],*/
               ),
-          width: width ?? $ecwBp(),
+          width: width ?? $bpECW(),
           height: double.infinity,
         )
         .align(alignment ?? .centerRight)

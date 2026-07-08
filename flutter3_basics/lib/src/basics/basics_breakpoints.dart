@@ -18,7 +18,7 @@ part of '../../flutter3_basics.dart';
 /// Extra large         | xl          | ≥1200px
 /// Extra extra large   | xxl         | ≥1400px
 /// ```
-double $wXlBp({double min = 300, double max = 400}) =>
+double $bpWXl({double min = 300, double max = 400}) =>
     $screenWidth >= 1200 ? max : min;
 
 //mark: - 断点
@@ -27,7 +27,7 @@ double $wXlBp({double min = 300, double max = 400}) =>
 /// - 结束面板(右边的面板)容器宽度断点
 /// - 使用[animatedContainer]动画改变大小
 @dp
-double $ecwBp() => switch ($screenWidth) {
+double $bpECW() => switch ($screenWidth) {
   >= 1600 => 600,
   >= 1400 => 500,
   >= 1100 => 400,
@@ -38,7 +38,7 @@ double $ecwBp() => switch ($screenWidth) {
 
 /// 断点网格列数
 /// - 根据不同的屏幕宽度, 返回不同的列数
-int $gridBp() => switch ($screenWidth) {
+int $bpGrid() => switch ($screenWidth) {
   >= 1600 => 6,
   >= 1400 => 5,
   >= 1100 => 4,

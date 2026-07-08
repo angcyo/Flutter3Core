@@ -177,7 +177,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
 
   Widget buildPanelApp(BuildContext context, GlobalTheme globalTheme) {
     return TabsManagerWidget(controller: controller)
-        .animatedContainer(width: $ecwBp())
+        .animatedContainer(width: $bpECW())
         .material(color: globalTheme.surfaceBgColor);
   }
 }

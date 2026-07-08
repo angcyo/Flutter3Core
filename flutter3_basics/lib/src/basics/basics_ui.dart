@@ -3139,6 +3139,8 @@ extension WidgetEx on Widget {
   /// [Material] 有些时候, 可能需要使用此部件包裹一下
   Widget inkWellCircle(
     GestureTapCallback? onTap, {
+    GestureTapDownCallback? onClickDown /*带按下事件信息的点击回调*/,
+    GestureTapDownCallback? onTapDown /*按下回调*/,
     Color? splashColor,
     Color? disableColor,
     Color? highlightColor,
@@ -3155,6 +3157,8 @@ extension WidgetEx on Widget {
       ? colorFiltered(color: disableColor)
       : inkWell(
           onTap,
+          onClickDown: onClickDown,
+          onTapDown: onTapDown,
           borderRadius: borderRadius,
           customBorder: borderRadius == null ? const CircleBorder() : null,
           splashColor: splashColor,

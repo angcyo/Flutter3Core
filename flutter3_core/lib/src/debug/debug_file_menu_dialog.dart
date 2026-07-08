@@ -41,7 +41,7 @@ class DebugFileMenuDialog extends StatelessWidget with DialogMixin {
     final isFile = filePath?.isFileSync() ?? false;
     const size = 25.0;
     return [
-          if (!dialogIsPopupStyle) buildDragHandle(context),
+          if (dialogIsPopupStyle != true) buildDragHandle(context),
           if (isFile)
             IconTextTile(
               iconWidget: loadCoreAssetSvgPicture(

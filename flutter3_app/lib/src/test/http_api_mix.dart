@@ -72,7 +72,7 @@ mixin HttpApiLogStateMixin<T extends StatefulWidget>
       buildApiTest(
         context,
         globalTheme,
-      ).card().animatedContainer(width: $ecwBp()),
+      ).card().animatedContainer(width: $bpECW()),
     ].row()!;
   }
 
