@@ -212,7 +212,12 @@ Future<String?> get $platformDeviceModel async => isAndroid
 /// 平台上的设备名称
 /// - [$platformDeviceInfoCache]
 /// - [$platformPackageInfoCache]
+/// - [Platform.version]
 String? get $platformDeviceName => $platformDeviceInfoCache?.platformDeviceName;
+
+/// 平台的版本
+/// [Platform.version]
+String? get $platformVersion => Platform.version;
 
 /// [BaseDeviceInfo]
 extension PlatformDeviceInfoEx on BaseDeviceInfo {

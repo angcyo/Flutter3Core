@@ -270,7 +270,7 @@ class DebugPage extends StatefulWidget {
   /// [debugLastCopyString]
   /// - [buildDebugLastWidget]
   /// - [buildLastDebugCopyString]
-  static String buildLastDebugCopyString(BuildContext? context) {
+  static String buildLastDebugCopyString([BuildContext? context]) {
     return stringBuilder((builder) {
       //--
       for (final b in debugLastCopyStringBuilderList) {
