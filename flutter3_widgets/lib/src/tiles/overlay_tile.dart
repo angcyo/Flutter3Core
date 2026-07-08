@@ -589,6 +589,7 @@ extension OverlayEx on BuildContext {
     Alignment? targetAnchor,
     Alignment? followerAnchor,
     Offset? alignmentOffset,
+    @defInjectMark Offset? edgeOffset,
     //--
     VoidAction? onHide /*隐藏浮窗时的回调*/,
     @defInjectMark Alignment? scaleAlignment /*缩放动画对齐方式*/,
@@ -631,6 +632,7 @@ extension OverlayEx on BuildContext {
             targetAnchor: targetAnchor,
             followerAnchor: followerAnchor,
             alignmentOffset: alignmentOffset,
+            edgeOffset: edgeOffset,
             onChildUpdatePosition: (_, parentSize, childSize, childOffset) {
               final align = scaleAlignment ?? followerAnchor ?? .centerLeft;
               final offset = childOffset + align.alongSize(childSize);

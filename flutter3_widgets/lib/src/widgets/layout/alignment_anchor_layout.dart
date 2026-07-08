@@ -20,6 +20,10 @@ class AlignmentAnchorLayout extends StatefulWidget {
   /// 对齐后, 额外的偏移量
   final Offset? alignmentOffset;
 
+  /// 溢出时, 添加的偏移量
+  @defInjectMark
+  final Offset? edgeOffset;
+
   /// 内容位置确定后的回调
   final void Function(
     Rect anchorRect,
@@ -114,14 +118,14 @@ class AlignmentAnchorLayout extends StatefulWidget {
     //MARK: - 溢出计算
     if (edgeOffset != null) {
       if (offsetX < 0) {
-        offsetX = edgeOffset?.dx ?? 0;
+        offsetX = edgeOffset.dx ?? 0;
       } else if (offsetX + childSize.width > parentWidth) {
-        offsetX = parentWidth - childSize.width - (edgeOffset?.dx ?? 0);
+        offsetX = parentWidth - childSize.width - (edgeOffset.dx ?? 0);
       }
       if (offsetY < 0) {
-        offsetY = edgeOffset?.dy ?? 0;
+        offsetY = edgeOffset.dy ?? 0;
       } else if (offsetY + childSize.height > parentHeight) {
-        offsetY = parentHeight - childSize.height - (edgeOffset?.dy ?? 0);
+        offsetY = parentHeight - childSize.height - (edgeOffset.dy ?? 0);
       }
     }
     return Offset(offsetX, offsetY);
@@ -133,6 +137,7 @@ class AlignmentAnchorLayout extends StatefulWidget {
     this.targetAnchor,
     this.followerAnchor,
     this.alignmentOffset,
+    this.edgeOffset,
     this.onChildUpdatePosition,
     //--
     this.getAnchorBoundsAction,
@@ -245,7 +250,7 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
         alignmentOffset:
             (widget.alignmentOffset ?? Offset.zero) +
             (_dragOffset ?? Offset.zero),
-        edgeOffset: Offset(kX, kX),
+        edgeOffset: widget.edgeOffset ?? Offset(kX, kX),
         anchorRect: _anchorRect!,
         parentSize: _parentSize!,
         childSize: _childSize!,
