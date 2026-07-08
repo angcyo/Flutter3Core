@@ -307,9 +307,29 @@ mixin AbsScrollPage {
   bool? enableAppBar(BuildContext context) => context.isInRootNavigator;
 
   /// 状态栏是否是暗色模式
-  /// 背景黑色, 状态栏图标/文本为白色
+  /// # 暗色模式
+  /// - 背景黑色, 状态栏图标/文本为白色
+  /// # 亮色模式
+  /// - 背景白色, 状态栏图标/文本为黑色
   @property
-  bool? isDarkStatusBar(BuildContext context) => null;
+  bool? isDarkStatusBar(BuildContext context) {
+    //debugger();
+    Color? refColor;
+    final appBarBackgroundColor = getAppBarBackgroundColor(context);
+    if (appBarBackgroundColor == null ||
+        appBarBackgroundColor == Colors.transparent) {
+      refColor = getBackgroundColor(context);
+      if (refColor == Colors.transparent) {
+        refColor = null;
+      }
+    } else {
+      refColor = appBarBackgroundColor;
+    }
+    if (refColor == null) {
+      return null;
+    }
+    return refColor.isDark;
+  }
 
   /// 是否使用[SliverAppBar], 否则使用[buildAppBar]
   @property
