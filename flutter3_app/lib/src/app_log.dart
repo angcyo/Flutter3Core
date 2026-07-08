@@ -89,7 +89,8 @@ Future<String> shareAppLog({
   //--
   await list.zipPathList(output);
   if (share == true) {
-    output.shareFile().ignore();
+    saveFilePath(output).ignore();
+    //output.shareFile().ignore();
   }
   if (clearTempPath == true) {
     clearTempShareLogPath(clearFilePath: includeFilePath == true);
