@@ -576,16 +576,28 @@ extension StringEx on String {
     return index == -1 ? this : substring(0, index);
   }
 
+  /// 将对应的字符串时间转换成13位ms时间戳
+  int? toTimestamp([String? pattern = "yyyy-MM-dd HH:mm:ss.SSS"]) =>
+      toDateTime(pattern)?.millisecondsSinceEpoch;
+
   /// 转换成[DateTime]
   /// [pattern] 时间模板 'yyyy-MM-dd'
   /// ```
   /// "yyyy-MM-dd HH:mm:ss" 转换成时间
   /// DateTime toDateTime() => DateTime.parse(this);
   /// ```
-  DateTime toDateTime([String? pattern = "yyyy-MM-dd HH:mm:ss"]) {
+  DateTime? toDateTime([String? pattern = "yyyy-MM-dd HH:mm:ss"]) {
     // 解析日期字符串
-    intl.DateFormat inputFormat = intl.DateFormat(pattern);
-    return inputFormat.parse(this);
+    try {
+      intl.DateFormat inputFormat = intl.DateFormat(pattern);
+      return inputFormat.parse(this);
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      return null;
+    }
   }
 
   /// 反序字符串
