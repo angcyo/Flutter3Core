@@ -37,8 +37,7 @@ extension FfiListIntEx on List<int> {
   R? withVecUint8<R>(R? Function(ffi.Pointer<Vec_uint8_t> ptr) action) {
     Stopwatch? watch;
     if (kDebugMode) {
-      watch = Stopwatch()
-        ..start();
+      watch = Stopwatch()..start();
     }
     final bytes = this;
     //创建一个指针, 用来ffi传递
@@ -60,8 +59,7 @@ extension FfiListIntEx on List<int> {
       }
       Stopwatch? watch2;
       if (kDebugMode) {
-        watch2 = Stopwatch()
-          ..start();
+        watch2 = Stopwatch()..start();
       }
       //执行耗时: 4688ms
       final result = action(ptr);
@@ -98,10 +96,11 @@ extension FfiVecUint8Ex on Vec_uint8_t {
   }
 
   /// rgba像素字节数据转成图片
-  Future<ui.Image> toImageFromPixels(int width,
-      int height, [
-        ui.PixelFormat format = ui.PixelFormat.rgba8888,
-      ]) {
+  Future<ui.Image> toImageFromPixels(
+    int width,
+    int height, [
+    ui.PixelFormat format = ui.PixelFormat.rgba8888,
+  ]) {
     final bytes = toBytes();
     //debugger();
     final Completer<ui.Image> completer = Completer<ui.Image>();
@@ -241,9 +240,7 @@ extension FfiListListDoubleEx on List<List<double>> {
     for (var i = 0; i < bytes.length; i++) {
       final list = bytes[i];
       //list.toVecDouble()
-      final ref = list
-          .toVecDouble()
-          .ref;
+      final ref = list.toVecDouble().ref;
       bytesPtr[i] = ref;
       //bytesPtr.elementAt(i);
       //bytesPtr += ref;
@@ -294,7 +291,8 @@ extension FfiListListDoubleEx on List<List<double>> {
 
   /// 自动释放内存
   R? withVecVecDouble<R>(
-      R? Function(ffi.Pointer<Vec_Vec_double_t> ptr) action,) {
+    R? Function(ffi.Pointer<Vec_Vec_double_t> ptr) action,
+  ) {
     final ptr = toVecVecDouble();
     try {
       return action(ptr);
@@ -361,12 +359,28 @@ extension FfiPixelsImageEx on PixelsImage {
 /// 批量创建[Vec_uint8_t]指针
 /// - [free] 是否自动释放申请内存
 ///
+/// ```
+/// return ffiPtrList((list) {
+///         return _bindings
+///             .ffi_image_pixels_to_svg_path(
+///               list[0],
+///               width,
+///               height,
+///               alphaThreshold,
+///               grayThreshold,
+///             )
+///             .toStr();
+///       }, [pixels]) ??
+///       "";
+/// ```
+///
 /// - [ffiPtrList]
 /// - [ffiPtrDoubleList]
-R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
-    List<dynamic> args, {
-      bool free = true,
-    }) {
+R? ffiPtrList<R>(
+  R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
+  List<dynamic> args, {
+  bool free = true,
+}) {
   final ptrList = <ffi.Pointer<Vec_uint8_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -408,13 +422,21 @@ R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
 
 /// 批量创建[Vec_double_t]指针
 ///
+/// ```
+/// Float64List ffiOutputPerspectiveTransform(List<double> src, List<double> dst) {
+///   return ffiPtrDoubleList((list) {
+///     return _bindings.output_perspective_transform(list[0], list[1]);
+///   }, [src, dst])!.toDoubleList();
+/// }
+/// ```
+///
 /// - [ffiPtrList]
 /// - [ffiPtrDoubleList]
 R? ffiPtrDoubleList<R>(
-    R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
-    List<dynamic> args, {
-      bool free = true,
-    }) {
+  R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
+  List<dynamic> args, {
+  bool free = true,
+}) {
   final ptrList = <ffi.Pointer<Vec_double_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -422,6 +444,9 @@ R? ffiPtrDoubleList<R>(
       ptrList.add(arg.toVecDouble());
     } else if (arg is ffi.Pointer<Vec_double_t>) {
       ptrList.add(arg);
+    } else if (arg is double) {
+      ptrList.add((args as List<double>).toVecDouble());
+      break;
     } else {
       assert(() {
         print("无法处理的类型: [${arg.runtimeType}]");
