@@ -359,8 +359,14 @@ extension FfiPixelsImageEx on PixelsImage {
 }
 
 /// 批量创建[Vec_uint8_t]指针
+/// - [free] 是否自动释放申请内存
+///
+/// - [ffiPtrList]
+/// - [ffiPtrDoubleList]
 R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
-    List<dynamic> args,) {
+    List<dynamic> args, {
+      bool free = true,
+    }) {
   final ptrList = <ffi.Pointer<Vec_uint8_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -390,18 +396,25 @@ R? ffiPtrList<R>(R? Function(List<ffi.Pointer<Vec_uint8_t>> ptrList) action,
       return true;
     }());
   } finally {
-    for (final element in ptrList) {
-      calloc.free(element.ref.ptr);
-      calloc.free(element);
+    if (free) {
+      for (final element in ptrList) {
+        calloc.free(element.ref.ptr);
+        calloc.free(element);
+      }
     }
   }
   return null;
 }
 
 /// 批量创建[Vec_double_t]指针
+///
+/// - [ffiPtrList]
+/// - [ffiPtrDoubleList]
 R? ffiPtrDoubleList<R>(
     R? Function(List<ffi.Pointer<Vec_double_t>> ptrList) action,
-    List<dynamic> args,) {
+    List<dynamic> args, {
+      bool free = true,
+    }) {
   final ptrList = <ffi.Pointer<Vec_double_t>>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
@@ -427,9 +440,11 @@ R? ffiPtrDoubleList<R>(
       return true;
     }());
   } finally {
-    for (final element in ptrList) {
-      calloc.free(element.ref.ptr);
-      calloc.free(element);
+    if (free) {
+      for (final element in ptrList) {
+        calloc.free(element.ref.ptr);
+        calloc.free(element);
+      }
     }
   }
   return null;

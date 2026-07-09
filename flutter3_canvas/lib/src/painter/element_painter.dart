@@ -641,7 +641,8 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 更新元素的左上角到指定的位置
-  /// 只修改[PaintProperty.left].[PaintProperty.top]
+  /// - 移动元素xy到指定位置
+  /// - 只修改[PaintProperty.left].[PaintProperty.top]
   @api
   void updateLocationTo({
     @sceneCoordinate @dp Offset? location,
