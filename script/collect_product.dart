@@ -477,7 +477,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
 
   //--
   if (!inner) {
-    colorLog('💡准备复制文件: $srcPath');
+    colorLog('💡 准备复制文件: $srcPath');
   }
   dstFile.createSync(recursive: true);
   dstFile.writeAsBytesSync(srcFile.readAsBytesSync());

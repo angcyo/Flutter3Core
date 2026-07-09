@@ -412,7 +412,7 @@ class DateTemplateParser extends StringTemplateParser {
   /// [time] 指定13位时间戳
   void setDate({String? date, String? datePattern, int? time}) {
     if (date != null) {
-      calendar = date.toDateTime(datePattern);
+      calendar = date.toDateTime(datePattern) ?? calendar;
     } else if (time != null) {
       calendar = time.toDateTime();
     }
