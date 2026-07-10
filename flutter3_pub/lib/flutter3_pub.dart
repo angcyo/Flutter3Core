@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:charset/charset.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_core/flutter3_core.dart';
@@ -31,10 +32,10 @@ export 'package:photo_view/photo_view.dart';
 export 'package:photo_view/photo_view_gallery.dart';
 export 'package:url_launcher/url_launcher.dart';
 
-export 'src/apis/cmse_api.dart';
-export 'src/apis/cmse_widget.dart';
 export 'src/apis/cctv_news_api.dart';
 export 'src/apis/cctv_news_widget.dart';
+export 'src/apis/cmse_api.dart';
+export 'src/apis/cmse_widget.dart';
 export 'src/apis/idiom_api.dart';
 export 'src/apis/idiom_widget.dart';
 export 'src/apis/spp_news_api.dart';
@@ -51,3 +52,23 @@ part 'src/photo/single_photo_dialog.dart';
 part 'src/picker/color_picker_ex.dart';
 part 'src/picker/file_picker_ex.dart';
 part 'src/picker/label_color_pick_tile.dart';
+
+extension StringGbkEx on String {
+  /// 获取单字符对应的码点(GBK)
+  int? get codePointGbk {
+    if (isEmpty) return null;
+    final List<int> gbkBytes = gbk.encode(this);
+    // 2. 判断字节长度并合成为整数
+    if (gbkBytes.length == 2) {
+      // 双字节字符（如汉字、全角符号）
+      // 通过位运算 (左移 8 位然后按位或) 组合成一个 16 位大端序整数
+      int highByte = gbkBytes[0];
+      int lowByte = gbkBytes[1];
+      return (highByte << 8) | lowByte;
+    } else if (gbkBytes.length == 1) {
+      // 单字节字符（如半角英文字母、数字），直接返回
+      return gbkBytes[0];
+    }
+    return null;
+  }
+}

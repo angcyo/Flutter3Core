@@ -638,6 +638,11 @@ extension StringEx on String {
   int get ascii => codeUnitAt(0);
 
   /// 获取单字符对应的码点
+  /// - [codePointGbk]
+  ///
+  /// - `啊` : codePoint 21834
+  /// - `啊` : codePointGbk 45217
+  ///
   int get codePoint => ascii;
 
   /// 转换为标准的 "U+XXXX" 16进制大写字符串
