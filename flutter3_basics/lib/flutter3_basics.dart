@@ -60,6 +60,8 @@ export 'src/widgets/simple_app.dart';
 
 // @formatter:off
 
+part 'src/l.dart';
+part 'src/bom.dart';
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_async.dart';
@@ -143,7 +145,6 @@ part 'src/global/global_shortcut_manager.dart';
 part 'src/global/overlay/overlay_animation.dart';
 part 'src/global/overlay/overlay_manage.dart';
 part 'src/global/overlay/overlay_notification.dart';
-part 'src/l.dart';
 part 'src/meta/meta.dart';
 part 'src/meta/package_info_meta.dart';
 part 'src/meta/point.dart';
