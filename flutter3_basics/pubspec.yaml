@@ -91,7 +91,7 @@ dependencies:
   # https://pub.dev/packages/vector_math
   # https://github.com/google/vector_math.dart
   # Note: vector_math is pinned to version 2.2.0 by flutter_test from the flutter SDK.
-  vector_math: ^2.2.0
+  vector_math: any
 
   # https://pub.dev/packages/matrix4_transform
   # https://github.com/marcglasberg/matrix4_transform
@@ -114,7 +114,7 @@ dependencies:
   # https://github.com/felangel/equatable
   # https://pub.dev/packages/collection
   # https://pub.dev/packages/meta
-  equatable: ^2.0.8
+  equatable: ^2.1.0
 
   # https://pub.dev/packages/flutter_isolate
   # https://pub.dev/packages/uuid
@@ -126,6 +126,10 @@ dependencies:
   # 重试框架
   # https://pub.dev/packages/retry
   #retry: ^3.1.2
+
+  # https://pub.dev/packages/html_unescape_xx
+  # unescaping HTML-encoded
+  html_unescape_xx: ^3.0.1
 
 dev_dependencies:
   flutter_test:

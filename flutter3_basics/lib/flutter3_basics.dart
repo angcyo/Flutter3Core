@@ -29,6 +29,7 @@ import 'package:meta/meta_meta.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
+import 'package:html_unescape_xx/html_unescape.dart';
 
 import 'assets_generated/assets.gen.dart';
 

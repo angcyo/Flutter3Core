@@ -610,6 +610,11 @@ extension StringEx on String {
     return buffer.toString();
   }
 
+  /// 将unicode字符串值转换成对应的字符串字符
+  /// - `&#225;` : `á` 十进制unicode
+  /// - `&#xE3;` : `ã` 十六进制unicode
+  String get unicode => HtmlUnescapeAll().convert(this);
+
   /// 获取单字符对应的ASCII码
   /// [IntEx.ascii]
   /// [StringEx.ascii]
