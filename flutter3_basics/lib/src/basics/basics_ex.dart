@@ -611,14 +611,37 @@ extension StringEx on String {
   }
 
   /// 将unicode字符串值转换成对应的字符串字符
+  /// - `&nbsp;` : ` ` 空格
   /// - `&#225;` : `á` 十进制unicode
   /// - `&#xE3;` : `ã` 十六进制unicode
-  String get unicode => HtmlUnescapeAll().convert(this);
+  ///
+  /// # 支持码点字符
+  /// - 将 Unicode 码点字符串（如 "U+4E2D" 或 "4E2D"）解析为内存中真实的字符 "中"，
+  /// - `U+4E2D` : 20013 中
+  String get unicode {
+    if (startsWith("U+") || startsWith("u+")) {
+      // 1. 清理字符串：去掉 "U+" 或 "u+" 前缀
+      final hexStr = toUpperCase().replaceAll('U+', '');
+      // 2. 将 16 进制字符串解析为 10 进制整型 (int)
+      // "4E2D" -> 20013
+      final codePoint = int.parse(hexStr, radix: 16);
+      // 3. 转换为真实字符
+      return String.fromCharCode(codePoint);
+    } else {
+      return HtmlUnescapeAll().convert(this);
+    }
+  }
 
   /// 获取单字符对应的ASCII码
   /// [IntEx.ascii]
   /// [StringEx.ascii]
   int get ascii => codeUnitAt(0);
+
+  /// 获取单字符对应的码点
+  int get codePoint => ascii;
+
+  /// 转换为标准的 "U+XXXX" 16进制大写字符串
+  String get unicodeStr => "U+${codePoint.toRadixString(16).toUpperCase()}";
 
   /// 获取[ascii]对应的字节数组
   /// 在都占用1个字节的情况下和[bytes]返回的数据一致.
