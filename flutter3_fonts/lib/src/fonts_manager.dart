@@ -44,6 +44,7 @@ class FontsManager {
       final filePath = joinPath(saveFolder, name);
       final file = filePath.file();
       if (override == true || !file.existsSync()) {
+        file.parent.ensureDirectory();
         final bytes = await loadAssetBytes(key);
         await file.writeAsBytes(bytes);
       }
@@ -127,6 +128,10 @@ class FontsManager {
         defaultFontFamilyMetaList,
         filterDisplayFontFamilyList: [displayFontFamily],
       ),
+      ...getFontFamilyLocalPathList(
+        shxFontFamilyMetaList,
+        filterDisplayFontFamilyList: [displayFontFamily],
+      ),
     ];
   }
 
@@ -155,6 +160,42 @@ class FontsManager {
   }
 
   //endregion ---默认字体---
+
+  //region ---单线字体---
+
+  final List<String> shxFontPathList = [];
+  final List<FontFamilyMeta> shxFontFamilyMetaList = [];
+
+  Future<bool> tryLoadShxFontFamily(String? fontFamily) async {
+    return tryLoadFontFamilyIn(shxFontPathList, fontFamily);
+  }
+
+  Future<List<FontFamilyMeta>> loadShxFileFontFamilyList({
+    bool parseVariant = false,
+    bool? autoLoad = true,
+    bool? reload,
+    bool? waitLoad,
+  }) async {
+    //debugger();
+    if (reload == true) {
+      shxFontFamilyMetaList.clear();
+    }
+    if (shxFontFamilyMetaList.isNotEmpty) {
+      return shxFontFamilyMetaList;
+    }
+    shxFontFamilyMetaList.addAll(
+      await loadFileFontFamilyListIn(
+        shxFontPathList,
+        parseVariant: parseVariant,
+        autoLoad: autoLoad,
+        reload: reload,
+        waitLoad: waitLoad,
+      ),
+    );
+    return shxFontFamilyMetaList;
+  }
+
+  //endregion ---单线字体---
 
   //region ---自定义字体---
 
