@@ -668,8 +668,16 @@ class SingleCharTextPainter extends BaseTextPainter {
                 @dp
                 final pathBounds = charPath.getBounds();
 
-                lineBaseline = max(lineBaseline, -pathBounds.top);
                 final ascender = pathBounds.top;
+                if (ascender > 0) {
+                  if (lineBaseline == 0) {
+                    lineBaseline = ascender;
+                  } else {
+                    lineBaseline = min(lineBaseline, ascender);
+                  }
+                } else {
+                  lineBaseline = max(lineBaseline, -ascender);
+                }
                 final descender = pathBounds.bottom;
                 lineAscender ??= ascender;
                 lineDescender ??= descender;
@@ -726,7 +734,9 @@ class SingleCharTextPainter extends BaseTextPainter {
         for (final char in lineList) {
           char
             ..debugPaintBounds = debugPaintBounds
-            ..lineBaseline = lineBaseline
+            ..lineBaseline = (lineAscender ?? 0) > 0 /*字体无上升, 全在底下*/
+                ? -lineBaseline
+                : lineBaseline
             ..lineAscender = lineAscender ?? 0
             ..lineDescender = lineDescender ?? 0;
         }
