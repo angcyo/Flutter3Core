@@ -77,24 +77,29 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = widget.fontFamilyMeta?.textStyle();
-    final fontFamily = widget.fontFamilyMeta?.displayFontFamily;
+    final fontFamilyMeta = widget.fontFamilyMeta;
+    final textStyle = fontFamilyMeta?.textStyle();
+    final fontFamily = fontFamilyMeta?.displayFontFamily;
 
     final fontFamilyWidget =
         fontFamily
             ?.text(style: textStyle, maxLines: widget.isSingleLine ? 1 : null)
             .tooltip(
-              isDebug
-                  ? widget.fontFamilyMeta?.variantList.firstOrNull?.uri
-                  : null,
+              isDebug ? fontFamilyMeta?.variantList.firstOrNull?.uri : null,
             ) ??
         widget.defWidget ??
         "Default".text();
 
-    final previewTextWidget = widget.previewText?.text(
-      style: textStyle,
-      maxLines: widget.isSingleLine ? 1 : null,
-    );
+    final previewTextWidget =
+        fontFamilyMeta?.fontType == .shx || fontFamilyMeta?.fontType == .svg
+        ? PathFontPreviewWidget(
+            fontFamilyMeta: fontFamilyMeta,
+            previewText: widget.previewText,
+          )
+        : widget.previewText?.text(
+            style: textStyle,
+            maxLines: widget.isSingleLine ? 1 : null,
+          );
 
     if (widget.direction == Axis.horizontal) {
       final left = fontFamilyWidget;
@@ -116,5 +121,38 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
           widget.trailingWidget,
         ].row()?.paddingInsets(widget.padding) ??
         empty;
+  }
+}
+
+/// 路径字体预览小部件
+class PathFontPreviewWidget extends StatefulWidget {
+  /// 字体信息
+  final FontFamilyMeta? fontFamilyMeta;
+
+  /// 预览文本
+  final String? previewText;
+
+  const PathFontPreviewWidget({
+    super.key,
+    required this.fontFamilyMeta,
+    required this.previewText,
+  });
+
+  @override
+  State<PathFontPreviewWidget> createState() => _PathFontPreviewWidgetState();
+}
+
+class _PathFontPreviewWidgetState extends State<PathFontPreviewWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final pathList = $shxLoader.loadTextPath
+        ?.call(widget.fontFamilyMeta, widget.previewText ?? "", null)
+        .values
+        .filterNull<Path>();
+    return PathTextWidget(
+      textPathList: pathList,
+      alignVertical: .bottom,
+      ignoreBaseline: true,
+    );
   }
 }

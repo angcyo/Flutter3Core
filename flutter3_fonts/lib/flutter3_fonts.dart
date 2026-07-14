@@ -1,5 +1,6 @@
 library flutter3_fonts;
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -14,6 +15,7 @@ export 'package:google_fonts/google_fonts.dart';
 part 'src/font_family_meta.dart';
 part 'src/font_family_tile.dart';
 part 'src/fonts_loader.dart';
+part 'src/shx_loader.dart';
 part 'src/fonts_manager.dart';
 
 ///

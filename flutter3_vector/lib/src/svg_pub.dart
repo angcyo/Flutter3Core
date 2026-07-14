@@ -35,18 +35,17 @@ Future<PictureInfo> loadAssetSvgPicture(
   SvgTheme? theme,
   bool clipViewBox = true,
   VectorGraphicsErrorListener? onError,
-}) =>
-    vg.loadPicture(
-      SvgAssetLoader(
-        key.ensurePackagePrefix(package, prefix).transformKey(),
-        packageName: package,
-        assetBundle: bundle,
-        theme: theme,
-      ),
-      context,
-      clipViewbox: clipViewBox,
-      onError: onError,
-    );
+}) => vg.loadPicture(
+  SvgAssetLoader(
+    key.ensurePackagePrefix(package, prefix).transformKey(),
+    packageName: package,
+    assetBundle: bundle,
+    theme: theme,
+  ),
+  context,
+  clipViewbox: clipViewBox,
+  onError: onError,
+);
 
 extension SvgStringEx on String {
   /// 将svg中的path路径字符串转换成[Path]对象
@@ -69,11 +68,14 @@ extension SvgStringEx on String {
   /// [GCodeStringEx.toUiPathFromGCode]
   ///
   @dp
-  Path toUiPath({
+  Path? toUiPath({
     bool failSilently = false,
     double? scale,
     bool isMmUnit = false,
   }) {
+    if (isEmpty) {
+      return null;
+    }
     final path = parseSvgPath(this, failSilently: failSilently);
     scale ??= isMmUnit ? $mmFactor : 1.0;
     if (scale != 1.0) {
@@ -116,17 +118,12 @@ extension SvgStringEx on String {
     ColorMapper? colorMapper,
     bool clipViewBox = true,
     VectorGraphicsErrorListener? onError,
-  }) =>
-      vg.loadPicture(
-        SvgStringLoader(
-          this,
-          theme: theme,
-          colorMapper: colorMapper,
-        ),
-        context,
-        clipViewbox: clipViewBox,
-        onError: onError,
-      );
+  }) => vg.loadPicture(
+    SvgStringLoader(this, theme: theme, colorMapper: colorMapper),
+    context,
+    clipViewbox: clipViewBox,
+    onError: onError,
+  );
 
   /// 将svg xml字符串转换成[UiImage]对象
   Future<UiImage> toSvgPictureImage({
@@ -142,9 +139,10 @@ extension SvgStringEx on String {
         colorMapper: colorMapper,
         clipViewBox: clipViewBox,
         onError: onError,
-      ))
-          .let((it) => it.picture
-              .toImage(it.size.width.toInt(), it.size.height.toInt()));
+      )).let(
+        (it) =>
+            it.picture.toImage(it.size.width.toInt(), it.size.height.toInt()),
+      );
 }
 
 //endregion svg
@@ -173,7 +171,8 @@ class SvgListener extends VectorGraphicsCodecListener {
     Paint? paint,
     Rect? bounds,
     Matrix4? matrix,
-  )? onDrawElement;
+  )?
+  onDrawElement;
 
   /// 存储所有的paint对象
   final List<Paint> _paints = <Paint>[];
@@ -275,26 +274,26 @@ class SvgListener extends VectorGraphicsCodecListener {
       if (patternId != null) {
         //paint.shader = _patterns[patternId]!.shader;
       }
-      final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-        textDirection: _textDirection,
-      ));
-      builder.pushStyle(UiTextStyle(
-        locale: _locale,
-        foreground: paint,
-        fontWeight: textConfig.fontWeight,
-        fontSize: textConfig.fontSize,
-        fontFamily: textConfig.fontFamily,
-        decoration: textConfig.decoration,
-        decorationStyle: textConfig.decorationStyle,
-        decorationColor: textConfig.decorationColor,
-      ));
+      final ParagraphBuilder builder = ParagraphBuilder(
+        ParagraphStyle(textDirection: _textDirection),
+      );
+      builder.pushStyle(
+        UiTextStyle(
+          locale: _locale,
+          foreground: paint,
+          fontWeight: textConfig.fontWeight,
+          fontSize: textConfig.fontSize,
+          fontFamily: textConfig.fontFamily,
+          decoration: textConfig.decoration,
+          decorationStyle: textConfig.decorationStyle,
+          decorationColor: textConfig.decorationColor,
+        ),
+      );
 
       builder.addText(textConfig.text);
 
       final Paragraph paragraph = builder.build();
-      paragraph.layout(const ParagraphConstraints(
-        width: double.infinity,
-      ));
+      paragraph.layout(const ParagraphConstraints(width: double.infinity));
       paragraphWidth = paragraph.maxIntrinsicWidth;
 
       Offset offset = Offset(
@@ -388,16 +387,17 @@ class SvgListener extends VectorGraphicsCodecListener {
   /// 以便在后续绘制对象时读取[Paint]对象
   /// [FlutterVectorGraphicsListener.onPaintObject]
   @override
-  void onPaintObject(
-      {required int id,
-      required int color,
-      required int? strokeCap,
-      required int? strokeJoin,
-      required int blendMode,
-      required double? strokeMiterLimit,
-      required double? strokeWidth,
-      required int paintStyle,
-      required int? shaderId}) {
+  void onPaintObject({
+    required int id,
+    required int color,
+    required int? strokeCap,
+    required int? strokeJoin,
+    required int blendMode,
+    required double? strokeMiterLimit,
+    required double? strokeWidth,
+    required int paintStyle,
+    required int? shaderId,
+  }) {
     BlendMode mode = BlendMode.srcOver;
     if (blendMode != 0) {
       mode = BlendMode.values[blendMode];
@@ -526,16 +526,17 @@ class SvgListener extends VectorGraphicsCodecListener {
 
   @override
   void onRadialGradient(
-      double centerX,
-      double centerY,
-      double radius,
-      double? focalX,
-      double? focalY,
-      Int32List colors,
-      Float32List? offsets,
-      Float64List? transform,
-      int tileMode,
-      int id) {
+    double centerX,
+    double centerY,
+    double radius,
+    double? focalX,
+    double? focalY,
+    Int32List colors,
+    Float32List? offsets,
+    Float64List? transform,
+    int tileMode,
+    int id,
+  ) {
     assert(() {
       //l.d('onRadialGradient $centerX $centerY $radius $focalX $focalY $colors $offsets $transform $tileMode $id');
       return true;
@@ -572,15 +573,16 @@ class SvgListener extends VectorGraphicsCodecListener {
   /// [onUpdateTextPosition]
   @override
   void onTextConfig(
-      String text,
-      String? fontFamily,
-      double xAnchorMultiplier,
-      int fontWeight,
-      double fontSize,
-      int decoration,
-      int decorationStyle,
-      int decorationColor,
-      int id) {
+    String text,
+    String? fontFamily,
+    double xAnchorMultiplier,
+    int fontWeight,
+    double fontSize,
+    int decoration,
+    int decorationStyle,
+    int decorationColor,
+    int id,
+  ) {
     //debugger();
     assert(() {
       //l.d('onTextConfig[$id] $text $fontFamily $xAnchorMultiplier $fontWeight $fontSize $decoration $decorationStyle ${decorationColor.toHexColor()}');
@@ -598,16 +600,18 @@ class SvgListener extends VectorGraphicsCodecListener {
       decorations.add(TextDecoration.lineThrough);
     }
 
-    _textConfig.add(SvgTextConfig(
-      text,
-      fontFamily,
-      xAnchorMultiplier,
-      FontWeight.values[fontWeight],
-      fontSize,
-      TextDecoration.combine(decorations),
-      TextDecorationStyle.values[decorationStyle],
-      Color(decorationColor),
-    ));
+    _textConfig.add(
+      SvgTextConfig(
+        text,
+        fontFamily,
+        xAnchorMultiplier,
+        FontWeight.values[fontWeight],
+        fontSize,
+        TextDecoration.combine(decorations),
+        TextDecorationStyle.values[decorationStyle],
+        Color(decorationColor),
+      ),
+    );
   }
 
   @override

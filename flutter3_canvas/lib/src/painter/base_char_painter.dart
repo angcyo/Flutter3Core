@@ -207,6 +207,10 @@ abstract class BaseCharPainter {
 
 /// 单文本字符逐个绘制
 /// 使用[TextPainter]绘制单个文本
+/// - 绘制[String]数据
+///
+/// - [CharTextPainter]
+/// - [CharPathPainter]
 class CharTextPainter extends BaseCharPainter {
   /// 绘制的字符
   final String char;
@@ -237,6 +241,10 @@ class CharTextPainter extends BaseCharPainter {
 }
 
 /// 单个矢量字符绘制
+/// - 绘制[Path]数据
+///
+/// - [CharTextPainter]
+/// - [CharPathPainter]
 class CharPathPainter extends BaseCharPainter {
   /// 字符
   final String char;

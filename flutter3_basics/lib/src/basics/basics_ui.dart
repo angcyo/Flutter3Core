@@ -387,6 +387,7 @@ extension WidgetListEx on WidgetNullList {
     EdgeInsetsGeometry? padding,
     bool? primary,
     bool reverse = false,
+    ScrollBehavior? scrollBehavior,
     //--
     MainAxisSize? mainAxisSize, //MainAxisSize.min
     MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
@@ -399,7 +400,7 @@ extension WidgetListEx on WidgetNullList {
       return null;
     }
     Widget body;
-    if (axis == Axis.vertical) {
+    if (axis == .vertical) {
       body = list.column(
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         mainAxisAlignment: mainAxisAlignment,
@@ -416,7 +417,8 @@ extension WidgetListEx on WidgetNullList {
         gapWidget: gapWidget,
       )!;
     }
-    return body.scroll(
+    //默认情况下, 在桌面端无法通过鼠标拖拽进行水平滚动
+    body = body.scroll(
       key: key,
       scrollDirection: axis,
       physics: physics,
@@ -425,6 +427,22 @@ extension WidgetListEx on WidgetNullList {
       primary: primary,
       reverse: reverse,
     );
+    if (isDesktopOrWeb && axis == .horizontal) {
+      return ScrollConfiguration(
+        behavior:
+            scrollBehavior ??
+            const MaterialScrollBehavior().copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse, // 允许鼠标拖拽滚动
+                PointerDeviceKind.stylus,
+                PointerDeviceKind.trackpad,
+              },
+            ),
+        child: body,
+      );
+    }
+    return body;
   }
 
   /// 垂直滚动

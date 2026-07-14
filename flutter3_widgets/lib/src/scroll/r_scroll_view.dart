@@ -335,6 +335,7 @@ class _RScrollViewState extends State<RScrollView>
 }
 
 extension RScrollViewEx on WidgetNullList {
+  /// - [updateSignal] 刷新信号
   /// [RScrollView]
   Widget rScroll({
     RScrollController? controller,

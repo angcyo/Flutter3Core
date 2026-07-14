@@ -558,6 +558,48 @@ Future<Uint8List> loadAssetBytes(
   return (await loadAssetByteData(key, prefix: prefix, package: package)).bytes;
 }
 
+/// 获取指定资产文件夹下的文件列表
+/// - [key]. [folderPath] 示例: 'assets/images/' (建议以 / 结尾，避免前缀匹配歧义)
+///
+/// # 顶级包的路径
+/// - assets/config/build_config.json
+/// - assets/png/logo.png
+///
+/// # 子包的路径
+/// - packages/yd_res/assets/fonts/bigfont.shx
+/// - packages/flutter3_core/assets/svg/core_close.svg
+/// - packages/yd_res/assets/fonts/SourceHanSansCN-Normal.otf
+///
+/// @return 文件列表资源的全路径key
+Future<List<String>?> loadAssetListInFolder(
+  String? key, {
+  String prefix = kDefAssetsPrefix,
+  String? package,
+}) async {
+  final folderPath = key?.ensurePackagePrefix(package, prefix).transformKey();
+  if (folderPath == null) return null;
+  try {
+    // 1. 从 rootBundle 加载资产清单对象（Flutter 3.22+ 标准写法）
+    final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+
+    // 2. 获取当前 App 中打包进去的所有资产文件的 Key 列表
+    final List<String> allAssets = assetManifest.listAssets();
+
+    // 3. 过滤出属于该文件夹路径的文件
+    final List<String> filteredAssets = allAssets.where((String assetPath) {
+      return assetPath.startsWith(folderPath);
+    }).toList();
+
+    return filteredAssets;
+  } catch (e) {
+    assert(() {
+      l.e("无法加载资产清单: $e");
+      return true;
+    }());
+    return null;
+  }
+}
+
 /// 缓存不存在的key
 @tempFlag
 List<String> _noAssetKeyList = [];

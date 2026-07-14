@@ -6,7 +6,7 @@ part of '../flutter3_fonts.dart';
 /// @date 2024/06/15
 ///
 /// 字体描述元数据
-class FontFamilyMeta with EquatableMixin {
+class FontFamilyMeta with Equatable {
   /// 字体名称, 不包含字宽和字体的样式
   /// 用来显示的字体名称
   String displayFontFamily;
@@ -39,6 +39,15 @@ class FontFamilyMeta with EquatableMixin {
   @configProperty
   bool? exportAssetsFont;
 
+  //--
+
+  /// 字体类型
+  FontType get fontType => variantList.firstOrNull?.fontType ?? .ttf;
+
+  /// 所有变体字体对应的本地文件路径
+  List<String> get variantLocalPathList =>
+      variantList.map((e) => e.localPath).filterNull();
+
   FontFamilyMeta({
     required this.displayFontFamily,
     this.source,
@@ -53,6 +62,7 @@ class FontFamilyMeta with EquatableMixin {
     required String displayFontFamily,
     required String fontFamily,
     required String uri,
+    FontType? fontType,
     //--
     FontFamilySource? source,
     String? savePath,
@@ -66,6 +76,7 @@ class FontFamilyMeta with EquatableMixin {
              displayFontFamily: displayFontFamily,
              fontFamily: fontFamily,
              uri: uri,
+             fontType: FontType.fromPath(uri) ?? .ttf,
            ),
          ],
          savePath: savePath,
@@ -147,7 +158,7 @@ enum FontFamilySource { asset, file, http }
 /// [Medium]字体粗细
 /// [Italic]字体样式
 /// [.ttf]扩展名
-class FontFamilyVariantMeta with EquatableMixin {
+class FontFamilyVariantMeta with Equatable {
   /// 用来显示的字体名称
   @configProperty
   String displayFontFamily;
@@ -155,6 +166,10 @@ class FontFamilyVariantMeta with EquatableMixin {
   /// 这里的字体名称, 包含了[fontWeightStr]和[fontStyleStr]
   @configProperty
   String fontFamily;
+
+  /// 字体类型, 决定不同的加载渲染方式
+  @configProperty
+  FontType fontType;
 
   /// 当前字体变种的资源路径
   @configProperty
@@ -193,7 +208,12 @@ class FontFamilyVariantMeta with EquatableMixin {
     int? bestScore;
     FontFamilyVariantMeta? bestMatch;
     final sourceVariant =
-        FontFamilyVariantMeta(displayFontFamily: '', fontFamily: '', uri: '')
+        FontFamilyVariantMeta(
+            displayFontFamily: '',
+            fontFamily: '',
+            uri: '',
+            fontType: .ttf,
+          )
           ..fontWeight = fontWeight ?? FontWeight.normal
           ..fontStyle = fontStyle ?? FontStyle.normal;
     for (final variantToCompare in variantsToCompare) {
@@ -222,9 +242,13 @@ class FontFamilyVariantMeta with EquatableMixin {
     required this.displayFontFamily,
     required this.fontFamily,
     required this.uri,
+    required this.fontType,
     this.fontWeightStr,
     this.fontStyleStr,
+    String? filePath,
   }) {
+    localPath = filePath;
+
     if (fontWeightStr != null) {
       for (final entry in _fontWeightMap.entries) {
         if (entry.value == fontWeightStr) {
@@ -245,11 +269,15 @@ class FontFamilyVariantMeta with EquatableMixin {
 
   /// 从文件名解析
   /// [filename] 文件名, 包含扩展名
-  FontFamilyVariantMeta.fromFilename(String filename, {String? filePath})
-    : displayFontFamily = filename,
-      fontFamily = filename,
-      uri = filePath ?? filename,
-      localPath = filePath {
+  FontFamilyVariantMeta.fromFilename(
+    String filename, {
+    String? filePath,
+    FontType? fontType,
+  }) : displayFontFamily = filename,
+       fontFamily = filename,
+       uri = filePath ?? filename,
+       localPath = filePath,
+       fontType = fontType ?? FontType.fromPath(filePath ?? filename) ?? .ttf {
     //debugger();
     final filenameParts = filename.split('.');
     fontFamily = filenameParts.first;
@@ -301,6 +329,13 @@ class FontFamilyVariantMeta with EquatableMixin {
     bool? overwrite,
     bool? exportAssetsFont,
   }) async {
+    if (fontType == .shx || fontType == .svg) {
+      assert(() {
+        l.d("当前字体不需要加载到Flutter框架[$fontFamily]->$uri");
+        return true;
+      }());
+      return false;
+    }
     bool result = false;
     assert(() {
       l.d("加载字体[$fontFamily]->$uri");
@@ -342,7 +377,7 @@ class FontFamilyVariantMeta with EquatableMixin {
   @override
   String toString() {
     return 'FontFamilyVariantMeta{fontFamily: $fontFamily, displayFontFamily: $displayFontFamily, fileExtension: $fileExtension, '
-        'fontWeight: $fontWeightStr, fontStyle: $fontStyleStr, uri: $uri, fileExtension: $fileExtension}';
+        'fontWeight: $fontWeightStr, fontStyle: $fontStyleStr, uri: $uri, fileExtension: $fileExtension fontType: $fontType}';
   }
 
   @override

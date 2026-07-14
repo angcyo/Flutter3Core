@@ -564,6 +564,7 @@ extension StringEx on String {
     return index == -1 ? this : substring(index + "$pattern".length);
   }
 
+  /// 从0开始, 截取指定字符前的所有字符串
   /// [substringStart]
   /// [substringEnd]
   String substringStart(Pattern pattern, [bool last = false]) {

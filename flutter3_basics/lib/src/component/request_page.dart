@@ -95,6 +95,9 @@ class RequestPage {
   /// 是否是当前页, 也就是当前页的数据加载完毕了
   bool get isCurrentPage => requestPageIndex == _currentPageIndex;
 
+  /// -[singlePage]
+  bool get isSinglePage => requestPageSize == intMaxValue;
+
   /// 重置分页信息
   void reset() {
     pageRefresh();

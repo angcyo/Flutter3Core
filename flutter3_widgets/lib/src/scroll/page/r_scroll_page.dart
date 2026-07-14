@@ -27,6 +27,11 @@ part of '../../../flutter3_widgets.dart';
 /// - [resetPage]
 /// - [singlePage]
 ///
+/// ## 刷新界面
+///
+/// - [scrollViewUpdateSignal]
+/// - [rebuildScrollView]
+///
 mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 保存最后一次[rebuildByBean]方法创建的更新信号,
   /// 然后在[RItemTileExtension]中消耗此对象
@@ -112,6 +117,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// - [updateLoadDataWidget] 刷新界面
   @tempFlag
   final UpdateValueNotifier _scrollViewUpdateSignal = createUpdateSignal();
+
+  UpdateValueNotifier get scrollViewUpdateSignal {
+    //支持在外部单独混入此功能
+    if (scrollController.scrollViewUpdateSignal != _scrollViewUpdateSignal) {
+      scrollController.scrollViewUpdateSignal = _scrollViewUpdateSignal;
+    }
+    return _scrollViewUpdateSignal;
+  }
 
   //region 生命周期
 
@@ -436,7 +449,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 是否启用加载更多
   @configProperty
-  bool get enablePageLoadMore => true;
+  bool get enablePageLoadMore => !requestPage.isSinglePage;
 
   @output
   RequestPage get requestPage => scrollController.requestPage;
@@ -466,15 +479,19 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [loadDataEnd]
   @api
   @updateMark
-  void startRefresh() {
-    scrollController.startRefresh();
+  void startRefresh({bool useWidgetState = false, bool atTop = true}) {
+    scrollController.startRefresh(useWidgetState: useWidgetState, atTop: atTop);
   }
 
   /// 结束下拉刷新, 更多时候应该调用[loadDataEnd]
   @api
   @updateMark
-  void finishRefresh() {
-    scrollController.finishRefresh(null);
+  void finishRefresh([
+    Iterable? loadData,
+    dynamic stateData,
+    WidgetBuildState? widgetState,
+  ]) {
+    scrollController.finishRefresh(loadData, stateData, widgetState);
   }
 
   /// 显示情感图状态刷新

@@ -15,6 +15,7 @@ part of '../../flutter3_widgets.dart';
 ///
 class RScrollController extends ScrollController {
   /// 用来控制刷新的key
+  /// - [wrapRefreshWidget] 中使用
   /// [RefreshIndicatorState]
   final GlobalKey<RefreshIndicatorState> scrollRefreshKey = GlobalKey();
 
@@ -208,7 +209,17 @@ class RScrollController extends ScrollController {
     if (useWidgetState) {
       updateAdapterState(.loading, null);
     } else {
-      scrollRefreshKey.currentState?.show(atTop: atTop);
+      final refreshState = scrollRefreshKey.currentState;
+      if (refreshState == null) {
+        assert(() {
+          l.w(
+            "[${tag ?? debugLabel}]无法触发刷新[startRefresh], 请检查是否调用了[wrapRefreshWidget]!",
+          );
+          return true;
+        }());
+      } else {
+        refreshState.show(atTop: atTop);
+      }
     }
   }
 
@@ -320,8 +331,9 @@ class RScrollController extends ScrollController {
     final signal = scrollViewUpdateSignal;
     if (signal == null) {
       assert(() {
-        l.d("[${classHash()}]无法重建布局!");
-        debugger();
+        final state = adapterStateValue.value;
+        l.d("[${classHash()}]无法从[$state]状态重建布局!");
+        debugger(when: state != .preLoading);
         return true;
       }());
     } else {

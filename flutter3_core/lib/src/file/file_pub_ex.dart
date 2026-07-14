@@ -5,6 +5,46 @@ part of '../../flutter3_core.dart';
 /// @since 2023/11/17
 ///
 
+/// 使用当前平台的 [分隔符] 将给定路径部分连接成单个路径
+/// - [p.join]
+String joinPath(
+  String part1,
+  String part2, [
+  String? part3,
+  String? part4,
+  String? part5,
+  String? part6,
+  String? part7,
+  String? part8,
+  String? part9,
+  String? part10,
+  String? part11,
+  String? part12,
+  String? part13,
+  String? part14,
+  String? part15,
+  String? part16,
+]) {
+  return p.join(
+    part1,
+    part2,
+    part3,
+    part4,
+    part5,
+    part6,
+    part7,
+    part8,
+    part9,
+    part10,
+    part11,
+    part12,
+    part13,
+    part14,
+    part15,
+    part16,
+  );
+}
+
 /// 屏幕截图
 Future<UiImage?> captureScreenImage([
   BuildContext? context,
@@ -54,7 +94,7 @@ Future<Directory> fileDirectory() async {
   Directory? directory;
   try {
     //debugger();
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    if (defaultTargetPlatform == .android) {
       // /storage/emulated/0/Android/data/com.angcyo.flutter3_abc/files
       try {
         directory = await getExternalStorageDirectory();
@@ -65,9 +105,9 @@ Future<Directory> fileDirectory() async {
         }());
         //l.e(e);
       }
-    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS ||
-        defaultTargetPlatform == TargetPlatform.windows) {
+    } else if (defaultTargetPlatform == .iOS ||
+        defaultTargetPlatform == .macOS ||
+        defaultTargetPlatform == .windows) {
       try {
         // /data/user/0/com.angcyo.flutter3_abc/files
         //C:\Users\Administrator\AppData\Roaming\com.angcyo.flutter3.desktop.abc\flutter3_desktop_abc_pn
@@ -106,7 +146,7 @@ Future<Directory> fileDirectory() async {
 Future<Directory> cacheDirectory() async {
   Directory? directory;
   try {
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    if (defaultTargetPlatform == .android) {
       // android: /storage/emulated/0/Android/data/com.angcyo.flutter3_abc/cache
       try {
         directory = (await getExternalCacheDirectories())?.firstOrNull;
@@ -117,8 +157,8 @@ Future<Directory> cacheDirectory() async {
         }());
         //l.e(e);
       }
-    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
+    } else if (defaultTargetPlatform == .iOS ||
+        defaultTargetPlatform == .macOS) {
       try {
         // android: /data/user/0/com.angcyo.flutter3_abc/cache
         // ios:
@@ -131,16 +171,38 @@ Future<Directory> cacheDirectory() async {
         }());
         //l.e(e);
       }
-    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+    } else if (defaultTargetPlatform == .windows) {
       try {
         //C:\Users\Administrator\AppData\Roaming\com.angcyo.flutter3.desktop.abc\flutter3_desktop_abc_pn
-        directory = await getApplicationSupportDirectory();
+        // C:\Users\ADMINI~1\AppData\Local\Temp
+        //final dir = await getTemporaryDirectory();
+
+        // C:\Users\Administrator\AppData\Local\com.laser.abc.beeb.desktop.app\Laserabc Beeb Desktop
+        //final cache = await getApplicationCacheDirectory();
+
+        // C:\Users\Administrator\Downloads
+        //final downloads = await getDownloadsDirectory();
+
+        //Windows: getLibraryPath() has not been implemented.
+        //final library = await getLibraryDirectory();
+
+        //C:\Users\Administrator\AppData\Local\com.laser.abc.beeb.desktop.app\Laserabc Beeb Desktop
+        directory = await getApplicationCacheDirectory();
       } catch (e) {
         assert(() {
           l.e(e);
           return true;
         }());
         //l.e(e);
+        try {
+          //C:\Users\Administrator\AppData\Roaming\com.laser.abc.beeb.desktop.app\Laserabc Beeb Desktop
+          directory = await getApplicationSupportDirectory();
+        } catch (e) {
+          assert(() {
+            l.e(e);
+            return true;
+          }());
+        }
       }
     }
     directory ??= await getTemporaryDirectory();
@@ -152,7 +214,8 @@ Future<Directory> cacheDirectory() async {
     //l.e(e);
   }
   //Directory: '/data/user/0/com.angcyo.lp.image.ffi.lp_image_handle_ffi_example/code_cache'
-  return directory ?? Directory.systemTemp;
+  return directory ??
+      Directory.systemTemp; //C:\Users\ADMINI~1\AppData\Local\Temp
 }
 
 extension DirectoryPubEx on Directory {

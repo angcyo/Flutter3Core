@@ -114,8 +114,8 @@ abstract class BaseTextPainter {
   /// - 返回整体的边界大小
   @initialize
   @entryPoint
-  void initPainter() {
-    if (useVectorText) {
+  void initPainter({bool? scaleVectorCharPath}) {
+    if (scaleVectorCharPath ?? useVectorText) {
       scaleVectorCharPathToFontSize();
     }
   }
@@ -414,8 +414,8 @@ class NormalTextPainter extends BaseTextPainter {
   /// 初始化文本绘制对象
   @initialize
   @override
-  void initPainter() {
-    super.initPainter();
+  void initPainter({bool? scaleVectorCharPath}) {
+    super.initPainter(scaleVectorCharPath: scaleVectorCharPath);
     _textPainter = createBaseTextPainter(text);
     double left = 2147483648;
     double top = 2147483648;
@@ -594,8 +594,8 @@ class SingleCharTextPainter extends BaseTextPainter {
   /// 初始化文本绘制对象
   @initialize
   @override
-  void initPainter() {
-    super.initPainter();
+  void initPainter({bool? scaleVectorCharPath}) {
+    super.initPainter(scaleVectorCharPath: scaleVectorCharPath);
     final List<List<BaseCharPainter>> charPainterList = [];
     final charList = _splitText(text);
     //矢量文本画笔
@@ -1055,8 +1055,8 @@ class SingleCurveCharTextPainter extends SingleCharTextPainter {
 
   /// 曲线文本初始化
   @override
-  void initPainter() {
-    super.initPainter();
+  void initPainter({bool? scaleVectorCharPath}) {
+    super.initPainter(scaleVectorCharPath: scaleVectorCharPath);
     final charList = charPainterList;
     if (charList == null) {
       return;
