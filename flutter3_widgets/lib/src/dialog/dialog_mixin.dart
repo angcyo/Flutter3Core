@@ -73,13 +73,13 @@ mixin DialogMixin implements TranslationTypeImpl {
 
   /// 对话框外边距
   /// 系统默认的对话框内边距[_defaultInsetPadding]
-  EdgeInsets get dialogMargin => const EdgeInsets.symmetric(
+  EdgeInsetsGeometry get dialogMargin => const EdgeInsets.symmetric(
     horizontal: kXxx /*60*/,
     vertical: kToolbarHeight,
   );
 
   /// 对话框内容内边距
-  EdgeInsets get dialogContentPadding =>
+  EdgeInsetsGeometry get dialogContentPadding =>
       const EdgeInsets.symmetric(horizontal: kX, vertical: kX);
 
   /// 对话框的最小宽度限制
@@ -144,8 +144,8 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildDialogContainer(
     BuildContext context,
     Widget child, {
-    EdgeInsets? margin,
-    EdgeInsets? padding,
+    @defInjectMark EdgeInsetsGeometry? margin,
+    @defInjectMark EdgeInsetsGeometry? padding,
     Color? decorationColor,
     Decoration? decoration,
     BoxConstraints? constraints,
@@ -213,8 +213,8 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildAdaptiveCenterDialog(
     BuildContext context,
     Widget content, {
-    EdgeInsets? margin,
-    EdgeInsets? contentPadding = EdgeInsets.zero,
+    @defInjectMark EdgeInsetsGeometry? margin,
+    @defInjectMark EdgeInsetsGeometry? contentPadding = EdgeInsets.zero,
     Color? decorationColor,
     bool? blur /*是否启用模糊*/,
     bool? shadow = true /*是否启用阴影*/,
@@ -292,8 +292,8 @@ mixin DialogMixin implements TranslationTypeImpl {
   Widget buildDesktopCenterDialog(
     BuildContext context,
     Widget content, {
-    EdgeInsets? margin,
-    EdgeInsets? contentPadding = EdgeInsets.zero,
+    @defInjectMark EdgeInsetsGeometry? margin,
+    @defInjectMark EdgeInsetsGeometry? contentPadding = EdgeInsets.zero,
     Color? decorationColor,
     bool? blur /*是否启用模糊*/,
     bool? shadow = true /*是否启用阴影*/,

@@ -13,7 +13,9 @@ class OssEndpointConfigDialog extends StatefulWidget with DialogMixin {
   @hiveFlag
   static HiveStringValue $ossBucketHive = $hiveString("_key_oss_bucket_config");
 
-  const OssEndpointConfigDialog({super.key});
+  final EdgeInsetsGeometry? margin;
+
+  const OssEndpointConfigDialog({super.key, this.margin});
 
   @override
   State<OssEndpointConfigDialog> createState() =>
@@ -65,6 +67,7 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
             },
           ),
       ].rScroll(shrinkWrap: true),
+      margin: widget.margin,
     );
   }
 
@@ -100,9 +103,34 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
   }
 }
 
+/// 同时配置 HTTP 端点 和 OSS 端点
+/// - [HttpHostConfigDialog]
+/// - [OssEndpointConfigDialog]
+class HttpAndOssConfigDialog extends StatefulWidget with DialogMixin {
+  const HttpAndOssConfigDialog({super.key});
+
+  @override
+  State<HttpAndOssConfigDialog> createState() => _HttpAndOssConfigDialogState();
+}
+
+class _HttpAndOssConfigDialogState extends State<HttpAndOssConfigDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return [
+      HttpHostConfigDialog(margin: insets(all: kX)),
+      OssEndpointConfigDialog(margin: insets(all: kX)),
+    ].row(mainAxisAlignment: .center)!;
+  }
+}
+
 extension OssEndpointConfigBuildContextEx on BuildContext {
   /// 显示OSS 端点切换对话框
   void showOssEndpointConfigDialog() {
     showWidgetDialog(const OssEndpointConfigDialog());
+  }
+
+  /// 显示HTTP 和 OSS 端点切换对话框
+  void showHttpAndOssConfigDialog() {
+    showWidgetDialog(const HttpAndOssConfigDialog());
   }
 }

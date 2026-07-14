@@ -12,7 +12,9 @@ class HttpHostConfigDialog extends StatefulWidget with DialogMixin {
   @hiveFlag
   static HiveStringValue $configHostHive = $hiveString("_key_http_host_config");
 
-  const HttpHostConfigDialog({super.key});
+  final EdgeInsetsGeometry? margin;
+
+  const HttpHostConfigDialog({super.key, this.margin});
 
   @override
   State<HttpHostConfigDialog> createState() => _HttpHostConfigDialogState();
@@ -54,6 +56,7 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
             },
           ),
       ].rScroll(shrinkWrap: true),
+      margin: widget.margin,
     );
   }
 
