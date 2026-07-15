@@ -3060,6 +3060,7 @@ extension WidgetEx on Widget {
     ShapeBorder? customBorder,
     GestureLongPressCallback? onLongPress,
     bool enable = true,
+    bool useDisableCursorStyle = true,
     MouseCursor? cursor,
     //--
     bool disableColor = false,
@@ -3069,7 +3070,7 @@ extension WidgetEx on Widget {
   }) {
     if (!enable) {
       //禁用组件
-      if (isDesktopOrWeb || mouseIsConnected) {
+      if (useDisableCursorStyle && (isDesktopOrWeb || mouseIsConnected)) {
         return mouse(cursor: cursor ?? SystemMouseCursors.forbidden);
       }
       return this;

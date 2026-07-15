@@ -74,7 +74,7 @@ class DesktopMessageDialog extends AndroidNormalDialog {
 
   @override
   Widget build(BuildContext context) {
-    final lRes = libRes(context);
+    final libRes = context.libRes;
     final globalTheme = GlobalTheme.of(context);
 
     // 标题 / 内容
@@ -111,7 +111,7 @@ class DesktopMessageDialog extends AndroidNormalDialog {
                         vertical: kM,
                         horizontal: kX,
                       ),
-                      child: lRes?.libCancel.text(),
+                      child: libRes?.libCancel.text(),
                       onTap: () {
                         context.pop();
                       },
@@ -125,7 +125,7 @@ class DesktopMessageDialog extends AndroidNormalDialog {
                         vertical: kM,
                         horizontal: kX,
                       ),
-                      child: lRes?.libConfirm.text(),
+                      child: libRes?.libConfirm.text(),
                       onTap: () {
                         _doConfirmTap(context);
                       },

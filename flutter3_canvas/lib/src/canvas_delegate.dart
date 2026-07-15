@@ -960,6 +960,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       color: globalTheme.dialogSurfaceBgColor,
       elevation: kMenuStyle.elevation?.resolve({}),
       shape: kMenuStyle.shape?.resolve({}),
+      menuPadding: kMenuStyle.padding?.resolve({}),
     );
   }
 
@@ -986,6 +987,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       color: globalTheme.dialogSurfaceBgColor,
       elevation: kMenuStyle.elevation?.resolve({}),
       shape: kMenuStyle.shape?.resolve({}),
+      menuPadding: kMenuStyle.padding?.resolve({}),
       /*color: Color(0xff232327),*/
     );
   }

@@ -189,7 +189,7 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
         .inkWell(
           widget.onTap,
           enable: widget.onTap != null,
-          cursor: WidgetStateMouseCursor.adaptiveClickable,
+          useDisableCursorStyle: false,
         );
   }
 

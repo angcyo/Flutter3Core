@@ -995,7 +995,7 @@ extension DialogExtension on BuildContext {
     //--
     Offset? position /*强行指定在overlay中的位置, 此位置会自动偏移anchor的左上角偏移*/,
     //--
-    Offset offset = Offset.zero /*相对锚点左上角额外偏移的量*/,
+    Offset? offset /*相对锚点左上角额外偏移的量*/,
     //--
     double? elevation = kH,
     Color? color /*菜单的背景颜色*/,
@@ -1022,9 +1022,14 @@ extension DialogExtension on BuildContext {
     }
 
     items ??= menus?.mapIndex((e, index) {
+      final onTap = onMenusTap?.getOrNull(index);
       return PopupMenuItem<T>(
         value: e as dynamic,
-        onTap: onMenusTap?.getOrNull(index),
+        enabled: onTap != null,
+        onTap: onTap,
+        mouseCursor: onTap == null
+            ? SystemMouseCursors.forbidden
+            : SystemMouseCursors.basic,
         child: e,
       );
     }).toList();
@@ -1047,6 +1052,7 @@ extension DialogExtension on BuildContext {
       return null;
     }
 
+    offset ??= .zero;
     //用来定位
     final RenderBox overlay =
         Navigator.of(
@@ -1141,7 +1147,7 @@ extension DialogExtension on BuildContext {
     //--
     Offset? position /*强行指定在overlay中的位置, 此位置会自动偏移anchor的左上角偏移*/,
     //--
-    Offset offset = Offset.zero /*相对锚点左上角额外偏移的量*/,
+    Offset? offset /*相对锚点左上角额外偏移的量*/,
     //--
     double? elevation = kH,
     Color? color /*菜单的背景颜色*/,
@@ -1184,7 +1190,7 @@ extension DialogExtension on BuildContext {
       }());
       return null;
     }
-
+    offset ??= .zero;
     //用来定位
     final RenderBox overlay =
         Navigator.of(

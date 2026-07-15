@@ -7,6 +7,8 @@ part of 'menu_mix.dart';
 /// 弹窗菜单路由, 支持[Widget]结构
 /// 参考[_PopupMenuRoute]
 /// [showMenu] - 只能支持[PopupMenuEntry]items
+///
+/// 默认动画[FadeTransition]
 class PopupMenuRoute<T> extends PopupRoute<T> {
   final Widget menu;
   final RelativeRect position;

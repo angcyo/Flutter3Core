@@ -34,6 +34,9 @@ class MouseRightMenuWidget extends StatefulWidget {
   @configProperty
   final Widget? menu;
 
+  /// 对齐后, 额外的偏移量
+  final Offset? alignmentOffset;
+
   const MouseRightMenuWidget({
     super.key,
     this.child,
@@ -43,6 +46,7 @@ class MouseRightMenuWidget extends StatefulWidget {
     this.menus,
     this.onMenusTap,
     this.menu,
+    this.alignmentOffset,
   });
 
   @override
@@ -67,6 +71,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               elevation: kMenuStyle.elevation?.resolve({}),
               shape: kMenuStyle.shape?.resolve({}),
               menuPadding: kMenuStyle.padding?.resolve({}),
+              offset: widget.alignmentOffset,
             );
           }
           if (widget.menu != null) {
@@ -77,6 +82,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               elevation: kMenuStyle.elevation?.resolve({}),
               shape: kMenuStyle.shape?.resolve({}),
               menuPadding: kMenuStyle.padding?.resolve({}),
+              offset: widget.alignmentOffset,
             );
           }
           widget.onMouseRightTap?.call(event);
