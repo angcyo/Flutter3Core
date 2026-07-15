@@ -28,7 +28,7 @@ class MouseRightMenuWidget extends StatefulWidget {
 
   /// 菜单对应的点击事件
   @configProperty
-  final List<VoidCallback>? onMenusTap;
+  final List<VoidCallback?>? onMenusTap;
 
   /// 仅设置菜单整体
   @configProperty
@@ -157,10 +157,15 @@ extension MouseRightMenuWidgetEx on Widget {
   Widget mouseRightMenu({
     Key? key,
     List<Widget>? menus,
-    List<VoidCallback>? onMenusTap /*菜单对应的点击事件*/,
+    List<VoidCallback?>? onMenusTap /*菜单对应的点击事件*/,
     //--菜单整体
     Widget? menu,
+    //--
+    bool enable = true,
   }) {
+    if (!enable) {
+      return this;
+    }
     return MouseRightMenuWidget(
       key: key,
       menus: menus,

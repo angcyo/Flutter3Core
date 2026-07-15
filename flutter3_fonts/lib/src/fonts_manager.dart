@@ -344,8 +344,8 @@ class FontsManager {
     if (_systemFontPathList == null) {
       if (isWindows) {
         _systemFontPathList = [
-          '${Platform.environment['windir']}/fonts/',
-          '${Platform.environment['USERPROFILE']}/AppData/Local/Microsoft/Windows/Fonts/',
+          '${Platform.environment['windir']}\\fonts\\',
+          '${Platform.environment['USERPROFILE']}\\AppData\\Local\\Microsoft\\Windows\\Fonts\\',
         ];
       } else if (isMacOS) {
         _systemFontPathList = [
@@ -598,7 +598,7 @@ class FontsManager {
     }
     for (final path in pathList) {
       for (final fontType in FontType.values) {
-        final filePath = "$path/$fontFamily${fontType.suffix}";
+        final filePath = joinPath(path, "$fontFamily${fontType.suffix}");
         try {
           if (await filePath.file().exists()) {
             final variantMeta = FontFamilyVariantMeta(

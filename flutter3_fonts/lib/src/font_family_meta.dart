@@ -41,6 +41,10 @@ class FontFamilyMeta with Equatable {
 
   //--
 
+  /// 字体所在的本地路径
+  String? get localPath =>
+      source == .file ? savePath ?? variantList.firstOrNull?.localPath : null;
+
   /// 字体类型
   FontType get fontType => variantList.firstOrNull?.fontType ?? .ttf;
 

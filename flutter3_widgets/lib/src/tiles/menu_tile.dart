@@ -137,8 +137,16 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
 
+    //需要悬浮显示的值(菜单)
+    Widget? value = widget.valueWidget ?? _buildValueWidget(context, initValue);
+
     //build label
-    Widget? label = widget.buildLabelWidgetMixin(context);
+    Widget? label = widget.buildLabelWidgetMixin(
+      context,
+      labelTextStyle:
+          widget.labelTextStyle ??
+          (isDesktopOrWeb && value == null ? globalTheme.textBodyStyle : null),
+    );
     if (label != null && !isNil(widget.labelActions)) {
       label = [label, ...?widget.labelActions].row(
         mainAxisSize: MainAxisSize.min,
@@ -147,8 +155,6 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
       );
     }
 
-    //需要悬浮显示的值(菜单)
-    Widget? value = widget.valueWidget ?? _buildValueWidget(context, initValue);
     //debugger();
     if (value != null) {
       value =

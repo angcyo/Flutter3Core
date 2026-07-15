@@ -987,7 +987,7 @@ extension DialogExtension on BuildContext {
   /// [showWidgetMenu] - 支持[Widget]
   Future<T?> showMenus<T>(
     List<Widget>? menus /*辅助生成items*/, {
-    List<VoidCallback>? onMenusTap /*菜单对应的点击事件*/,
+    List<VoidCallback?>? onMenusTap /*菜单对应的点击事件*/,
     List<PopupMenuEntry<T>>? items /*菜单项*/,
     //--
     T? initialValue,
