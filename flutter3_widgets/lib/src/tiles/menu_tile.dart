@@ -186,7 +186,11 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
     return [label, value?.expanded()]
         .row(crossAxisAlignment: CrossAxisAlignment.center)!
         .paddingInsets(widget.tilePadding)
-        .inkWell(widget.onTap, enable: widget.onTap != null);
+        .inkWell(
+          widget.onTap,
+          enable: widget.onTap != null,
+          cursor: WidgetStateMouseCursor.adaptiveClickable,
+        );
   }
 
   /// 构建值小部件

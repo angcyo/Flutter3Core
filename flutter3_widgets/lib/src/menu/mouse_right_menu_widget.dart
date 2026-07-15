@@ -66,6 +66,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               color: globalTheme.dialogSurfaceBgColor,
               elevation: kMenuStyle.elevation?.resolve({}),
               shape: kMenuStyle.shape?.resolve({}),
+              menuPadding: kMenuStyle.padding?.resolve({}),
             );
           }
           if (widget.menu != null) {
@@ -75,6 +76,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               color: globalTheme.dialogSurfaceBgColor,
               elevation: kMenuStyle.elevation?.resolve({}),
               shape: kMenuStyle.shape?.resolve({}),
+              menuPadding: kMenuStyle.padding?.resolve({}),
             );
           }
           widget.onMouseRightTap?.call(event);
@@ -89,6 +91,25 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
 
 extension MouseRightMenuWidgetEx on Widget {
   /// 鼠标右键触发
+  /// - 自定义显示的内容以及方式
+  /// ```
+  /// .mouseRightTrigger(
+  ///   onMouseRightContentTap: (ctx, event) {
+  ///     context.showOverlay(
+  ///       (ctx, entry) {
+  ///         return DebugFileMenuDialog(
+  ///           this.path,
+  ///           onDeleteAction: onDeleteAction,
+  ///           dialogInOverlay: true,
+  ///         ).elevation().material();
+  ///       },
+  ///       alignmentOffset: event.localPosition,
+  ///       scaleAlignment: .topLeft,
+  ///       hideOverlayOutsideTap: true,
+  ///     );
+  ///   },
+  /// );
+  /// ```
   Widget mouseRightTrigger({
     Key? key,
     PointerEventListener? onMouseRightTap,
@@ -106,6 +127,27 @@ extension MouseRightMenuWidgetEx on Widget {
   }
 
   /// 鼠标右键菜单
+  /// - 仅支持显示[PopupMenuRoute]的内容
+  /// ```
+  /// .mouseRightMenu(
+  ///    menus: [
+  ///      LabelMenuTile(
+  ///        label: "保存",
+  ///        labelTextStyle: globalTheme.textBodyStyle,
+  ///      ),
+  ///    ],
+  ///    onMenusTap: [
+  ///      () async {
+  ///        //save as
+  ///        saveFilePath(
+  ///          (await frames![i].saveToFilePath(
+  ///            await cacheFilePath("output_$i.png"),
+  ///          ))?.path,
+  ///        );
+  ///      },
+  ///    ],
+  /// )
+  /// ```
   Widget mouseRightMenu({
     Key? key,
     List<Widget>? menus,

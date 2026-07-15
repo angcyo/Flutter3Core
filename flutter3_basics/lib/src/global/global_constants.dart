@@ -90,6 +90,8 @@ const kLabelMinWidth = 80.0;
 const kLabelMaxWidth = 130.0;
 const kNumberMinWidth = 66.0;
 const kNumberMinHeight = 26.0;
+
+/// 菜单最小宽度
 const kMenuMinWidth = 160.0;
 
 /// 系统[Dialog]最小宽度280.0

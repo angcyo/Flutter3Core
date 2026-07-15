@@ -83,6 +83,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final isInPopup = this.isInPopup ?? isDesktopOrWeb;
 
     Widget? body = items.column(gapWidget: horizontalLine(context));
     if (isTransparentStyle) {
@@ -132,6 +133,10 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
           isPopupStyle: isInPopup,
         )
         .paddingAll(isTransparentStyle ? kX : 0)
-        .desktopConstrained(enable: isInPopup, maxWidth: kDialogMinWidth);
+        .desktopConstrained(
+          enable: isInPopup,
+          maxWidth: isDesktopOrWeb ? kDesktopDialogMinWidth : kDialogMinWidth,
+        )
+        .align(.bottomCenter, enable: isInPopup);
   }
 }

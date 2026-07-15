@@ -1004,7 +1004,7 @@ extension DialogExtension on BuildContext {
     ShapeBorder? shape = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
-    EdgeInsets? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
+    EdgeInsetsGeometry? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
     BoxConstraints? constraints,
     Clip clipBehavior = Clip.none,
     //--
@@ -1150,7 +1150,7 @@ extension DialogExtension on BuildContext {
     ShapeBorder? shape = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
-    EdgeInsets? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
+    EdgeInsetsGeometry? menuPadding = const EdgeInsets.symmetric(vertical: 8.0),
     BoxConstraints? constraints,
     Clip clipBehavior = Clip.none,
     //--
