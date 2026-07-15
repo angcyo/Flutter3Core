@@ -502,7 +502,9 @@ extension FileEx on File {
     final Uint8List bytes = await readAsBytes();
 
     final name = filename;
-    if (name.endsWith(".rgb565a8") || name.endsWith(".rgb565")) {
+    if (name.endsWith(".rgba8888") ||
+        name.endsWith(".rgb565a8") ||
+        name.endsWith(".rgb565")) {
       if (debugWidth == null || debugHeight == null) {
         //使用正则, 从文件名中获取宽高 .wxh.png 的格式
         final match = RegExp(r"\.(\d+)x(\d+)\.");
@@ -513,6 +515,9 @@ extension FileEx on File {
         }
       }
       if (debugWidth != null && debugHeight != null) {
+        if (name.endsWith(".rgba8888")) {
+          return bytes.toImageFromPixels(debugWidth, debugHeight);
+        }
         return bytes.toImageFromRGB565A8Pixels(
           debugWidth,
           debugHeight,
@@ -677,6 +682,13 @@ extension FileEx on File {
   /// PathNotFoundException: Cannot delete file, path = '/storage/emulated/0/Android/data/com.angcyo.flutter3.abc/files/2024-03-30_22-08-34-053.lp2' (OS Error: No such file or directory, errno = 2)
   Future<FileSystemEntity?> deleteSafe({bool recursive = false}) async {
     try {
+      if (!existsSync()) {
+        assert(() {
+          l.i("文件不存在,无需删除->$this");
+          return true;
+        }());
+        return null;
+      }
       final result = await delete(recursive: recursive);
       assert(() {
         l.i("删除文件成功->$this");
