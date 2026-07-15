@@ -2974,13 +2974,13 @@ extension WidgetEx on Widget {
     GestureTapCallback? onTap, {
     bool enable = true,
     MouseCursor? cursor,
-    double? inkRadius,
     Color? backgroundColor,
     Decoration? decoration,
     //--
     BoxShape shape = BoxShape.rectangle,
-    double? radius /*圆角*/,
     BorderRadius? borderRadius,
+    double? radius /*圆角*/,
+    double? inkRadius /*涟漪圆角*/,
     //--
     EdgeInsetsGeometry? padding,
     double? width,
@@ -3020,7 +3020,7 @@ extension WidgetEx on Widget {
         onTap,
         onLongPress: onLongPress,
         borderRadius: bRadius,
-        radius: inkRadius,
+        radius: radius ?? inkRadius,
         customBorder: /*isCircle ? const CircleBorder() : */ null,
         /*highlightShape: shape,*/
         highlightColor: highlightColor,

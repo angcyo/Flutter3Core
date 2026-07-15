@@ -43,9 +43,11 @@ const kInchFractionDigits = 3;
 double get dpr => devicePixelRatio;
 
 /// pt
+/// 1 磅 (pt) = 1 / 72 英寸 (inch) ≈ 0.3527 毫米 (mm)
 const double sInchesPerPT = (1.0 / 72);
 
 /// mm
+/// 1 英寸  ≈ 2.54 厘米  ≈ 25.4 毫米
 const double sInchesPerMM = (1.0 / 25.4);
 
 /// 将dp变换成mm, 需要除以的因子
