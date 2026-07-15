@@ -602,10 +602,6 @@ class SingleCharTextPainter extends BaseTextPainter {
     final vectorPaint = useVectorText ? createBasePaint() : null;
     vectorPaint?.strokeWidth = 0; //矢量文本画笔宽度恒为0
 
-    //当出现空行时, 使用此对象的宽高占位
-    String? placeholderChar;
-    TextPainter? placeholderPainter;
-
     //MARK: 1. 初始化每一个char以及基础信息
     for (final line in charList) {
       List<BaseCharPainter> lineList = [];
@@ -614,51 +610,105 @@ class SingleCharTextPainter extends BaseTextPainter {
       double? lineAscender;
       //下降距离, 正值
       double? lineDescender;
-      if (line.isEmpty) {
-        //空行
-        placeholderChar ??= "中";
-        placeholderPainter ??= createBaseTextPainter(placeholderChar);
-        final charWidth = placeholderPainter.width + italicCharWidth;
-        final charHeight = placeholderPainter.height;
-        lineAscender ??= -charHeight;
-        lineDescender ??= 0;
-        lineBaseline = lineDescender - lineAscender;
+
+      //为char, 添加一个矢量画笔
+      //- [charBounds] 正常情况应该是
+      //  - Rect.fromLTRB(2.6, -24.1, 20.7, 0.6)
+      //  - Rect.fromLTRB(0.2, -31.8, 26.0, 0.0)
+      //  - 但是有些字体会是
+      //  - Rect.fromLTRB(4.7, -11.7, 12.8, -2.3)
+      //  - Rect.fromLTRB(-5.8, 1.2, 5.8, 15.2)
+      void addCharPathPainter(String char, Path charPath, @dp Rect charBounds) {
+        double ascender = charBounds.top;
+        double descender = charBounds.bottom;
+        double offsetX = 0;
+        double offsetY = 0;
+        if (ascender > 0) {
+          //需要调整到负值
+          offsetY = -descender;
+          ascender = ascender - descender;
+          descender = 0;
+          /*if (lineBaseline == 0) {
+            lineBaseline = ascender;
+          } else {
+            lineBaseline = min(lineBaseline, ascender);
+          }*/
+        }
+        lineBaseline = max(lineBaseline, -ascender);
+
+        lineAscender ??= ascender;
+        lineDescender ??= descender;
+        lineAscender = min(lineAscender!, ascender);
+        lineDescender = max(lineDescender!, descender);
+
         lineList.add(
-          CharTextPainter(
-            placeholderChar,
-            null,
-            charBounds: Rect.fromLTWH(
-              0,
-              lineAscender,
-              charWidth,
-              lineDescender,
-            ),
+          CharPathPainter(
+            char,
+            charPath,
+            vectorPaint,
+            charBounds: charBounds,
+            charPathOffset: Offset(offsetX, offsetY),
           ),
         );
+      }
+
+      //为char, 添加一个画笔
+      void addCharTextPainter(
+        String char,
+        TextPainter? charPainter,
+        @dp Rect charBounds, {
+        double? descender,
+      }) {
+        double ascender = charBounds.top;
+        descender ??= charBounds.bottom;
+
+        lineBaseline = max(lineBaseline, -ascender);
+        lineAscender ??= ascender;
+        lineDescender ??= descender;
+        lineAscender = min(lineAscender!, ascender);
+        lineDescender = max(lineDescender!, descender);
+
+        lineList.add(
+          CharTextPainter(char, charPainter, charBounds: charBounds),
+        );
+      }
+
+      if (line.isEmpty) {
+        //空行, 查找有效数据行的高度使用
+        BaseCharPainter? refPainter = charPainterList.firstOrNull?.firstOrNull;
+        if (refPainter == null) {
+          final placeholderChar = "中";
+          final placeholderPainter = createBaseTextPainter(placeholderChar);
+          final charWidth = placeholderPainter.width + italicCharWidth;
+          final charHeight = placeholderPainter.height;
+          refPainter = CharTextPainter(
+            placeholderChar,
+            null,
+            charBounds: Rect.fromLTWH(0, -charHeight, charWidth, charHeight),
+          );
+        }
+        final charBounds = refPainter.charBounds;
+        addCharTextPainter("", null, charBounds);
       } else {
         //有效数据行
         for (final char in line) {
           if (useVectorText) {
             //矢量文本
             if (char == " ") {
-              //空字符
-              final charWidth = fontSize / 4 + italicCharWidth;
-              final charHeight = fontSize / 4;
+              //空 矢量字符
+              BaseCharPainter? refPainter =
+                  lineList.firstOrNull ??
+                  charPainterList.firstOrNull?.firstOrNull;
 
-              lineBaseline = max(lineBaseline, charHeight);
-              lineAscender ??= -charHeight;
-              lineDescender ??= 0;
-              lineAscender = min(lineAscender, -charHeight);
-              lineDescender = max(lineDescender, 0);
+              final pathBounds =
+                  refPainter?.charBounds ??
+                  vectorTextPathMap?.values
+                      .filterNull()
+                      .firstOrNull
+                      ?.getBounds() ??
+                  Rect.fromLTWH(0, -1.0, fontSize / 4 + italicCharWidth, 0);
 
-              lineList.add(
-                CharPathPainter(
-                  char,
-                  kEmptyPath,
-                  vectorPaint,
-                  charBounds: Rect.fromLTWH(0, -charHeight, charWidth, 0),
-                ),
-              );
+              addCharPathPainter(char, kEmptyPath, pathBounds);
             } else {
               //正常矢量字符
               final charPath = vectorTextPathMap?[char];
@@ -667,31 +717,7 @@ class SingleCharTextPainter extends BaseTextPainter {
                 //如果需要变换字符, 应该是在这里进行.
                 @dp
                 final pathBounds = charPath.getBounds();
-
-                final ascender = pathBounds.top;
-                if (ascender > 0) {
-                  if (lineBaseline == 0) {
-                    lineBaseline = ascender;
-                  } else {
-                    lineBaseline = min(lineBaseline, ascender);
-                  }
-                } else {
-                  lineBaseline = max(lineBaseline, -ascender);
-                }
-                final descender = pathBounds.bottom;
-                lineAscender ??= ascender;
-                lineDescender ??= descender;
-                lineAscender = min(lineAscender, ascender);
-                lineDescender = max(lineDescender, descender);
-
-                lineList.add(
-                  CharPathPainter(
-                    char,
-                    charPath,
-                    vectorPaint,
-                    charBounds: pathBounds,
-                  ),
-                );
+                addCharPathPainter(char, charPath, pathBounds);
               } else {
                 //字体不支持的矢量字符
                 debugger();
@@ -711,11 +737,6 @@ class SingleCharTextPainter extends BaseTextPainter {
 
             final ascent = -lineMetrics.ascent;
             final descent = lineMetrics.descent;
-            lineBaseline = max(lineBaseline, -ascent);
-            lineAscender ??= ascent;
-            lineDescender ??= lineMetrics.descent;
-            lineAscender = min(lineAscender, ascent);
-            lineDescender = max(lineDescender, descent);
 
             final charBounds = Rect.fromLTWH(
               lineMetrics.left,
@@ -723,8 +744,11 @@ class SingleCharTextPainter extends BaseTextPainter {
               charWidth,
               charHeight,
             );
-            lineList.add(
-              CharTextPainter(char, charPainter, charBounds: charBounds),
+            addCharTextPainter(
+              char,
+              charPainter,
+              charBounds,
+              descender: descent,
             );
           }
         }
@@ -734,9 +758,7 @@ class SingleCharTextPainter extends BaseTextPainter {
         for (final char in lineList) {
           char
             ..debugPaintBounds = debugPaintBounds
-            ..lineBaseline = (lineAscender ?? 0) > 0 /*字体无上升, 全在底下*/
-                ? -lineBaseline
-                : lineBaseline
+            ..lineBaseline = lineBaseline
             ..lineAscender = lineAscender ?? 0
             ..lineDescender = lineDescender ?? 0;
         }
@@ -786,7 +808,9 @@ class SingleCharTextPainter extends BaseTextPainter {
           //char.charBounds = matrix.mapRect(char.charBounds);
           char.charRotateMatrix = matrix
             ..postConcat(
-              createTranslateMatrix(tx: char.charOriginBounds.height),
+              createTranslateMatrix(
+                tx: char.charOriginBounds.height + char.charPathOffset.dy,
+              ),
             );
         }
       }
@@ -907,12 +931,21 @@ class SingleCharTextPainter extends BaseTextPainter {
       final startOffset = last.lineStartOffset;
       final lineWidth = last.lineWidth;
       final lineHeight = last.lineHeight;
-      _painterBounds = Rect.fromLTWH(
-        0,
-        0,
-        startOffset.dx + lineWidth,
-        startOffset.dy + lineHeight,
-      );
+      if (orientation.isVertical) {
+        _painterBounds = Rect.fromLTWH(
+          0,
+          0,
+          startOffset.dx + lineWidth,
+          lineMaxHeight,
+        );
+      } else {
+        _painterBounds = Rect.fromLTWH(
+          0,
+          0,
+          lineMaxWidth,
+          startOffset.dy + lineHeight,
+        );
+      }
     }
     this.charPainterList = charPainterList;
   }

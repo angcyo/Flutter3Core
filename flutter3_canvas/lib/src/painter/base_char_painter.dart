@@ -37,6 +37,10 @@ abstract class BaseCharPainter {
   @autoInjectMark
   Offset charOriginOffset = Offset.zero;
 
+  /// 调整[charPath]时的偏移, 在[charOriginOffset]之后, 还需要的偏移
+  @configProperty
+  Offset charPathOffset = Offset.zero;
+
   /// 字符对齐[lineBaseline]还需要的偏移量
   @autoInjectMark
   Offset charBaselineOffset = Offset.zero;
@@ -126,7 +130,7 @@ abstract class BaseCharPainter {
   @autoInjectMark
   Matrix4? charCurveMatrix;
 
-  BaseCharPainter({this.charBounds = Rect.zero}) {
+  BaseCharPainter({this.charBounds = Rect.zero, this.charPathOffset = .zero}) {
     charOriginOffset = charBounds.lt;
   }
 
@@ -143,7 +147,10 @@ abstract class BaseCharPainter {
 
   /// 绘制到0,0位置的矩阵
   Matrix4 get _charOriginMatrix => createTranslateMatrix(
-    offset: -charOriginOffset /*对齐0,0*/ + charBaselineOffset /*对齐baseline*/,
+    offset:
+        -charOriginOffset /*对齐0,0*/ +
+        charPathOffset /*额外偏移*/ +
+        charBaselineOffset /*对齐baseline*/,
   );
 
   /// 绘制到正确的位置时, 需要作用的矩阵
@@ -266,7 +273,13 @@ class CharPathPainter extends BaseCharPainter {
     return result;
   }
 
-  CharPathPainter(this.char, this.charPath, this.charPaint, {super.charBounds});
+  CharPathPainter(
+    this.char,
+    this.charPath,
+    this.charPaint, {
+    super.charBounds,
+    super.charPathOffset,
+  });
 
   /// 绘制
   @override
