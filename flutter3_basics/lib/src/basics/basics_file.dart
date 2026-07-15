@@ -498,8 +498,28 @@ extension FileEx on File {
   /// 从文件路径中读取图片
   /// [FileImage._loadAsync]
   /// [ImageStringEx.toImageFromFile]
-  Future<UiImage> toImage() async {
+  Future<UiImage> toImage({int? debugWidth, int? debugHeight}) async {
     final Uint8List bytes = await readAsBytes();
+
+    final name = filename;
+    if (name.endsWith(".rgb565a8") || name.endsWith(".rgb565")) {
+      if (debugWidth == null || debugHeight == null) {
+        //使用正则, 从文件名中获取宽高 .wxh.png 的格式
+        final match = RegExp(r"\.(\d+)x(\d+)\.");
+        final matchResult = match.firstMatch(name);
+        if (matchResult != null) {
+          debugWidth ??= int.parse(matchResult.group(1)!);
+          debugHeight ??= int.parse(matchResult.group(2)!);
+        }
+      }
+      if (debugWidth != null && debugHeight != null) {
+        return bytes.toImageFromRGB565A8Pixels(
+          debugWidth,
+          debugHeight,
+          useAlpha: name.endsWith(".rgb565a8"),
+        );
+      }
+    }
 
     /*final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromFilePath(this);
     final ui.Codec codec = await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);

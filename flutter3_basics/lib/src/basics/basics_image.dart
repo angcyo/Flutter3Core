@@ -251,9 +251,89 @@ extension ImageEx on UiImage {
   /// 获取图片的颜色数据
   /// [Uint8ListImageEx.toImageFromPixels]
   /// [ImageEx.toBytes]
+  /// [ImageEx.toPixels]
+  /// [ImageEx.toRGB565A8Pixels]
   Future<Uint8List?> toPixels([
     UiImageByteFormat format = UiImageByteFormat.rawRgba,
   ]) => toBytes(format);
+
+  /// 转换成 RGB565A8 像素数据
+  /// - [useAlpha] 是否使用透明度, 不使用就是 RGB565
+  /// - [endian] 存储字节的顺序
+  /// [ImageEx.toPixels]
+  /// [ImageEx.toRGB565A8Pixels]
+  /// [ImageEx.toRGB565A8Pixels]
+  /// [Uint8ListImageEx.toImageFromRGB565A8Pixels]
+  Future<Uint8List?> toRGB565A8Pixels({
+    bool useAlpha = true,
+    Endian endian = Endian.big,
+  }) async {
+    final width = this.width;
+    final height = this.height;
+    final pixelCount = width * height;
+
+    // 1. 获取原图的 RGBA8888 原始像素数据
+    final rgbaData = await toByteData(format: .rawRgba);
+    if (rgbaData == null) {
+      assert(() {
+        l.w("无法获取图片像素数据");
+        return true;
+      }());
+      return null;
+    }
+    // 2. 初始化输出缓冲区
+    // RGB565 占 2 字节/像素，A8 占 1 字节/像素，总计 3 字节/像素
+    final Uint8List output = Uint8List(pixelCount * (useAlpha ? 3 : 2));
+
+    // 为了提高写入效率，使用 ByteData 包装前 2/3 的 RGB565 区域
+    final ByteData outputBuffer = ByteData.view(
+      output.buffer,
+      0,
+      pixelCount * 2,
+    );
+
+    // A8 数据的起始偏移量 (紧跟在 RGB565 之后)
+    final int alphaOffset = pixelCount * 2;
+
+    int srcOffset = 0;
+    int dstRgbOffset = 0;
+
+    for (int i = 0; i < pixelCount; i++) {
+      // 读取原始的 R, G, B, A 8位通道值
+      final r8 = rgbaData.getUint8(srcOffset);
+      final g8 = rgbaData.getUint8(srcOffset + 1);
+      final b8 = rgbaData.getUint8(srcOffset + 2);
+      final a8 = rgbaData.getUint8(srcOffset + 3);
+
+      // --- 核心转换逻辑 ---
+      // RGB565 转换：将 8 位缩减到 5位/6位/5位
+      /*final r5 = (r8 >> 3) & 0x1F; // 取高5位
+      final g6 = (g8 >> 2) & 0x3F; // 取高6位
+      final b5 = (b8 >> 3) & 0x1F; // 取高5位*/
+
+      final r5 = ((r8 * 249 + 1014) >> 11) & 0x1F; // 更加精准的 8bit 转 5bit 映射
+      final g6 = ((g8 * 253 + 505) >> 10) & 0x3F; // 更加精准的 8bit 转 6bit 映射
+      final b5 = ((b8 * 249 + 1014) >> 11) & 0x1F;
+
+      // 拼装成一个 16 位的无符号整数 (根据硬件端字节序调整，这里默认大端序 Big-Endian)
+      // 如果硬件需要小端序(Little-Endian)，请改用下面的 Little-Endian 拼装
+      final rgb565 = (r5 << 11) | (g6 << 5) | b5;
+
+      // 写入 RGB565 数据到前半段缓冲区 (占 2 字节)
+      outputBuffer.setUint16(dstRgbOffset, rgb565, endian);
+
+      // 写入 A8 数据到后半段缓冲区 (占 1 字节)
+      if (useAlpha) {
+        output[alphaOffset + i] = a8;
+      }
+
+      // 指针递增
+      srcOffset += useAlpha ? 4 : 3; // 读指针跳过 4 字节 (RGBA)
+      dstRgbOffset += 2; // 写指针跳过 2 字节 (RGB565)
+    }
+
+    return output;
+  }
 
   /// 获取图片中的像素值
   Future<int?> getPixelColor(int x, int y) async {
@@ -568,6 +648,201 @@ extension ImageEx on UiImage {
   }
 }
 
+extension ByteDataEx on ByteData {
+  /// [Uint8List]
+  /// [ImageByteFormat.rawRgba]
+  /// [Uint8List.sublistView]
+  Uint8List get bytes => buffer.asUint8List();
+
+  /// ```
+  /// // 接收方
+  /// final received = (message as TransferableTypedData).materialize().asUint8List();
+  /// ```
+  TransferableTypedData get transferable => bytes.transferable;
+
+  /// [Image].[StatefulWidget]
+  /// `class Image extends StatefulWidget`
+  Image toImageWidget() => bytes.toImageWidget();
+
+  /// [ui.Image]
+  /// [ImageEx.toBytes]
+  Future<ui.Image> toImage() => bytes.toImage();
+
+  /// [MemoryImage]
+  MemoryImage toMemoryImage() => bytes.toMemoryImage();
+
+  /// 转换成base64字符串图片, 带协议头
+  /// [ImageStringEx.toImageFromBase64]
+  String toBase64Image([UiImageByteFormat format = UiImageByteFormat.png]) =>
+      bytes.toBase64Image(format);
+}
+
+/// [UiImageEx]
+/// [Uint8ListImageEx]
+extension Uint8ListImageEx on Uint8List {
+  /// 转换成文本字符串
+  String toTextString([bool allowMalformed = true]) =>
+      utf8.decode(this, allowMalformed: allowMalformed);
+
+  /// [ByteDataEx.bytes]
+  ByteData get byteData => buffer.asByteData();
+
+  /// ```
+  /// // 接收方
+  /// final received = (message as TransferableTypedData).materialize().asUint8List();
+  /// ```
+  TransferableTypedData get transferable =>
+      TransferableTypedData.fromList([this]);
+
+  /// 使用[MemoryImage]显示内存字节图片数据
+  /// [Image].[StatefulWidget]
+  /// `class Image extends StatefulWidget`
+  Image toImageWidget({
+    double scale = 1.0,
+    BoxFit? fit = BoxFit.cover,
+    double? width,
+    double? height,
+    Color? tintColor,
+    int? memCacheWidth,
+    int? memCacheHeight,
+  }) => Image.memory(
+    this,
+    scale: scale,
+    fit: fit,
+    width: width,
+    height: height,
+    color: tintColor,
+    cacheWidth: memCacheWidth,
+    cacheHeight: memCacheHeight,
+    errorBuilder: (context, error, stackTrace) =>
+        GlobalConfig.of(context).errorPlaceholderBuilder(context, error),
+  );
+
+  /// 解码图片字节数据
+  /// [ui.Image]
+  /// [ui.Codec.getNextFrame]
+  /// [FlutterVectorGraphicsListener.onImage]
+  ///
+  /// ```
+  /// final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+  /// final Codec codec = await descriptor.instantiateCodec();
+  /// final FrameInfo info = await codec.getNextFrame();
+  /// info.image;
+  /// ```
+  ///
+  /// [ImageEx.toBytes]
+  Future<ui.Image> toImage() => decodeImageFromList(this);
+
+  /// 将[PixelFormat.rgba8888]颜色格式的像素数据转换成图片
+  /// [ImageEx.toPixels]
+  Future<ui.Image> toImageFromPixels(
+    int width,
+    int height, [
+    ui.PixelFormat format = ui.PixelFormat.rgba8888,
+  ]) {
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+    ui.decodeImageFromPixels(this, width, height, format, completer.complete);
+    return completer.future;
+  }
+
+  /// 将[RGB565A8]颜色格式的像素数据转换成图片
+  ///
+  /// - [useAlpha] 是否使用透明度, 不使用就是 RGB565
+  /// - [endian] 存储字节的顺序
+  ///
+  /// [ImageEx.toPixels]
+  /// [ImageEx.toRGB565A8Pixels]
+  /// [Uint8ListImageEx.toImageFromRGB565A8Pixels]
+  Future<ui.Image> toImageFromRGB565A8Pixels(
+    int width,
+    int height, {
+    bool useAlpha = true,
+    Endian endian = Endian.big,
+  }) {
+    final bytes = this;
+    final int pixelCount = width * height;
+    final int rgb565Size = pixelCount * 2;
+
+    // 数据长度校验
+    if (useAlpha && bytes.length < pixelCount * 3) {
+      throw ArgumentError(
+        "包含Alpha通道时，数据长度至少需要 ${pixelCount * 3} 字节，当前只有 ${bytes.length} 字节",
+      );
+    } else if (!useAlpha && bytes.length < rgb565Size) {
+      throw ArgumentError(
+        "不包含Alpha通道时，数据长度至少需要 $rgb565Size 字节，当前只有 ${bytes.length} 字节",
+      );
+    }
+
+    // 1. 创建目标 RGBA8888 缓冲区 (4 字节/像素)
+    final Uint8List rgbaBytes = Uint8List(pixelCount * 4);
+
+    // 2. 用 ByteData 包装输入的 RGB565 前半段区域，方便按 16 位读取
+    final ByteData rgb565Buffer = ByteData.view(
+      bytes.buffer,
+      bytes.offsetInBytes,
+      rgb565Size,
+    );
+
+    // A8 数据的起始偏移量 (紧跟在 RGB565 之后)
+    final int alphaOffset = rgb565Size;
+
+    int dstOffset = 0;
+
+    for (int i = 0; i < pixelCount; i++) {
+      // 读取 16 位的 RGB565 像素值 (根据硬件端传来的字节序读取)
+      final int rgb565 = rgb565Buffer.getUint16(i * 2, endian);
+
+      // --- 核心反解逻辑：从 16 位中拆出 R, G, B ---
+      // 提取高 5 位，并左移 3 位还原为 8 位。使用 | (r5 >> 2) 进行低位补全，防止图片变暗
+      final int r5 = (rgb565 >> 11) & 0x1F;
+      final int r8 = (r5 << 3) | (r5 >> 2);
+
+      // 提取中间 6 位，并左移 2 位还原为 8 位。使用 | (g6 >> 4) 进行低位补全
+      final int g6 = (rgb565 >> 5) & 0x3F;
+      final int g8 = (g6 << 2) | (g6 >> 4);
+
+      // 提取低 5 位，并左移 3 位还原为 8 位。使用 | (b5 >> 2) 进行低位补全
+      final int b5 = rgb565 & 0x1F;
+      final int b8 = (b5 << 3) | (b5 >> 2);
+
+      // --- 处理 Alpha 通道 ---
+      int a8 = 255; // 默认完全不透明
+      if (useAlpha) {
+        a8 = bytes[alphaOffset + i]; // 从后半段的 A8 区域读取对应的透明度值
+      }
+
+      // 3. 写入 RGBA8888 目标缓冲区
+      rgbaBytes[dstOffset] = r8; // R
+      rgbaBytes[dstOffset + 1] = g8; // G
+      rgbaBytes[dstOffset + 2] = b8; // B
+      rgbaBytes[dstOffset + 3] = a8; // A
+
+      dstOffset += 4;
+    }
+
+    // 4. 将还原后的 RGBA8888 像素数组交付给 Flutter 生成 ui.Image
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+    ui.decodeImageFromPixels(
+      rgbaBytes,
+      width,
+      height,
+      ui.PixelFormat.rgba8888,
+      completer.complete,
+    );
+
+    return completer.future;
+  }
+
+  /// [MemoryImage]
+  MemoryImage toMemoryImage() => MemoryImage(this);
+
+  /// 转换成base64字符串图片, 带协议头
+  /// [ImageStringEx.toImageFromBase64]
+  String toBase64Image([UiImageByteFormat format = UiImageByteFormat.png]) =>
+      'data:image/${format == UiImageByteFormat.png ? "png" : "jpeg"};base64,${base64Encode(this)}';
+}
+
 extension ImageStringEx on String {
   /// 从Base64字符串中读取图片
   /// [ByteDataEx.toBase64Image]
@@ -600,8 +875,10 @@ extension ImageStringEx on String {
   /// 从文件路径中读取图片
   /// [FileImage._loadAsync]
   /// [FileEx.toImage]
-  Future<ui.Image> toImageFromFile() =>
-      isHttpScheme ? toImageFromHttp() : File(this).toImage();
+  Future<ui.Image> toImageFromFile({int? debugWidth, int? debugHeight}) =>
+      isHttpScheme
+      ? toImageFromHttp()
+      : File(this).toImage(debugWidth: debugWidth, debugHeight: debugHeight);
 
   /// 从网络路径中读取图片
   Future<ui.Image> toImageFromHttp() async {
