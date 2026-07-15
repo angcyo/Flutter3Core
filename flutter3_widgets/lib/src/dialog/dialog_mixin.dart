@@ -1030,7 +1030,10 @@ extension DialogExtension on BuildContext {
         mouseCursor: onTap == null
             ? SystemMouseCursors.forbidden
             : SystemMouseCursors.basic,
-        child: e,
+        child: e.colorFiltered(
+          enable: onTap == null,
+          color: GlobalTheme.of(this).textDisableStyle.color,
+        ),
       );
     }).toList();
 

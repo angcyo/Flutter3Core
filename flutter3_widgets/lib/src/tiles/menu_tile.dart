@@ -135,6 +135,8 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+
     //build label
     Widget? label = widget.buildLabelWidgetMixin(context);
     if (label != null && !isNil(widget.labelActions)) {
@@ -399,6 +401,7 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
                 },
           borderRadius: BorderRadius.circular(radius),
           enable: widget.enable ?? isEnableTap,
+          disableColor: !isEnableTap,
         )
         .material()
         .paddingOnly(horizontal: kM, vertical: kM, insets: widget.tilePadding)
