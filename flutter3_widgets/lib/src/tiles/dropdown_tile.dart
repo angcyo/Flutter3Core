@@ -713,12 +713,15 @@ class _DropdownTileState extends State<DropdownTile> {
       decoration: CustomDropdownDecoration(
         closedFillColor: globalTheme.themeWhiteColor,
         expandedFillColor: globalTheme.themeWhiteColor,
+        hintStyle: globalTheme.textGeneralStyle,
+        /*headerStyle: globalTheme.textGeneralStyle,*/
       ),
+      /*disabledDecoration: CustomDropdownDisabledDecoration(),*/
       /*closedHeaderPadding: insets(),
       expandedHeaderPadding: insets(),*/
-      /*itemsListPadding: ,
-      listItemPadding: ,*/
-      /*searchHintText: "searchHintText",*/
+      /*itemsListPadding: insets(),
+      listItemPadding: insets(),*/
+       /*searchHintText: "searchHintText",*/
       /*hideSelectedFieldWhenExpanded:,*/
       initialItem: widget.dropdownValue,
       /*initialItems: widget.dropdownValue,*/
