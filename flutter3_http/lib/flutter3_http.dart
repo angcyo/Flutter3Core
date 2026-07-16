@@ -41,5 +41,6 @@ part 'src/doh/r_doh.dart';
 part 'src/http.dart';
 part 'src/http_interceptor.dart';
 part 'src/network_string_loader.dart';
+part 'src/pub_apis.dart';
 part 'src/webhook.dart';
 // @formatter:on

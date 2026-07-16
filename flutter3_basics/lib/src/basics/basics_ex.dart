@@ -124,7 +124,8 @@ extension DynamicEx on dynamic {
 
   /// 直接转成json字符串
   /// [toJsonString]
-  String toJsonString() => (this as Object).toJsonString(null);
+  String toJsonString([String? indent]) =>
+      (this as Object).toJsonString(indent);
 
   /// [runtimeType]
   /// [toString]
@@ -702,6 +703,9 @@ extension StringEx on String {
 
   /// 判断当前字符串是否是ip字符串
   bool get isIpStr => isMatch(r'^(\d{1,3}\.){3}\d{1,3}$');
+
+  /// 判断当前字符串是否是ip v6字符串
+  bool get isIpv6Str => isMatch(r'^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$');
 
   /// 取ip地址的前3段
   String get subnet => contains(".") ? substring(0, lastIndexOf('.')) : "";
