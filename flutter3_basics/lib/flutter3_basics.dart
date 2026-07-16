@@ -223,11 +223,24 @@ typedef GestureContextTapCallback = void Function(BuildContext contet);
 
 /// [GestureContextTapCallback] 带按下事件信息的回调
 typedef GestureContextTapDownCallback =
-    void Function(BuildContext contet, TapDownDetails details);
+void Function(BuildContext contet, TapDownDetails details);
 
 /// [GestureTapCallback] 异步手势回调
 /// [GestureContextTapCallback]
 typedef AsyncGestureContextTapCallback = FutureOr Function(BuildContext contet);
+
+/// 像素配置类型
+enum PixelConfigType {
+  rgb565(".rgb565"),
+  rgb565a8(".rgb565a8"),
+  rgba8888(".rgba8888"),
+  ;
+
+  /// 后缀
+  final String suffix;
+
+  const PixelConfigType(this.suffix);
+}
 
 ///[isNullOrEmpty]
 bool isNil(dynamic value) => isNullOrEmpty(value);
@@ -277,8 +290,7 @@ bool isNullOrEmpty(dynamic value) {
 
 /// 将所有非空对象转换为字符串
 /// [separator] 分隔符
-String join(
-  String separator, [
+String join(String separator, [
   Object? part1,
   Object? part2,
   Object? part3,

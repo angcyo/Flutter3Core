@@ -502,9 +502,10 @@ extension FileEx on File {
     final Uint8List bytes = await readAsBytes();
 
     final name = filename;
-    if (name.endsWith(".rgba8888") ||
-        name.endsWith(".rgb565a8") ||
-        name.endsWith(".rgb565")) {
+    final pixelType = PixelConfigType.values.findFirst(
+      (e) => name.endsWith(e.suffix),
+    );
+    if (pixelType != null) {
       if (debugWidth == null || debugHeight == null) {
         //使用正则, 从文件名中获取宽高 .wxh.png 的格式
         final match = RegExp(r"\.(\d+)x(\d+)\.");
@@ -515,14 +516,16 @@ extension FileEx on File {
         }
       }
       if (debugWidth != null && debugHeight != null) {
-        if (name.endsWith(".rgba8888")) {
+        if (pixelType == .rgba8888) {
           return bytes.toImageFromPixels(debugWidth, debugHeight);
         }
         return bytes.toImageFromRGB565A8Pixels(
           debugWidth,
           debugHeight,
-          useAlpha: name.endsWith(".rgb565a8"),
+          useAlpha: pixelType == .rgb565a8,
         );
+      } else if (pixelType == .rgba8888) {
+        return bytes.toImage();
       }
     }
 
