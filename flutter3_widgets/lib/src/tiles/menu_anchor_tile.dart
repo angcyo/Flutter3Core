@@ -75,6 +75,9 @@ class MenuTriggerWidget extends StatefulWidget {
   /// 菜单项
   final List<Widget>? menuChildren;
 
+  /// 菜单项的构建
+  final List<Widget>? Function(BuildContext context)? menuChildrenBuilder;
+
   /// 是否显示有菜单时的提示小部件
   /// - 默认有菜单时, 自动显示
   @autoInjectMark
@@ -101,6 +104,7 @@ class MenuTriggerWidget extends StatefulWidget {
     this.menuBgColor,
     //--items
     this.menuChildren,
+    this.menuChildrenBuilder,
     this.showMoreMenuTip,
     this.moreMenuTipWidget,
   });
@@ -159,8 +163,11 @@ class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
           backgroundColor: WidgetStatePropertyAll(menuBgColor),
           alignment: widget.alignment ?? (isDesktopOrWeb ? .topRight : null),
         );
+    final menuChildren =
+        widget.menuChildrenBuilder?.call(context) ??
+        widget.menuChildren;
     final showMoreMenuTip =
-        widget.showMoreMenuTip ?? widget.menuChildren?.isNotEmpty == true;
+        widget.showMoreMenuTip ?? menuChildren?.isNotEmpty == true;
     final hoverDecoration =
         widget.hoverDecoration ??
         fillDecoration(
@@ -183,7 +190,7 @@ class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
         //菜单对齐之后, 额外的偏移量
         alignmentOffset: widget.alignmentOffset ?? .zero,
         reservedPadding: .zero /*insets(all: 8)*/,
-        menuChildren: _wrapHoverMenChildren(widget.menuChildren),
+        menuChildren: _wrapHoverMenChildren(menuChildren),
         builder: (context, menuController, child) {
           //--body
           Widget body =
@@ -331,6 +338,8 @@ class SubmenuTriggerWidget extends StatefulWidget {
   /// 菜单项
   final List<Widget>? menuChildren;
 
+  final List<Widget>? Function(BuildContext context)? menuChildrenBuilder;
+
   //MARK: SubmenuButton
 
   /// 菜单首部图标
@@ -351,6 +360,7 @@ class SubmenuTriggerWidget extends StatefulWidget {
     this.menuStyle,
     this.menuBgColor,
     this.menuChildren,
+    this.menuChildrenBuilder,
     //--
     this.buttonStyle,
     this.leadingIcon,
@@ -372,6 +382,8 @@ class _SubmenuTriggerWidgetState extends State<SubmenuTriggerWidget> {
           backgroundColor: WidgetStatePropertyAll(menuBgColor),
           alignment: .topRight,
         );
+    final menuChildren =
+        widget.menuChildrenBuilder?.call(context) ?? widget.menuChildren;
     return SubmenuButton(
       animated: true,
       /*onAnimationStatusChanged: ,*/
@@ -395,7 +407,7 @@ class _SubmenuTriggerWidgetState extends State<SubmenuTriggerWidget> {
       menuStyle: menuStyle,
       leadingIcon: widget.leadingIcon,
       trailingIcon: widget.trailingIcon,
-      menuChildren: _wrapHoverMenChildren(context, widget.menuChildren),
+      menuChildren: _wrapHoverMenChildren(context, menuChildren),
       child: widget.child,
     ).paddingOnly(horizontal: kM, vertical: kM, insets: widget.margin);
   }
@@ -471,6 +483,7 @@ extension MenuTriggerWidgetEx on Widget {
   MenuTriggerWidget menuTrigger({
     Key? key,
     List<Widget>? menuChildren,
+    List<Widget>? Function(BuildContext context)? menuChildrenBuilder,
     bool hoverTrigger = false,
     bool? showMoreMenuTip,
     Widget? moreMenuTipWidget,
@@ -486,6 +499,7 @@ extension MenuTriggerWidgetEx on Widget {
       key: key,
       hoverTrigger: hoverTrigger,
       menuChildren: menuChildren,
+      menuChildrenBuilder: menuChildrenBuilder,
       showMoreMenuTip: showMoreMenuTip,
       moreMenuTipWidget: moreMenuTipWidget,
       hoverDecoration: hoverDecoration,
@@ -504,6 +518,7 @@ extension MenuTriggerWidgetEx on Widget {
   SubmenuTriggerWidget submenuTrigger({
     Key? key,
     List<Widget>? menuChildren,
+    List<Widget>? Function(BuildContext context)? menuChildrenBuilder,
     EdgeInsets? margin,
     ButtonStyle? buttonStyle,
   }) {
@@ -512,6 +527,7 @@ extension MenuTriggerWidgetEx on Widget {
       buttonStyle: buttonStyle,
       margin: margin,
       menuChildren: menuChildren,
+      menuChildrenBuilder: menuChildrenBuilder,
       child: this,
     );
   }

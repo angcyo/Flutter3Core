@@ -371,18 +371,22 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   Future<HttpServer> start({
     bool checkNetwork = true,
     int retryCount = 5,
+    String? ip,
+    int? port,
   }) async {
     _startUdpBroadcast();
     final server = await super.start(
       checkNetwork: checkNetwork,
       retryCount: retryCount,
+      ip: ip,
+      port: port,
     );
     debugLogServerAddressStream << address;
     return server;
   }
 
   @override
-  void stop() {
+  Future stop() async {
     //发送一个停止udp广播
     sendUdpBroadcast(
       udpBroadcastPort,

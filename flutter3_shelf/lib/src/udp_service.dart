@@ -8,10 +8,7 @@ part of '../flutter3_shelf.dart';
 /// 使用UDP进行数据广播以及接收
 class UdpService {
   /// 判断指定主机和端口是否被占用
-  static Future<bool> isPortOccupied(
-    int port, {
-    String? hostname,
-  }) async {
+  static Future<bool> isPortOccupied(int port, {String? hostname}) async {
     // 创建一个尝试连接到指定主机和端口的 Socket。
     Socket? socket;
     try {
@@ -68,17 +65,22 @@ class UdpService {
     return null;
   }
 
-  /// 获取一个随机可用的端口
+  /// 获取一个随机可用的端口, 分配端口.
+  /// - [isRandom] 是否随机分配端口, 否则顺序获取
   @api
-  static Future<int> generatePort() async {
+  static Future<int> generatePort({
+    int min = 1111,
+    int max = 65535,
+    bool isRandom = true,
+  }) async {
     //被占用的端口
     List<int> occupiedPorts = [];
+    int count = 0;
     int nextPort() {
-      final min = 1111;
-      final max = 65535;
-      int port = nextInt(max, min);
+      int port = isRandom ? nextInt(max, min) : min + count;
       while (occupiedPorts.contains(port)) {
-        port = nextInt(max, min);
+        count++;
+        port = isRandom ? nextInt(max, min) : min + count;
       }
       return port;
     }
@@ -154,7 +156,9 @@ class UdpService {
     packet.port; //数据包来自客户端的端口
     //final body = packet.data.utf8Str;
     assert(() {
-      l.v("客户端收到数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}");
+      l.v(
+        "客户端收到数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}",
+      );
       return true;
     }());
   }
@@ -184,7 +188,7 @@ class UdpService {
     stopClient();
   }
 
-//endregion api
+  //endregion api
 }
 
 /// 默认实现
@@ -387,7 +391,9 @@ class DefaultUdpService extends UdpService {
     } catch (e, s) {
       //非法格式的数据
       assert(() {
-        l.v("无法解析的数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}");
+        l.v(
+          "无法解析的数据包[${packet.address}:${packet.port}]->${packet.data.size().toSizeStr()}",
+        );
         printError(e, s);
         return true;
       }());
@@ -397,7 +403,9 @@ class DefaultUdpService extends UdpService {
   /// 专心处理客户端心跳消息
   @overridePoint
   void onSelfServerHandleClientPacket(
-      UdpPacketBean packet, UdpClientInfoBean bean) {
+    UdpPacketBean packet,
+    UdpClientInfoBean bean,
+  ) {
     //debugger();
     final deviceId = bean.deviceId ??= packet.deviceId;
     final client = getServerClientInfo(deviceId);
@@ -457,7 +465,9 @@ class DefaultUdpService extends UdpService {
   /// 专心处理客户端的消息
   @overridePoint
   void onSelfServerHandleMessagePacket(
-      UdpPacketBean packet, UdpMessageBean bean) {
+    UdpPacketBean packet,
+    UdpMessageBean bean,
+  ) {
     final deviceId = bean.deviceId ??= packet.deviceId;
     final have = haveServerClient(deviceId);
     if (!have) {
@@ -541,7 +551,8 @@ class DefaultUdpService extends UdpService {
       _clientUdp = udp;
       //--
       onSelfClientInfoChanged(
-          ServiceInfoBean()..servicePort = udp.local.port?.value ?? -1);
+        ServiceInfoBean()..servicePort = udp.local.port?.value ?? -1,
+      );
       //--启动心跳
       _heartTimer = Timer.periodic(heartPeriod, (timer) {
         sendBroadcastHeart();
@@ -652,7 +663,9 @@ class DefaultUdpService extends UdpService {
     try {
       final udp = await UDP.bind(Endpoint.any());
       final result = await udp.send(
-          data, Endpoint.unicast(InternetAddress(host), port: Port(port)));
+        data,
+        Endpoint.unicast(InternetAddress(host), port: Port(port)),
+      );
       udp.close();
       return true;
     } catch (e, s) {
@@ -671,8 +684,9 @@ class DefaultUdpService extends UdpService {
     packet.packetId ??= $uuid;
     packet.deviceId ??= $deviceUuid;
     packet.time ??= nowTime();
-    final length =
-        await sendBroadcast(packet.toJson().toJsonString(null).bytes);
+    final length = await sendBroadcast(
+      packet.toJson().toJsonString(null).bytes,
+    );
     return (length ?? 0) > 0;
   }
 
@@ -705,7 +719,7 @@ class DefaultUdpService extends UdpService {
     return sendBroadcastPacket(packet);
   }
 
-//endregion 客户端
+  //endregion 客户端
 }
 
 /// 默认的udp服务

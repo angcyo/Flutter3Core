@@ -184,6 +184,8 @@ class Flutter3ShelfHttp {
   Future<HttpServer> start({
     bool checkNetwork = true,
     int retryCount = 5,
+    String? ip,
+    int? port,
   }) async {
     //debugger();
     final handler = createHandler();
@@ -191,13 +193,14 @@ class Flutter3ShelfHttp {
     while (count <= retryCount) {
       try {
         //debugger();
-        final ip = (await $getLocalIp()) ?? (await $getWifiIp());
+        ip ??= (await $getLocalIp()) ?? (await $getWifiIp());
         if (checkNetwork && ip == null) {
           throw "无法获取网络IP, 请检查网络连接!";
         }
         host = ip ?? host;
+        this.port = port ?? this.port;
         //debugger();
-        _httpServer = await shelf_io.serve(handler, host, port).get((
+        _httpServer = await shelf_io.serve(handler, host, this.port).get((
           value,
           error,
         ) {
@@ -225,8 +228,12 @@ class Flutter3ShelfHttp {
       } catch (e) {
         //debugger();
         //if (e is SocketException) debugger();
+        assert(() {
+          l.w("启动失败:$e");
+          return true;
+        }());
         if (e is! String) {
-          port++;
+          this.port++;
           count++;
         } else {
           rethrow;
@@ -242,9 +249,9 @@ class Flutter3ShelfHttp {
 
   /// 停止服务
   @api
-  void stop() {
+  Future stop() async {
     try {
-      _httpServer?.close();
+      await _httpServer?.close();
       startTime = 0;
       stopTime = nowTimestamp();
     } catch (e, s) {
