@@ -69,6 +69,7 @@ extension ObjectLogEx on Object {
   ///
   /// [writeToFile]
   Future<File> saveToFile(dynamic file, {bool? share}) async {
+    assert(file is File || file is String);
     final result = await writeToFile(
       file: file is File ? file : "$file".file(),
     );
