@@ -8,6 +8,56 @@ part of '../flutter3_http.dart';
 class PubApis {
   PubApis._();
 
+  /// 不同语言对应的国家语言映射
+  static final Map<String, Map<String, String>> countryCodeFlagMap = {};
+
+  /// 获取国家代码对应的国家名称
+  /// - [countryCode]国家代码 https://countrycode.org/
+  ///   - "ca": "加拿大",
+  ///   - "us": "美国",
+  ///   - "cn": "中国",
+  ///   - "jp": "日本",
+  ///   - "kr": "韩国",
+  ///   - "tw": "台灣", // "tw": "中華民國",
+  ///   - "hk": "中国香港",
+  /// - [languageCode]语言代码 https://i18ns.com/languagecode.html
+  ///   - "zh": "中文",
+  ///   - "en": "English",
+  ///   - "ja": "日本",
+  ///   - "ko": "한국어",
+  ///   - "fr": "Français",
+  ///   - "de": "Deutsch",
+  ///
+  /// https://flagicons.lipis.dev/
+  /// https://flagpedia.asia/
+  static Future<String?> countryCodeToCountryName(
+    String? countryCode, {
+    String? languageCode,
+    bool? showErrorToast = true,
+    bool? throwError = false,
+  }) async {
+    languageCode ??= "zh";
+    final cache = countryCodeFlagMap[languageCode];
+    if (cache != null) {
+      return cache[countryCode];
+    }
+    final url = "https://flagcdn.com/$languageCode/codes.json";
+    Map<String, dynamic>? map;
+    await url.dioGetString().http(
+      (data, error) {
+        if (data is String) {
+          map = jsonDecode(data);
+          countryCodeFlagMap[languageCode!] = map!.map(
+            (key, value) => MapEntry(key, value.toString()),
+          );
+        }
+      },
+      showErrorToast: showErrorToast,
+      throwError: throwError,
+    );
+    return map?[countryCode];
+  }
+
   /// 获取ip对应的信息
   /// ```
   /// {
@@ -43,13 +93,13 @@ class PubApis {
   ///   "longitude" : 114.0683
   /// }
   /// ```
-  static Future<Map<String, dynamic>?> getGeoIpInfo(
+  static Future<LibGeoIpBean?> getGeoIpInfo(
     String? ip, {
     bool? showErrorToast = true,
     bool? throwError = false,
   }) async {
     final url = "https://api.ip.sb/geoip/$ip";
-    Map<String, dynamic>? result;
+    LibGeoIpBean? result;
     await url
         .dioGetString(
           headers: {
@@ -62,7 +112,18 @@ class PubApis {
         .http(
           (data, error) {
             if (data is String) {
-              result = jsonDecode(data);
+              result = LibGeoIpBean.fromJson(jsonDecode(data));
+              final countryCode = result?.countryCode;
+              if (countryCode != null) {
+                countryCodeToCountryName(countryCode.toLowerCase()).get((
+                  value,
+                  error,
+                ) {
+                  if (value is String) {
+                    result?.countryName = value;
+                  }
+                });
+              }
             }
           },
           showErrorToast: showErrorToast,
@@ -90,6 +151,5 @@ extension PubApisStringEx on String {
   }
 
   /// 获取ip对应信息
-  Future<Map<String, dynamic>?> get geoIpInfo async =>
-      PubApis.getGeoIpInfo(this);
+  Future<LibGeoIpBean?> get geoIpInfo async => PubApis.getGeoIpInfo(this);
 }

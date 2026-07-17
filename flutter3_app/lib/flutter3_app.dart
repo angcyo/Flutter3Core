@@ -22,7 +22,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'src/mode/lib_app_setting_bean.dart';
 
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
@@ -32,9 +31,6 @@ export 'package:package_info_plus/package_info_plus.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:share_plus/share_plus.dart';
 
-export 'src/mode/lib_app_setting_bean.dart';
-export 'src/mode/lib_app_version_bean.dart';
-export 'src/mode/lib_label_value_bean.dart';
 export 'src/pages/app_about_dialog.dart';
 export 'src/pages/app_update_dialog.dart';
 

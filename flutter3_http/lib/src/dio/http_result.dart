@@ -63,7 +63,7 @@ class HttpResultHandle {
       }
     } else {
       assert(() {
-        l.w("未处理的response类型[${response.runtimeType}]");
+        l.w("未处理的 response 类型[${response.runtimeType}], 请自行处理!");
         return true;
       }());
       return response;

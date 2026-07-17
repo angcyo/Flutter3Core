@@ -100,6 +100,9 @@ typedef WidgetOf = dynamic;
 /// 在一个数据中, 提取Widget
 /// - [tryTextWidget] 是否尝试使用[Text]小部件
 /// - [textSelectable] 是否可选择文本
+///
+/// - [IWidgetProvider]
+/// - [ITextProvider]
 Widget? widgetOf(
   BuildContext? context,
   dynamic data, {
