@@ -32,7 +32,8 @@ class Flutter3ShelfHttp {
   String? address;
 
   /// 接口路由处理路由
-  final _router = Router();
+  /// - [notFoundHandler] 404处理
+  final _router = Router(/*notFoundHandler: _defaultNotFound*/);
 
   /// http核心服务服务
   @autoInjectMark
@@ -55,6 +56,7 @@ class Flutter3ShelfHttp {
     });
   }
 
+  ///
   /// [handler]需要时[shelf.Handler]类型
   /// [shelf.Request]
   void get(String route, Function handler) => _router.get(route, handler);
@@ -141,6 +143,61 @@ class Flutter3ShelfHttp {
         );
       }
       return shelf.Response(500, body: text);
+    });
+  }
+
+  /// 添加一个下载文件的接口
+  /// ```
+  /// "/download?filePath=/storage/emulated/0/Download/test.txt"
+  /// ```
+  /// - [onGetFileAction] 获取对应的文件
+  void download({
+    String route = "/download",
+    File? Function(String filePath)? onGetFileAction,
+  }) {
+    // 注册文件下载接口，通过路由参数传递文件名
+    _router.get(route, (shelf.Request request) async {
+      // 1. 确定文件在服务器上的实际物理路径（假设存放在服务器运行目录的 'downloads' 文件夹下）
+      // 💡 安全提示：务必对文件名进行过滤，防止通过 '../' 进行任意文件遍历攻击
+      final filePath = request.url.queryParameters["filePath"]?.decodeUri();
+      if (filePath == null || filePath.isEmpty) {
+        return shelf.Response.notFound('文件不存在: $filePath');
+      }
+
+      final file = onGetFileAction == null
+          ? File(filePath)
+          : onGetFileAction(filePath);
+
+      // 2. 检查文件是否存在
+      if (file == null || !await file.exists()) {
+        return shelf.Response.notFound('文件不存在: $filePath');
+      }
+      final safeFilename = file.filename;
+      // 3. 获取文件长度，用于告知客户端下载进度
+      final fileLength = await file.length();
+
+      // 4. 【核心】以数据流（Stream<List<int>>）的形式打开文件
+      final fileStream = file.openRead();
+
+      // 5. 返回响应，并配置标准的 HTTP 响应头
+      return shelf.Response.ok(
+        fileStream, // 直接将流作为 body 传入
+        headers: {
+          // 告诉浏览器这是一个需要下载的附件，并指定默认保存的文件名
+          // 使用 Uri.encodeComponent 确保中文文件名不会变成乱码
+          'Content-Disposition':
+              'attachment; filename="${Uri.encodeComponent(safeFilename)}"',
+
+          // 告诉客户端文件的总字节数，以便客户端（如 Flutter 的 Dio）展示进度条
+          'Content-Length': fileLength.toString(),
+
+          // 二进制流的通用媒体类型
+          'Content-Type': 'application/octet-stream',
+
+          // 允许跨域（如果是 Flutter Web 客户端下载，这很关键）
+          'Access-Control-Allow-Origin': '*',
+        },
+      );
     });
   }
 
