@@ -62,8 +62,21 @@ extension ObjectLogEx on Object {
     bool useCacheFolder = true,
   }) async => "$this".filePathOf(subFolder, useCacheFolder);
 
+  /// 写入到指定文件
+  /// - [file] 文件对象[File]或文件路径[String]
+  /// - [share] 是否要分享/另存这个文件?
+  ///   - [GlobalConfig.saveFileFn]
+  ///
   /// [writeToFile]
-  Future<File> saveToFile(File? file) => writeToFile(file: file);
+  Future<File> saveToFile(dynamic file, {bool? share}) async {
+    final result = await writeToFile(
+      file: file is File ? file : "$file".file(),
+    );
+    if (share == true) {
+      await saveFilePath(result.path);
+    }
+    return result;
+  }
 
   /// 写入到文件, 返回对应的文件
   /// [file] 直接指定文件, 否则会根据[fileName].[folder]生成文件对象
