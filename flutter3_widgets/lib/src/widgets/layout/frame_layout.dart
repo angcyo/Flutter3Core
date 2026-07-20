@@ -41,11 +41,13 @@ class FrameLayout extends MultiChildRenderObjectWidget {
 class FrameLayoutParentData extends ContainerBoxParentData<RenderBox> {
   FrameLayoutParentData();
 
+  ///
   @override
   void detach() {
     super.detach();
   }
 
+  ///
   @override
   String toString() {
     return super.toString();

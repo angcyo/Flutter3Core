@@ -24,6 +24,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_widgets/src/dialog/dialog.dart';
 import 'package:flutter3_widgets/src/popup/popup_mix.dart';
+import 'package:flutter3_widgets/src/widgets/layout/dial_layout_helper.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart'
     as cl_layout;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -153,6 +154,7 @@ part 'src/widgets/animate_gradient_widget.dart';
 part 'src/widgets/image_render_widget.dart';
 part 'src/widgets/layout/magnifier_layout.dart';
 part 'src/widgets/layout/constraintlayout.dart';
+part 'src/widgets/layout/dial_layout.dart';
 part 'src/widgets/layout/left_center_right_layout.dart';
 part 'src/widgets/layout/left_priority_layout.dart';
 part 'src/widgets/layout/dynamic_layout_builder.dart';

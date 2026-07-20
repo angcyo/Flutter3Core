@@ -256,12 +256,17 @@ class LayoutBoxConstraints extends BoxConstraints {
   }
 }
 
+/// - [measureWrapChildren]
+/// - [hitLayoutChildren]
+/// - [paintLayoutChildren]
 mixin LayoutMixin<
   ChildType extends RenderObject,
   ParentDataType extends ContainerParentDataMixin<ChildType>
 >
     on ContainerRenderObjectMixin<ChildType, ParentDataType> {
-  //---
+  //MARK: - core
+
+  //MARK: mixin
 
   /// 获取所有子节点的数量
   @protected
@@ -356,7 +361,13 @@ mixin LayoutMixin<
     return height;
   }
 
-  /// 使用wrap的方式, 测量子节点
+  /// 使用`wrap-content`的方式, 测量子节点
+  /// ```
+  ///  final (childMaxWidth, childMaxHeight) = measureWrapChildren(
+  ///     getChildren(),
+  ///     parentConstraints: constraints,
+  ///   );
+  /// ```
   /// [childWidth] 指定子节点的宽度
   /// [childHeight] 指定子节点的高度
   (double childMaxWidth, double childMaxHeight) measureWrapChildren(
@@ -509,49 +520,115 @@ mixin LayoutMixin<
     }
   }
 
+  /// ```
+  /// @override
+  /// void paint(PaintingContext context, ui.Offset offset) {
+  ///   paintLayoutChildren(getChildren(), context, offset);
+  /// }
+  /// ```
   /// 绘制子节点
+  ///
+  /// - [RenderTransform.paint]
   void paintLayoutChildren(
     List<ChildType> children,
     PaintingContext context,
     ui.Offset offset, {
     Offset paintOffset = Offset.zero,
+    //--
+    Matrix4? transform,
   }) {
-    for (final child in children) {
-      final parentData = child.parentData;
-      if (parentData is BoxParentData) {
-        context.paintChild(child, parentData.offset + offset + paintOffset);
+    void paintSelf(PaintingContext context, Offset offset) {
+      for (final child in children) {
+        final parentData = child.parentData;
+        if (parentData is BoxParentData) {
+          context.paintChild(child, parentData.offset + offset + paintOffset);
+        }
+      }
+    }
+
+    //--
+    if (transform == null) {
+      paintSelf(context, offset);
+    } else {
+      final Offset? childOffset = MatrixUtils.getAsTranslation(transform);
+      if (childOffset == null) {
+        // if the matrix is singular the children would be compressed to a line or
+        // single point, instead short-circuit and paint nothing.
+        final double det = transform.determinant();
+        if (det == 0 || !det.isFinite) {
+          layer = null;
+          return;
+        }
+        layer = context.pushTransform(
+          needsCompositing,
+          offset,
+          transform,
+          paintSelf,
+          oldLayer: layer is TransformLayer ? layer as TransformLayer? : null,
+        );
+      } else {
+        paintSelf(context, offset + childOffset);
+        layer = null;
       }
     }
   }
 
-  /// [defaultHitTestChildren]
+  /// ```
+  /// @override
+  /// bool hitTestChildren(BoxHitTestResult result, {required ui.Offset position}) {
+  ///   return hitLayoutChildren(getChildren(), result, position: position);
+  /// }
+  /// ```
+  /// - [getChildren]
+  /// - [defaultHitTestChildren]
+  ///
+  /// - [RenderTransform.hitTestChildren]
   bool hitLayoutChildren(
     List<ChildType> children,
     BoxHitTestResult result, {
     required Offset position,
     Offset paintOffset = Offset.zero,
+    //--
+    Matrix4? transform,
   }) {
     //debugger();
-    for (final child in children) {
-      final parentData = child.parentData;
-      if (child is RenderBox && parentData is BoxParentData) {
-        final offset = parentData.offset + paintOffset;
-        final bool isHit = result.addWithPaintOffset(
-          offset: offset,
-          position: position,
-          hitTest: (BoxHitTestResult result, Offset transformed) {
+
+    bool hitTestChildren(BoxHitTestResult result, Offset position) {
+      for (final child in children) {
+        final parentData = child.parentData;
+        if (child is RenderBox && parentData is BoxParentData) {
+          final offset = parentData.offset + paintOffset;
+          final bool isHit = result.addWithPaintOffset(
+            offset: offset,
+            position: position,
+            hitTest: (BoxHitTestResult result, Offset transformed) {
+              //debugger();
+              assert(transformed == position - offset);
+              return (child as RenderBox).hitTest(
+                result,
+                position: transformed,
+              );
+            },
+          );
+          if (isHit) {
             //debugger();
-            assert(transformed == position - offset);
-            return (child as RenderBox).hitTest(result, position: transformed);
-          },
-        );
-        if (isHit) {
-          //debugger();
-          return true;
+            return true;
+          }
         }
       }
+      return false;
     }
-    return false;
+
+    //--
+    if (transform == null) {
+      return hitTestChildren(result, position);
+    } else {
+      return result.addWithPaintTransform(
+        transform: transform,
+        position: position,
+        hitTest: hitTestChildren,
+      );
+    }
   }
 
   //---

@@ -207,6 +207,8 @@ class ScaleMatrixContainerRenderObject extends RenderBox
   }
 
   /// 当前手势坐标是否命中某个child
+  /// - [Transform] 矩阵变换小部件
+  /// - [RenderTransform.hitTestChildren]
   @api
   bool hitTestChild(String? tag, ui.Offset position) {
     RenderBox? child = findChildByTag(tag);
@@ -252,6 +254,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
     }
   }
 
+  ///
   @override
   bool hitTest(BoxHitTestResult result, {required ui.Offset position}) {
     return super.hitTest(result, position: position);
@@ -416,6 +419,7 @@ class ScaleMatrixContainerRenderObject extends RenderBox
   }
 
   /// [defaultPaint]
+  /// - [RenderTransform.paint]
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     final Matrix4? transform = _effectiveTransform;
