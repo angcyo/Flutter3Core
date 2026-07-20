@@ -80,6 +80,22 @@ shelf.Response responseOk(
   context: context,
 );
 
+/// 响应成功, json数据类型
+shelf.Response responseJson(
+  Object? body, {
+  Map<String, /* String | List<String> */ Object>? headers = const {
+    HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
+    HttpHeaders.accessControlAllowOriginHeader: '*',
+  },
+  Encoding? encoding = utf8,
+  Map<String, Object>? context,
+}) => shelf.Response.ok(
+  body == null ? null : jsonEncode(body),
+  headers: headers,
+  encoding: encoding,
+  context: context,
+);
+
 /// 响应成功, 文本类型
 shelf.Response responseOkHtml(
   Object? body, {
@@ -119,6 +135,7 @@ shelf.Response responseOkFile({
                 HttpHeaders.contentTypeHeader:
                     _defaultMimeTypeResolver.lookup(file.path) ??
                     'application/octet-stream',
+                HttpHeaders.accessControlAllowOriginHeader: '*',
               }),
     encoding: encoding,
     context: context,

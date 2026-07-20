@@ -199,14 +199,7 @@ class Flutter3ShelfHttp {
             'last_modified': stat.modified.toIso8601String(),
           });*/
         }
-
-        return shelf.Response.ok(
-          jsonEncode(fileList),
-          headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'Access-Control-Allow-Origin': '*', // 顺手加上跨域支持，方便前端调用
-          },
-        );
+        return responseJson(fileList);
       }
 
       // 2. 检查文件是否存在
@@ -223,7 +216,7 @@ class Flutter3ShelfHttp {
       // 5. 返回响应，并配置标准的 HTTP 响应头
       final defContentType = 'application/octet-stream';
       final mimeType = mediaType == true ? file.path.mimeType() : null;
-      return shelf.Response.ok(
+      return responseOk(
         fileStream, // 直接将流作为 body 传入
         headers: {
           // 告诉浏览器这是一个需要下载的附件，并指定默认保存的文件名
