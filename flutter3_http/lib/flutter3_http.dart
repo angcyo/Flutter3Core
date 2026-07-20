@@ -15,10 +15,12 @@ import 'package:flutter3_http/src/diagnosis/speed_test_dart.dart';
 import 'package:flutter3_http/src/diagnosis/speed_test_mix.dart';
 import 'package:flutter3_http/src/discovery/discovery_utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:simple_sse/simple_sse.dart';
 
 import 'src/dio/log_interceptor.dart';
 
 export 'package:dio/dio.dart';
+export 'package:simple_sse/simple_sse.dart';
 
 export 'src/dio/log_interceptor.dart';
 export 'src/sync/mutex.dart';

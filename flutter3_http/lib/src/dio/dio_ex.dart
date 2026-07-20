@@ -91,6 +91,61 @@ extension DioStringEx on String {
     }
   }
 
+  //MARK: sse
+
+  /// sse [SseEvent]事件请求
+  ///
+  /// ```
+  /// ?sseClientId=xxx
+  /// accept: text/event-stream
+  /// ```
+  /// ```
+  /// SseEvent(id: null, event: null, data: "id:9\n\nevent:message\n\ndata:9\n\n", retry: null)
+  /// ```
+  /// # 注释事件
+  /// ```
+  /// :xxx
+  /// ```
+  /// [DioSseClient]
+  /// [SseEventTransformer]
+  Future<Response<ResponseBody>> sseEvent(
+    void Function(SseEvent event) onEvent, {
+    Object? body,
+    String? sseClientId,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    Map<String, dynamic>? headers,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+    BuildContext? context,
+  }) async {
+    final response = await RDio.get(context: context).dio.get<ResponseBody>(
+      transformUrl(),
+      data: body,
+      queryParameters: sseClientId == null
+          ? queryParameters
+          : {"sseClientId": sseClientId, ...?queryParameters},
+      options: _mergeOptions(options, {
+        "accept": "text/event-stream",
+        ...?headers,
+      })?..responseType = ResponseType.stream,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    );
+    //debugger();
+
+    final stream = (response.data as ResponseBody).stream
+        .map(utf8.decode)
+        .transform(const LineSplitter())
+        .transform(const SseEventTransformer());
+
+    final subscription = stream.listen((event) {
+      onEvent(event);
+    }, cancelOnError: true);
+
+    return response;
+  }
+
   //MARK: get
 
   /// get请求

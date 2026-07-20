@@ -25,7 +25,7 @@ dependencies:
   # https://pub.dev/packages/http_parser
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  dio: ^5.9.2
+  dio: ^5.10.0
   # https://pub.dev/packages/dio_http2_adapter
   # https://pub.dev/packages/http2
   # https://pub.dev/packages/dio
@@ -36,6 +36,12 @@ dependencies:
   #And because flutter3_http depends on json_serializable ^6.11.2, json_serializable >6.11.2 <7.0.0 is required.
   #Because json_serializable >=6.11.3 depends on build ^4.0.3 and no versions of json_serializable match >6.11.2 <6.11.3, json_serializable >6.11.2 requires build ^4.0.3.
   json_annotation: ^4.12.0
+  # https://pub.dev/packages/simple_sse_dio
+  # https://pub.dev/packages/dio
+  # https://pub.dev/packages/simple_sse
+  simple_sse_dio: ^1.0.1
+  # https://pub.dev/packages/simple_sse
+  simple_sse: ^2.0.0
 
   # https://pub.dev/packages/doh
   doh: ^0.0.4+2
@@ -123,7 +129,7 @@ dev_dependencies:
   # https://pub.dev/packages/http
   # https://pub.dev/packages/http_parser
   # https://pub.dev/packages/meta
-  googleapis_auth: ^2.3.1
+  googleapis_auth: ^2.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

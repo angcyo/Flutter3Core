@@ -112,6 +112,15 @@ dev_dependencies:
   # https://pub.dev/packages/build_runner
   build_runner: any
   json_serializable: any
+  # https://pub.dev/packages/sse
+  # https://pub.dev/packages/async
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/logging
+  # https://pub.dev/packages/pool
+  # https://pub.dev/packages/shelf
+  # https://pub.dev/packages/stream_channel
+  # https://pub.dev/packages/web
+  sse: ^4.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

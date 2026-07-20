@@ -76,13 +76,13 @@ class LogFileInterceptor extends Interceptor {
     final hashCode = options.hashCode;
     final value = uuidMap.remove(hashCode);
     final log = stringBuilder((builder) {
+      final errorText =
+          "${err.response?.statusCode ?? err.response?.statusMessage ?? err.runtimeType}";
       if (value == null) {
-        builder.appendLine(
-          "<--${err.requestOptions.uri}(Dio异常[${err.response?.statusCode}])",
-        );
+        builder.appendLine("<--${err.requestOptions.uri}(Dio异常[$errorText])");
       } else {
         builder.appendLine(
-          "<--${value.$1} ${LTime.diffTime(value.$2)}(Dio异常[${err.response?.statusCode}])",
+          "<--${value.$1} ${LTime.diffTime(value.$2)}(Dio异常[$errorText])",
         );
       }
       builder.appendLine("error->$err");
