@@ -451,8 +451,20 @@ int rgbToGray(int r, int g, int b) {
 }
 
 /// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia, Web
+///
+/// ```
+/// 平台的名称
+/// - [android]
+/// - [ios]
+/// - [windows]
+/// - [linux]
+/// - [macos]
+/// - [fuchsia]
+/// ```
+///
 /// 统一小写
-String get $platformName {
+/// - [Platform.operatingSystem]
+String get $platformName => Platform.operatingSystem.toLowerCase(); /*{
   if (isAndroid) {
     return "Android".toLowerCase();
   } else if (isIos) {
@@ -470,7 +482,7 @@ String get $platformName {
   } else {
     return "Unknown".toLowerCase();
   }
-}
+}*/
 
 //---
 

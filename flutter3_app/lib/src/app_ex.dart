@@ -219,15 +219,6 @@ String? get $platformDeviceName => $platformDeviceInfoCache?.platformDeviceName;
 /// [Platform.version]
 String get $platformVersion => Platform.version;
 
-/// 平台的名称
-/// - [android]
-/// - [ios]
-/// - [windows]
-/// - [linux]
-/// - [macos]
-/// - [fuchsia]
-String get $platformName => Platform.operatingSystem;
-
 /// [BaseDeviceInfo]
 extension PlatformDeviceInfoEx on BaseDeviceInfo {
   /// 平台设备的名称
