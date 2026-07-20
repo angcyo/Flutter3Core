@@ -106,6 +106,17 @@ extension DioStringEx on String {
   /// ```
   /// :xxx
   /// ```
+  /// # 示例
+  /// ```
+  /// "http://localhost:8082/sseHandler"
+  ///  .sseEvent((event) {
+  ///    l.i(event);
+  ///  })
+  ///  .get((value, error) {
+  ///    debugger();
+  ///  });
+  /// ```
+  ///
   /// [DioSseClient]
   /// [SseEventTransformer]
   Future<Response<ResponseBody>> sseEvent(

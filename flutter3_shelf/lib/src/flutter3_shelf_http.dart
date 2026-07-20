@@ -146,13 +146,21 @@ class Flutter3ShelfHttp {
     });
   }
 
-  /// 添加一个下载文件的接口
+  /// 添加一个的接口
+  /// - 支持图片访问
+  /// - 支持下载文件
+  ///
   /// ```
-  /// "/download?filePath=/storage/emulated/0/Download/test.txt"
+  /// "/visitFile?filePath=/storage/emulated/0/Download/test.txt"
   /// ```
+  /// - [route] 路由地址
+  /// - [mediaType] 媒体类型, 是否响应媒体类型
+  /// - [supportFolder] 是否支持访问文件夹
   /// - [onGetFileAction] 获取对应的文件
-  void download({
-    String route = "/download",
+  void visitFile({
+    String route = "/visitFile",
+    bool? mediaType = true,
+    bool? supportFolder = true,
     File? Function(String filePath)? onGetFileAction,
   }) {
     // 注册文件下载接口，通过路由参数传递文件名
@@ -161,12 +169,45 @@ class Flutter3ShelfHttp {
       // 💡 安全提示：务必对文件名进行过滤，防止通过 '../' 进行任意文件遍历攻击
       final filePath = request.url.queryParameters["filePath"]?.decodeUri();
       if (filePath == null || filePath.isEmpty) {
-        return shelf.Response.notFound('文件不存在: $filePath');
+        return shelf.Response.notFound('缺少查询参数[filePath]');
       }
 
       final file = onGetFileAction == null
           ? File(filePath)
           : onGetFileAction(filePath);
+
+      if (supportFolder == true && file != null && file.isDirectorySync()) {
+        final directory = Directory(file.path);
+        final List<String> fileList = [];
+
+        // 2. 异步流式遍历目录，防 Event Loop 阻塞
+        // recursive: false 表示只列出当前层级，不递归子目录
+        // followLinks: false 表示不追踪软链接，防止死循环或越权
+        await for (final entity in directory.list(
+          recursive: false,
+          followLinks: false,
+        )) {
+          fileList.add(entity.path);
+          /*final stat = await entity.stat();
+          final isDir = entity is Directory;
+
+          fileList.add({
+            'name': entity.path.split(Platform.pathSeparator).last,
+            'path': entity.path,
+            'is_directory': isDir,
+            'size': isDir ? 0 : stat.size, // 文件夹大小通常由系统决定，这里给0或过滤
+            'last_modified': stat.modified.toIso8601String(),
+          });*/
+        }
+
+        return shelf.Response.ok(
+          jsonEncode(fileList),
+          headers: {
+            'content-type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*', // 顺手加上跨域支持，方便前端调用
+          },
+        );
+      }
 
       // 2. 检查文件是否存在
       if (file == null || !await file.exists()) {
@@ -180,6 +221,8 @@ class Flutter3ShelfHttp {
       final fileStream = file.openRead();
 
       // 5. 返回响应，并配置标准的 HTTP 响应头
+      final defContentType = 'application/octet-stream';
+      final mimeType = mediaType == true ? file.path.mimeType() : null;
       return shelf.Response.ok(
         fileStream, // 直接将流作为 body 传入
         headers: {
@@ -192,7 +235,9 @@ class Flutter3ShelfHttp {
           'Content-Length': fileLength.toString(),
 
           // 二进制流的通用媒体类型
-          'Content-Type': 'application/octet-stream',
+          'Content-Type': mediaType == true && mimeType?.isImageMimeType == true
+              ? mimeType ?? defContentType
+              : defContentType,
 
           // 允许跨域（如果是 Flutter Web 客户端下载，这很关键）
           'Access-Control-Allow-Origin': '*',

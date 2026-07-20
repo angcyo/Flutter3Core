@@ -107,7 +107,7 @@ extension MimeEx on String {
   ///
   /// ```
   String? mimeType([List<int>? headerBytes]) {
-    final path = toUri()?.path ?? this;
+    final path = toUri()?.filePathOrUrl ?? this;
     final mimeType = lookupMimeType(path, headerBytes: headerBytes);
     if (mimeType == null) {
       return null;
