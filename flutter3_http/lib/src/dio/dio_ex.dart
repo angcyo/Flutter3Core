@@ -407,12 +407,13 @@ extension DioStringEx on String {
   /// [cancelToken] 取消请求的token
   /// [deleteOnError] 是否在下载失败时, 删除文件
   /// [overwrite] 是否覆盖已存在的文件
+  /// [onDownloadAction] 下载结束的回调
   /// https://pub.dev/packages/network_to_file_image
   ///
   /// [Dio.download]
   ///
   Future<Response?> download({
-    String? savePath,
+    @autoInjectMark String? savePath,
     Future<String>? getSavePath,
     BuildContext? context,
     ProgressCallback? onReceiveProgress,
@@ -427,14 +428,17 @@ extension DioStringEx on String {
     bool debugLog = false, //debug模式下, 是否打印日志
     bool? throwError = true,
     bool? toastError = false,
+    //--
+    void Function(String? savePath, Object? error)? onDownloadAction,
   }) async {
     final url = transformUrl();
     final dio = RDio.get(context: context).dio;
-    final saveFilePath = savePath ?? (await getSavePath);
+    String? saveFilePath = savePath ?? (await getSavePath);
     if (overwrite == false && saveFilePath?.isExistsSync() == true) {
       //文件已经存在
       final length = saveFilePath!.length;
       onReceiveProgress?.call(length, length);
+      onDownloadAction?.call(saveFilePath, null);
       l.d("文件已经存在: $url -> $saveFilePath");
       return Response(
         requestOptions: RequestOptions(path: this),
@@ -474,12 +478,32 @@ extension DioStringEx on String {
         options: _mergeOptions(options, headers),
       );
       //debugger();
+      final contentDisposition =
+          response.headers["Content-Disposition"]?.firstOrNull;
+      if (contentDisposition != null) {
+        // HeaderValue 能够帮我们自动切分 key-value 参数对
+        final headerValue = HeaderValue.parse(contentDisposition);
+
+        // 获取 filename* 或 filename
+        final rawFilenameExt = headerValue.parameters['filename*']?.decodeUri();
+        final rawFilename = headerValue.parameters['filename']?.decodeUri();
+        final newFileName = rawFilenameExt ?? rawFilename;
+        if (newFileName != null) {
+          final file = saveFilePath!.toFile();
+          final newFile = file.renameSync(
+            "${file.parent.path}${Platform.pathSeparator}$newFileName",
+          );
+          saveFilePath = newFile.path;
+        }
+      }
+      onDownloadAction?.call(saveFilePath, null);
       return response;
     } catch (e) {
       assert(() {
         l.e("下载失败: $url -> $saveFilePath \n$e");
         return true;
       }());
+      onDownloadAction?.call(saveFilePath, e);
       if (toastError == true) {
         toastInfo(e.toString());
       }
@@ -513,7 +537,7 @@ extension DioFutureResponseEx<T> on Future<T> {
     List<String>? codeKeyList,
     List<String>? dataKeyList,
     List<String>? messageKeyList,
-    bool? useDataCodeStatus,
+    bool? useDataCodeStatus /*是否使用数据code*/,
     bool Function(dynamic code)? isSuccessCode /*当前code码是否表示成功*/,
     String? tag,
     String? debugLabel,

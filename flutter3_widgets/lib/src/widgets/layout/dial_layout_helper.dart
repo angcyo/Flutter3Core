@@ -16,17 +16,21 @@ abstract class DialLayoutHelper {
   /// * [autoRotate] - 是否允许矩形随圆周进行自旋转。
   ///                  设置为 true 时，矩形底边朝向圆心；
   ///                  设置为 false 时，矩形始终保持水平正立。
+  /// * [startAngle] 起始布局的角度(弧度)
   static List<PlacedRectangle> arrangeNonIntersectingCircles({
     required List<LayoutRectangle> rectangles,
     required double initialRadius,
     required double radialGap,
     required double arcGap,
     required bool autoRotate,
+    double startAngle = 0.0,
   }) {
     final List<PlacedRectangle> results = [];
     if (rectangles.isEmpty) return results;
 
     double currentRadius = initialRadius;
+
+    // currentAngle 记录当前圈内已累积的相对角度 (0 ~ 2π)
     double currentAngle = 0.0;
 
     double maxOuterRadiusInCurrentRing = 0.0;
@@ -38,7 +42,6 @@ abstract class DialLayoutHelper {
       if (currentAngle == 0.0) {
         double maxRemainingHeight = 0.0;
         for (int j = i; j < rectangles.length; j++) {
-          // 如果不自旋转，保守估计可能的最大径向跨度为对角线长度
           double effectiveHeight = autoRotate
               ? rectangles[j].height
               : sqrt(
@@ -59,20 +62,23 @@ abstract class DialLayoutHelper {
 
       final rect = rectangles[i];
 
-      // 2. 核心突破：根据是否自旋转，动态计算当前角度下游标对应的“等效切向宽度”与“等效径向高度”
+      // 计算当前位置在世界坐标系下的绝对起点角度
+      final double absoluteStartAngle = startAngle + currentAngle;
+
+      // 2. 根据绝对角度计算切向和径向上的等效投影尺寸
       double effWidth;
       double effHeight;
       if (autoRotate) {
         effWidth = rect.width;
         effHeight = rect.height;
       } else {
-        // 不自旋转时，随着圆周角度 currentAngle 的变化，宽和高在极坐标轴上的投影动态坍缩与拉伸
+        // 不自旋转时，投影尺寸依赖于矩形在平面中的【绝对极角】absoluteStartAngle
         effWidth =
-            rect.width * sin(currentAngle).abs() +
-            rect.height * cos(currentAngle).abs();
+            rect.width * sin(absoluteStartAngle).abs() +
+            rect.height * cos(absoluteStartAngle).abs();
         effHeight =
-            rect.width * cos(currentAngle).abs() +
-            rect.height * sin(currentAngle).abs();
+            rect.width * cos(absoluteStartAngle).abs() +
+            rect.height * sin(absoluteStartAngle).abs();
       }
 
       // 容错防御
@@ -80,7 +86,7 @@ abstract class DialLayoutHelper {
         currentRadius = effHeight / 2.0 + 5.0;
       }
 
-      // 3. 基于动态投影尺寸计算彻底防撞所需的圆心角
+      // 3. 基于动态投影尺寸计算防撞所需的圆心角
       double halfWidthWithGap = effWidth / 2.0 + arcGap / 2.0;
       double thetaHalf = atan2(
         halfWidthWithGap,
@@ -88,7 +94,7 @@ abstract class DialLayoutHelper {
       );
       double angleNeeded = 2.0 * thetaHalf;
 
-      // 4. 换圈判定
+      // 4. 换圈判定：若相对角度超标（超过一整圈 2π），则开启新一圈
       if (currentAngle + angleNeeded > 2.0 * pi) {
         maxOuterRadiusInPreviousRing = maxOuterRadiusInCurrentRing;
         currentAngle = 0.0;
@@ -96,8 +102,8 @@ abstract class DialLayoutHelper {
         continue;
       }
 
-      // 5. 计算中心摆放极角与标准笛卡尔坐标
-      double placementAngle = currentAngle + thetaHalf;
+      // 5. 计算最终摆放的绝对极角 (起始偏移 + 相对累积 + 本矩形半张角)
+      double placementAngle = startAngle + currentAngle + thetaHalf;
       double centerX = currentRadius * cos(placementAngle);
       double centerY = currentRadius * sin(placementAngle);
 
@@ -107,7 +113,6 @@ abstract class DialLayoutHelper {
           centerX: centerX,
           centerY: centerY,
           rotationRad: autoRotate ? placementAngle : 0.0,
-          // 控制核心：是否应用自旋转弧度
           radius: currentRadius,
         ),
       );
@@ -119,7 +124,7 @@ abstract class DialLayoutHelper {
           pow(currentRadius + rect.height / 2.0, 2) + pow(rect.width / 2.0, 2),
         );
       } else {
-        // 不自旋转时，通过精确遍历无旋转矩形的 4 个绝对顶点，找出触及最远的外壳半径
+        // 遍历未旋转矩形的 4 个绝对顶点计算最远半径
         double maxR = 0.0;
         final xOffsets = [-rect.width / 2.0, rect.width / 2.0];
         final yOffsets = [-rect.height / 2.0, rect.height / 2.0];
@@ -138,7 +143,7 @@ abstract class DialLayoutHelper {
         maxOuterRadiusInCurrentRing = outerCornerRadius;
       }
 
-      // 7. 推进游标
+      // 7. 推进圈内相对角度游标
       currentAngle += angleNeeded;
       i++;
     }

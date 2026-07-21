@@ -9,7 +9,7 @@ part 'lib_label_value_bean.g.dart';
 ///
 /// 为一个[value]添加一个[label]标签，用于显示在UI上
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class LibLabelValueBean with ITextProvider, EquatableMixin {
+class LibLabelValueBean with ITextProvider, Equatable {
   factory LibLabelValueBean.fromJson(Map<String, dynamic> json) =>
       _$LibLabelValueBeanFromJson(json);
 

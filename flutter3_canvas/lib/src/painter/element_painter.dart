@@ -2542,7 +2542,7 @@ class ElementGroupPainter extends ElementPainter {
 
 /// 元素绘制时的一些状态存储信息
 /// [PainterPropertyType.state]
-class PaintState with EquatableMixin {
+class PaintState with Equatable {
   /// 元素的唯一标识
   String? elementUuid = $uuid;
 
@@ -2629,7 +2629,7 @@ class PaintState with EquatableMixin {
 /// 绘制属性, 包含坐标/缩放/旋转/倾斜等信息
 /// 先倾斜, 再缩放, 最后旋转
 /// [PainterPropertyType.paint]
-class PaintProperty with EquatableMixin {
+class PaintProperty with Equatable {
   //region ---基础属性---
 
   /// 绘制的左上坐标

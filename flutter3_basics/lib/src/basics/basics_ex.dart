@@ -2350,12 +2350,46 @@ extension IntEx on int {
   }
 
   /// 1 .. 100
-  Stream<int> to(int to, {bool includeTo = true, int step = 1}) async* {
+  /// `this .. to`
+  ///
+  /// - [sleep] 延迟时间
+  Stream<int> to(
+    int to, {
+    bool includeTo = true,
+    int step = 1,
+    //--
+    int? sleep,
+    int? Function(int i)? onGetSleep,
+  }) async* {
     for (var i = this; i <= to; i += step) {
       if (includeTo || i < to) {
         yield i;
+
+        sleep ??= onGetSleep?.call(i);
+        if (sleep != null) {
+          await Future.delayed(Duration(milliseconds: sleep));
+        }
       } else if (i >= to) {
         break;
+      }
+    }
+  }
+
+  /// `from .. this`
+  /// - [sleep] 延迟时间
+  Stream<int> from(
+    int from, {
+    bool includeFrom = true,
+    int step = 1,
+    int? sleep,
+    int? Function(int i)? onGetSleep,
+  }) async* {
+    for (var i = includeFrom ? from : from + 1; i <= this; i += step) {
+      yield i;
+
+      sleep ??= onGetSleep?.call(i);
+      if (sleep != null) {
+        await Future.delayed(Duration(milliseconds: sleep));
       }
     }
   }

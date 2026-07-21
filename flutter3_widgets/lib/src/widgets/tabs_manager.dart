@@ -320,7 +320,7 @@ class TabsManagerController {
 }
 
 /// 标签信息
-class TabEntryInfo with EquatableMixin {
+class TabEntryInfo with Equatable {
   //MARK: - config
 
   /// 标签的信息

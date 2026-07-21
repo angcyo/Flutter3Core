@@ -116,7 +116,7 @@ class FourPoint {
 }
 
 /// 定义一个包含2个点的数据结构
-class TwoPoint with EquatableMixin {
+class TwoPoint with Equatable {
   static TwoPoint? fromListString(String? src) {
     if (src == null || src.isEmpty) {
       return null;

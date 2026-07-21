@@ -6,6 +6,10 @@ part of '../../flutter3_basics.dart';
 /// 数学相关函数
 /// [Matrix4Ex]
 
+/// 圆周率
+/// 3.141592653589793238462643383279
+double get $pi => math.pi;
+
 /// 数字类型
 enum NumType {
   /// 浮点

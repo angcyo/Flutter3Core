@@ -354,7 +354,7 @@ class NavigatorObserverDispatcher extends NavigatorObserver {
 /// - [Route]
 /// - [RouteSettings]
 @immutable
-class RouteInfo with EquatableMixin {
+class RouteInfo with Equatable {
   final RouteSettings routeSettings;
 
   /// 是否是[PageRoute]

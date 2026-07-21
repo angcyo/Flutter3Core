@@ -77,7 +77,7 @@ class CmseApi {
   }
 }
 
-class CmseFXRWItemBean with EquatableMixin {
+class CmseFXRWItemBean with Equatable {
   /// 封面的地址
   /// - https://www.cmse.gov.cn/fxrw/202511/W020251125475201572708.jpg
   final String? imgUrl;

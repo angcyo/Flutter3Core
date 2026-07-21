@@ -63,6 +63,8 @@ extension MimeEx on String {
   /// 可能需要先调用[mimeType]方法
   ///
   /// ```
+  /// 'jpeg': 'image/jpeg',
+  /// 'png': 'image/png',
   /// 'svg': 'image/svg+xml',
   /// 'svgz': 'image/svg+xml',
   /// ```

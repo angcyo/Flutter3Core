@@ -36,7 +36,7 @@ class HttpResultHandle {
   @configProperty
   bool useDataCodeStatus = true;
 
-  /// 处理当前[code]码是否表示成功
+  /// 处理当前[Response].[code]码是否表示成功
   late bool Function(dynamic code) isSuccessCode = (code) =>
       code is int && code >= 200 && code < 300;
 

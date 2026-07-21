@@ -170,7 +170,7 @@ extension AnimationWidgetEx on Widget {
     );
   }
 
-  /// 不透明动画, 不需要动画控制
+  /// 不透明动画, 不需要动画控制器. 只要[opacity]发生变化, 就会触发动画.
   /// [AnimatedContainer]
   /// [AnimatedOpacity]
   Widget animatedOpacity({required double opacity}) => AnimatedOpacity(

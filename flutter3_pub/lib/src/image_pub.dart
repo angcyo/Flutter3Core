@@ -58,6 +58,10 @@ extension ImagePubEx on String {
   /// 根据类型, 自动转换成对应的图片小部件
   /// - 支持http/file
   /// - 支持svg/image
+  ///
+  /// [WidgetEx.clipOval] 切圆
+  /// [WidgetEx.radiusAll] 切圆角
+  ///
   /// [toImageProvider]
   /// [ImagePubEx.toImageWidget]
   /// [ImageMetaEx.toImageWidget]

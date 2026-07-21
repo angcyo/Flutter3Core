@@ -129,6 +129,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     hover = MouseHoverScope.get(buildContext);
     isHover = hover?.value ?? isHover;
     hover?.addListener(handleMouseHoverMixin);
+    debugger(when: hover == null);
   }
 
   @override
@@ -177,7 +178,7 @@ extension MouseHoverScopeEx on Widget {
     MouseCursor cursor = MouseCursor.defer,
     bool? enable,
   }) {
-    return (enable ?? isMouseConnected)
+    return (enable ?? (isDesktopOrWeb || isMouseConnected))
         ? MouseHoverProvider(key: key, cursor: cursor, child: this)
         : this;
   }
@@ -192,7 +193,7 @@ extension MouseHoverScopeEx on Widget {
     //--
     Widget? normalChild,
   }) {
-    return (enable ?? isMouseConnected)
+    return (enable ?? (isDesktopOrWeb || isMouseConnected))
         ? MouseHoverVisibility(
             key: key,
             duration: duration,

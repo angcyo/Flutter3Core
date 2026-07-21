@@ -83,7 +83,7 @@ class IdiomApi {
 }
 
 /// 成语信息数据结构
-class IdiomBean with EquatableMixin {
+class IdiomBean with Equatable {
   /// 成语名称
   final String name;
 

@@ -81,16 +81,19 @@ shelf.Response responseOk(
 );
 
 /// 响应成功, json数据类型
+/// - [statusCode]指定状态码, 默认200
 shelf.Response responseJson(
   Object? body, {
+  int? statusCode,
   Map<String, /* String | List<String> */ Object>? headers = const {
     HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
     HttpHeaders.accessControlAllowOriginHeader: '*',
   },
   Encoding? encoding = utf8,
   Map<String, Object>? context,
-}) => shelf.Response.ok(
-  body == null ? null : jsonEncode(body),
+}) => shelf.Response(
+  statusCode ?? (body == null ? 404 : 200),
+  body: body == null ? null : jsonEncode(body),
   headers: headers,
   encoding: encoding,
   context: context,

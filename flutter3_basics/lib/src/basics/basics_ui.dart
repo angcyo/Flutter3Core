@@ -3020,7 +3020,7 @@ extension WidgetEx on Widget {
         onTap,
         onLongPress: onLongPress,
         borderRadius: bRadius,
-        radius: radius ?? inkRadius,
+        radius: /*radius ?? */ inkRadius /*影响涟漪*/,
         customBorder: /*isCircle ? const CircleBorder() : */ null,
         /*highlightShape: shape,*/
         highlightColor: highlightColor,

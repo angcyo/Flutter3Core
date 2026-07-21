@@ -157,11 +157,14 @@ class Flutter3ShelfHttp {
   /// - [mediaType] 媒体类型, 是否响应媒体类型
   /// - [supportFolder] 是否支持访问文件夹
   /// - [onGetFileAction] 获取对应的文件
+  /// - [onGetFileStreamAction] 直接获取对应的文件数据流, 以及对应的[mimeType]
   void visitFile({
     String route = "/visitFile",
     bool? mediaType = true,
     bool? supportFolder = true,
-    File? Function(String filePath)? onGetFileAction,
+    FutureOr<File?> Function(String filePath)? onGetFileAction,
+    FutureOr<(Stream<List<int>>?, String?)?> Function(String filePath)?
+    onGetFileStreamAction,
   }) {
     // 注册文件下载接口，通过路由参数传递文件名
     _router.get(route, (shelf.Request request) async {
@@ -174,9 +177,9 @@ class Flutter3ShelfHttp {
 
       final file = onGetFileAction == null
           ? File(filePath)
-          : onGetFileAction(filePath);
+          : (await onGetFileAction(filePath) ?? File(filePath));
 
-      if (supportFolder == true && file != null && file.isDirectorySync()) {
+      if (supportFolder == true && file.isDirectorySync()) {
         final directory = Directory(file.path);
         final List<String> fileList = [];
 
@@ -203,19 +206,23 @@ class Flutter3ShelfHttp {
       }
 
       // 2. 检查文件是否存在
-      if (file == null || !await file.exists()) {
+      final pair = await onGetFileStreamAction?.call(filePath);
+      Stream<List<int>>? fileStream = pair?.$1;
+      if (fileStream == null && !await file.exists()) {
         return shelf.Response.notFound('文件不存在: $filePath');
       }
       final safeFilename = file.filename;
       // 3. 获取文件长度，用于告知客户端下载进度
-      final fileLength = await file.length();
+      final fileLength = await file.length() ?? -1;
 
       // 4. 【核心】以数据流（Stream<List<int>>）的形式打开文件
-      final fileStream = file.openRead();
+      fileStream ??= file.openRead();
 
       // 5. 返回响应，并配置标准的 HTTP 响应头
       final defContentType = 'application/octet-stream';
-      final mimeType = mediaType == true ? file.path.mimeType() : null;
+      final mimeType = mediaType == true
+          ? (pair?.$2 ?? file.path.mimeType())
+          : null;
       return responseOk(
         fileStream, // 直接将流作为 body 传入
         headers: {
