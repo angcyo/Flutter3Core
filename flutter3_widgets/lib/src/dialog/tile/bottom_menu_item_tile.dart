@@ -7,12 +7,20 @@ part of '../dialog.dart';
 /// 底部菜单tile
 /// [BottomMenuItemsDialog]
 class BottomMenuItemTile extends StatelessWidget {
+  /// [children]布局方向
+  final Axis direction;
+
   /// [Row]children
   final WidgetNullList? children;
 
   /// [children]
   @indirectProperty
   final Widget? child;
+
+  /// 主轴对齐
+  final MainAxisAlignment? mainAxisAlignment;
+
+  //--
 
   /// 背景色, 不指定使用默认
   final Color? backgroundColor;
@@ -38,8 +46,11 @@ class BottomMenuItemTile extends StatelessWidget {
 
   const BottomMenuItemTile({
     super.key,
+    this.direction = .horizontal,
     this.children,
     this.child,
+    this.mainAxisAlignment,
+    //--
     this.onTap,
     this.enable = true,
     this.closeAfterTap = true,
@@ -52,8 +63,17 @@ class BottomMenuItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return (children ?? [child])
-        .row(gap: kH, mainAxisAlignment: MainAxisAlignment.center)!
+    final list = (children ?? [child]);
+    final body = direction == .horizontal
+        ? list.row(
+            gap: kH,
+            mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
+          )!
+        : list.column(
+            gap: kH,
+            mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
+          )!;
+    return body
         .colorFiltered(
           color: enable
               ? filterColor

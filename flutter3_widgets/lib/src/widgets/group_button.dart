@@ -225,6 +225,19 @@ class CapsuleButton extends StatefulWidget {
   /// 结束的按钮
   final Widget? end;
 
+  /// 图标
+  @defInjectMark
+  final IconData? iconStart;
+  @defInjectMark
+  final IconData? iconEnd;
+
+  /// 图标大小
+  @defInjectMark
+  final double? iconSize;
+
+  /// 图标颜色
+  final Color? iconColor;
+
   /// 点击事件, 默认询问关闭路由
   @defInjectMark
   final GestureTapCallback? onStartTap;
@@ -256,7 +269,11 @@ class CapsuleButton extends StatefulWidget {
   const CapsuleButton({
     super.key,
     this.start,
+    this.iconStart,
     this.end,
+    this.iconEnd,
+    this.iconSize,
+    this.iconColor,
     this.onStartTap,
     this.onEndTap,
     this.width,
@@ -286,12 +303,24 @@ class _CapsuleButtonState extends State<CapsuleButton> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final borderColor = globalTheme.borderColor;
-    final width = widget.width ?? 80;
-    final height = widget.height ?? 28;
-
-    final start = widget.start ?? Icon(Icons.remove, size: 16);
+    final size = widget.iconSize ?? 16;
+    final width = widget.width ?? size * 5;
+    final height = widget.height ?? size * 2;
+    final start =
+        widget.start ??
+        Icon(
+          widget.iconStart ?? Icons.remove,
+          color: widget.iconColor,
+          size: size,
+        );
     final line = vLine(context, color: borderColor, indent: height / 4 / 2);
-    final end = widget.end ?? Icon(Icons.radio_button_checked, size: 16);
+    final end =
+        widget.end ??
+        Icon(
+          widget.iconEnd ?? Icons.radio_button_checked,
+          color: widget.iconColor,
+          size: size,
+        );
 
     return Row(
           mainAxisSize: .min,

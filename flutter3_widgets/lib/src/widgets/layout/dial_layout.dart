@@ -292,14 +292,17 @@ extension DialLayoutWidgetEx on Widget {
     double frequencyRatioXToY = 2 / 3,
     Duration duration = const Duration(seconds: 10),
     double phaseOffset = 0,
+    bool enable = true,
   }) {
-    return FloatingAnimatedWidget(
-      distanceX: distanceX,
-      distanceY: distanceY,
-      frequencyRatioXToY: frequencyRatioXToY,
-      duration: duration,
-      phaseOffset: phaseOffset,
-      child: this,
-    );
+    return enable
+        ? FloatingAnimatedWidget(
+            distanceX: distanceX,
+            distanceY: distanceY,
+            frequencyRatioXToY: frequencyRatioXToY,
+            duration: duration,
+            phaseOffset: phaseOffset,
+            child: this,
+          )
+        : this;
   }
 }
