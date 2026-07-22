@@ -72,6 +72,8 @@ OverlayState? get overlayState => GlobalConfig.def.findOverlayState();
 NavigatorState? get navigatorState => GlobalConfig.def.findNavigatorState();
 
 /// 快速打开url.一般是跳转到web页面/平台浏览器
+/// - 桌面端 launch
+/// - 移动端 openSingleWebView
 @dsl
 Future<bool> openWebUrl(
   String? url, [

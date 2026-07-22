@@ -244,8 +244,12 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   }
 
   /// 处理html页面ws请求
-  static shelf.Response handleDebugLogWebSocketRequest(shelf.Request request) {
-    final text = ShelfHtml.getWebSocketHtml('WebSocket', "/_ws_server_");
+  static shelf.Response handleDebugLogWebSocketRequest(
+    shelf.Request request,
+    String path, {
+    String? tile,
+  }) {
+    final text = ShelfHtml.getWebSocketHtml(tile ?? 'WebSocket', path);
     if (request.isAcceptHtml) {
       return responseOkHtml(text);
     }
@@ -294,9 +298,9 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
 
   /// 处理html页面文件列表请求
   static shelf.Response handleDebugLogUdpClientListRequest(
-    shelf.Request request,
+    shelf.Request request, {
     String? address,
-  ) {
+  }) {
     //debugger();
     final buffer = StringBuffer();
     final values = udpBroadcastClientMap.values;
@@ -330,14 +334,22 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   DebugLogWebSocketServer({super.port = 9200, super.scheme = 'http'}) {
     //注册接口apis
     //--进入首页页面
-    get('/', handleDebugLogIndexRequest);
+    get('/', DebugLogWebSocketServer.handleDebugLogIndexRequest);
     //--进入ws页面
-    get('/ws', handleDebugLogWebSocketRequest);
+    get('/ws', (shelf.Request request) {
+      return DebugLogWebSocketServer.handleDebugLogWebSocketRequest(
+        request,
+        "/_ws_server_",
+      );
+    });
     //--进入文件浏览页面
-    get('/files', handleDebugLogFilesRequest);
+    get('/files', DebugLogWebSocketServer.handleDebugLogFilesRequest);
     //--进入udp client 客户端列表页面
     get('/list', (shelf.Request request) {
-      return handleDebugLogUdpClientListRequest(request, address);
+      return DebugLogWebSocketServer.handleDebugLogUdpClientListRequest(
+        request,
+        address: address,
+      );
     });
     //--转发控制台日志输出
     l.printList.add((log) {

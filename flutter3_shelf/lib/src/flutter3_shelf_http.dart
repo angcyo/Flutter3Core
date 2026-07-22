@@ -246,6 +246,71 @@ class Flutter3ShelfHttp {
     });
   }
 
+  /// 添加一个WebSocket接口处理
+  /// - [onConnected] 连接成功的回调
+  /// - [sendController] 自动监听此流, 将数据发送给客户端
+  /// - [onData] 数据接收的回调
+  void websocket({
+    Iterable<String>? protocols,
+    Iterable<String>? allowedOrigins,
+    Duration? pingInterval,
+    //--
+    String route = "/websocket",
+    void Function(WebSocketChannel webSocket, String? subprotocol)? onConnected,
+    void Function(WebSocketChannel webSocket, Object? error)? onDisconnected,
+    LiveStreamController? sendController /*发送数据使用*/,
+    bool allowBackward = true,
+    void Function(dynamic data)? onData,
+  }) {
+    // -------------------------------------------------------------
+    // 2. WebSocket 路由 (/ws)
+    // webSocketHandler 返回的是一个标准的 Shelf Handler 闭包
+    // -------------------------------------------------------------
+    final wsHandler = webSocketHandler(
+      (webSocket, subProtocol) {
+        assert(() {
+          l.i('[WebSocket][$route] 客户端连接成功!');
+          return true;
+        }());
+        if (onConnected == null) {
+          final subscription = sendController?.listen((value) {
+            if (value != null) {
+              webSocket.sink.add(value);
+            }
+          }, allowBackward: allowBackward);
+          //接收数据
+          webSocket.stream.listen(
+            (message) {
+              assert(() {
+                l.d('[WebSocket][$route] 收到客户端消息: $message');
+                return true;
+              }());
+              // 响应消息 (Echo)
+              //webSocket.sink.add('服务单回显: $message');
+              onData?.call(message);
+            },
+            onDone: () {
+              l.i('[WebSocket][$route] 连接关闭');
+              subscription?.cancel();
+              onDisconnected?.call(webSocket, null);
+            },
+            onError: (error) {
+              l.e('[WebSocket][$route] 发生错误: $error');
+              subscription?.cancel();
+              onDisconnected?.call(webSocket, error);
+            },
+          );
+        } else {
+          onConnected.call(webSocket, subProtocol);
+        }
+      },
+      protocols: protocols,
+      allowedOrigins: allowedOrigins,
+      pingInterval: pingInterval,
+    );
+    get(route, wsHandler);
+  }
+
   /// 获取服务器地址
   String getServerAddress({String? scheme, String? host, int? port}) {
     scheme ??= this.scheme;
@@ -260,7 +325,7 @@ class Flutter3ShelfHttp {
     }
   }
 
-  //---
+  //MARK - core
 
   /// 创建处理程序
   @overridePoint
