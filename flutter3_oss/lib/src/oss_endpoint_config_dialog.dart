@@ -5,6 +5,7 @@ part of '../flutter3_oss.dart';
 /// @date 2026/06/08
 ///
 /// OSS 端点切换对话框
+/// @return true 发生了改变
 class OssEndpointConfigDialog extends StatefulWidget with DialogMixin {
   @hiveFlag
   static HiveStringValue $ossEndpointHive = $hiveString(
@@ -23,6 +24,8 @@ class OssEndpointConfigDialog extends StatefulWidget with DialogMixin {
 }
 
 class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
+  bool _changed = false;
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -57,11 +60,12 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
                 item.ossBucket == currentData?.ossBucket,
             onTap: () {
               if (item.ossEndpoint == currentData?.ossEndpoint) {
-                widget.closeDialogIf(context);
+                widget.closeDialogIf(context, result: _changed);
               } else {
                 OssEndpointConfigDialog.$ossEndpointHive << item.ossEndpoint;
                 OssEndpointConfigDialog.$ossBucketHive << item.ossBucket;
                 OssClient.ossConfigLive << item;
+                _changed = true;
                 updateState();
               }
             },
@@ -106,6 +110,7 @@ class _OssEndpointConfigDialogState extends State<OssEndpointConfigDialog> {
 /// 同时配置 HTTP 端点 和 OSS 端点
 /// - [HttpHostConfigDialog]
 /// - [OssEndpointConfigDialog]
+/// @return true 发生了改变
 class HttpAndOssConfigDialog extends StatefulWidget with DialogMixin {
   const HttpAndOssConfigDialog({super.key});
 
@@ -125,12 +130,12 @@ class _HttpAndOssConfigDialogState extends State<HttpAndOssConfigDialog> {
 
 extension OssEndpointConfigBuildContextEx on BuildContext {
   /// 显示OSS 端点切换对话框
-  void showOssEndpointConfigDialog() {
-    showWidgetDialog(const OssEndpointConfigDialog());
+  Future<T?> showOssEndpointConfigDialog<T>() {
+    return showWidgetDialog<T>(const OssEndpointConfigDialog());
   }
 
   /// 显示HTTP 和 OSS 端点切换对话框
-  void showHttpAndOssConfigDialog() {
-    showWidgetDialog(const HttpAndOssConfigDialog());
+  Future<T?> showHttpAndOssConfigDialog<T>() {
+    return showWidgetDialog<T>(const HttpAndOssConfigDialog());
   }
 }

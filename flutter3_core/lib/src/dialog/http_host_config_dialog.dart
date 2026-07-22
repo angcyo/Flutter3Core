@@ -8,6 +8,8 @@ part of '../../flutter3_core.dart';
 ///
 /// - [HttpHostConfigDialog]
 /// - [OssEndpointConfigDialog]
+///
+/// @return true 发生了改变
 class HttpHostConfigDialog extends StatefulWidget with DialogMixin {
   @hiveFlag
   static HiveStringValue $configHostHive = $hiveString("_key_http_host_config");
@@ -21,6 +23,8 @@ class HttpHostConfigDialog extends StatefulWidget with DialogMixin {
 }
 
 class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
+  bool _changed = false;
+
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
@@ -47,10 +51,11 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
             selected: item.host == $host,
             onTap: () {
               if (item.host == $host) {
-                widget.closeDialogIf(context);
+                widget.closeDialogIf(context, result: _changed);
               } else {
                 HttpHostConfigDialog.$configHostHive << item.host;
                 $host = item.host;
+                _changed = true;
                 updateState();
               }
             },
