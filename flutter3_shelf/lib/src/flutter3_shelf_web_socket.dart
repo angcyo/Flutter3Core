@@ -227,6 +227,94 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     }
   }
 
+  /// 处理调试html页面首页请求
+  static shelf.Response handleDebugLogIndexRequest(shelf.Request request) {
+    final text = ShelfHtml.getDebugLogIndexHtml().replaceKeyTemplate(
+      "bottomInfo",
+      nowTimeString().connect(
+        DebugPage.buildLastDebugCopyString(
+          GlobalConfig.def.globalContext,
+        ).connect(null, "<br>").replaceAll("\n", "<br>"),
+      ),
+    );
+    if (request.isAcceptHtml) {
+      return responseOkHtml(text);
+    }
+    return responseOk(text);
+  }
+
+  /// 处理html页面ws请求
+  static shelf.Response handleDebugLogWebSocketRequest(shelf.Request request) {
+    final text = ShelfHtml.getWebSocketHtml('WebSocket', "/_ws_server_");
+    if (request.isAcceptHtml) {
+      return responseOkHtml(text);
+    }
+    return responseOk(text);
+  }
+
+  /// 处理html页面文件列表请求
+  static Future<shelf.Response> handleDebugLogFilesRequest(
+    shelf.Request request,
+  ) async {
+    final path = request.requestedUri.queryParameters["path"];
+    final title = request.requestedUri.queryParameters["title"];
+    final buffer = StringBuffer();
+    //根目录
+    final filePathDir = await fileFolder();
+    final rootPath = filePathDir.parent.path;
+    //debugger();
+    //需要请求的路径
+    String? targetPath;
+    if (isNil(path) || path == ".") {
+      // 请求根目录
+      targetPath = rootPath;
+    } else if (path == "..") {
+      // 请求上级
+      targetPath = filePathDir.parent.path;
+    } else if (path?.isFileExistsSync() == true) {
+      // 请求文件
+      targetPath = path!;
+    } else {
+      // 请求子目录
+      targetPath = rootPath.connectUrl(path);
+    }
+    if (await targetPath.isFile()) {
+      //返回文件数据流
+      return responseFile(targetPath);
+    } else {
+      //返回文件目录
+      buffer.write(
+        ShelfHtml.getFilesHeaderHtml(title ?? "文件浏览", targetPath),
+      ); //头
+      buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath)); //内容
+      buffer.write(ShelfHtml.getFilesFooterHtml()); //尾
+      return responseOkHtml(buffer.toString());
+    }
+  }
+
+  /// 处理html页面文件列表请求
+  static shelf.Response handleDebugLogUdpClientListRequest(
+    shelf.Request request,
+    String? address,
+  ) {
+    //debugger();
+    final buffer = StringBuffer();
+    final values = udpBroadcastClientMap.values;
+    buffer.write(
+      ShelfHtml.getUdpClientListHeaderHtml(
+        "UDP客户端列表",
+        "UDP客户端列表[${values.length}]",
+      ),
+    );
+    for (final value in values) {
+      buffer.write(
+        ShelfHtml.getUdpClientListItemHtml(value, value["address"] == address),
+      );
+    }
+    buffer.write(ShelfHtml.getUdpClientListFooterHtml());
+    return responseOkHtml(buffer.toString());
+  }
+
   //--
 
   /// udp广播端口
@@ -242,88 +330,14 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   DebugLogWebSocketServer({super.port = 9200, super.scheme = 'http'}) {
     //注册接口apis
     //--进入首页页面
-    get('/', (shelf.Request request) {
-      final text = ShelfHtml.getDebugLogIndexHtml().replaceKeyTemplate(
-        "bottomInfo",
-        nowTimeString().connect(
-          DebugPage.buildLastDebugCopyString(
-            GlobalConfig.def.globalContext,
-          ).connect(null, "<br>").replaceAll("\n", "<br>"),
-        ),
-      );
-      if (request.isAcceptHtml) {
-        return responseOkHtml(text);
-      }
-      return responseOk(text);
-    });
+    get('/', handleDebugLogIndexRequest);
     //--进入ws页面
-    get('/ws', (shelf.Request request) {
-      final text = ShelfHtml.getWebSocketHtml(
-        'WebSocket',
-        "${getServerAddress(scheme: "ws")}/_ws_server_",
-      );
-      if (request.isAcceptHtml) {
-        return responseOkHtml(text);
-      }
-      return responseOk(text);
-    });
+    get('/ws', handleDebugLogWebSocketRequest);
     //--进入文件浏览页面
-    get('/files', (shelf.Request request) async {
-      final path = request.requestedUri.queryParameters["path"];
-      final buffer = StringBuffer();
-      //根目录
-      final filePathDir = await fileFolder();
-      final rootPath = filePathDir.parent.path;
-      //debugger();
-      //需要请求的路径
-      String? targetPath;
-      if (isNil(path) || path == ".") {
-        // 请求根目录
-        targetPath = rootPath;
-      } else if (path == "..") {
-        // 请求上级
-        targetPath = filePathDir.parent.path;
-      } else if (path?.isFileExistsSync() == true) {
-        // 请求文件
-        targetPath = path!;
-      } else {
-        // 请求子目录
-        targetPath = rootPath.connectUrl(path);
-      }
-      if (await targetPath.isFile()) {
-        //返回文件数据流
-        return responseFile(targetPath);
-      } else {
-        //返回文件目录
-        buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath)); //头
-        buffer.write(
-          await ShelfHtml.getFilesListHtml(rootPath, targetPath),
-        ); //内容
-        buffer.write(ShelfHtml.getFilesFooterHtml()); //尾
-        return responseOkHtml(buffer.toString());
-      }
-    });
+    get('/files', handleDebugLogFilesRequest);
     //--进入udp client 客户端列表页面
     get('/list', (shelf.Request request) {
-      //debugger();
-      final buffer = StringBuffer();
-      final values = udpBroadcastClientMap.values;
-      buffer.write(
-        ShelfHtml.getUdpClientListHeaderHtml(
-          "UDP客户端列表",
-          "UDP客户端列表[${values.length}]",
-        ),
-      );
-      for (final value in values) {
-        buffer.write(
-          ShelfHtml.getUdpClientListItemHtml(
-            value,
-            value["address"] == address,
-          ),
-        );
-      }
-      buffer.write(ShelfHtml.getUdpClientListFooterHtml());
-      return responseOkHtml(buffer.toString());
+      return handleDebugLogUdpClientListRequest(request, address);
     });
     //--转发控制台日志输出
     l.printList.add((log) {

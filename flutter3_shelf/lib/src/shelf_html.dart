@@ -139,7 +139,8 @@ abstract final class ShelfHtml {
 </div>
 <script>
     // 创建一个 WebSocket 实例，指定服务器的地址
-    const socket = new WebSocket('$ws');
+    const host = window.location.host; //域名/IP + 端口号; hostname: 仅域名/IP
+    const socket = new WebSocket('ws://' + host + '$ws');
 
     // 当连接打开时触发
     socket.onopen = function (event) {

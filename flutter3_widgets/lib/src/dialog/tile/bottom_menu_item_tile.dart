@@ -69,10 +69,13 @@ class BottomMenuItemTile extends StatelessWidget {
             gap: kH,
             mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
           )!
-        : list.column(
-            gap: kH,
-            mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
-          )!;
+        : list
+              .column(
+                gap: kH,
+                mainAxisAlignment:
+                    mainAxisAlignment ?? MainAxisAlignment.center,
+              )!
+              .matchParentWidth();
     return body
         .colorFiltered(
           color: enable
