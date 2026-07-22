@@ -3497,3 +3497,16 @@ extension StreamBytesEx on Stream<List<int>> {
     return bytes;
   }
 }
+
+//MARK: - Uri
+
+extension UriEx on Uri {
+  /// 获取api host
+  /// - `origin` : http://192.168.1.96:9990
+  /// - `scheme` : http
+  /// - `host` : 192.168.1.96
+  /// - `port` : 9990
+  /// - `path` : /api/shares
+  /// - `query` :
+  String get apiHost => origin;
+}

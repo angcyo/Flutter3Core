@@ -9,8 +9,24 @@ part of '../flutter3_shelf.dart';
 class UdpService {
   /// 判断指定主机和端口是否被占用
   static Future<bool> isPortOccupied(int port, {String? hostname}) async {
+    //直接绑定某个端口, 失败了则被占用
+    try {
+      // 尝试在本地所有 IPv4 地址上绑定该端口
+      final socket = await ServerSocket.bind(
+        InternetAddress.anyIPv4,
+        port,
+        shared: false, // 禁用共享模式
+      );
+
+      // 如果成功绑定，记得立即关闭资源
+      await socket.close();
+      return false; // 未被占用
+    } on SocketException catch (_) {
+      return true; // 抛出 SocketException (EADDRINUSE)，说明已被占用
+    }
+
     // 创建一个尝试连接到指定主机和端口的 Socket。
-    Socket? socket;
+    /*Socket? socket;
     try {
       // 设置一个短超时，防止永远等待连接
       socket = await Socket.connect(
@@ -22,14 +38,14 @@ class UdpService {
       return true;
     } catch (e) {
       //端口未被占用
-      /*assert(() {
+      */ /*assert(() {
         l.v("[$port]端口被占用!");
         return true;
-      }());*/
+      }());*/ /*
       return false;
     } finally {
       socket?.destroy(); //关闭 socket
-    }
+    }*/
   }
 
   /// 获取一个随机未被占用本机端口的[UDP]

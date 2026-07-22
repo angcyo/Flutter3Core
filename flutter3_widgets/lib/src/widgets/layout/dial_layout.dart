@@ -166,7 +166,7 @@ class _DialLayoutRender extends RenderBox
       offset,
       transform: effectiveTransform,
     );
-    debugPaintBoxBounds(context, offset);
+    /*debugPaintBoxBounds(context, offset);*/
   }
 
   /// - [RenderTransform]
@@ -264,7 +264,7 @@ class _FloatingAnimatedWidgetState extends State<FloatingAnimatedWidget>
       child: widget.child,
       builder: (context, cachedChild) {
         // 关键改动：将控制器当前值叠加相位偏移量 phaseOffset
-        final double rawValue = (_controller.value + widget.phaseOffset) % 1.0;
+        final double rawValue = _controller.value + widget.phaseOffset;
         // 将 0.0 ~ 1.0 的动画进度映射到 0 ~ 2π 弧度
         final double t = rawValue * 2 * pi;
 
@@ -272,6 +272,10 @@ class _FloatingAnimatedWidgetState extends State<FloatingAnimatedWidget>
         final double dx = widget.distanceX * sin(t * widget.frequencyRatioXToY);
         final double dy = widget.distanceY * sin(t);
 
+        /*assert(() {
+          l.d("test-> t: $t, dx: $dx, dy: $dy");
+          return true;
+        }());*/
         return Transform.translate(offset: Offset(dx, dy), child: cachedChild);
       },
     );

@@ -386,7 +386,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   }
 
   @override
-  Future stop() async {
+  Future<bool> stop() async {
     //发送一个停止udp广播
     sendUdpBroadcast(
       udpBroadcastPort,
@@ -399,7 +399,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     debugLogServerAddressStream << null;
     _broadcastTimer?.cancel();
     _broadcastTimer = null;
-    super.stop();
+    return super.stop();
   }
 }
 

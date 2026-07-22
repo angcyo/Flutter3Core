@@ -525,8 +525,13 @@ class GlobalConfig with Diagnosticable, OverlayManage {
         Process.run('open', [filePath]);
       } else if (Platform.isLinux) {
         Process.run('xdg-open', [filePath]);
+      } else {
+        return Future.value(false);
       }
       return Future.value(true);
+    } else if (filePath != null) {
+      //移动端, 降级到分享文件
+      return saveFilePath(filePath, context, meta);
     }
     return Future.value(false);
   };

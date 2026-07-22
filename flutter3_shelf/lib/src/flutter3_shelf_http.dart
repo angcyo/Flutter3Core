@@ -351,16 +351,18 @@ class Flutter3ShelfHttp {
 
   /// 停止服务
   @api
-  Future stop() async {
+  Future<bool> stop() async {
     try {
       await _httpServer?.close();
       startTime = 0;
       stopTime = nowTimestamp();
+      return true;
     } catch (e, s) {
       assert(() {
         printError(e, s);
         return true;
       }());
+      return false;
     }
   }
 
