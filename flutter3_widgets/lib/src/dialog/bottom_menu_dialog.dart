@@ -22,6 +22,14 @@ part of './dialog.dart';
 ///
 class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 菜单列表,
+  /// ```
+  /// BottomMenuItemTile( /*标题*/
+  ///   enable: false,
+  ///   child: LibRes.of(
+  ///     context,
+  ///   ).libDeleteTip.text(style: globalTheme.textDesStyle),
+  /// ),
+  /// ```
   /// [BottomMenuItemTile]
   final WidgetNullList items;
 
@@ -54,6 +62,9 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
   /// 奸细的高度
   final double cancelGap;
 
+  /// 取消按钮的文本样式
+  final TextStyle? cancelTextStyle;
+
   //--
 
   /// 是否在弹窗中显示当前的对话框
@@ -69,6 +80,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
     this.clipRadius = kDefaultBorderRadiusXX,
     this.cancelItem,
     this.cancelText,
+    this.cancelTextStyle,
     //--
     this.surfaceColor = Colors.transparent,
     this.cancelGapColor,
@@ -100,7 +112,9 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
             },
             closeAfterTap: true,
             popResult: popResult,
-            child: (cancelText ?? LibRes.of(context).libCancel).text(),
+            child: (cancelText ?? LibRes.of(context).libCancel).text(
+              textStyle: cancelTextStyle,
+            ),
           ));
     }
     if (isTransparentStyle) {
@@ -129,7 +143,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
           enablePullBack: isInPopup != true,
           showDragHandle: false,
           bgColor: surfaceColor,
-          clipTopRadius: isTransparentStyle ? null : clipRadius,
+          clipTopRadius: isTransparentStyle ? 0 : clipRadius,
           isPopupStyle: isInPopup,
         )
         .paddingAll(isTransparentStyle ? kX : 0)

@@ -7,7 +7,7 @@ part of '../dialog.dart';
 /// 底部菜单tile
 /// [BottomMenuItemsDialog]
 class BottomMenuItemTile extends StatelessWidget {
-  /// children
+  /// [Row]children
   final WidgetNullList? children;
 
   /// [children]
