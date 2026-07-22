@@ -224,7 +224,7 @@ extension PlatformDeviceInfoEx on BaseDeviceInfo {
   /// 平台设备的名称
   /// [Platform.operatingSystem]
   String? get platformDeviceName => switch (this) {
-    AndroidDeviceInfo info => info.model,
+    AndroidDeviceInfo info => info.model /*PKX110*/ /*Pixel 7*/ /*SM-S9010*/,
     WindowsDeviceInfo info => info.productName,
     IosDeviceInfo info => info.modelName,
     MacOsDeviceInfo info => info.modelName /*MacBook Pro (14-inch, 2023)*/,

@@ -2679,7 +2679,7 @@ extension IterableEx<E> on Iterable<E> {
 
   /// 过滤元素, 返回满足条件的新列表
   /// [test] 返回true, 则保留元素
-  /// [WhereIterable]
+  /// [where]返回的是[WhereIterable], 必须[toList]否则无法处理成json
   List<E> filter(bool Function(E element) test) => where(test).toList();
 
   /// 统计满足条件的元素数量
