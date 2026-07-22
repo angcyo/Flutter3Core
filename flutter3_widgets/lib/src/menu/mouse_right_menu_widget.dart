@@ -37,12 +37,16 @@ class MouseRightMenuWidget extends StatefulWidget {
   /// 对齐后, 额外的偏移量
   final Offset? alignmentOffset;
 
+  /// 是否使用根导航器
+  final bool useRootNavigator;
+
   const MouseRightMenuWidget({
     super.key,
     this.child,
     this.onMouseRightTap,
     this.onMouseRightContentTap,
     //--
+    this.useRootNavigator = false,
     this.menus,
     this.onMenusTap,
     this.menu,
@@ -72,6 +76,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               shape: kMenuStyle.shape?.resolve({}),
               menuPadding: kMenuStyle.padding?.resolve({}),
               offset: widget.alignmentOffset,
+              useRootNavigator: widget.useRootNavigator,
             );
           }
           if (widget.menu != null) {
@@ -83,6 +88,7 @@ class _MouseRightMenuWidgetState extends State<MouseRightMenuWidget> {
               shape: kMenuStyle.shape?.resolve({}),
               menuPadding: kMenuStyle.padding?.resolve({}),
               offset: widget.alignmentOffset,
+              useRootNavigator: widget.useRootNavigator,
             );
           }
           widget.onMouseRightTap?.call(event);
@@ -161,6 +167,7 @@ extension MouseRightMenuWidgetEx on Widget {
     //--菜单整体
     Widget? menu,
     //--
+    bool useRootNavigator = false,
     bool enable = true,
   }) {
     if (!enable) {
@@ -171,6 +178,7 @@ extension MouseRightMenuWidgetEx on Widget {
       menus: menus,
       onMenusTap: onMenusTap,
       menu: menu,
+      useRootNavigator: useRootNavigator,
       child: this,
     );
   }

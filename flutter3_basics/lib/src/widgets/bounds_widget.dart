@@ -100,11 +100,11 @@ class _BoundsWidgetRenderObject extends RenderProxyBox {
       );
     }
     //if (isSchedulerIdle) {
-      //debugger(when: config.debugLabel != null);
-      if (config.debugLabel != null) {
-        final bounds = getGlobalBounds();
-        l.d("[${classHash()}] $bounds key:${config.key?.classHash()}");
-      }
+    //debugger(when: config.debugLabel != null);
+    if (config.debugLabel != null) {
+      final bounds = getGlobalBounds();
+      l.d("[${classHash()}] $bounds key:${config.key?.classHash()}");
+    }
     //}
   }
 }
@@ -117,12 +117,15 @@ extension BoundsWidgetEx on Widget {
     double strokeWidth = 1,
     double radius = 0,
     String? debugLabel,
-  }) => BoundsWidget(
-    key: key,
-    color: color,
-    strokeWidth: strokeWidth,
-    radius: radius,
-    debugLabel: debugLabel,
-    child: this,
-  );
+    bool? enable,
+  }) => (enable ?? isDebug)
+      ? BoundsWidget(
+          key: key,
+          color: color,
+          strokeWidth: strokeWidth,
+          radius: radius,
+          debugLabel: debugLabel,
+          child: this,
+        )
+      : this;
 }

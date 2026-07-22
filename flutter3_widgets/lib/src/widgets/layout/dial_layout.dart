@@ -172,6 +172,7 @@ class _DialLayoutRender extends RenderBox
   /// - [RenderTransform]
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
+    super.applyPaintTransform(child, transform);
     final Matrix4? effectiveTransform = _effectiveTransform;
     if (effectiveTransform != null) {
       transform.multiply(effectiveTransform);

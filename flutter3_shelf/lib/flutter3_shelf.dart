@@ -70,11 +70,13 @@ extension ShelfRequestEx on shelf.Request {
 /// 响应成功, 数据类型
 shelf.Response responseOk(
   Object? body, {
+  int? statusCode,
   Map<String, /* String | List<String> */ Object>? headers,
   Encoding? encoding = utf8,
   Map<String, Object>? context,
-}) => shelf.Response.ok(
-  body,
+}) => shelf.Response(
+  statusCode ?? (body == null ? 404 : 200),
+  body: body,
   headers: headers,
   encoding: encoding,
   context: context,
@@ -117,27 +119,46 @@ shelf.Response responseOkHtml(
 /// attachment; filename="LOG_中国人_1.0.1_3_2025-11-18_15-03-38_745.zip"
 /// ```
 ///
-shelf.Response responseOkFile({
-  String? filePath,
-  Stream<List<int>>? fileStream,
+shelf.Response responseFile(
+  Object? body, {
+  int? statusCode,
+  String? mimeType,
+  bool? mediaType = false,
   Map<String, /* String | List<String> */ Object>? headers,
   Encoding? encoding = utf8,
   Map<String, Object>? context,
 }) {
-  final file = filePath?.file();
+  assert(
+    body == null || body is String || body is File || body is Stream<List<int>>,
+  );
+  Stream<List<int>>? fileStream;
+  File? file;
+  if (body is File) {
+    file = body;
+    fileStream = body.openRead();
+  } else if (body is String) {
+    file = body.file();
+    fileStream = file.openRead();
+  } else if (body is Stream<List<int>>) {
+    fileStream = body;
+  }
+  final defContentType = 'application/octet-stream';
+  mimeType ??= mediaType == true ? file?.path.mimeType() : null;
   return responseOk(
-    fileStream ?? file?.openRead(),
+    fileStream,
+    statusCode: statusCode,
     headers:
         headers ??
         (file == null
-            ? null
+            ? {HttpHeaders.accessControlAllowOriginHeader: '*'}
             : {
                 HttpHeaders.contentDisposition:
                     'attachment; filename="${file.fileName().encodeUri()}"',
                 HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
                 HttpHeaders.contentTypeHeader:
-                    _defaultMimeTypeResolver.lookup(file.path) ??
-                    'application/octet-stream',
+                    mediaType == true && mimeType?.isImageMimeType == true
+                    ? mimeType ?? defContentType
+                    : defContentType,
                 HttpHeaders.accessControlAllowOriginHeader: '*',
               }),
     encoding: encoding,

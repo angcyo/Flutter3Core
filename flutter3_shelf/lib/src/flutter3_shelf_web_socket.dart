@@ -292,7 +292,7 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
       }
       if (await targetPath.isFile()) {
         //返回文件数据流
-        return responseOkFile(filePath: targetPath);
+        return responseFile(targetPath);
       } else {
         //返回文件目录
         buffer.write(ShelfHtml.getFilesHeaderHtml("文件浏览", targetPath)); //头

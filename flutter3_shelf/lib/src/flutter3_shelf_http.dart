@@ -52,7 +52,7 @@ class Flutter3ShelfHttp {
     get("/favicon.ico", (shelf.Request request) async {
       //final logo = await loadAssetBytes(Assets.png.flutter.keyName);
       final bytes = faviconBase64.toBase64Bytes;
-      return responseOkFile(fileStream: bytes.stream);
+      return responseFile(bytes.stream);
     });
   }
 
