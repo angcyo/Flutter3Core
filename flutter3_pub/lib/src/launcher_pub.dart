@@ -42,6 +42,19 @@ extension LauncherUriEx on Uri {
 }
 
 extension LauncherStringEx on String {
+  /// 使用 `mailto` 协议, 唤醒对应软件, 发送邮件
+  /// mailto:<主收件人列表>?<参数1>=<URL编码值1>&<参数2>=<URL编码值2>...
+  Future<bool> mailto({String? subject, String? body}) async {
+    final url =
+        "mailto:$this"
+        "${subject != null || body != null ? "?" : ""}"
+        "${subject != null ? "subject=${Uri.encodeComponent(subject)}" : ""}"
+        "${subject != null && body != null ? "&" : ""}"
+        "${body != null ? "body=${Uri.encodeComponent(body)}" : ""}";
+    //debugger();
+    return url.launch();
+  }
+
   /// -[LaunchMode.platformDefault] 使用平台浏览器打开url,打开网页, 在高版本Edge浏览器中也会在App内打开网页, 但是不用手动控制导航栏.
   /// - 桌面端: 浏览器打开网页, 系统浏览器打开网页
   ///
