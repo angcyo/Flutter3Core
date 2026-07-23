@@ -319,6 +319,7 @@ https://github.com/fluttercommunity/plus_plugins
 - [connectivity_plus: ^5.0.2](https://pub.dev/packages/connectivity_plus) 监视网络连接状态（WiFi、移动数据、蜂窝）。
 - [network_info_plus: ^5.0.3](https://pub.dev/packages/network_info_plus) 该插件允许 Flutter 应用程序发现网络信息并相应地进行自我配置。 获取wifi相关信息
 - [highlight: ^0.7.0](https://pub.dev/packages/highlight) Dart 语法高亮库。
+- [syntax_highlight: ^0.5.0](https://pub.dev/packages/syntax_highlight) Dart 语法高亮库。
 - [flutter_highlight: ^0.7.0](https://pub.dev/packages/flutter_highlight) 语法高亮, 代码高亮小部件，支持 170+ 语言和 80+ 风格。
 - [substring_highlight: ^1.0.33](https://pub.dev/packages/substring_highlight) 在字符级别突出显示 Flutter 文本。
 - [highlightable: ^1.0.5](https://pub.dev/packages/highlightable) 一个文本小部件替代方案，它突出显示了定义的字符（来自模式/纯字符串）
@@ -383,6 +384,8 @@ https://github.com/fluttercommunity/plus_plugins
 - [cronet_http: ^1.3.2](https://pub.dev/packages/cronet_http) 一个 Android Flutter 插件，提供对 Cronet HTTP 客户端的访问。
 - [encrypt: ^5.0.3](https://pub.dev/packages/encrypt) 一组基于 PointyCastle 的高级 API，用于双向加密。 具有 PKCS1 和 OAEP 编码的 RSA SHA256 with RSA
 - [jsonc: ^0.0.3](https://pub.dev/packages/jsonc) 带有注释和尾随逗号的 JSON。
+- [flutter_confetti: ^0.8.0](https://pub.dev/packages/flutter_confetti) 在 Flutter 中轻松创建彩带动画。
+- [flutter_confetti_engine: ^1.0.8](https://pub.dev/packages/flutter_confetti_engine) 一个 Flutter 庆祝包，它将五彩纸屑粒子动画 、 触觉反馈和可选声音统一到一个 API 调用中。 撒花/纸屑庆祝动画（Confetti Animation）
 
 ## 平台特有
 
