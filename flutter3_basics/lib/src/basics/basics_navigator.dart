@@ -209,8 +209,8 @@ class TranslationTypeImpl {
   /// [DialogPageRoute]
   TranslationType get translationType => TranslationType.material;
 
-  /// [PopupEx.showPopupDialog] 弹窗优先对齐方式
-  Alignment? get popupPreferredAlignment => .bottomCenter;
+  /// [PopupEx.showPopupDialog] 弹窗哪个位置优先对齐锚点
+  Alignment? get popupPreferredFollowerAlignment => .bottomCenter;
 }
 
 /// [DialogMixin]
@@ -240,7 +240,7 @@ mixin TranslationTypeMixin implements TranslationTypeImpl {
   }
 
   @override
-  Alignment? get popupPreferredAlignment => .bottomCenter;
+  Alignment? get popupPreferredFollowerAlignment => .bottomCenter;
 }
 
 /// [TranslationTypeImpl]
@@ -294,8 +294,8 @@ extension RouteWidgetEx on Widget {
       getWidgetTranslationTypeImpl(depth: depth)?.dialogUseRootNavigator;
 
   /// 获取[Widget]的指定的过渡动画类型
-  Alignment? getWidgetPopupPreferredAlignment({int depth = 3}) =>
-      getWidgetTranslationTypeImpl(depth: depth)?.popupPreferredAlignment;
+  Alignment? getWidgetPopupPreferredFollowerAlignment({int depth = 3}) =>
+      getWidgetTranslationTypeImpl(depth: depth)?.popupPreferredFollowerAlignment;
 
   /// [MaterialPageRoute]
   /// [CupertinoPageRoute]

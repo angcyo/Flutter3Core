@@ -1255,6 +1255,12 @@ extension PaintEx on Paint {
 }
 
 extension AlignmentEx on Alignment {
+  /// 翻转垂直对齐方式
+  Alignment get flipVertical => Alignment(x, -y);
+
+  /// 翻转水平对齐方式
+  Alignment get flipHorizontal => Alignment(-x, y);
+
   String? get name => switch (this) {
     Alignment.topLeft => "topLeft",
     Alignment.topCenter => "topCenter",

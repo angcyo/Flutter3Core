@@ -36,8 +36,8 @@ extension PopupEx on BuildContext {
     bool rootNavigator = false,
     double? edgeMargin /*距离容器的边界距离*/,
     //--
-    Alignment? popupPreferredAlignment /*优先对齐方式*/,
     Alignment targetAnchor = .topRight /*对齐锚点的什么位置*/,
+    Alignment? popupPreferredFollowerAlignment /*优先对齐方式*/,
     Alignment? followerAnchor /*自身的什么位置*/,
     Offset alignmentOffset = .zero /*对齐后的偏移*/,
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
@@ -60,7 +60,8 @@ extension PopupEx on BuildContext {
       contentPadding ??= const EdgeInsets.all(kS);
       contentMargin ??= EdgeInsets.zero;
     }
-    popupPreferredAlignment ??= body.getWidgetPopupPreferredAlignment();
+    popupPreferredFollowerAlignment ??= body
+        .getWidgetPopupPreferredFollowerAlignment();
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
     final parentSize = navigator.context.findRenderObject()?.renderSize;
     final parentWidth = parentSize?.width ?? $screenWidth;
@@ -85,10 +86,12 @@ extension PopupEx on BuildContext {
       childOffsetCallback:
           childOffsetCallback ??
           (anchorRect, childRect) {
-            Alignment bodyAlign;
+            Alignment bodyFollowerAlign;
             //debugger();
             if (followerAnchor != null) {
-              bodyAlign = followerAnchor;
+              bodyFollowerAlign = followerAnchor;
+            } else if (popupPreferredFollowerAlignment != null) {
+              bodyFollowerAlign = popupPreferredFollowerAlignment;
             } else {
               final anchorCx = anchorRect.center.dx;
               final anchorCy = anchorRect.center.dy;
@@ -97,19 +100,35 @@ extension PopupEx on BuildContext {
               if (anchorCx < screenCx) {
                 if (anchorCy < screenCy) {
                   //锚点在屏幕左上
-                  bodyAlign = popupPreferredAlignment ?? Alignment.topRight;
+                  bodyFollowerAlign = Alignment.topRight;
                 } else {
                   //锚点在屏幕左下
-                  bodyAlign = popupPreferredAlignment ?? Alignment.bottomRight;
+                  bodyFollowerAlign = Alignment.bottomRight;
                 }
               } else {
                 if (anchorCy < screenCy) {
                   //锚点在屏幕右上
-                  bodyAlign = popupPreferredAlignment ?? Alignment.topLeft;
+                  bodyFollowerAlign = Alignment.topLeft;
                 } else {
                   //锚点在屏幕右下
-                  bodyAlign = popupPreferredAlignment ?? Alignment.bottomLeft;
+                  bodyFollowerAlign = Alignment.bottomLeft;
                 }
+              }
+            }
+
+            if (followerAnchor == null &&
+                popupPreferredFollowerAlignment != null) {
+              if (bodyFollowerAlign.isTop &&
+                  anchorRect.bottom + childRect.height + (edgeMargin ?? 0) >
+                      parentHeight) {
+                //朝底部显示, 并且移除了, 则翻转显示
+                bodyFollowerAlign = bodyFollowerAlign.flipVertical;
+                targetAnchor = targetAnchor.flipVertical;
+              } else if (bodyFollowerAlign.isLeft &&
+                  anchorRect.right + childRect.width + (edgeMargin ?? 0) >
+                      parentWidth) {
+                bodyFollowerAlign = bodyFollowerAlign.flipHorizontal;
+                targetAnchor = targetAnchor.flipHorizontal;
               }
             }
             return AlignmentAnchorLayout.getFollowerAlignmentOffset(
@@ -117,7 +136,7 @@ extension PopupEx on BuildContext {
               parentSize: Size(parentWidth, parentHeight),
               childSize: childRect.size,
               targetAnchor: targetAnchor,
-              followerAnchor: bodyAlign,
+              followerAnchor: bodyFollowerAlign,
               alignmentOffset: alignmentOffset,
               edgeOffset: edgeMargin == null
                   ? null
