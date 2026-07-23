@@ -374,6 +374,7 @@ class Flutter3ShelfHttp {
     //debugger();
     final handler = createHandler();
     int count = 0;
+    this.port = port ?? this.port;
     while (count <= retryCount) {
       try {
         //debugger();
@@ -382,7 +383,6 @@ class Flutter3ShelfHttp {
           throw "无法获取网络IP, 请检查网络连接!";
         }
         host = ip ?? host;
-        this.port = port ?? this.port;
         //debugger();
         _httpServer = await shelf_io.serve(handler, host, this.port).get((
           value,
@@ -426,7 +426,7 @@ class Flutter3ShelfHttp {
     }
     //debugger();
     if (_httpServer == null) {
-      throw "启动失败, 请稍后重试!";
+      throw "[${this.port}]启动失败, 请稍后重试!";
     }
     return _httpServer!;
   }
