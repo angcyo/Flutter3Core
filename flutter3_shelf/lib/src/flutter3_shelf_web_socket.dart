@@ -293,8 +293,6 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
     String? deviceName,
   }) async {
     final path = request.requestedUri.queryParameters["path"];
-    final title = request.requestedUri.queryParameters["title"];
-    final buffer = StringBuffer();
     //根目录
     final filePathDir = await fileFolder();
     final rootPath = filePathDir.parent.path;
@@ -319,13 +317,6 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
       return responseFile(targetPath);
     } else {
       //返回文件目录
-      /*buffer.write(
-        ShelfHtml.getFilesHeaderHtml(title ?? "文件浏览", targetPath),
-      ); //头
-      buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath)); //内容
-      buffer.write(ShelfHtml.getFilesFooterHtml()); //尾
-      return responseOkHtml(buffer.toString());*/
-
       final file = File(targetPath);
       final isRootPath = targetPath == rootPath;
       final fileList = [
@@ -343,7 +334,9 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
         final folderName = entity.fileName();
         final targetPath = entity.path.replaceAll(rootPath, '');
         final des = entity.isDirectorySync()
-            ? (entity as Directory).listSync().length.toString().connect(" 项")
+            ? ((entity as Directory).listFilesSync()?.length ?? 0)
+                  .toString()
+                  .connect(" 项")
             : (entity as File)
                   .fileSizeSync()
                   .toSizeStr(space: " ")

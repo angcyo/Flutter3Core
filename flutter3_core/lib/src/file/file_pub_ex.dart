@@ -84,6 +84,11 @@ Future<UiImage?> saveScreenCapture([
 /// C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools
 /// ```
 ///
+/// # macos
+/// ```
+/// '/Users/angcyo/Library/Containers/com.laserabc.factory.tools.desktop/Data/Library/Application Support/com.laserabc.factory.tools.desktop'
+/// ```
+///
 /// - [getApplicationDocumentsDirectory]
 /// - [getApplicationCacheDirectory]
 ///
@@ -139,6 +144,11 @@ Future<Directory> fileDirectory() async {
 /// # Windows
 /// ```
 /// C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools
+/// ```
+///
+/// # macos
+/// ```
+/// '/Users/angcyo/Library/Containers/com.laserabc.factory.tools.desktop/Data/Library/Caches/com.laserabc.factory.tools.desktop'
 /// ```
 ///
 /// - [fileDirectory]
