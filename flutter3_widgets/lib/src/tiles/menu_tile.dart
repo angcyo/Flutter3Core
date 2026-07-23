@@ -572,7 +572,7 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
                       preferredFollowerAlignment:
                           widget.preferredFollowerAlignment,
                       followerAnchor: widget.followerAnchor,
-                      alignmentOffset: widget.alignmentOffset,
+                      alignmentOffset: widget.alignmentOffset ?? .zero,
                     );
                   }).get((data, error) {
                     if (widget.autoCloseMenu == true) {
