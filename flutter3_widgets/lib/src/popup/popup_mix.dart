@@ -37,8 +37,8 @@ extension PopupEx on BuildContext {
     double? edgeMargin /*距离容器的边界距离*/,
     //--
     Alignment targetAnchor = .topRight /*对齐锚点的什么位置*/,
-    Alignment? popupPreferredFollowerAlignment /*优先对齐方式*/,
-    Alignment? followerAnchor /*自身的什么位置*/,
+    Alignment? preferredFollowerAlignment /*优先对齐方式*/,
+    Alignment? followerAnchor /*固定自身的什么位置*/,
     Offset alignmentOffset = .zero /*对齐后的偏移*/,
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
@@ -60,8 +60,7 @@ extension PopupEx on BuildContext {
       contentPadding ??= const EdgeInsets.all(kS);
       contentMargin ??= EdgeInsets.zero;
     }
-    popupPreferredFollowerAlignment ??= body
-        .getWidgetPopupPreferredFollowerAlignment();
+    preferredFollowerAlignment ??= body.getWidgetPreferredFollowerAlignment();
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
     final parentSize = navigator.context.findRenderObject()?.renderSize;
     final parentWidth = parentSize?.width ?? $screenWidth;
@@ -90,8 +89,8 @@ extension PopupEx on BuildContext {
             //debugger();
             if (followerAnchor != null) {
               bodyFollowerAlign = followerAnchor;
-            } else if (popupPreferredFollowerAlignment != null) {
-              bodyFollowerAlign = popupPreferredFollowerAlignment;
+            } else if (preferredFollowerAlignment != null) {
+              bodyFollowerAlign = preferredFollowerAlignment;
             } else {
               final anchorCx = anchorRect.center.dx;
               final anchorCy = anchorRect.center.dy;
@@ -116,8 +115,7 @@ extension PopupEx on BuildContext {
               }
             }
 
-            if (followerAnchor == null &&
-                popupPreferredFollowerAlignment != null) {
+            if (followerAnchor == null && preferredFollowerAlignment != null) {
               if (bodyFollowerAlign.isTop &&
                   anchorRect.bottom + childRect.height + (edgeMargin ?? 0) >
                       parentHeight) {

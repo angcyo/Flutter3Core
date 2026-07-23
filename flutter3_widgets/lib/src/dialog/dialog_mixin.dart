@@ -59,7 +59,7 @@ mixin DialogMixin implements TranslationTypeImpl {
   }
 
   @override
-  Alignment? get popupPreferredFollowerAlignment => .bottomCenter;
+  Alignment? get preferredFollowerAlignment => .bottomCenter;
 
   //MARK: - dialog
 
