@@ -491,7 +491,7 @@ extension DioStringEx on String {
         if (newFileName != null) {
           final file = saveFilePath!.toFile();
           final newFile = file.renameSync(
-            "${file.parent.path}${Platform.pathSeparator}$newFileName",
+            "${file.parent.path}${pathSeparator}$newFileName",
           );
           saveFilePath = newFile.path;
         }

@@ -10,7 +10,6 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_core/assets_generated/assets.gen.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_core/src/debug/debug_file_tiles.dart';
@@ -50,23 +49,23 @@ part 'src/debug/debug_mix.dart';
 part 'src/debug/debug_page.dart';
 part 'src/debug/navigator_route_overlay.dart';
 part 'src/debug/screen_capture_overlay.dart';
+part 'src/dialog/http_host_config_dialog.dart';
 part 'src/dialog/number_keyboard_dialog.dart';
 part 'src/dialog/options_dialog.dart';
 part 'src/dialog/shortcut_dialog.dart';
 part 'src/dialog/single_bottom_input_dialog.dart';
+part 'src/dialog/single_field_dialog.dart';
 part 'src/dialog/single_image_dialog.dart';
 part 'src/dialog/single_text_dialog.dart';
-part 'src/dialog/single_field_dialog.dart';
 part 'src/dialog/wheel_dialog.dart';
-part 'src/dialog/http_host_config_dialog.dart';
 part 'src/file/app_lifecycle_log.dart';
 part 'src/file/config_file.dart';
 part 'src/file/file_log.dart';
 part 'src/file/file_pub_ex.dart';
 part 'src/file/file_type.dart';
 part 'src/isar/hive/hive_ex.dart';
-part 'src/isar/hive/hive_value.dart';
 part 'src/isar/hive/hive_string_value.dart';
+part 'src/isar/hive/hive_value.dart';
 part 'src/isar/isar_ex.dart';
 part 'src/popup/slider_popup_dialog.dart';
 part 'src/tiles/core_dialog_title.dart';
@@ -102,13 +101,14 @@ Future<void> initFlutter3Core() async {
     GlobalConfig.def.writeFileFn
         ?.call(kLFileName, kLogPathName, log)
         .catchError((error) {
-          debugPrint('写入文件调用失败: $error');
-        });
+      debugPrint('写入文件调用失败: $error');
+    });
   };
 
   // 调试输入配置系统
-  registerDebugInputValueChanged((value) {
-    CoreDebug.parseHiveKeys(value.lines(), feedback: true);
+  registerDebugInputValueChanged((from, value) {
+    return CoreDebug.parseHiveKeys(
+        value.lines(), feedback: "$from" == "SingleInputWidget");
   });
 
   //--
@@ -177,8 +177,7 @@ Future<void> initIsar() async {
 //--
 
 /// [Image].[StatefulWidget]
-SvgPicture? loadCoreAssetSvgPicture(
-  String? key, {
+SvgPicture? loadCoreAssetSvgPicture(String? key, {
   String? prefix = kDefAssetsSvgPrefix,
   String? package = 'flutter3_core',
   BoxFit? fit,
@@ -187,19 +186,19 @@ SvgPicture? loadCoreAssetSvgPicture(
   double? height,
   UiColor? tintColor,
   UiColorFilter? colorFilter,
-}) => key == null
-    ? null
-    : SvgPicture.asset(
-        key.ensurePackagePrefix(package, prefix).transformKey(),
-        fit: fit ?? BoxFit.contain,
-        width: size ?? width,
-        height: size ?? height,
-        colorFilter: colorFilter ?? tintColor?.toColorFilter(),
-      );
+}) =>
+    key == null
+        ? null
+        : SvgPicture.asset(
+      key.ensurePackagePrefix(package, prefix).transformKey(),
+      fit: fit ?? BoxFit.contain,
+      width: size ?? width,
+      height: size ?? height,
+      colorFilter: colorFilter ?? tintColor?.toColorFilter(),
+    );
 
 /// [loadAssetSvgWidget]
-Widget loadCoreSvgWidget(
-  String key, {
+Widget loadCoreSvgWidget(String key, {
   String? prefix = kDefAssetsSvgPrefix,
   String? package = 'flutter3_core',
   Color? tintColor,
@@ -208,17 +207,18 @@ Widget loadCoreSvgWidget(
   double? size,
   double? width,
   double? height,
-}) => loadAssetSvgWidget(
-  key,
-  prefix: prefix,
-  package: package,
-  tintColor: tintColor,
-  colorFilter: colorFilter,
-  size: size,
-  width: width,
-  height: height,
-  fit: fit,
-);
+}) =>
+    loadAssetSvgWidget(
+      key,
+      prefix: prefix,
+      package: package,
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+      size: size,
+      width: width,
+      height: height,
+      fit: fit,
+    );
 
 /// 下一步svg图标
 SvgPicture coreNextSvgPicture({
@@ -228,19 +228,19 @@ SvgPicture coreNextSvgPicture({
   double? height,
   UiColor? tintColor,
   UiColorFilter? colorFilter,
-}) => loadCoreAssetSvgPicture(
-  Assets.svg.coreNext,
-  fit: fit,
-  size: size,
-  width: width,
-  height: height,
-  tintColor: tintColor,
-  colorFilter: colorFilter,
-)!;
+}) =>
+    loadCoreAssetSvgPicture(
+      Assets.svg.coreNext,
+      fit: fit,
+      size: size,
+      width: width,
+      height: height,
+      tintColor: tintColor,
+      colorFilter: colorFilter,
+    )!;
 
 /// [Image].[StatefulWidget]
-Image? loadCoreAssetImageWidget(
-  String? key, {
+Image? loadCoreAssetImageWidget(String? key, {
   String? prefix = kDefAssetsPngPrefix,
   String? package = 'flutter3_core',
   BoxFit? fit,
@@ -249,13 +249,14 @@ Image? loadCoreAssetImageWidget(
   double? height,
   UiColor? color,
   UiBlendMode? colorBlendMode,
-}) => key == null
-    ? null
-    : Image.asset(
-        key.ensurePackagePrefix(package, prefix).transformKey(),
-        fit: fit,
-        width: size ?? width,
-        height: size ?? height,
-        color: color,
-        colorBlendMode: colorBlendMode,
-      );
+}) =>
+    key == null
+        ? null
+        : Image.asset(
+      key.ensurePackagePrefix(package, prefix).transformKey(),
+      fit: fit,
+      width: size ?? width,
+      height: size ?? height,
+      color: color,
+      colorBlendMode: colorBlendMode,
+    );

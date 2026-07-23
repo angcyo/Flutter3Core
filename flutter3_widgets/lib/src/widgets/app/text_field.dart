@@ -1409,7 +1409,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     _checkSuffixIcon();
 
     // 通知输入框的值改变了
-    value.text.notifyInputValueChanged();
+    value.text.notifyInputValueChanged("SingleInputWidget");
   }
 
   /// 焦点改变后的回调

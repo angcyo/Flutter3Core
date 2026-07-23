@@ -108,10 +108,11 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   # https://pub.dev/packages/shelf_router_generator
-  shelf_router_generator: ^1.1.4
+  shelf_router_generator: ^1.1.5
   # https://pub.dev/packages/build_runner
   build_runner: any
   json_serializable: any
+  flutter_gen_runner: any
   # https://pub.dev/packages/sse
   # https://pub.dev/packages/async
   # https://pub.dev/packages/collection
@@ -121,6 +122,22 @@ dev_dependencies:
   # https://pub.dev/packages/stream_channel
   # https://pub.dev/packages/web
   sse: ^4.2.0
+
+# https://pub.dev/packages/flutter_gen#configuration-file
+# dart run build_runner build --delete-conflicting-outputs
+# flutter pub run build_runner build
+flutter_gen:
+  output: lib/assets_generated/ # Optional (default: lib/gen/)
+  parse_metadata: true
+  assets:
+    outputs:
+      package_parameter_enabled: true
+      directory_path_enabled: true
+  integrations:
+    image: false
+    flutter_svg: false
+    rive: false
+    lottie: false
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -158,3 +175,5 @@ flutter:
 #
 # For details regarding fonts in packages, see
 # https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/html/

@@ -116,21 +116,21 @@ extension HttpUriEx on Uri {
 extension HttpStringEx on String {
   /// this == host
   /// 拼接`host/path`
-  String connectUrl(String? path) {
+  String connectUrl(String? path, {String separator = "/"}) {
     if (path == null || isNil(path)) {
       return this;
     }
     String result = this;
     //移除末尾的/
-    if (result.endsWith('/')) {
+    if (result.endsWith(separator)) {
       result = result.substring(0, result.length - 1);
     }
-    if (path.startsWith('/')) {
+    if (path.startsWith(separator)) {
       //移除开头的/
       path = path.substring(1);
     }
     if (path.isNotEmpty) {
-      result = '$result/$path';
+      result = '$result$separator$path';
     }
     return result;
   }

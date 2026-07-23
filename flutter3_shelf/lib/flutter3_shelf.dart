@@ -6,6 +6,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter3_app/flutter3_app.dart';
+import 'package:flutter3_shelf/assets_generated/assets.gen.dart';
 import 'package:flutter3_shelf/src/local/api/udp_apis.dart';
 import 'package:flutter3_shelf/src/shelf_html.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -123,7 +124,7 @@ shelf.Response responseFile(
   Object? body, {
   int? statusCode,
   String? mimeType,
-  bool? mediaType = false,
+  bool? mediaType,
   Map<String, /* String | List<String> */ Object>? headers,
   Encoding? encoding = utf8,
   Map<String, Object>? context,
@@ -143,24 +144,29 @@ shelf.Response responseFile(
     fileStream = body;
   }
   final defContentType = 'application/octet-stream';
+  if (mimeType != null) {
+    mediaType ??= mimeType.isImageMimeType;
+  }
   mimeType ??= mediaType == true ? file?.path.mimeType() : null;
+  final normalHeader = {
+    HttpHeaders.contentTypeHeader:
+        mediaType == true && mimeType?.isImageMimeType == true
+        ? mimeType ?? defContentType
+        : defContentType,
+    HttpHeaders.accessControlAllowOriginHeader: '*',
+  };
+  headers ??= file == null
+      ? normalHeader
+      : {
+          HttpHeaders.contentDisposition:
+              'attachment; filename="${file.fileName().encodeUri()}"',
+          HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
+          ...normalHeader,
+        };
   return responseOk(
     fileStream,
     statusCode: statusCode,
-    headers:
-        headers ??
-        (file == null
-            ? {HttpHeaders.accessControlAllowOriginHeader: '*'}
-            : {
-                HttpHeaders.contentDisposition:
-                    'attachment; filename="${file.fileName().encodeUri()}"',
-                HttpHeaders.contentLengthHeader: file.lengthSync().toString(),
-                HttpHeaders.contentTypeHeader:
-                    mediaType == true && mimeType?.isImageMimeType == true
-                    ? mimeType ?? defContentType
-                    : defContentType,
-                HttpHeaders.accessControlAllowOriginHeader: '*',
-              }),
+    headers: headers,
     encoding: encoding,
     context: context,
   );

@@ -6,6 +6,12 @@ part of '../../flutter3_basics.dart';
 /// @date 2024/03/31
 ///
 
+/// 当前系统路径分隔符
+/// - [Platform.pathSeparator] 路径分割符号: Windows: `\` POSIX: `/`
+/// Portable Operating System Interface（可移植操作系统接口）。
+///
+String get pathSeparator => Platform.pathSeparator;
+
 extension FileUriEx on Uri {
   bool get isFileScheme => scheme == 'file';
 
@@ -264,7 +270,7 @@ extension FileEx on File {
       text = text.split('?').first;
     }
     //路径分隔符, Android:/
-    return text.split(Platform.pathSeparator).last;
+    return text.split(pathSeparator).last;
   }
 
   /// [UiImageProvider]

@@ -1,5 +1,3 @@
-
-
 ///
 /// Email:angcyo@126.com
 /// @author angcyo
@@ -49,7 +47,9 @@ void main() {
   }
 
   final maxBase36Value = int.parse("1z141z4", radix: 36); // 4294967296
-  final maxBase36ValueStr = 65535.toRadixString(36); // 1ekf
+  //最大支持36进制
+  //RangeError (radix): Invalid value: Not in inclusive range 2..36
+  final maxBase36ValueStr = 65535.toRadixString(36); // 1ekf 36进制
   print("...");
   print(maxBase36Value);
   print(maxBase36ValueStr);

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{deviceName}} Http 文件服务 - Debug</title>
+    <style>
+        :root {
+            --bg: #f3f6fb;
+            --panel: rgba(255, 255, 255, 0.86);
+            --line: rgba(32, 44, 75, 0.12);
+            --text: #182033;
+            --sub: #667693;
+            --accent: #3d7eff;
+            --accent-soft: rgba(61, 126, 255, 0.14);
+            --shadow: 0 14px 40px rgba(36, 58, 111, 0.12);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        a,
+        button,
+        input,
+        label {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text);
+            background: radial-gradient(1200px 640px at -8% -10%, rgba(61, 126, 255, 0.16), transparent 55%),
+            radial-gradient(1000px 520px at 110% -18%, rgba(29, 211, 176, 0.14), transparent 48%),
+            var(--bg);
+            min-height: 100dvh;
+            padding: 6px;
+        }
+
+        .shell {
+            width: 100%;
+            height: calc(100dvh - 12px);
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 16px 16px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .title-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .title {
+            margin: 0;
+            font-size: clamp(22px, 2.2vw, 32px);
+            line-height: 1.2;
+        }
+
+        .device-name {
+            margin: 0;
+            padding: 4px 12px;
+            border: 1px solid rgba(61, 126, 255, 0.28);
+            border-radius: 999px;
+            background: rgba(61, 126, 255, 0.08);
+            color: #3155a7;
+            font-size: clamp(12px, 1vw, 14px);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .back-link {
+            color: var(--accent);
+            font-size: clamp(12px, 0.95vw, 14px);
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(61, 126, 255, 0.24);
+            background: var(--accent-soft);
+        }
+
+        .main {
+            padding: 0 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .path-bar {
+            margin: 0;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(61, 126, 255, 0.2);
+            background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+            color: #1f3156;
+            font-size: clamp(14px, 1vw, 18px);
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .list-wrap {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 8px 10px;
+        }
+
+        .file-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 3px;
+        }
+
+        .file-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: baseline;
+            border-radius: 8px;
+            padding: 5px 6px;
+        }
+
+        .file-item:hover {
+            background: rgba(61, 126, 255, 0.06);
+        }
+
+        .file-link {
+            color: #2f56b6;
+            font-size: clamp(12px, 0.95vw, 14px);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            word-break: break-all;
+        }
+
+        .file-meta {
+            color: #9aa4b8;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .is-dir .file-link {
+            color: #4f66a1;
+            font-weight: 600;
+        }
+
+        @media (max-width: 860px) {
+            body {
+                padding: 4px;
+            }
+
+            .shell {
+                height: calc(100dvh - 8px);
+            }
+
+            .header {
+                padding: 12px 10px 8px;
+            }
+
+            .title-wrap {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .main {
+                padding: 0 10px 10px;
+            }
+
+            .file-item {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
+
+            .file-meta {
+                white-space: normal;
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="header">
+        <div class="title-wrap">
+          <h1 class="title">Http 文件服务</h1>
+          <p class="device-name">{{deviceName}}</p>
+        </div>
+        <a class="back-link" href="/">返回首页</a>
+      </header>
+      <section class="main">
+        <h2 class="path-bar" id="currentPath"></h2>
+        <div class="list-wrap" aria-label="文件列表">
+          <ul class="file-list" id="fileList"></ul>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const currentPath = document.getElementById("currentPath")
+      const fileList = document.getElementById("fileList")
+      const rawFileList = '{{fileList}}'
+      const rawCurrentPath = '{{currentPath}}'
+
+      function renderFiles(data) {
+        const next = data || {}
+        const items = normalizeItems(next.items)
+        currentPath.textContent = next.path || resolveCurrentPath() || ""
+        fileList.innerHTML = ""
+
+        const fragment = document.createDocumentFragment()
+        items.forEach((item) => {
+          const li = document.createElement("li")
+          li.className = `file-item${item.isDir ? " is-dir" : ""}`
+
+          const link = document.createElement("a")
+          link.className = "file-link"
+          link.href = item.href || "#"
+          link.textContent = item.name || "-"
+
+          const meta = document.createElement("span")
+          meta.className = "file-meta"
+          meta.textContent = item.meta || ""
+
+          li.appendChild(link)
+          li.appendChild(meta)
+          fragment.appendChild(li)
+        })
+        fileList.appendChild(fragment)
+      }
+
+      function normalizeItems(list) {
+        if (!Array.isArray(list)) return []
+        return list.map((item) => {
+          if (!item || typeof item !== "object") return null
+          const path = String(item.path ?? "").trim()
+          const nameFromData = typeof item.name === "string" ? item.name.trim() : ""
+          const des = String(item.des ?? "")
+          const href = path.startsWith("/files?path=") ? path : `/files?path=${encodeURIComponent(path)}`
+          const name = nameFromData || extractName(path)
+          const isDir = !name.includes(".") || path === "." || path === ".." || path.endsWith("/")
+          return {name, href, meta: des, isDir}
+        }).filter(Boolean)
+      }
+
+      function extractName(path) {
+        if (!path) return "."
+        const normalized = path.replace(/\\/g, "/").replace(/\/+$/, "")
+        if (normalized === "") return "."
+        const segments = normalized.split("/")
+        return segments[segments.length - 1] || normalized
+      }
+
+      function parseInjectedFileList() {
+        if (!rawFileList) return []
+        try {
+          const parsed = JSON.parse(decodeUri(rawFileList))
+          return Array.isArray(parsed) ? parsed : []
+        } catch (error) {
+          console.error("解析文件列表失败:", error)
+          return []
+        }
+      }
+
+      function resolveCurrentPath() {
+        const queryPath = rawCurrentPath || new URLSearchParams(window.location.search).get("path")
+        if (!queryPath) return ""
+        return decodeUri(queryPath)
+      }
+
+      function decodeUri(value) {
+        try {
+          return decodeURIComponent(value)
+        } catch (error) {
+          return value
+        }
+      }
+
+      // 占位: 外部可调用 window.setDebugFilesData({ path, items:[{name, path, des}] }) 注入数据
+      const injectedItems = parseInjectedFileList()
+      renderFiles({
+        path: resolveCurrentPath(),
+        items: injectedItems
+      })
+    </script>
+  </body>
+</html>

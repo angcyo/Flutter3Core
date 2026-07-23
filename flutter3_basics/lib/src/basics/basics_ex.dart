@@ -1023,6 +1023,8 @@ extension StringEx on String {
       });
 
   /// 使用正则替换字符串中的{xxx}字符
+  /// - 支持 `{xxx}`
+  /// - 支持 `{{xxx}}`
   /// ```
   /// "你好，{name}！你的积分是 {score}".replaceAllVariable({
   ///     "name": "angcyo",
@@ -1030,12 +1032,19 @@ extension StringEx on String {
   ///   });
   /// //你好，angcyo！你的积分是 100
   /// ```
+  /// - [params] 需要替换的数据
+  /// - [isDoubleBrace] 是否是双花括号
+  /// - [replace] 拦截替换函数, 否则默认使用 [params] 中对应的值
   String replaceAllVariable(
     Map<String, dynamic>? params, {
     String? regex,
+    bool? isDoubleBrace,
     String Function(Match)? replace,
   }) => replaceAllMapped(
-    regex ?? RegExp(r'\{(\w+)\}'),
+    regex ??
+        (isDoubleBrace == true
+            ? RegExp(r'\{{2}(\w+)\}{2}')
+            : RegExp(r'\{(\w+)\}')),
     (match) =>
         replace?.call(match) ??
         params?[match.group(1)!]?.toString() ??

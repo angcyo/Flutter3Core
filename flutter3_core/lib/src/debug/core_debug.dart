@@ -4,6 +4,10 @@ part of '../../flutter3_core.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2024/04/10
 ///
+///
+/// 调试指令系统
+/// [registerDebugInputValueChanged] 注册一个输入框内容变化通知
+/// [CoreDebug.parseHiveKeys] 解析一行一行的字符串, 识别出[DebugCommand]
 
 /// 返回是否要拦截默认处理
 typedef DebugCommandAction = bool Function(DebugCommand);
@@ -23,6 +27,7 @@ class DebugCommand {
 }
 
 class CoreDebug {
+  /// 调试指令[DebugCommand]拦截处理回调
   static List<DebugCommandAction> debugCommandActionList =
       <DebugCommandAction>[];
 
@@ -102,20 +107,24 @@ class CoreDebug {
   ///
   /// - [parseHiveKey]
   /// - [parseHiveKeys]
-  static void parseHiveKeys(
+  ///
+  /// @return 有些指令有返回值, 有些没有
+  static List<dynamic>? parseHiveKeys(
     List<String?>? lines, {
     BuildContext? context,
     bool? feedback,
   }) {
     context ??= GlobalConfig.def.globalContext;
     if (lines == null || lines.isEmpty) {
-      return;
+      return null;
     }
+    List<dynamic>? result = [];
     bool match = false;
     String? lastValueString;
     try {
-      for (var line in lines) {
+      for (final line in lines) {
         if (line == null) {
+          result.add(null);
           continue;
         }
 
@@ -132,7 +141,7 @@ class CoreDebug {
 
           bool intercept = false;
           try {
-            for (var action in debugCommandActionList) {
+            for (final action in debugCommandActionList) {
               intercept =
                   intercept ||
                   action.call(DebugCommand(line, key, type, valueString));
@@ -153,18 +162,39 @@ class CoreDebug {
             switch (key.toLowerCase()) {
               case "cmd":
                 switch (type) {
-                  case "clear":
-                    //删除hawk的键
+                  case "exit": //退出应用
+                    $next(() {
+                      exitApp();
+                    });
+                    match = true;
+                    result.add(true);
+                    break;
+                  case "del":
+                  case "clear": //删除hawk的键
                     //@cmd#clear=key
                     valueString.hiveDelete();
                     match = true;
+                    result.add(true);
                     break;
-                  case "show":
-                    //显示hawk的键值
+                  case "get": //获取指定hive的值
+                  case "show": //显示hawk的键值
                     //@cmd#show=key
-                    final value = valueString.hiveGet();
-                    toastBlur(text: value);
+                    final value = switch (null) {
+                      _ when valueString == "*" => hiveAll()?.toJsonString(),
+                      _ when valueString == "debugInfo" =>
+                        DebugPage.buildLastDebugCopyString(
+                          GlobalConfig.def.globalContext,
+                        ),
+                      _ => valueString.hiveGet(),
+                    };
+                    if (type == "show") {
+                      toastBlur(text: value);
+                    }
                     match = false;
+                    result.add(value);
+                    break;
+                  default:
+                    result.add(null);
                     break;
                 }
                 break;
@@ -181,6 +211,7 @@ class CoreDebug {
                       key.hivePut(value);
                     }
                     match = true;
+                    result.add(value);
                     break;
                   case "int":
                   case "i":
@@ -193,6 +224,7 @@ class CoreDebug {
                       key.hivePut(value);
                     }
                     match = true;
+                    result.add(value);
                     break;
                   case "float":
                   case "f":
@@ -204,16 +236,20 @@ class CoreDebug {
                     } else {
                       key.hivePut(value);
                     }
+                    result.add(value);
                     match = true;
                     break;
                   case "string":
                   case "s":
                     key.hivePut(valueString);
                     match = true;
+                    result.add(valueString);
                     break;
                 }
                 break;
             }
+          } else {
+            result.add(null);
           }
         }
       }
@@ -231,5 +267,6 @@ class CoreDebug {
       }
       toastBlur(text: lastValueString);
     }
+    return result;
   }
 }

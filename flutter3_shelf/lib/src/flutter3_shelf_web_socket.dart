@@ -228,38 +228,70 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
   }
 
   /// 处理调试html页面首页请求
-  static shelf.Response handleDebugLogIndexRequest(shelf.Request request) {
-    final text = ShelfHtml.getDebugLogIndexHtml().replaceKeyTemplate(
+  static Future<shelf.Response> handleDebugLogIndexRequest(
+    shelf.Request request, {
+    String? deviceName,
+    String? bottomInfo,
+  }) async {
+    /*final text = ShelfHtml.getDebugLogIndexHtml().replaceKeyTemplate(
       "bottomInfo",
       nowTimeString().connect(
         DebugPage.buildLastDebugCopyString(
           GlobalConfig.def.globalContext,
         ).connect(null, "<br>").replaceAll("\n", "<br>"),
       ),
-    );
+    );*/
+    String html = await loadAssetString(Assets.html.debugIndex);
+    html = html.replaceAllVariable({
+      "deviceName": deviceName ?? $platformDeviceName ?? "DebugLog",
+      "bottomInfo": nowTimeString().connect(
+        DebugPage.buildLastDebugCopyString(
+          GlobalConfig.def.globalContext,
+        ).connect(null, "<br>").replaceAll("\n", "<br>"),
+      ),
+    }, isDoubleBrace: true);
     if (request.isAcceptHtml) {
-      return responseOkHtml(text);
+      return responseOkHtml(html);
     }
-    return responseOk(text);
+    return responseOk(html);
   }
 
   /// 处理html页面ws请求
-  static shelf.Response handleDebugLogWebSocketRequest(
+  /// - [quickOptions] 快捷输入json array字符串
+  ///   ```
+  ///   [
+  ///     { "label": "查询状态", "value": "status", "autoSend": false },
+  ///     { "label": "重载配置", "value": "reload", "autoSend": true }
+  /// ]
+  ///   ```
+  static Future<shelf.Response> handleDebugLogWebSocketRequest(
     shelf.Request request,
     String path, {
-    String? tile,
-  }) {
-    final text = ShelfHtml.getWebSocketHtml(tile ?? 'WebSocket', path);
+    String? deviceName,
+    dynamic quickOptions,
+  }) async {
+    /*final html = ShelfHtml.getWebSocketHtml(tile ?? 'WebSocket', path);*/
+    String html = await loadAssetString(Assets.html.debugWs);
+    html = html.replaceAllVariable({
+      "webSocketPath": path,
+      "deviceName": deviceName ?? $platformDeviceName ?? "DebugLog",
+      "quickOptions": quickOptions is String
+          ? quickOptions
+          : quickOptions != null
+          ? jsonEncode(quickOptions)
+          : null,
+    }, isDoubleBrace: true);
     if (request.isAcceptHtml) {
-      return responseOkHtml(text);
+      return responseOkHtml(html);
     }
-    return responseOk(text);
+    return responseOk(html);
   }
 
   /// 处理html页面文件列表请求
   static Future<shelf.Response> handleDebugLogFilesRequest(
-    shelf.Request request,
-  ) async {
+    shelf.Request request, {
+    String? deviceName,
+  }) async {
     final path = request.requestedUri.queryParameters["path"];
     final title = request.requestedUri.queryParameters["title"];
     final buffer = StringBuffer();
@@ -280,19 +312,56 @@ class DebugLogWebSocketServer extends Flutter3ShelfWebSocketServer {
       targetPath = path!;
     } else {
       // 请求子目录
-      targetPath = rootPath.connectUrl(path);
+      targetPath = rootPath.connectUrl(path, separator: pathSeparator);
     }
     if (await targetPath.isFile()) {
       //返回文件数据流
       return responseFile(targetPath);
     } else {
       //返回文件目录
-      buffer.write(
+      /*buffer.write(
         ShelfHtml.getFilesHeaderHtml(title ?? "文件浏览", targetPath),
       ); //头
       buffer.write(await ShelfHtml.getFilesListHtml(rootPath, targetPath)); //内容
       buffer.write(ShelfHtml.getFilesFooterHtml()); //尾
-      return responseOkHtml(buffer.toString());
+      return responseOkHtml(buffer.toString());*/
+
+      final file = File(targetPath);
+      final isRootPath = targetPath == rootPath;
+      final fileList = [
+        if (!isRootPath) {"name": ".", "path": ".", "des": "根目录"},
+        if (!isRootPath)
+          {
+            "name": "..",
+            "path": file.parent.path.replaceAll(rootPath, ''),
+            "des": "上一级",
+          },
+      ];
+      for (final entity
+          in file.listFilesSync()?.sortFileList(modifiedTimeDesc: true) ??
+              <FileSystemEntity>[]) {
+        final folderName = entity.fileName();
+        final targetPath = entity.path.replaceAll(rootPath, '');
+        final des = entity.isDirectorySync()
+            ? (entity as Directory).listSync().length.toString().connect(" 项")
+            : (entity as File)
+                  .fileSizeSync()
+                  .toSizeStr(space: " ")
+                  .connect(" ${entity.lastModifiedSync()}");
+        fileList.add({"name": folderName, "path": targetPath, "des": des});
+      }
+
+      String html = await loadAssetString(Assets.html.debugFiles);
+      html = html.replaceAllVariable({
+        "webSocketPath": path,
+        "deviceName": deviceName ?? $platformDeviceName ?? "DebugLog",
+        "currentPath": targetPath.encodeUri(),
+        "fileList": jsonEncode(fileList).encodeUri(),
+      }, isDoubleBrace: true);
+      if (request.isAcceptHtml) {
+        return responseOkHtml(html);
+      }
+      return responseOk(html);
     }
   }
 

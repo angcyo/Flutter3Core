@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{deviceName}} 服务首页 - Debug</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f3f6fb;
+            --panel: rgba(255, 255, 255, 0.84);
+            --line: rgba(32, 44, 75, 0.12);
+            --text: #182033;
+            --sub: #61708a;
+            --accent: #3d7eff;
+            --accent-soft: rgba(61, 126, 255, 0.14);
+            --shadow: 0 14px 40px rgba(36, 58, 111, 0.12);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        a,
+        button,
+        input,
+        label {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text);
+            background: radial-gradient(1200px 640px at -8% -10%, rgba(61, 126, 255, 0.16), transparent 55%),
+            radial-gradient(1000px 520px at 110% -18%, rgba(29, 211, 176, 0.14), transparent 48%),
+            var(--bg);
+            min-height: 100dvh;
+            padding: 6px;
+        }
+
+        .shell {
+            width: 100%;
+            margin: 0 auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            min-height: calc(100dvh - 12px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px 24px 10px;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .title-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .title {
+            margin: 0;
+            font-size: clamp(24px, 3vw, 38px);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .device-name {
+            margin: 0;
+            padding: 4px 12px;
+            border: 1px solid rgba(61, 126, 255, 0.28);
+            border-radius: 999px;
+            background: rgba(61, 126, 255, 0.08);
+            color: #3155a7;
+            font-size: clamp(12px, 1vw, 14px);
+            font-weight: 600;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .now-time {
+            margin: 0;
+            color: #637390;
+            font-size: clamp(12px, 1vw, 14px);
+            font-family: "Cascadia Mono", "Consolas", "Courier New", monospace;
+            white-space: nowrap;
+            text-align: right;
+        }
+
+        .cards {
+            padding: 0 16px 10px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .service {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+            padding: 14px 14px 12px;
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .service:hover,
+        .service:focus-visible {
+            transform: translateY(-1px);
+            border-color: rgba(61, 126, 255, 0.45);
+            box-shadow: 0 8px 18px rgba(61, 126, 255, 0.18);
+        }
+
+        .service.active {
+            border-color: var(--accent);
+            background: linear-gradient(180deg, #fff 0%, #f1f6ff 100%);
+            box-shadow: 0 10px 22px rgba(61, 126, 255, 0.2);
+        }
+
+        .service h2 {
+            margin: 0;
+            font-size: clamp(18px, 2vw, 28px);
+            line-height: 1.1;
+        }
+
+        .service p {
+            margin: 8px 0 0;
+            color: var(--sub);
+            font-size: clamp(13px, 1.2vw, 18px);
+        }
+
+        .content {
+            padding: 0 16px 14px;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .debug-footer {
+            padding: 6px 0 0;
+            text-align: center;
+        }
+
+        .debug-string {
+            margin: 0;
+            padding: 0;
+            color: #2a3854;
+            line-height: 1.55;
+            font-size: clamp(12px, 1.02vw, 14px);
+            font-family: "Cascadia Mono", "Consolas", "Courier New", monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            text-align: center;
+        }
+
+        @media (max-width: 860px) {
+            body {
+                padding: 4px;
+            }
+
+            .header {
+                padding: 14px 14px 8px;
+            }
+
+            .title-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .title-wrap {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .device-name {
+                width: fit-content;
+            }
+
+            .now-time {
+                text-align: left;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                padding: 0 10px 10px;
+            }
+
+            .content {
+                padding: 0 10px 10px;
+            }
+
+            .debug-footer {
+                padding-top: 4px;
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="header">
+        <div class="title-row">
+          <div class="title-wrap">
+            <h1 class="title">服务首页</h1>
+            <p class="device-name">{{deviceName}}</p>
+          </div>
+          <p class="now-time" id="nowTime">--:--:--</p>
+        </div>
+      </header>
+
+      <section class="cards" aria-label="服务入口">
+        <a class="service" href="debug_ws.html">
+          <h2>WebSocket 日志服务</h2>
+          <p>实时查看设备调试信息</p>
+        </a>
+        <a class="service" href="debug_files.html">
+          <h2>Http 文件服务</h2>
+          <p>浏览查看设备文件信息</p>
+        </a>
+        <a class="service" href="debug_udp_client_list.html">
+          <h2>UDP 客户端服务</h2>
+          <p>浏览查看广播的设备终端信息</p>
+        </a>
+      </section>
+
+      <section class="content">
+        <div class="debug-footer" aria-label="底部调试信息">
+          <pre class="debug-string">{{bottomInfo}}</pre>
+        </div>
+      </section>
+    </main>
+    <script>
+      const nowTime = document.getElementById("nowTime")
+
+      function formatDateTime(date) {
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, "0")
+        const day = String(date.getDate()).padStart(2, "0")
+        const hour = String(date.getHours()).padStart(2, "0")
+        const minute = String(date.getMinutes()).padStart(2, "0")
+        const second = String(date.getSeconds()).padStart(2, "0")
+        return `${year}-${month}-${day} ${hour}:${minute}:${second}`
+      }
+
+      function updateNowTime() {
+        nowTime.textContent = formatDateTime(new Date())
+      }
+
+      updateNowTime()
+      setInterval(updateNowTime, 1000)
+    </script>
+  </body>
+</html>

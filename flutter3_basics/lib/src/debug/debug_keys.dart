@@ -8,7 +8,10 @@ part of '../../flutter3_basics.dart';
 ///
 typedef DebugKeyChanged = void Function(String key, dynamic value);
 typedef DebugValueChanged = void Function(dynamic value);
-typedef DebugInputValueChanged = void Function(String value);
+
+/// - [from] 来自哪个输入框的变化
+typedef DebugInputValueChanged =
+    List<dynamic>? Function(dynamic from, String value);
 
 /// [CoreDebug.parseHiveKeys]
 final class DebugKeys {
@@ -20,11 +23,17 @@ final class DebugKeys {
   static final List<DebugInputValueChanged> _debugInputValueChangedList = [];
 
   /// 通知输入框的值发生了变化时回调
-  static void notifyDebugInputValueChanged(String value) {
+  ///
+  /// [CoreDebug.parseHiveKeys]
+  static List<dynamic>? notifyDebugInputValueChanged(
+    dynamic from,
+    String value,
+  ) {
     //通知所有的监听者
-    for (var element in _debugInputValueChangedList) {
+    List<dynamic>? result;
+    for (final element in _debugInputValueChangedList) {
       try {
-        element(value);
+        result ??= element(from, value);
       } catch (e) {
         assert(() {
           l.d(e);
@@ -32,12 +41,13 @@ final class DebugKeys {
         }());
       }
     }
+    return result;
   }
 
   /// 通知调试[key]发生了变化时回调
   static void notifyDebugKeyChanged(String key, dynamic value) {
     //通知所有的监听者
-    for (var element in _debugKeyChangedList) {
+    for (final element in _debugKeyChangedList) {
       try {
         element(key, value);
       } catch (e) {
@@ -71,9 +81,8 @@ extension DebugKeysEx on String {
 
   /// [_SingleInputWidgetState._onSelfValueChanged]
   /// [notifyDebugInputValueChanged]
-  void notifyInputValueChanged() {
-    DebugKeys.notifyDebugInputValueChanged(this);
-  }
+  List<dynamic>? notifyInputValueChanged(dynamic from) =>
+      DebugKeys.notifyDebugInputValueChanged(from, this);
 
   /// 当前的key对应的value改变后通知
   void onDebugValueChanged(DebugValueChanged debugValueChanged) {
@@ -103,6 +112,7 @@ void unregisterDebugKeyChanged(DebugKeyChanged debugKeyChanged) {
 //--input value--
 
 /// 注册一个输入框值变化监听回调
+/// - [DebugKeys.notifyDebugInputValueChanged] 通知输入框的值发生了变化
 void registerDebugInputValueChanged(DebugInputValueChanged inputValueChanged) {
   if (!DebugKeys._debugInputValueChangedList.contains(inputValueChanged)) {
     DebugKeys._debugInputValueChangedList.add(inputValueChanged);
@@ -111,15 +121,19 @@ void registerDebugInputValueChanged(DebugInputValueChanged inputValueChanged) {
 
 /// 注销一个输入框值变化监听回调
 void unregisterDebugInputValueChanged(
-    DebugInputValueChanged inputValueChanged) {
+  DebugInputValueChanged inputValueChanged,
+) {
   DebugKeys._debugInputValueChangedList.remove(inputValueChanged);
 }
 
 //--指定key的value--
 
 /// 注册一个value变化监听回调
+/// - [DebugKeys.notifyDebugKeyChanged] 通知key的value发生了变化
 void registerDebugValueChanged(
-    String? key, DebugValueChanged debugValueChanged) {
+  String? key,
+  DebugValueChanged debugValueChanged,
+) {
   if (key != null) {
     List<DebugValueChanged> list = DebugKeys._debugValueChangedMap[key] ?? [];
     if (!list.contains(debugValueChanged)) {
@@ -131,7 +145,9 @@ void registerDebugValueChanged(
 
 /// 注销一个value变化监听回调
 void unregisterDebugValueChanged(
-    String? key, DebugValueChanged debugValueChanged) {
+  String? key,
+  DebugValueChanged debugValueChanged,
+) {
   if (key != null) {
     DebugKeys._debugValueChangedMap[key]?.remove(debugValueChanged);
   }
