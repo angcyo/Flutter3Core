@@ -94,7 +94,8 @@ class _CanvasScaleRadioTileState extends State<CanvasScaleRadioTile> {
               },
             ),
         ].column()?.box(width: 100),
-        popupAlignment: .topCenter,
+        targetAnchor: .topCenter,
+        followerAnchor: .bottomCenter,
       ),
       Icon(Icons.add).ib(() {
         canvasDelegate?.canvasKeyManager.zoomIn();

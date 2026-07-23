@@ -37,8 +37,8 @@ extension PopupEx on BuildContext {
     double? edgeMargin /*距离容器的边界距离*/,
     //--
     Alignment targetAnchor = .topRight /*对齐锚点的什么位置*/,
-    Alignment? preferredFollowerAlignment /*优先对齐方式*/,
-    Alignment? followerAnchor /*固定自身的什么位置*/,
+    Alignment? preferredFollowerAlignment /*优先使用自身的什么位置对齐*/,
+    Alignment? followerAnchor /*对齐自身的什么位置*/,
     Offset alignmentOffset = .zero /*对齐后的偏移*/,
     bool matchAnchorSize = false /*是否撑满锚点的宽度大小*/,
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,

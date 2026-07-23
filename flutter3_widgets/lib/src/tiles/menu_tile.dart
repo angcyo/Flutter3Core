@@ -463,8 +463,17 @@ class DesktopIconMenuTile extends StatefulWidget {
   /// - 会拦截默认的弹出[popupBodyWidget]处理, 返回true表示拦截默认处理
   final ResultDynamicAction? onTap;
 
-  /// 弹窗对齐锚点的方式
-  final Alignment? popupAlignment;
+  /// 对齐锚点的什么位置
+  final Alignment? targetAnchor;
+
+  /// 优先使用自身的什么位置对齐
+  final Alignment? preferredFollowerAlignment;
+
+  /// 对齐自身的什么位置
+  final Alignment? followerAnchor;
+
+  /// 对齐后的偏移
+  final Offset? alignmentOffset;
 
   //--
 
@@ -485,7 +494,10 @@ class DesktopIconMenuTile extends StatefulWidget {
     this.isSelected = false,
     this.popupBodyWidget,
     this.onTap,
-    this.popupAlignment,
+    this.targetAnchor,
+    this.preferredFollowerAlignment,
+    this.followerAnchor,
+    this.alignmentOffset,
     //--
     this.autoCloseMenu = false,
     this.tooltip,
@@ -556,7 +568,11 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
                   wrapShowPopupMixin(() async {
                     await buildContext?.showPopupDialog(
                       widget.popupBodyWidget!,
-                      followerAnchor: widget.popupAlignment,
+                      targetAnchor: widget.targetAnchor ?? .topRight,
+                      preferredFollowerAlignment:
+                          widget.preferredFollowerAlignment,
+                      followerAnchor: widget.followerAnchor,
+                      alignmentOffset: widget.alignmentOffset,
                     );
                   }).get((data, error) {
                     if (widget.autoCloseMenu == true) {
