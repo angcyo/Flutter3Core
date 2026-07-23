@@ -193,6 +193,42 @@ class CoreDebug {
                     match = false;
                     result.add(value);
                     break;
+                  case "api": //请求接口
+                    () async {
+                      final url = valueString.decodeUri();
+                      url.get().http(
+                        (value, error) {
+                          return value;
+                        },
+                        showErrorToast: false,
+                        throwError: false,
+                        useDataCodeStatus: false,
+                      );
+                    }();
+                    match = true;
+                    result.add(true);
+                    break;
+                  case "download": //下载并打开文件
+                    () async {
+                      final downloadUrl = valueString.decodeUri();
+                      downloadUrl.download(
+                        savePath: await cacheFilePath(
+                          downloadUrl.fileName(),
+                          "downloads",
+                        ),
+                        throwError: false,
+                        toastError: true,
+                        onDownloadAction: (savePath, error) {
+                          if (error == null) {
+                            //下载成功
+                            openFilePath(savePath);
+                          }
+                        },
+                      );
+                    }();
+                    match = true;
+                    result.add(true);
+                    break;
                   default:
                     result.add(null);
                     break;

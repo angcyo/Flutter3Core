@@ -347,11 +347,11 @@ class Flutter3ShelfHttp {
       .addMiddleware((innerHandler) {
         return (request) {
           assert(() {
-            final headers = request.headers;
+            //final headers = request.headers;
+            //${request.protocolVersion}; //1.1
             //debugger();
             l.d(
-              "收到请求[${request.requestedUri}][${request.method}]->${request.url} "
-              "${request.protocolVersion}",
+              "收到请求[${request.requestedUri}][${request.method}]->${request.url}",
             );
             return true;
           }());
