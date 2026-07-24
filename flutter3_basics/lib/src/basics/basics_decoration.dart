@@ -231,6 +231,8 @@ BoxDecoration strokeDecoration({
   BorderSide? bottom,
   BorderSide? start,
   BorderSide? end,
+  //--
+  Color? fillColor,
 }) {
   final strokeColor = color ?? GlobalTheme.of(context).accentColor;
   final BorderSide side = BorderSide(
@@ -240,6 +242,7 @@ BoxDecoration strokeDecoration({
     strokeAlign: strokeAlign,
   );
   return BoxDecoration(
+    color: fillColor,
     border: BorderDirectional(
       top: top ?? side,
       bottom: bottom ?? side,

@@ -236,6 +236,7 @@ class CapsuleButton extends StatefulWidget {
   final double? iconSize;
 
   /// 图标颜色
+  @defInjectMark
   final Color? iconColor;
 
   /// 点击事件, 默认询问关闭路由
@@ -266,6 +267,22 @@ class CapsuleButton extends StatefulWidget {
   /// 外部额外的填充
   final EdgeInsets? padding;
 
+  //--
+
+  /// 边框的颜色
+  /// - [Colors.transparent]
+  @defInjectMark
+  final Color? strokeColor;
+
+  /// 填充的颜色
+  /// - [Colors.black26]
+  final Color? fillColor;
+
+  /// 分割线的颜色
+  /// - [Colors.white24]
+  @defInjectMark
+  final Color? dividerColor;
+
   const CapsuleButton({
     super.key,
     this.start,
@@ -282,6 +299,10 @@ class CapsuleButton extends StatefulWidget {
     this.alignment,
     this.enableBlur = false,
     this.padding = const EdgeInsets.only(right: kX),
+    //--
+    this.dividerColor,
+    this.strokeColor,
+    this.fillColor,
   });
 
   @override
@@ -302,23 +323,22 @@ class _CapsuleButtonState extends State<CapsuleButton> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final borderColor = globalTheme.borderColor;
+    final borderColor = widget.strokeColor ?? globalTheme.borderColor;
+    final dividerColor = widget.dividerColor ?? borderColor;
+    final fillColor = widget.fillColor;
+    final iconColor = widget.iconColor ?? dividerColor;
     final size = widget.iconSize ?? 16;
     final width = widget.width ?? size * 5;
     final height = widget.height ?? size * 1.8;
     final start =
         widget.start ??
-        Icon(
-          widget.iconStart ?? Icons.remove,
-          color: widget.iconColor,
-          size: size,
-        );
-    final line = vLine(context, color: borderColor, indent: height / 4 / 2);
+        Icon(widget.iconStart ?? Icons.remove, color: iconColor, size: size);
+    final line = vLine(context, color: dividerColor, indent: height / 4 / 2);
     final end =
         widget.end ??
         Icon(
           widget.iconEnd ?? Icons.radio_button_checked,
-          color: widget.iconColor,
+          color: iconColor,
           size: size,
         );
 
@@ -346,7 +366,13 @@ class _CapsuleButtonState extends State<CapsuleButton> {
                 ),
           ],
         )
-        .decoration(strokeDecoration(color: borderColor, radius: height / 2))
+        .decoration(
+          strokeDecoration(
+            color: borderColor,
+            fillColor: fillColor,
+            radius: height / 2,
+          ),
+        )
         .blur(enable: widget.enableBlur)
         .material()
         .clipRadius(radius: height / 2)
