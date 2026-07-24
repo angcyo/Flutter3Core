@@ -44,6 +44,11 @@ class _SingleInAppWebPageState extends State<SingleInAppWebPage>
   Widget build(BuildContext context) => buildScaffold(context);
 
   @override
+  List<Widget>? buildAppBarActions(BuildContext context) {
+    return buildWebViewActions(context);
+  }
+
+  @override
   Widget buildBody(BuildContext context, WidgetList? children) =>
       buildInAppWebView(context, webConfigMixin).interceptPopResult(() async {
         if (await onWebviewBackPress() == true) {

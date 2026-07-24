@@ -359,6 +359,55 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
     return Stack(children: children);
   }
 
+  /// 构建右侧菜单
+  @api
+  List<Widget>? buildWebViewActions(BuildContext context) {
+    final libRes = context.libRes;
+    final globalTheme = GlobalTheme.of(context);
+    return [
+      CapsuleButton(
+        onEndTap: () {
+          context.showWidgetDialog(
+            BottomMenuItemsDialog([
+              BottomMenuItemTile(
+                closeAfterTap: true,
+                child: [
+                  webviewTile?.text(textAlign: .center),
+                  webviewUrl?.text(
+                    textStyle: globalTheme.textDesStyle,
+                    textAlign: .center,
+                  ),
+                ].column(),
+                onTap: () {
+                  webviewUrl?.toString().copy();
+                },
+              ),
+              if (webConfigMixin.debug || isDebugFlagDevice)
+                BottomMenuItemTile(
+                  closeAfterTap: true,
+                  child: webViewUserAgentCache?.text(
+                    textStyle: globalTheme.textDesStyle,
+                    textAlign: .center,
+                  ),
+                  onTap: () {
+                    webViewUserAgentCache?.copy();
+                  },
+                ),
+              BottomMenuItemTile(
+                enable: true,
+                closeAfterTap: true,
+                child: libRes?.libRefresh.text(),
+                onTap: () {
+                  reloadWebview();
+                },
+              ),
+            ]),
+          );
+        },
+      ),
+    ];
+  }
+
   //region ---api---
 
   /// 按下返回键时, 等待页面back后返回

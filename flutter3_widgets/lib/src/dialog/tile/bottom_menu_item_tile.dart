@@ -68,6 +68,7 @@ class BottomMenuItemTile extends StatelessWidget {
         ? list.row(
             gap: kH,
             mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
+            lastExtend: true,
           )!
         : list
               .column(
