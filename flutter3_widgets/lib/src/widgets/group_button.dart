@@ -305,7 +305,7 @@ class _CapsuleButtonState extends State<CapsuleButton> {
     final borderColor = globalTheme.borderColor;
     final size = widget.iconSize ?? 16;
     final width = widget.width ?? size * 5;
-    final height = widget.height ?? size * 2;
+    final height = widget.height ?? size * 1.8;
     final start =
         widget.start ??
         Icon(
