@@ -762,14 +762,35 @@ extension WidgetEx on Widget {
     bool enable = true,
     HitTestBehavior? behavior = HitTestBehavior.translucent,
     GestureTapCallback? onTap,
-  }) => (onLongPress == null && onTap == null) || !enable
-      ? this
-      : GestureDetector(
-          onLongPress: onLongPress,
-          onTap: onTap,
-          behavior: behavior,
-          child: this,
-        );
+    GestureContextLongPressCallback? onContentLongPress,
+  }) {
+    if ((onLongPress == null && onTap == null && onContentLongPress == null) ||
+        !enable) {
+      return this;
+    }
+
+    Widget buildBody(BuildContext? context) {
+      return GestureDetector(
+        onLongPress: onLongPress != null || onContentLongPress != null
+            ? () {
+                onLongPress?.call();
+                if (context != null) {
+                  onContentLongPress?.call(context);
+                }
+              }
+            : null,
+        onTap: onTap,
+        behavior: behavior,
+        child: this,
+      );
+    }
+
+    if (onContentLongPress == null) {
+      return buildBody(null);
+    } else {
+      return Builder(builder: buildBody);
+    }
+  }
 
   /// 手势探测
   /// [onVerticalDragUpdate] 仅在垂直滑动时回调
@@ -3158,7 +3179,7 @@ extension WidgetEx on Widget {
     }
 
     Widget body = onContextTap != null
-        ? Builder(builder: (ctx) => buildBody(ctx))
+        ? Builder(builder: buildBody)
         : buildBody(null);
     if (onLongPressPeriodic != null) {
       body = body.listenerPointer(
@@ -3197,6 +3218,7 @@ extension WidgetEx on Widget {
     //--
     Duration? periodicDuration,
     GestureLongPressCallback? onLongPressPeriodic,
+    GestureContextTapCallback? onContextTap,
   }) => !enable
       ? colorFiltered(color: disableColor)
       : inkWell(
@@ -3213,6 +3235,7 @@ extension WidgetEx on Widget {
           onLongPress: onLongPress,
           periodicDuration: periodicDuration,
           onLongPressPeriodic: onLongPressPeriodic,
+          onContextTap: onContextTap,
         );
 
   /// 将[this]和[other] 使用[Column]包裹

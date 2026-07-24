@@ -59,6 +59,9 @@ export 'src/mode/lib_label_value_bean.dart';
 export 'src/utils/hex.dart';
 export 'src/widgets/simple_app.dart';
 
+//export 'package:leak_tracker/leak_tracker.dart';
+
+// @formatter:off
 part 'src/basics/basics.dart';
 part 'src/basics/basics_animation.dart';
 part 'src/basics/basics_async.dart';
@@ -143,10 +146,6 @@ part 'src/global/global_typedef.dart';
 part 'src/global/overlay/overlay_animation.dart';
 part 'src/global/overlay/overlay_manage.dart';
 part 'src/global/overlay/overlay_notification.dart';
-//export 'package:leak_tracker/leak_tracker.dart';
-
-// @formatter:off
-
 part 'src/l.dart';
 part 'src/meta/meta.dart';
 part 'src/meta/package_info_meta.dart';
@@ -222,6 +221,9 @@ typedef NumFormat = String? Function(num? number);
 
 /// [GestureTapCallback]
 typedef GestureContextTapCallback = void Function(BuildContext contet);
+
+/// [GestureLongPressCallback]
+typedef GestureContextLongPressCallback = void Function(BuildContext contet);
 
 /// [GestureContextTapCallback] 带按下事件信息的回调
 typedef GestureContextTapDownCallback =
