@@ -86,7 +86,10 @@ class ProcessPlugin with PluginMixin {
   }) async {
     final bool isInstalled = await this.isInstalled;
     final bool isUpdate = await this.isUpdate;
-    if (isInstalled && (ignoreUpdate == true || !isUpdate)) {
+    if (ignoreUpdate == true && !isInstalled) {
+      //忽略更新, 此时插件又没有安装, 则返回
+      return null;
+    } else if (isInstalled && (ignoreUpdate == true || !isUpdate)) {
       //已经安装了插件并且无新插件, 则直接启动
       final exeScript = await script;
       if (exeScript == null) {
