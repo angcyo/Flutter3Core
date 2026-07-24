@@ -62,7 +62,7 @@ class MenuTriggerWidget extends StatefulWidget {
   @defInjectMark
   final Color? menuBgColor;
 
-  /// 菜单显示的对齐方式
+  /// 菜单显示的对齐方式, 菜单要对齐锚点的那个位置
   /// - 移动端默认null
   /// - 桌面端默认[AlignmentGeometry.topRight]
   final AlignmentGeometry? alignment;
@@ -164,8 +164,7 @@ class MenuTriggerWidgetState extends State<MenuTriggerWidget> {
           alignment: widget.alignment ?? (isDesktopOrWeb ? .topRight : null),
         );
     final menuChildren =
-        widget.menuChildrenBuilder?.call(context) ??
-        widget.menuChildren;
+        widget.menuChildrenBuilder?.call(context) ?? widget.menuChildren;
     final showMoreMenuTip =
         widget.showMoreMenuTip ?? menuChildren?.isNotEmpty == true;
     final hoverDecoration =
