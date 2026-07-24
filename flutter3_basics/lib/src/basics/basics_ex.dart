@@ -2506,6 +2506,9 @@ extension ListIntEx on List<int> {
 
   /// [utf8Str]
   /// [UTF-16]格式
+  ///
+  /// - [StringEx.asciiBytes]
+  /// - [ListIntEx.charCodes]
   String get charCodes => String.fromCharCodes(this);
 
   String toCharCodesStr() => charCodes;

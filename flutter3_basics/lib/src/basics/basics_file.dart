@@ -296,10 +296,65 @@ extension FileEx on File {
     return 0;
   }
 
-  /// 读取文件内容
-  Future<Uint8List?> readBytes() async {
+  /*  Future<Uint8List?> readHeaderTwoBytes() async {
+    final file = this;
+    if (!await file.exists()) {
+      return null;
+    }
+    // start: 0, end: 2 表示只读取下标为 0 和 1 的前 2 个字节
+    final stream = file.openRead(0, 2);
     try {
-      return await readAsBytes();
+      // 监听 Stream 的第一个 Chunk 并合并为 Uint8List
+      final List<int> bytes = await stream.first;
+      return Uint8List.fromList(bytes.take(2).toList());
+    } catch (e) {
+      assert(() {
+        l.e('读取失败: $e');
+        return true;
+      }());
+      return null;
+    }
+
+    */ /*final file = this;
+    RandomAccessFile? raf;
+
+    try {
+      raf = await file.open(mode: FileMode.read);
+      // 直接读取指定数量的字节
+      final Uint8List bytes = await raf.read(2);
+      return bytes;
+    } catch (e) {
+      print('读取失败: $e');
+      return null;
+    } finally {
+      // 务必关闭文件句柄，释放系统资源
+      await raf?.close();
+    }*/ /*
+  }*/
+
+  /// 读取文件内容
+  /// - [start] 开始位置
+  /// - [count] 读取字节的数量
+  Future<Uint8List?> readBytes({int? start, int? count}) async {
+    try {
+      if (start != null || count != null) {
+        final raf = await open(mode: .read);
+        try {
+          if (start != null) {
+            await raf.setPosition(start);
+          }
+          return await raf.read(count ?? lengthSync());
+        } catch (e) {
+          assert(() {
+            l.e(e);
+            return true;
+          }());
+        } finally {
+          raf.closeSync();
+        }
+      } else {
+        return await readAsBytes();
+      }
     } catch (e) {
       assert(() {
         if (existsSync()) {
@@ -312,9 +367,26 @@ extension FileEx on File {
   }
 
   /// 读取文件内容
-  Uint8List? readBytesSync() {
+  Uint8List? readBytesSync({int? start, int? count}) {
     try {
-      return readAsBytesSync();
+      if (start != null || count != null) {
+        final raf = openSync(mode: .read);
+        try {
+          if (start != null) {
+            raf.setPositionSync(start);
+          }
+          return raf.readSync(count ?? lengthSync());
+        } catch (e) {
+          assert(() {
+            l.e(e);
+            return true;
+          }());
+        } finally {
+          raf.closeSync();
+        }
+      } else {
+        return readAsBytesSync();
+      }
     } catch (e) {
       assert(() {
         if (existsSync()) {
