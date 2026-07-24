@@ -835,7 +835,11 @@ class CanvasListener {
   onCanvasStyleChangedAction;
 
   /// [CanvasDelegate.dispatchCanvasOpenProject]
-  final void Function(CanvasDelegate delegate, dynamic from, dynamic to)?
+  final Future<bool> Function(
+    CanvasDelegate delegate,
+    dynamic from,
+    dynamic to,
+  )?
   onCanvasOpenProject;
 
   /// [CanvasDelegate.dispatchCanvasOverlayComponentChanged]

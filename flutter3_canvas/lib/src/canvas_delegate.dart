@@ -1667,8 +1667,9 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 使用者可以在[CanvasListener.onCanvasOpenProject]会调用,根据项目结构信息,恢复画布状态信息.
   /// - [project]工程数据
   /// - [isUpdate]是否仅是更新工程数据
+  /// @return true: 表示处理成功, 否则返回false继续后续处理
   @api
-  void dispatchCanvasOpenProject(dynamic project) {
+  Future<bool> dispatchCanvasOpenProject(dynamic project) async {
     //debugger();
     assert(() {
       l.d("[${classHash()}]打开工程->$project");
@@ -1676,9 +1677,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     }());
     final old = this.project;
     this.project = project;
-    _eachCanvasListener((element) {
-      element.onCanvasOpenProject?.call(this, old, project);
+    bool handle = false;
+    _eachCanvasListener((element) async {
+      handle =
+          handle ||
+          (await element.onCanvasOpenProject?.call(this, old, project) == true);
     });
+    return handle;
   }
 
   //endregion ---事件派发---
