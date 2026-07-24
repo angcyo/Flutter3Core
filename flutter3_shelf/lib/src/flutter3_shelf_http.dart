@@ -177,9 +177,18 @@ class Flutter3ShelfHttp {
     FutureOr<File?> Function(String filePath)? onGetFileAction,
     FutureOr<(Stream<List<int>>?, String?)?> Function(String filePath)?
     onGetFileStreamAction,
+    //--
+    FutureOr<shelf.Response?> Function(shelf.Request request)?
+    interceptor /*拦截请求*/,
   }) {
     // 注册文件下载接口，通过路由参数传递文件名
     _router.get(route, (shelf.Request request) async {
+      if (interceptor != null) {
+        final response = await interceptor(request);
+        if (response != null) {
+          return response;
+        }
+      }
       // 1. 确定文件在服务器上的实际物理路径（假设存放在服务器运行目录的 'downloads' 文件夹下）
       // 💡 安全提示：务必对文件名进行过滤，防止通过 '../' 进行任意文件遍历攻击
       final filePath = request.url.queryParameters["filePath"]?.decodeUri();

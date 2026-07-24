@@ -191,8 +191,11 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
               );
     }
 
-    return [label, value?.expanded()]
-        .row(crossAxisAlignment: CrossAxisAlignment.center)!
+    return ([
+              label,
+              value?.expanded(),
+            ].row(crossAxisAlignment: CrossAxisAlignment.center) ??
+            empty)
         .paddingInsets(widget.tilePadding)
         .inkWell(
           widget.onTap,
