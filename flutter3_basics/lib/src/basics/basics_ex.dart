@@ -652,6 +652,9 @@ extension StringEx on String {
 
   /// 获取[ascii]对应的字节数组
   /// 在都占用1个字节的情况下和[bytes]返回的数据一致.
+  ///
+  /// - [StringEx.asciiBytes]
+  /// - [ListIntEx.charCodes]
   List<int> get asciiBytes => codeUnits;
 
   int charAt(int index) => codeUnitAt(index);
