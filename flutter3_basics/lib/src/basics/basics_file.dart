@@ -257,6 +257,44 @@ extension FileSystemEntityEx on FileSystemEntity {
 /// - [FileEx]
 /// - [DirectoryEx]
 extension FileEx on File {
+  //MARK: - lock
+
+  /// 文件锁
+  /// @return
+  ///   - [RandomAccessFile] 表示锁定成功, 说明文件未被锁
+  ///   - [null] 表示锁定失败, 说明文件已被锁
+  Future<RandomAccessFile?> lock({
+    FileMode fileMode = .append,
+    FileLock lockMode = .exclusive,
+  }) async {
+    // 1. 打开文件（需要写权限时，模式需指定为 read/write/append）
+    RandomAccessFile? raf;
+    try {
+      if (!existsSync()) {
+        await create(recursive: true);
+      }
+      raf = await open(mode: fileMode);
+      // 2. 申请独占锁 (Exclusive Lock)
+      // - exclusive	非阻塞	独占（排他）	尝试获取写锁。若已被锁定，立即抛出异常 FileSystemException。
+      // - blockingExclusive	阻塞	独占（排他）	推荐用于写入。若文件被占用，一直等待直到拿到写锁。
+      raf = await raf.lock(lockMode);
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      await raf?.unlock();
+      await raf?.close();
+      raf = null;
+    }
+    /*finally {
+      // 4. 务必在 finally 块中解锁并关闭资源
+      await raf.unlock();
+      await raf.close();
+    }*/
+    return raf;
+  }
+
   /// 文件流
   Stream<List<int>> get stream {
     return openRead();
