@@ -310,7 +310,7 @@ class CapsuleButton extends StatefulWidget {
 }
 
 class _CapsuleButtonState extends State<CapsuleButton> {
-  /// # Material 图标
+  /// # Material 图标 material 图标
   /// https://fonts.google.com/icons?hl=zh-cn
   ///
   /// [Icons.more_horiz]
