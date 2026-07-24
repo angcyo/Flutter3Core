@@ -141,6 +141,18 @@
             text-shadow: 0 1px 0 rgba(0, 0, 0, 0.26);
         }
 
+        .log-image-box {
+            margin: 6px 0;
+        }
+
+        .log-image {
+            display: block;
+            max-width: min(100%, 640px);
+            max-height: 420px;
+            width: auto;
+            height: auto;
+        }
+
         .log.soft-wrap {
             white-space: pre-wrap;
             min-width: 0;
@@ -364,7 +376,7 @@
       </header>
       <section class="log-wrap" aria-label="WebSocket 日志输出">
         <div class="log-scroll" id="content-wrap">
-          <pre class="log" id="content"></pre>
+          <div class="log" id="content"></div>
         </div>
       </section>
       <footer class="option-bar" aria-label="日志选项栏">
@@ -418,8 +430,8 @@
         appendContent("WebSocket 已连接->" + path)
       }
 
-      socket.onmessage = function (event) {
-        appendContent(event.data)
+      socket.onmessage = async function (event) {
+        await handleSocketMessage(event.data)
       }
 
       socket.onerror = function (event) {
@@ -475,9 +487,32 @@
       })
       populateQuickSelect()
 
+      async function handleSocketMessage(data) {
+        if (data instanceof Blob) {
+          const shouldScroll = shouldAutoScroll()
+          if (data.type && data.type.startsWith("image/")) {
+            const dataUrl = await blobToDataUrl(data)
+            appendImageContent(dataUrl, shouldScroll)
+            return
+          }
+          const text = await data.text()
+          if (isImageDataUrl(text)) {
+            appendImageContent(text.trim(), shouldScroll)
+            return
+          }
+          appendContent(text || `收到 Blob 数据(${data.type || "unknown"}, ${data.size} bytes)`)
+          return
+        }
+        appendContent(data)
+      }
+
       function appendContent(text) {
         let row = String(text == null ? "" : text)
-        const shouldScroll = lockBottomToggle.checked || isScrollBottom()
+        const shouldScroll = shouldAutoScroll()
+        if (isImageDataUrl(row)) {
+          appendImageContent(row.trim(), shouldScroll)
+          return
+        }
         if (hasReg(row, /.*V->.*/g)) {
           row = wrapColor(row, "#9EC5BE")
         } else if (hasReg(row, /.*D->.*/g)) {
@@ -501,6 +536,47 @@
         if (shouldScroll) {
           scrollBottom()
         }
+      }
+
+      function appendImageContent(dataUrl, shouldScroll) {
+        if (content.innerHTML) {
+          content.insertAdjacentHTML("beforeend", "<br>")
+        }
+        const box = document.createElement("div")
+        box.className = "log-image-box"
+        const image = document.createElement("img")
+        image.className = "log-image"
+        image.src = dataUrl
+        /*image.alt = "ws-image"*/
+        image.alt = '{{deviceName}}'
+        image.loading = "lazy"
+        box.appendChild(image)
+        content.appendChild(box)
+        if (shouldScroll) {
+          scrollBottom()
+        }
+      }
+
+      function isImageDataUrl(text) {
+        const value = String(text == null ? "" : text).trim()
+        return value.startsWith("data:image/") && value.includes(";base64,")
+      }
+
+      function blobToDataUrl(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = function () {
+            resolve(String(reader.result || ""))
+          }
+          reader.onerror = function () {
+            reject(reader.error || new Error("blob to dataUrl failed"))
+          }
+          reader.readAsDataURL(blob)
+        })
+      }
+
+      function shouldAutoScroll() {
+        return lockBottomToggle.checked || isScrollBottom()
       }
 
       function tintColor(text, reg, color) {
