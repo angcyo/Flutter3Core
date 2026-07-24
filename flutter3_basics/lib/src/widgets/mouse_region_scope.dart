@@ -105,12 +105,16 @@ class MouseHoverVisibility extends StatefulWidget {
   /// 显示/隐藏的过渡曲线
   final Curve curve;
 
+  /// 可见性的回调
+  final ValueChanged<bool>? onVisibilityChanged;
+
   const MouseHoverVisibility({
     super.key,
     required this.child,
     this.normalChild,
     this.duration = kDefaultAnimationDuration,
     this.curve = Curves.linear,
+    this.onVisibilityChanged,
   });
 
   @override
@@ -128,6 +132,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     super.initState();
     hover = MouseHoverScope.get(buildContext);
     isHover = hover?.value ?? isHover;
+    widget.onVisibilityChanged?.call(isHover);
     hover?.addListener(handleMouseHoverMixin);
     debugger(when: hover == null);
   }
@@ -164,6 +169,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     final value = hover?.value ?? isHover;
     //l.i("${classHash()} handleMouseHoverMixin $value isHover:$isHover");
     if (value != isHover) {
+      widget.onVisibilityChanged?.call(value);
       setState(() {
         isHover = value;
       });
@@ -189,9 +195,12 @@ extension MouseHoverScopeEx on Widget {
     Key? key,
     Duration duration = kDefaultAnimationDuration,
     Curve curve = Curves.linear,
+    ValueChanged<bool>? onVisibilityChanged,
+    Widget? normalChild,
+    //--
     bool? enable,
     //--
-    Widget? normalChild,
+    bool? hoverProvider,
   }) {
     return (enable ?? (isDesktopOrWeb || isMouseConnected))
         ? MouseHoverVisibility(
@@ -199,8 +208,9 @@ extension MouseHoverScopeEx on Widget {
             duration: duration,
             curve: curve,
             normalChild: normalChild,
+            onVisibilityChanged: onVisibilityChanged,
             child: this,
-          )
+          ).mouseHoverProvider(enable: hoverProvider == true)
         : this;
   }
 }
