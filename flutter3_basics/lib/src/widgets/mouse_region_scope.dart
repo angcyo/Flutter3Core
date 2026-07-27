@@ -106,7 +106,7 @@ class MouseHoverVisibility extends StatefulWidget {
   final Curve curve;
 
   /// 可见性的回调
-  final ValueChanged<bool>? onVisibilityChanged;
+  final KeyValueCallback<bool>? onVisibilityChanged;
 
   const MouseHoverVisibility({
     super.key,
@@ -132,7 +132,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     super.initState();
     hover = MouseHoverScope.get(buildContext);
     isHover = hover?.value ?? isHover;
-    widget.onVisibilityChanged?.call(isHover);
+    widget.onVisibilityChanged?.call(widget.key, isHover);
     hover?.addListener(handleMouseHoverMixin);
     debugger(when: hover == null);
   }
@@ -169,7 +169,7 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
     final value = hover?.value ?? isHover;
     //l.i("${classHash()} handleMouseHoverMixin $value isHover:$isHover");
     if (value != isHover) {
-      widget.onVisibilityChanged?.call(value);
+      widget.onVisibilityChanged?.call(widget.key, value);
       setState(() {
         isHover = value;
       });
@@ -195,7 +195,7 @@ extension MouseHoverScopeEx on Widget {
     Key? key,
     Duration duration = kDefaultAnimationDuration,
     Curve curve = Curves.linear,
-    ValueChanged<bool>? onVisibilityChanged,
+    KeyValueCallback<bool>? onVisibilityChanged,
     Widget? normalChild,
     //--
     bool? enable,

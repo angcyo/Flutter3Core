@@ -198,6 +198,21 @@ Widget sliverLayout(
   Key? key,
 ]) => SliverLayoutBuilder(builder: builder, key: key);
 
+/// [Key]
+///   - [GlobalKey]
+///   - [LocalKey]
+///     - [ValueKey]
+///     - [ObjectKey]
+///     - [UniqueKey]
+///
+extension KeyEx on Key {
+  String? get str => this is ValueKey
+      ? (this as ValueKey).value?.toString()
+      : this is ObjectKey
+      ? (this as ObjectKey).value?.toString()
+      : null;
+}
+
 /// [List<Widget>]
 extension WidgetListEx on WidgetNullList {
   /// 过滤空数据和填充间隙

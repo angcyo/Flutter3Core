@@ -116,6 +116,9 @@ mixin KeyEventMixin {
 
   /// 平台按键事件入口
   /// - [onHandleKeyEventMixin] -> [handleKeyEventResultMixin]
+  ///
+  /// - [HardwareKeyboard.addHandler]
+  /// - [HardwareKeyboard.removeHandler]
   @callPoint
   @overridePoint
   bool onHandleKeyEventMixin(KeyEvent event) {

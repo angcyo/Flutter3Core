@@ -67,6 +67,9 @@ typedef FutureOrResultCallback<R, T> = FutureOr<R> Function(T value);
 /// 只有一个值回调
 typedef ValueCallback<T> = dynamic Function(T value);
 
+/// [ValueCallback]
+typedef KeyValueCallback<T> = dynamic Function(Key? key, T value);
+
 /// [ValueChanged]
 typedef ContextValueChanged<T> = void Function(BuildContext context, T value);
 
