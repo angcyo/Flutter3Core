@@ -158,8 +158,16 @@ class CanvasStyle {
   Offset canvasCopyOffset = Offset(4.0, 4.0);
 
   /// 按键盘箭头平移调整时的偏移量
+  /// - [canvasArrowAdjustOffset]
+  /// - [canvasArrowAdjustFastOffset]
   @mm
   Offset canvasArrowAdjustOffset = Offset(1.0, 1.0);
+
+  /// 按键盘箭头平移调整时, 同时又按住了[LogicalKeyboardKey.control]的偏移量
+  /// - [canvasArrowAdjustOffset]
+  /// - [canvasArrowAdjustFastOffset]
+  @mm
+  Offset canvasArrowAdjustFastOffset = Offset(10.0, 10.0);
 
   //endregion core
 

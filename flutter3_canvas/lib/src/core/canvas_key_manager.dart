@@ -107,7 +107,11 @@ class CanvasKeyManager
             canvasElementManager.canvasElementControlManager;
         if (canvasElementControlManager.isSelectedElement) {
           renderObject.requestFocus();
-          final offset = canvasStyle.canvasArrowAdjustOffset.toOffsetDp();
+          final offset =
+              (isCtrlPressed
+                      ? canvasStyle.canvasArrowAdjustFastOffset
+                      : canvasStyle.canvasArrowAdjustOffset)
+                  .toOffsetDp();
           final dx = info.keys.contains(LogicalKeyboardKey.arrowLeft)
               ? -offset.dx
               : info.keys.contains(LogicalKeyboardKey.arrowRight)
@@ -247,6 +251,48 @@ class CanvasKeyManager
       ],
       (info) {
         zoomOut();
+        return .handled;
+      },
+      tag: keyTag,
+    );
+
+    //组合
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [LogicalKeyboardKey.meta, LogicalKeyboardKey.keyG],
+        ],
+        if (!isMacOS) ...[
+          [LogicalKeyboardKey.control, LogicalKeyboardKey.keyG],
+        ],
+      ],
+      (info) {
+        groupSelectedElement();
+        return .handled;
+      },
+      tag: keyTag,
+    );
+
+    //取消组合
+    renderObject.registerKeyEvent(
+      [
+        if (isMacOS) ...[
+          [
+            LogicalKeyboardKey.meta,
+            LogicalKeyboardKey.shift,
+            LogicalKeyboardKey.keyG,
+          ],
+        ],
+        if (!isMacOS) ...[
+          [
+            LogicalKeyboardKey.control,
+            LogicalKeyboardKey.shift,
+            LogicalKeyboardKey.keyG,
+          ],
+        ],
+      ],
+      (info) {
+        ungroupSelectedElement();
         return .handled;
       },
       tag: keyTag,
