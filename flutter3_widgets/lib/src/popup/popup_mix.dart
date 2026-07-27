@@ -22,6 +22,8 @@ part 'popup_container_dialog.dart';
 extension PopupEx on BuildContext {
   /// 在指定锚点位置显示一个弹窗路由[PopupRoute]
   ///
+  /// - [backgroundColor] 弹窗的背景色, 有默认值
+  ///
   /// - [targetAnchor]对齐锚点的什么位置
   /// - [followerAnchor]弹窗需要对齐锚点的哪个方向
   /// - [bodyMargin] 弹窗的在对应方向上的边距

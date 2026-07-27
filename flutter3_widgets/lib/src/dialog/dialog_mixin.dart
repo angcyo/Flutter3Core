@@ -715,6 +715,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           decorationColor: Colors.transparent,
           shadowOffset: const Offset(0, -4),
         );
+    //--
     if (useDesktopLayout) {
       //no op
       if (adaptiveDesktopSlideStyle == true) {
