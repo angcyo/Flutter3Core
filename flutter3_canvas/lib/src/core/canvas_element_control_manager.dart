@@ -1783,7 +1783,12 @@ class ElementSelectComponent extends ElementGroupPainter
                 selectType != ElementSelectType.code &&
                 selectType != ElementSelectType.user,
           );
-          l.d('取消之前选中的元素: $children');
+          final count = children?.getAllSingleElement().size() ?? 0;
+          if (count > 5) {
+            l.v('取消之前选中的元素个数->$count');
+          } else {
+            l.d('取消之前选中的元素[${children?.size() ?? 0}]: $children');
+          }
           return true;
         }());
         resetChildren(null);
@@ -1807,9 +1812,9 @@ class ElementSelectComponent extends ElementGroupPainter
       }
     } else {
       assert(() {
-        final size = elements?.size() ?? 0;
-        if (size > 5) {
-          l.d('[${classHash()}]选中新的元素: $size');
+        final count = elements?.getAllSingleElement().size() ?? 0;
+        if (count > 5) {
+          l.d('[${classHash()}]选中新的元素个数: $count');
         } else {
           l.d('[${classHash()}]选中新的元素: $elements');
         }

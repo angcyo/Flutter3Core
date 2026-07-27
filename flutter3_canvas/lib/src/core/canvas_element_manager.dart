@@ -1439,7 +1439,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       return false;
     }
 
-    //删除原来的元素
+    //从原来的列表中, 删除需要组合的元素列表
     final newList = this.elements.clone(true);
     newList.removeAll(elements);
 
@@ -1457,12 +1457,12 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasDelegate.dispatchCanvasGroupChanged(group, elements);
     canvasDelegate.dispatchCanvasElementListRemoveChanged(
       CanvasElementType.element,
-      elements,
+      this.elements,
       elements,
     );
     canvasDelegate.dispatchCanvasElementListAddChanged(
       CanvasElementType.element,
-      elements,
+      this.elements,
       [group],
     );
 

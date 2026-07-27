@@ -1748,10 +1748,12 @@ class ElementPainter extends IElementPainter {
   @overridePoint
   bool onHoverChanged(@viewCoordinate PointerEvent event, bool hover) {
     if (paintState.isHover != hover) {
-      assert(() {
-        l.d("[${classHash()}] 悬停状态改变->$hover");
-        return true;
-      }());
+      if (parentGroupPainter == null) {
+        assert(() {
+          l.d("[${classHash()}] 悬停状态改变->$hover");
+          return true;
+        }());
+      }
       paintState.hoverPoint = hover ? event.localPosition : null;
       refresh();
     }
@@ -2096,7 +2098,8 @@ class ElementGroupPainter extends ElementPainter {
         element.onSelfElementUnGroupFrom(this);
       }
     });
-    this.children = children;
+    this.children ??= [];
+    this.children?.resetAll(children);
     //重新追加父元素
     children?.forEach((element) {
       if (element.parentGroupPainter == this) {
@@ -2168,6 +2171,7 @@ class ElementGroupPainter extends ElementPainter {
 
   @override
   void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    assert(children?.contains(this) != true);
     super.attachToCanvasDelegate(canvasDelegate);
     children?.forEach((element) {
       element.attachToCanvasDelegate(canvasDelegate);
