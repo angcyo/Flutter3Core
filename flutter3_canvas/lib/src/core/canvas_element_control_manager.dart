@@ -683,7 +683,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (isSelectedElement) {
-      final list = elementSelectComponent.children;
+      final list = elementSelectComponent.children?.clone();
       //elementSelectComponent.resetChildren(null, enableResetElementAngle);
       elementSelectComponent.resetSelectElement(null, selectType);
       canvasDelegate.canvasElementManager.removeElementList(list);
