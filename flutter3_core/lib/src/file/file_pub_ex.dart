@@ -143,7 +143,8 @@ Future<Directory> fileDirectory() async {
 ///
 /// # Windows
 /// ```
-/// C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools
+/// 文件: C:\Users\Administrator\AppData\Roaming\com.laserabc\Laserabc Factory Tools
+/// 缓存-> C:\Users\Administrator\AppData\Local\com.laser.abc.beeb.desktop.app\Laserabc Beeb Desktop
 /// ```
 ///
 /// # macos
@@ -551,6 +552,9 @@ extension FileStringPubEx on String {
 /// - [fileFolder]
 /// - [cacheFolder]
 /// - [cacheFilePath]
+///
+/// - [fileDirectory]
+/// - [cacheDirectory]
 Future<Directory> fileFolder([
   String? part1,
   String? part2,
@@ -640,8 +644,14 @@ Future<String> filePath(
 }
 
 /// 快速获取一个缓存文件路径, 会自动创建文件夹.
+///
+/// - [filePath]
+/// - [fileFolder]
 /// - [cacheFolder]
 /// - [cacheFilePath]
+///
+/// - [fileDirectory]
+/// - [cacheDirectory]
 Future<Directory> cacheFolder([
   String? part1,
   String? part2,
@@ -700,6 +710,9 @@ Future<Directory> cacheFolder([
 ///
 /// - [cacheFolder]
 /// - [cacheFilePath]
+///
+/// - [fileDirectory]
+/// - [cacheDirectory]
 Future<String> cacheFilePath(
   String fileName, [
   String? part1,
