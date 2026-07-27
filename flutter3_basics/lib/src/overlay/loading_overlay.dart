@@ -144,7 +144,7 @@ void hideLoading() {
 /// - [onStart] 自定义开始时的回调, 拦截默认显示加载提示
 /// - [delay] 延迟多久后显示加载提示
 /// - [timeout] 超时多久后触发[onEnd]回调, 并阻止[Future]的返回值,
-/// - [showCountDown] 是否显示倒计时
+/// - [showCountDown] 是否显示超时倒计时
 /// - [loadingInfoNotifier] 用来控制加载中的数据
 ///
 /// - [wrapLoading]
@@ -156,7 +156,7 @@ Future wrapLoading(
   Duration? delay,
   Duration? timeout,
   VoidCallback? onStart,
-  ValueErrorCallback? onEnd,
+  ValueErrorCallback? onEnd /*超时异常回调*/,
   bool showCountDown = false,
   bool autoHideLoading = true,
   //--

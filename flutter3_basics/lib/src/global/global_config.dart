@@ -663,6 +663,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
         final useSystemStyle =
             !dataStr.contains("overlay") || dataStr.contains("system");
         return LoadingIndicator(
+          size: null,
           progressValue: progress,
           useSystemStyle: useSystemStyle,
           color: color,
@@ -732,10 +733,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
         final loadingIndicator = GlobalConfig.of(
           context,
         ).loadingIndicatorBuilder(context, data, progress, color);
+        final size = data is Size ? data : kDefaultLoadingSize;
         return Container(
           alignment: Alignment.center,
           child: SizedBox.fromSize(
-            size: kDefaultLoadingSize,
+            size: size,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.black.withAlpha(80),
