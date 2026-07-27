@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "libActivateGuideLines": MessageLookupByLibrary.simpleMessage(
+      "Activate Guide Lines",
+    ),
     "libAdapterLoadMoreError": MessageLookupByLibrary.simpleMessage(
       "Load failed, click retry",
     ),
@@ -88,12 +91,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "libShowAllElements": MessageLookupByLibrary.simpleMessage(
       "Show All Elements",
     ),
+    "libShowCoordinateSystem": MessageLookupByLibrary.simpleMessage(
+      "Show Coordinate System",
+    ),
+    "libShowGrid": MessageLookupByLibrary.simpleMessage("Show Grid"),
+    "libShowGuideLines": MessageLookupByLibrary.simpleMessage(
+      "Show Guide Lines",
+    ),
     "libShowPassword": MessageLookupByLibrary.simpleMessage("Show Password"),
+    "libSmartSnap": MessageLookupByLibrary.simpleMessage("Smart Snap"),
     "libTips": MessageLookupByLibrary.simpleMessage("Tip"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("Upgrade failed"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("Start Upgrade"),
     "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage(
       "Upgrade succeeded",
+    ),
+    "libUseImperialUnits": MessageLookupByLibrary.simpleMessage(
+      "Use Imperial Units",
+    ),
+    "libUseMetricUnits": MessageLookupByLibrary.simpleMessage(
+      "Use Metric Units",
     ),
     "libValidRangeTip": MessageLookupByLibrary.simpleMessage("Valid Range"),
     "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),

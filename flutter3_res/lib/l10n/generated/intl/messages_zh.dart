@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "libActivateGuideLines": MessageLookupByLibrary.simpleMessage("激活参考线"),
     "libAdapterLoadMoreError": MessageLookupByLibrary.simpleMessage(
       "加载失败, 点击重试",
     ),
@@ -74,11 +75,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "libSelectAll": MessageLookupByLibrary.simpleMessage("全选"),
     "libShare": MessageLookupByLibrary.simpleMessage("分享"),
     "libShowAllElements": MessageLookupByLibrary.simpleMessage("显示所有元素"),
+    "libShowCoordinateSystem": MessageLookupByLibrary.simpleMessage("显示坐标系"),
+    "libShowGrid": MessageLookupByLibrary.simpleMessage("显示网格"),
+    "libShowGuideLines": MessageLookupByLibrary.simpleMessage("显示参考线"),
     "libShowPassword": MessageLookupByLibrary.simpleMessage("显示密码"),
+    "libSmartSnap": MessageLookupByLibrary.simpleMessage("智能吸附"),
     "libTips": MessageLookupByLibrary.simpleMessage("提示"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("更新失败"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("开始升级"),
     "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage("升级成功"),
+    "libUseImperialUnits": MessageLookupByLibrary.simpleMessage("使用英制单位"),
+    "libUseMetricUnits": MessageLookupByLibrary.simpleMessage("使用公制单位"),
     "libValidRangeTip": MessageLookupByLibrary.simpleMessage("有效范围"),
     "libWaitTip": MessageLookupByLibrary.simpleMessage("请稍等..."),
     "libWarn": MessageLookupByLibrary.simpleMessage("警告"),

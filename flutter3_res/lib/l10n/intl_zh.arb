@@ -85,6 +85,13 @@
   "libHidePassword": "隐藏密码",
   "libMatchCase": "匹配大小写",
   "libMatchWord": "匹配单词",
+  "libShowGrid": "显示网格",
+  "libShowCoordinateSystem": "显示坐标系",
+  "libActivateGuideLines": "激活参考线",
+  "libShowGuideLines": "显示参考线",
+  "libSmartSnap": "智能吸附",
+  "libUseMetricUnits": "使用公制单位",
+  "libUseImperialUnits": "使用英制单位",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

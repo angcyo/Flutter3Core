@@ -76,6 +76,13 @@
   "libHidePassword": "Hide Password",
   "libMatchCase": "Match Case",
   "libMatchWord": "Match Word",
+  "libShowGrid": "Show Grid",
+  "libShowCoordinateSystem": "Show Coordinate System",
+  "libActivateGuideLines": "Activate Guide Lines",
+  "libShowGuideLines": "Show Guide Lines",
+  "libSmartSnap": "Smart Snap",
+  "libUseMetricUnits": "Use Metric Units",
+  "libUseImperialUnits": "Use Imperial Units",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

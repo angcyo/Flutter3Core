@@ -24,9 +24,10 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog>
     with CanvasOptionsMixin {
   @override
   Widget build(BuildContext context) {
+    final libRes = context.libRes;
     final globalConfig = GlobalConfig.of(context);
     final canvasDelegate = widget.canvasDelegate;
-    final children = buildCanvasOptions(context, canvasDelegate);
+    final children = buildCanvasOptions(context, canvasDelegate, libRes);
 
     if (globalConfig.isInTabletLandscapeModel) {
       return widget.buildDesktopCenterDialog(
@@ -45,11 +46,12 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
   List<Widget> buildCanvasOptions(
     BuildContext context,
     CanvasDelegate? canvasDelegate,
+    LibRes? libRes,
   ) {
     final canvasStyle = canvasDelegate?.canvasStyle;
     return [
       LabelSwitchTile(
-        label: "显示网格",
+        label: libRes?.libShowGrid,
         value: canvasStyle?.showGrid == true,
         onValueChanged: (value) {
           canvasStyle?.showGrid = value;
@@ -59,7 +61,7 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
         },
       ),
       LabelSwitchTile(
-        label: "显示坐标系",
+        label: libRes?.libShowCoordinateSystem,
         value: canvasStyle?.showAxis == true,
         onValueChanged: (value) {
           canvasStyle?.showAxis = value;
@@ -69,7 +71,7 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
         },
       ),
       LabelSwitchTile(
-        label: "激活参考线",
+        label: libRes?.libActivateGuideLines,
         value: canvasStyle?.enableRefLine == true,
         onValueChanged: (value) {
           canvasStyle?.enableRefLine = value;
@@ -79,7 +81,7 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
         },
       ),
       LabelSwitchTile(
-        label: "显示参考线",
+        label: libRes?.libShowGuideLines,
         value: canvasStyle?.showRefLine == true,
         onValueChanged: (value) {
           canvasStyle?.showRefLine = value;
@@ -89,7 +91,7 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
         },
       ),
       LabelSwitchTile(
-        label: "智能吸附",
+        label: libRes?.libSmartSnap,
         value: canvasStyle?.enableElementAdsorb == true,
         onValueChanged: (value) {
           canvasStyle?.enableElementAdsorb = value;
@@ -99,7 +101,7 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
       ),
       //--
       LabelSwitchTile(
-        label: "使用公制单位",
+        label: libRes?.libUseMetricUnits,
         value: canvasStyle?.axisUnit is MmUnit,
         onValueChanged: (value) {
           canvasDelegate?.axisUnit = value ? IUnit.mm : IUnit.dp;
@@ -108,7 +110,7 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
         },
       ),
       LabelSwitchTile(
-        label: "使用英制单位",
+        label: libRes?.libUseImperialUnits,
         value: canvasStyle?.axisUnit is InchUnit,
         onValueChanged: (value) {
           canvasDelegate?.axisUnit = value ? IUnit.inch : IUnit.dp;

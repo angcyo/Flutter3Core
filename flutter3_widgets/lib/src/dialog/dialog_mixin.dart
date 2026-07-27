@@ -984,19 +984,29 @@ extension DialogExtension on BuildContext {
   /// [_PopupMenuDefaultsM3]
   /// [menuItemPadding]
   ///
-  /// [showMenus] - 支持[PopupMenuEntry]list
-  /// [showWidgetMenu] - 支持[Widget]
+  /// - [menuPosition] 菜单位置
+  ///   - [PopupMenuPosition.over]  覆盖在元素上
+  ///   - [PopupMenuPosition.under] 在元素下面
+  ///
+  /// - [showMenus] - 支持[PopupMenuEntry]list
+  /// - [showWidgetMenu] - 支持[Widget]
+  ///
+  /// - [showPopupDialog]
+  /// - [LabelMenuTile]
   Future<T?> showMenus<T>(
     List<Widget>? menus /*辅助生成items*/, {
     List<VoidCallback?>? onMenusTap /*菜单对应的点击事件*/,
     List<PopupMenuEntry<T>>? items /*菜单项*/,
     //--
     T? initialValue,
+    //--
     PopupMenuPosition? menuPosition /*PopupMenuPosition.over*/,
-    //--
     Offset? position /*强行指定在overlay中的位置, 此位置会自动偏移anchor的左上角偏移*/,
-    //--
     Offset? offset /*相对锚点左上角额外偏移的量*/,
+    //--menuPosition 替代属性, 因为没有child的大小, 所以暂不支持居中对齐属性
+    Alignment targetAnchor = .topRight /*对齐锚点的什么位置*/,
+    Alignment? followerAnchor = .topRight /*对齐自身的什么位置*/,
+    Offset alignmentOffset = .zero /*对齐后的偏移*/,
     //--
     double? elevation = kH,
     Color? color /*菜单的背景颜色*/,
@@ -1068,12 +1078,11 @@ extension DialogExtension on BuildContext {
     //位置信息
     final RelativeRect relativePosition;
     if (position == null) {
-      final PopupMenuPosition popupMenuPosition =
-          menuPosition ?? PopupMenuPosition.over;
+      /*final popupMenuPosition = menuPosition ?? PopupMenuPosition.over;
       switch (popupMenuPosition) {
-        case PopupMenuPosition.over:
+        case .over:
           offset = offset;
-        case PopupMenuPosition.under:
+        case .under:
           offset = Offset(0.0, anchor.size.height) + offset;
       }
       relativePosition = RelativeRect.fromRect(
@@ -1084,6 +1093,28 @@ extension DialogExtension on BuildContext {
             ancestor: overlay,
           ),
         ),
+        Offset.zero & overlay.size,
+      );
+      */
+
+      //--
+      if (menuPosition == .under) {
+        targetAnchor = .bottomRight;
+        followerAnchor = .topRight;
+      }
+      Rect? anchorRect =
+          findRenderObject()?.getGlobalBounds(overlay) ?? Rect.zero;
+      final followerOffset = AlignmentAnchorLayout.getFollowerAlignmentOffset(
+        anchorRect: anchorRect,
+        parentSize: overlay.size,
+        childSize: Size.zero,
+        targetAnchor: targetAnchor,
+        followerAnchor: followerAnchor,
+        alignmentOffset: alignmentOffset,
+        edgeOffset: null,
+      );
+      relativePosition = RelativeRect.fromRect(
+        Rect.fromPoints(followerOffset + offset, followerOffset + offset),
         Offset.zero & overlay.size,
       );
     } else {
@@ -1108,7 +1139,7 @@ extension DialogExtension on BuildContext {
       //positionBuilder: ,
       shape: shape,
       menuPadding: menuPadding,
-      color: color,
+      color: color ?? GlobalTheme.of(this).dialogSurfaceBgColor,
       constraints: constraints,
       clipBehavior: clipBehavior,
       useRootNavigator: useRootNavigator,

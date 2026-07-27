@@ -29,6 +29,12 @@ extension PopupEx on BuildContext {
   /// - [bodyMargin] 弹窗的在对应方向上的边距
   ///
   /// - [showArrowPopupRoute]
+  ///
+  /// - [DesktopTextMenuTile]
+  ///
+  /// - [showPopupDialog]
+  /// - [showMenus]
+  /// - [showWidgetMenu]
   Future showPopupDialog(
     Widget body, {
     GlobalKey? anchorKey,

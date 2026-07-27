@@ -413,6 +413,61 @@ class LibRes {
   String get libMatchWord {
     return Intl.message('匹配单词', name: 'libMatchWord', desc: '', args: []);
   }
+
+  /// `显示网格`
+  String get libShowGrid {
+    return Intl.message('显示网格', name: 'libShowGrid', desc: '', args: []);
+  }
+
+  /// `显示坐标系`
+  String get libShowCoordinateSystem {
+    return Intl.message(
+      '显示坐标系',
+      name: 'libShowCoordinateSystem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `激活参考线`
+  String get libActivateGuideLines {
+    return Intl.message(
+      '激活参考线',
+      name: 'libActivateGuideLines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `显示参考线`
+  String get libShowGuideLines {
+    return Intl.message('显示参考线', name: 'libShowGuideLines', desc: '', args: []);
+  }
+
+  /// `智能吸附`
+  String get libSmartSnap {
+    return Intl.message('智能吸附', name: 'libSmartSnap', desc: '', args: []);
+  }
+
+  /// `使用公制单位`
+  String get libUseMetricUnits {
+    return Intl.message(
+      '使用公制单位',
+      name: 'libUseMetricUnits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `使用英制单位`
+  String get libUseImperialUnits {
+    return Intl.message(
+      '使用英制单位',
+      name: 'libUseImperialUnits',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {
