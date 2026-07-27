@@ -40,7 +40,7 @@ mixin DioDownloadMixin {
     downloadProgressMixin = 0;
     downloadStateMixin = .downloading;
     final name = url.fileName();
-    final filePath = await cacheFilePath(name);
+    final filePath = await cacheFilePath(name, kDownloadsPathName);
     downloadFilePathCacheMixin = filePath;
     await url
         .download(

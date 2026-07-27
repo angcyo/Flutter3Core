@@ -27,6 +27,7 @@ const kConfigPathName = "config"; //配置存放的文件夹
 const kExportPathName = "export"; //导出的数据存放文件夹
 const kPrintPathName = "print"; //打印雕刻的数据存放文件夹
 const kPluginsPathName = "plugins"; //插件安装的文件夹
+const kDownloadsPathName = "downloads"; //下载文件存放的文件夹
 
 /// 当前支持写入文件的数据类型
 /// [UiImage]

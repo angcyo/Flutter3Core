@@ -214,7 +214,7 @@ class CoreDebug {
                       downloadUrl.download(
                         savePath: await cacheFilePath(
                           downloadUrl.fileName(),
-                          "downloads",
+                          kDownloadsPathName,
                         ),
                         throwError: false,
                         toastError: true,
