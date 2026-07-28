@@ -6,23 +6,6 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 使用[MenuAnchor].[MenuItemButton].[SubmenuButton]实现的菜单tile
 ///
-/// # 快捷键修饰符号
-///
-/// - macOS : `⌘ ⌥ ⇧ ⌃`
-/// - Windows / Linux : `Ctrl Alt Shift Win`
-///
-///  - 回车符号 `⏎`
-///  - 退格符号 `⌫`
-///
-///
-/// ```
-/// _LocalizedShortcutLabeler.instance.getShortcutLabel(
-///    shortcut!,
-///    MaterialLocalizations.of(context),
-///  )
-/// ```
-///
-///
 /// - [DropdownMenuTile] tile 内部[Overlay]
 /// - [MenuAnchorTile] tile [MenuAnchor]实现
 ///

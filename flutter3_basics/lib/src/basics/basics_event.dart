@@ -251,6 +251,13 @@ extension LogicalKeyboardKeyEx on KeyboardKey {
       this == LogicalKeyboardKey.meta ||
       this == LogicalKeyboardKey.metaLeft ||
       this == LogicalKeyboardKey.metaRight;
+
+  bool get isShiftKey =>
+      this == LogicalKeyboardKey.shift ||
+      this == LogicalKeyboardKey.shiftLeft ||
+      this == LogicalKeyboardKey.shiftRight;
+
+  bool get isModifier => isControlKey || isAltKey || isMetaKey || isShiftKey;
 }
 
 extension EventIntEx on int {

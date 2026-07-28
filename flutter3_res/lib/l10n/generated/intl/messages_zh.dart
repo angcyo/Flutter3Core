@@ -73,6 +73,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libSaveFailure": MessageLookupByLibrary.simpleMessage("保存失败"),
     "libSaveSuccessful": MessageLookupByLibrary.simpleMessage("保存成功"),
     "libSelectAll": MessageLookupByLibrary.simpleMessage("全选"),
+    "libSetHotkeys": MessageLookupByLibrary.simpleMessage("直接按键进行设置"),
     "libShare": MessageLookupByLibrary.simpleMessage("分享"),
     "libShowAllElements": MessageLookupByLibrary.simpleMessage("显示所有元素"),
     "libShowCoordinateSystem": MessageLookupByLibrary.simpleMessage("显示坐标系"),

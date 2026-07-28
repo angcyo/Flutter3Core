@@ -468,6 +468,11 @@ class LibRes {
       args: [],
     );
   }
+
+  /// `直接按键进行设置`
+  String get libSetHotkeys {
+    return Intl.message('直接按键进行设置', name: 'libSetHotkeys', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

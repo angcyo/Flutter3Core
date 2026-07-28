@@ -87,6 +87,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Saved successfully",
     ),
     "libSelectAll": MessageLookupByLibrary.simpleMessage("Select All"),
+    "libSetHotkeys": MessageLookupByLibrary.simpleMessage(
+      "Set Directly With Hotkeys",
+    ),
     "libShare": MessageLookupByLibrary.simpleMessage("Share"),
     "libShowAllElements": MessageLookupByLibrary.simpleMessage(
       "Show All Elements",

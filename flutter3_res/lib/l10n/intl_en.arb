@@ -83,6 +83,7 @@
   "libSmartSnap": "Smart Snap",
   "libUseMetricUnits": "Use Metric Units",
   "libUseImperialUnits": "Use Imperial Units",
+  "libSetHotkeys": "Set Directly With Hotkeys",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

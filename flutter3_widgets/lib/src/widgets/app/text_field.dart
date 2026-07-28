@@ -1275,9 +1275,10 @@ class SingleInputWidget extends StatefulWidget {
 class _SingleInputWidgetState extends State<SingleInputWidget> {
   /// 是否显示后缀图标, 一般是清除按钮和查看密码按钮
   bool get _showSuffixIcon =>
-      widget.alwaysShowSuffixIcon != false &&
-      widget.enabled &&
-      widget.config.hasFocus &&
+      (widget.alwaysShowSuffixIcon == true ||
+          (widget.alwaysShowSuffixIcon != false &&
+              widget.enabled &&
+              widget.config.hasFocus)) &&
       widget.config.controller.text.isNotEmpty;
 
   /// 前缀图标

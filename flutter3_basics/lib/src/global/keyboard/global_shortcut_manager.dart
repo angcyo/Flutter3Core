@@ -1,4 +1,4 @@
-part of '../../flutter3_basics.dart';
+part of '../../../flutter3_basics.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -65,13 +65,9 @@ typedef ShortcutIntentAction =
     KeyEventResult Function(BuildContext? context, dynamic host, dynamic data);
 
 /// 快捷方式描述
-/// # 快捷键修饰符号
-/// ```
-/// _LocalizedShortcutLabeler.instance.getShortcutLabel(
-///    shortcut!,
-///    MaterialLocalizations.of(context),
-///  )
-/// ```
+/// - [GlobalShortcutManager]
+/// - [ShortcutDescription]
+/// - [ShortcutConfigBean]
 class ShortcutDescription {
   //MARK: - shortcut
 
