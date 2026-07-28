@@ -11,6 +11,10 @@ part of '../../../flutter3_widgets.dart';
 /// - macOS : `⌘ ⌥ ⇧ ⌃`
 /// - Windows / Linux : `Ctrl Alt Shift Win`
 ///
+///  - 回车符号 `⏎`
+///  - 退格符号 `⌫`
+///
+///
 /// ```
 /// _LocalizedShortcutLabeler.instance.getShortcutLabel(
 ///    shortcut!,
