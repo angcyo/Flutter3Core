@@ -48,21 +48,11 @@ String? strOf(dynamic data) {
 }
 
 /// 在一个数据中, 提取文本
-/// [ITextProvider]
+/// - 支持 [ITextProvider]
 String? textOf(dynamic data, [BuildContext? context]) {
   //debugger();
   if (data == null) {
     return null;
-  }
-  if (data is String ||
-      data is bool ||
-      data is num ||
-      data is Iterable ||
-      data is Map) {
-    if (data is double) {
-      return data.toDigits();
-    }
-    return data.toString();
   }
   if (data is ITextProvider) {
     if (context != null) {
@@ -77,21 +67,9 @@ String? textOf(dynamic data, [BuildContext? context]) {
         printError(e, s);
         return true;
       }());*/
+      return strOf(data);
     }
   }
-  if (data != null) {
-    try {
-      return data.text;
-    } catch (e) {
-      //debugger();
-      assert(() {
-        l.w('当前类型[${data.runtimeType}],不支持[.text]/[ITextProvider]操作.');
-        return true;
-      }());
-      return data.toString();
-    }
-  }
-  return null;
 }
 
 /// 支持使用[widgetOf]获取对应的[Widget]

@@ -42,6 +42,9 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
   /// [dropdownValue]也会被回调
   final ValueChanged<dynamic>? onChanged;
 
+  /// 输入框的文本改变回调, 选择了下拉菜单项, 也会触发
+  final ValueChanged<String>? onTextChanged;
+
   /// 填充边距
   @defInjectMark
   final EdgeInsetsGeometry? padding;
@@ -84,6 +87,7 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
     this.dropdownValue,
     this.dropdownValueList,
     this.onChanged,
+    this.onTextChanged,
     this.icon,
     this.iconSize = 24.0,
     this.style,
@@ -146,6 +150,7 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
         }());
         updateValueMixin(value);
         widget.onChanged?.call(value);
+        widget.onTextChanged?.call(strOf(value)!);
       },
     );
     if (labelWidget == null) {
@@ -685,6 +690,9 @@ class DropdownTile extends StatefulWidget {
   final List<dynamic>? dropdownValueList;
   final ValueChanged<dynamic>? onChanged;
 
+  /// 输入框的文本改变回调, 选择了下拉菜单项, 也会触发
+  final ValueChanged<String>? onTextChanged;
+
   const DropdownTile({
     super.key,
     this.enabled = true,
@@ -695,6 +703,7 @@ class DropdownTile extends StatefulWidget {
     this.dropdownValue,
     this.dropdownValueList,
     this.onChanged,
+    this.onTextChanged,
   });
 
   @override
@@ -721,7 +730,7 @@ class _DropdownTileState extends State<DropdownTile> {
       expandedHeaderPadding: insets(),*/
       /*itemsListPadding: insets(),
       listItemPadding: insets(),*/
-       /*searchHintText: "searchHintText",*/
+      /*searchHintText: "searchHintText",*/
       /*hideSelectedFieldWhenExpanded:,*/
       initialItem: widget.dropdownValue,
       /*initialItems: widget.dropdownValue,*/
@@ -734,6 +743,7 @@ class _DropdownTileState extends State<DropdownTile> {
           return true;
         }());
         widget.onChanged?.call(value);
+        widget.onTextChanged?.call(strOf(value)!);
       },
     );
   }
@@ -803,6 +813,7 @@ extension DropdownMenuValueListEx on List {
       dropdownValue: dropdownValue,
       dropdownValueList: values,
       onChanged: onChanged,
+      onTextChanged: onTextChanged,
       isExpanded: isExpanded,
       isDense: isDense,
       padding: tilePadding,
