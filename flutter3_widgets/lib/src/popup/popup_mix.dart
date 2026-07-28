@@ -31,6 +31,7 @@ extension PopupEx on BuildContext {
   /// - [showArrowPopupRoute]
   ///
   /// - [DesktopTextMenuTile]
+  /// - [DesktopOptionsPopup]
   ///
   /// - [showPopupDialog]
   /// - [showMenus]
