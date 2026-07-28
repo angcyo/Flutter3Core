@@ -85,12 +85,16 @@ class BottomMenuItemTile extends StatelessWidget {
         )
         .paddingAll(kX)
         .constrainedMin(minHeight: kMinInteractiveDimension)
-        .ink(() async {
-          if (closeAfterTap) {
-            context.pop(result: popResult);
-          }
-          await onTap?.call();
-        }, enable: enable)
+        .ink(
+          () async {
+            if (closeAfterTap) {
+              context.pop(result: popResult);
+            }
+            await onTap?.call();
+          },
+          useDisableCursorStyle: false,
+          enable: enable,
+        )
         .material(color: backgroundColor ?? globalTheme.surfaceBgColor);
   }
 }

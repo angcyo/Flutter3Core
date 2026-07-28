@@ -162,10 +162,13 @@ extension MouseRightMenuWidgetEx on Widget {
   /// ```
   Widget mouseRightMenu({
     Key? key,
+    //--菜单项列表
     List<Widget>? menus,
     List<VoidCallback?>? onMenusTap /*菜单对应的点击事件*/,
     //--菜单整体
     Widget? menu,
+    //--鼠标右键回调
+    PointerEventContentListener? onMouseRightContentTap,
     //--
     bool useRootNavigator = false,
     bool enable = true,
@@ -179,6 +182,7 @@ extension MouseRightMenuWidgetEx on Widget {
       onMenusTap: onMenusTap,
       menu: menu,
       useRootNavigator: useRootNavigator,
+      onMouseRightContentTap: onMouseRightContentTap,
       child: this,
     );
   }
