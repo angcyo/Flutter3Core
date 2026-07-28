@@ -7,6 +7,10 @@ part of '../../../flutter3_widgets.dart';
 /// 使用[MenuAnchor].[MenuItemButton].[SubmenuButton]实现的菜单tile
 ///
 /// # 快捷键修饰符号
+///
+/// - macOS : `⌘ ⌥ ⇧ ⌃`
+/// - Windows / Linux : `Ctrl Alt Shift Win`
+///
 /// ```
 /// _LocalizedShortcutLabeler.instance.getShortcutLabel(
 ///    shortcut!,
