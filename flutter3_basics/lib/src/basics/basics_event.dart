@@ -466,6 +466,9 @@ extension KeyEventEx on KeyEvent {
   /// 是否是Meta键
   bool get isMetaKey => isKeyboardKey(LogicalKeyboardKey.meta);
 
+  /// 是否是修饰键
+  bool get isModifierKey => isCtrlKey || isAltKey || isShiftKey || isMetaKey;
+
   /// 数字按键对应的数字
   int? get number => character?.toIntOrNull();
 

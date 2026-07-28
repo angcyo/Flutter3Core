@@ -473,6 +473,21 @@ class LibRes {
   String get libSetHotkeys {
     return Intl.message('直接按键进行设置', name: 'libSetHotkeys', desc: '', args: []);
   }
+
+  /// `组合`
+  String get libGroup {
+    return Intl.message('组合', name: 'libGroup', desc: '', args: []);
+  }
+
+  /// `取消组合`
+  String get libUngroup {
+    return Intl.message('取消组合', name: 'libUngroup', desc: '', args: []);
+  }
+
+  /// `隐藏元素`
+  String get libHideElement {
+    return Intl.message('隐藏元素', name: 'libHideElement', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

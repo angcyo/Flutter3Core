@@ -5,7 +5,7 @@ part of '../../flutter3_core.dart';
 /// @date 2025/12/23
 ///
 /// 用来显示全局快捷键的弹窗
-/// - [GlobalShortcutManager]
+/// - [ShortcutManager]
 class ShortcutDialog extends StatefulWidget with DialogMixin {
   @override
   TranslationType get translationType => .scaleFade;
@@ -76,7 +76,7 @@ class _ShortcutDialogState extends State<ShortcutDialog> {
   }
 }
 
-/// 用来触发[GlobalShortcutManager]对应的[ShortcutDialog]
+/// 用来触发[ShortcutManager]对应的[ShortcutDialog]
 class GlobalShortcutTriggerWidget extends StatefulWidget {
   final Widget child;
 
@@ -180,7 +180,7 @@ class _GlobalShortcutTriggerWidgetState
 }
 
 /// 自动显示[ShortcutDialog]全局快捷键列表对话框
-/// - [GlobalShortcutManager]
+/// - [ShortcutManager]
 /// - [GlobalShortcutTriggerWidget]
 extension GlobalShortcutTriggerWidgetEx on Widget {
   /// 添加全局快捷键触发器

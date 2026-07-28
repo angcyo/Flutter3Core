@@ -3111,9 +3111,11 @@ extension ListEx<T> on List<T> {
 
   /// 重置列表的元素
   void resetAll(Iterable<T>? elements) {
-    clear();
-    if (elements != null) {
-      addAll(elements);
+    if (this != elements) {
+      clear();
+      if (elements != null) {
+        addAll(elements);
+      }
     }
   }
 

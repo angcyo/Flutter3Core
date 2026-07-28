@@ -84,6 +84,9 @@
   "libUseMetricUnits": "Use Metric Units",
   "libUseImperialUnits": "Use Imperial Units",
   "libSetHotkeys": "Set Directly With Hotkeys",
+  "libGroup": "Group",
+  "libUngroup": "Ungroup",
+  "libHideElement": "Hide Element",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

@@ -15,9 +15,19 @@ class CanvasKeyManager
   @override
   final CanvasDelegate canvasDelegate;
 
-  CanvasKeyManager(this.canvasDelegate);
+  CanvasKeyManager(this.canvasDelegate) {
+    assert(() {
+      l.i(
+        "注册快捷键个数[${CanvasKeyActions.values.size()}]->"
+        "[${shortcutConfigManager.shortcutConfigList.size()}/"
+        "${shortcutConfigManager.shortcutActionMap.length}]!",
+      );
+      return true;
+    }());
+  }
 
   /// 复制的元素列表
+  @tempFlag
   List<ElementPainter>? _copyElementList;
 
   String get keyTag => "$runtimeType";
@@ -31,6 +41,149 @@ class CanvasKeyManager
   @desktopFlag
   @callPoint
   void registerKeyEventHandler(CanvasRenderBox renderObject) {
+    if (useNewShortcutConfig) {
+      //空格键, 开启拖拽
+      if (canvasStyle.dragKeyboardKey != null) {
+        shortcutConfigManager.addShortcutConfig(
+          ShortcutConfigBean.fromKey(
+            canvasStyle.dragKeyboardKey,
+            id: CanvasKeyActions.dragCanvas.id,
+          ),
+        );
+      }
+      //Ctrl键, 任意比例缩放
+      if (canvasStyle.ignoreLockKeyboardKey != null) {
+        shortcutConfigManager.addShortcutConfig(
+          ShortcutConfigBean.fromKey(
+            canvasStyle.ignoreLockKeyboardKey,
+            id: CanvasKeyActions.ignoreLocalRatio.id,
+          ),
+        );
+      }
+      //删除选中元素
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.delete,
+          id: CanvasKeyActions.deleteSelectedElement.id,
+        ),
+      );
+      //方向键, 移动选中元素
+      shortcutConfigManager
+        ..addShortcutConfig(
+          ShortcutConfigBean.fromKey(
+            LogicalKeyboardKey.arrowUp,
+            id: CanvasKeyActions.moveElementUp.id,
+          ),
+        )
+        ..addShortcutConfig(
+          ShortcutConfigBean.fromKey(
+            LogicalKeyboardKey.arrowDown,
+            id: CanvasKeyActions.moveElementDown.id,
+          ),
+        )
+        ..addShortcutConfig(
+          ShortcutConfigBean.fromKey(
+            LogicalKeyboardKey.arrowLeft,
+            id: CanvasKeyActions.moveElementLeft.id,
+          ),
+        )
+        ..addShortcutConfig(
+          ShortcutConfigBean.fromKey(
+            LogicalKeyboardKey.arrowRight,
+            id: CanvasKeyActions.moveElementRight.id,
+          ),
+        );
+
+      //撤销
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyZ,
+          id: CanvasKeyActions.undo.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+
+      //重做
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyY,
+          id: CanvasKeyActions.redo.id,
+          meta: isMacOS,
+          control: !isMacOS,
+          shift: !isMacOS,
+        ),
+      );
+
+      //复制
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyC,
+          id: CanvasKeyActions.copyElement.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+      //粘贴
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyV,
+          id: CanvasKeyActions.pasteElement.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+
+      //全选
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyA,
+          id: CanvasKeyActions.selectAllElement.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+
+      //放大画布
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.equal,
+          id: CanvasKeyActions.zoomIn.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+      //缩小画布
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.minus,
+          id: CanvasKeyActions.zoomOut.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+      //组合
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyG,
+          id: CanvasKeyActions.groupElement.id,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+      //取消组合
+      shortcutConfigManager.addShortcutConfig(
+        ShortcutConfigBean.fromKey(
+          LogicalKeyboardKey.keyG,
+          id: CanvasKeyActions.ungroupElement.id,
+          shift: true,
+          meta: isMacOS,
+          control: !isMacOS,
+        ),
+      );
+      return;
+    }
+    //--old
     //空格键, 开启拖拽
     if (canvasStyle.dragKeyboardKey != null) {
       renderObject.registerKeyEvent(
@@ -70,9 +223,9 @@ class CanvasKeyManager
               .canvasElementControlManager
               .lockControl;
           if (info.isKeyDown) {
-            lockControl.setIgnoreLockRation(true);
+            lockControl.setIgnoreLockRatio(true);
           } else if (info.isKeyUp) {
-            lockControl.setIgnoreLockRation(false);
+            lockControl.setIgnoreLockRatio(false);
           }
           return .handled;
         },
@@ -183,8 +336,7 @@ class CanvasKeyManager
         ],
       ],
       (info) {
-        copySelectedElement();
-        return .handled;
+        return copySelectedElement() ? .handled : .ignored;
       },
       tag: keyTag,
     );
@@ -305,6 +457,19 @@ class CanvasKeyManager
   @callPoint
   void unregisterKeyEventHandler(CanvasRenderBox renderObject) {
     renderObject.removeAllKeyEventRegister(tag: keyTag);
+  }
+
+  /// 新的按键事件处理
+  /// - [CanvasRenderBox.handleKeyEventResultMixin]驱动
+  @callPoint
+  KeyEventResult handleKeyEvent(CanvasRenderBox renderObject, KeyEvent event) {
+    //触发注册的快捷键
+    final result = shortcutConfigManager.triggerShortcutAction(
+      event: event,
+      host: canvasDelegate,
+      data: renderObject,
+    );
+    return result ?? KeyEventResult.ignored;
   }
 
   //--
@@ -438,5 +603,310 @@ class CanvasKeyManager
     );
   }
 
-  //--
+  //MARK - ShortcutConfig
+
+  /// 是否使用新的快捷键配置
+  bool useNewShortcutConfig = true;
+
+  /// 快捷键配置管理
+  late ShortcutConfigManager shortcutConfigManager = ShortcutConfigManager()
+    ..registerShortcutAction(CanvasKeyActions.dragCanvas.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event != null) {
+        if (event.isKeyDown) {
+          canvasDelegate.updateCanvasStyleModeChanged(CanvasStyleMode.dragMode);
+          //canvasDelegate.addCursorStyle("drag", SystemMouseCursors.click);
+        } else if (event.isKeyUp) {
+          canvasDelegate.updateCanvasStyleModeChanged(null);
+          //canvasDelegate.removeCursorStyle("drag", SystemMouseCursors.click);
+        }
+        if (data is RenderObject) {
+          data.markNeedsPaint();
+        }
+        //renderObject.postMarkNeedsPaint();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.ignoreLocalRatio.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event != null) {
+        final lockControl = canvasDelegate
+            .canvasElementManager
+            .canvasElementControlManager
+            .lockControl;
+        if (event.isKeyDown) {
+          lockControl.setIgnoreLockRatio(true);
+        } else if (event.isKeyUp) {
+          lockControl.setIgnoreLockRatio(false);
+        }
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.deleteSelectedElement.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        deleteSelectedElement();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.moveElementUp.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        final canvasElementControlManager =
+            canvasElementManager.canvasElementControlManager;
+        if (canvasElementControlManager.isSelectedElement) {
+          //renderObject.requestFocus();
+          final offset =
+              (isCtrlPressed
+                      ? canvasStyle.canvasArrowAdjustFastOffset
+                      : canvasStyle.canvasArrowAdjustOffset)
+                  .toOffsetDp();
+          canvasElementControlManager.translateElement(
+            canvasElementManager.selectComponent,
+            dx: 0,
+            dy: -offset.dy,
+          );
+        }
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.moveElementDown.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        final canvasElementControlManager =
+            canvasElementManager.canvasElementControlManager;
+        if (canvasElementControlManager.isSelectedElement) {
+          //renderObject.requestFocus();
+          final offset =
+              (isCtrlPressed
+                      ? canvasStyle.canvasArrowAdjustFastOffset
+                      : canvasStyle.canvasArrowAdjustOffset)
+                  .toOffsetDp();
+          canvasElementControlManager.translateElement(
+            canvasElementManager.selectComponent,
+            dx: 0,
+            dy: offset.dy,
+          );
+        }
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.moveElementLeft.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        final canvasElementControlManager =
+            canvasElementManager.canvasElementControlManager;
+        if (canvasElementControlManager.isSelectedElement) {
+          //renderObject.requestFocus();
+          final offset =
+              (isCtrlPressed
+                      ? canvasStyle.canvasArrowAdjustFastOffset
+                      : canvasStyle.canvasArrowAdjustOffset)
+                  .toOffsetDp();
+          canvasElementControlManager.translateElement(
+            canvasElementManager.selectComponent,
+            dx: -offset.dx,
+            dy: 0,
+          );
+        }
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.moveElementRight.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        final canvasElementControlManager =
+            canvasElementManager.canvasElementControlManager;
+        if (canvasElementControlManager.isSelectedElement) {
+          //renderObject.requestFocus();
+          final offset =
+              (isCtrlPressed
+                      ? canvasStyle.canvasArrowAdjustFastOffset
+                      : canvasStyle.canvasArrowAdjustOffset)
+                  .toOffsetDp();
+          canvasElementControlManager.translateElement(
+            canvasElementManager.selectComponent,
+            dx: offset.dx,
+            dy: 0,
+          );
+        }
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.undo.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        undo();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.redo.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        redo();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.copyElement.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      return copySelectedElement() ? .handled : .ignored;
+    })
+    ..registerShortcutAction(CanvasKeyActions.pasteElement.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      return event?.isKeyDown == true && pasteSelectedElement()
+          ? .handled
+          : .ignored;
+    })
+    ..registerShortcutAction(CanvasKeyActions.selectAllElement.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        selectAllElement();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.zoomIn.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        zoomIn();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.zoomOut.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      if (event?.isKeyDown == true) {
+        zoomOut();
+      }
+      return .handled;
+    })
+    ..registerShortcutAction(CanvasKeyActions.groupElement.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      return event?.isKeyDown == true && groupSelectedElement()
+          ? .handled
+          : .ignored;
+    })
+    ..registerShortcutAction(CanvasKeyActions.ungroupElement.id, (
+      ctx,
+      event,
+      host,
+      data,
+    ) {
+      return event?.isKeyDown == true && ungroupSelectedElement()
+          ? .handled
+          : .ignored;
+    });
+}
+
+/// 画布按键操作
+enum CanvasKeyActions {
+  /// 拖拽画布
+  dragCanvas("canvas_drag_canvas"),
+
+  /// 忽略锁定比例
+  ignoreLocalRatio("canvas_ignore_local_ratio"),
+
+  /// 删除选中的元素
+  deleteSelectedElement("canvas_delete_selected_element"),
+
+  /// 向上移动元素
+  moveElementUp("canvas_move_element_up"),
+
+  /// 向下移动元素
+  moveElementDown("canvas_move_element_down"),
+
+  /// 向左移动元素
+  moveElementLeft("canvas_move_element_left"),
+
+  /// 向右移动元素
+  moveElementRight("canvas_move_element_right"),
+
+  /// 撤销
+  undo("canvas_undo"),
+
+  /// 重做
+  redo("canvas_redo"),
+
+  /// 复制选中元素
+  copyElement("canvas_copy_selected_element"),
+
+  /// 粘贴选中元素
+  pasteElement("canvas_paste_selected_element"),
+
+  /// 全选
+  selectAllElement("canvas_select_all_element"),
+
+  /// 放大画布
+  zoomIn("canvas_zoom_in"),
+
+  /// 缩小画布
+  zoomOut("canvas_zoom_out"),
+
+  /// 组合元素
+  groupElement("canvas_group_element"),
+
+  /// 解组元素
+  ungroupElement("canvas_ungroup_element");
+
+  final String id;
+
+  const CanvasKeyActions(this.id);
 }

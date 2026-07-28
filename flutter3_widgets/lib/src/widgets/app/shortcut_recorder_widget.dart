@@ -5,6 +5,8 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2026/07/28
 ///
 /// 快捷键录制小部件
+///
+/// - [ShortcutConfigBean]
 class ShortcutRecorderWidget extends StatefulWidget {
   /// 录制完成的快捷键回调
   final void Function(ShortcutConfigBean? configBean)? onShortcutAction;
@@ -31,7 +33,13 @@ class _ShortcutRecorderWidgetState extends State<ShortcutRecorderWidget> {
         if (event.isBackKey) {
           _labelConfig.updateText("");
         } else {
-          final bean = ShortcutConfigBean.fromKeyEvent(event);
+          final bean = ShortcutConfigBean.fromKeyEvent(
+            event,
+            control: isCtrlPressed,
+            shift: isShiftPressed,
+            alt: isAltPressed,
+            meta: isMetaPressed,
+          );
           _configBean = bean;
           _labelConfig.updateText("$bean");
           widget.onShortcutAction?.call(bean);

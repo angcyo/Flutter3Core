@@ -59,9 +59,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "libFind": MessageLookupByLibrary.simpleMessage("Find"),
     "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
     "libGoDownload": MessageLookupByLibrary.simpleMessage("Go to Download"),
+    "libGroup": MessageLookupByLibrary.simpleMessage("Group"),
     "libHideAllElements": MessageLookupByLibrary.simpleMessage(
       "Hide All Elements",
     ),
+    "libHideElement": MessageLookupByLibrary.simpleMessage("Hide Element"),
     "libHidePassword": MessageLookupByLibrary.simpleMessage("Hide Password"),
     "libInstallNow": MessageLookupByLibrary.simpleMessage("Install Now"),
     "libKnown": MessageLookupByLibrary.simpleMessage("Got it"),
@@ -104,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libShowPassword": MessageLookupByLibrary.simpleMessage("Show Password"),
     "libSmartSnap": MessageLookupByLibrary.simpleMessage("Smart Snap"),
     "libTips": MessageLookupByLibrary.simpleMessage("Tip"),
+    "libUngroup": MessageLookupByLibrary.simpleMessage("Ungroup"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("Upgrade failed"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("Start Upgrade"),
     "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage(

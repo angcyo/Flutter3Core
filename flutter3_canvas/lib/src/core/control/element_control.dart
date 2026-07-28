@@ -790,7 +790,7 @@ class LockControl extends BaseControl {
   }
 
   /// 设置临时忽略锁定比例
-  void setIgnoreLockRation(bool ignore) {
+  void setIgnoreLockRatio(bool ignore) {
     if (ignore) {
       pictureInfo = _unlockPictureInfo;
     } else {

@@ -93,6 +93,9 @@
   "libUseMetricUnits": "使用公制单位",
   "libUseImperialUnits": "使用英制单位",
   "libSetHotkeys": "直接按键进行设置",
+  "libGroup": "组合",
+  "libUngroup": "取消组合",
+  "libHideElement": "隐藏元素",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

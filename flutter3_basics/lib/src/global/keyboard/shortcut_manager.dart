@@ -6,10 +6,10 @@ part of '../../../flutter3_basics.dart';
 ///
 /// 全局快捷方式管理
 /// - [ShortcutMatcher]
-class GlobalShortcutManager {
+class ShortcutManager {
   final List<ShortcutDescription> shortcutDescriptions;
 
-  GlobalShortcutManager({List<ShortcutDescription>? shortcutDescriptions})
+  ShortcutManager({List<ShortcutDescription>? shortcutDescriptions})
     : shortcutDescriptions = shortcutDescriptions ?? [];
 
   @api
@@ -46,12 +46,13 @@ class GlobalShortcutManager {
   KeyEventResult? triggerShortcut(
     String? tag, {
     BuildContext? context,
+    KeyEvent? event,
     dynamic host,
     dynamic data,
   }) {
     final shortcutDescription = findShortcutByTag(tag);
     if (shortcutDescription != null) {
-      return shortcutDescription.action?.call(context, host, data);
+      return shortcutDescription.action?.call(context, event, host, data);
     }
     return null;
   }
@@ -59,13 +60,19 @@ class GlobalShortcutManager {
 
 /// 快捷键触发的回调
 /// - [context] 布局上下文
+/// - [event] 当前的键盘事件
 /// - [host] 宿主对象, 比如当前所在的窗口/容器/可操作对象等
 /// - [data] 调用传递的数据
 typedef ShortcutIntentAction =
-    KeyEventResult Function(BuildContext? context, dynamic host, dynamic data);
+    KeyEventResult Function(
+      BuildContext? context,
+      KeyEvent? event,
+      dynamic host,
+      dynamic data,
+    );
 
 /// 快捷方式描述
-/// - [GlobalShortcutManager]
+/// - [ShortcutManager]
 /// - [ShortcutDescription]
 /// - [ShortcutConfigBean]
 class ShortcutDescription {
@@ -101,6 +108,6 @@ class ShortcutDescription {
   });
 }
 
-/// [GlobalShortcutManager]的实例
+/// [ShortcutManager]的实例
 @globalInstance
-final $globalShortcutManager = GlobalShortcutManager();
+final $globalShortcutManager = ShortcutManager();

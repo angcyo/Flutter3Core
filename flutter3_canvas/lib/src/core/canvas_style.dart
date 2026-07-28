@@ -339,6 +339,10 @@ class CanvasStyle {
   @dp
   double menuTriangleHeight = 6;
 
+  /// 菜单的项的宽度
+  @dp
+  double menuItemWidth = 200;
+
   //endregion menu
 
   //region adsorb

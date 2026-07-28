@@ -99,6 +99,7 @@ extension PopMenuWidgetEx on Widget {
     double right = kX,
     double bottom = kH,
     //--
+    double? width,
     double? minWidth = kMenuMinWidth,
     double? minHeight,
     double? maxWidth,
@@ -113,9 +114,9 @@ extension PopMenuWidgetEx on Widget {
         right: right,
         bottom: bottom,
       ).constrainedMin(
-        minWidth: minWidth,
+        minWidth: width ?? minWidth,
         minHeight: minHeight,
-        maxWidth: maxWidth,
+        maxWidth: width ?? maxWidth,
         maxHeight: maxHeight,
       );
 

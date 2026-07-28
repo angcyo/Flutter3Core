@@ -161,7 +161,7 @@ class ShortcutMatcher with Diagnosticable, ChangeNotifier {
     // Marking some variables as "late" ensures that they aren't evaluated unless needed.
     late final Intent? intent = _find(event, HardwareKeyboard.instance);
     if (intent is ShortcutIntent && intent.description.action != null) {
-      return intent.description.action!.call(context, host, data);
+      return intent.description.action!.call(context, event, host, data);
     }
 
     //MARK: - system

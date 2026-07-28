@@ -23,7 +23,7 @@ part of '../../../flutter3_basics.dart';
 ///  )
 /// ```
 ///
-/// - [GlobalShortcutManager]
+/// - [ShortcutManager]
 /// - [ShortcutDescription]
 /// - [ShortcutConfigBean]
 ///
@@ -47,6 +47,14 @@ class ShortcutConfigBean with Equatable {
 
   //MARK: - get
 
+  /// 是否有效
+  bool get isValid =>
+      keyId != null ||
+      control == true ||
+      alt == true ||
+      shift == true ||
+      meta == true;
+
   /// 触发的按键
   LogicalKeyboardKey? get triggerKey =>
       keyId == null ? null : LogicalKeyboardKey.findKeyByKeyId(keyId!);
@@ -56,12 +64,13 @@ class ShortcutConfigBean with Equatable {
 
   ShortcutConfigBean({
     this.id,
-    this.keyId,
+    int? keyId,
+    LogicalKeyboardKey? key,
     this.control,
     this.alt,
     this.shift,
     this.meta,
-  });
+  }) : keyId = key?.keyId ?? keyId;
 
   /// 序列化为 JSON 保存
   Map<String, dynamic> toJson() => {
@@ -89,16 +98,39 @@ class ShortcutConfigBean with Equatable {
     KeyEvent? event, {
     String? id,
     bool modifier = true,
+    //--
+    bool? control,
+    bool? alt,
+    bool? shift,
+    bool? meta,
+  }) => ShortcutConfigBean.fromKey(
+    event?.logicalKey,
+    id: id,
+    modifier: modifier,
+    control: control,
+    alt: alt,
+    shift: shift,
+    meta: meta,
+  );
+
+  /// - [modifier] 是否过滤掉修饰符的[key]
+  factory ShortcutConfigBean.fromKey(
+    LogicalKeyboardKey? key, {
+    String? id,
+    bool modifier = true,
+    //--
+    bool? control,
+    bool? alt,
+    bool? shift,
+    bool? meta,
   }) {
     return ShortcutConfigBean(
       id: id,
-      keyId: modifier && event?.logicalKey.isModifier == true
-          ? null
-          : event?.logicalKey.keyId,
-      control: modifier && isCtrlPressed,
-      alt: modifier && isAltPressed,
-      shift: modifier && isShiftPressed,
-      meta: modifier && isMetaPressed,
+      keyId: modifier && key?.isModifier == true ? null : key?.keyId,
+      control: modifier && (control == true || key?.isControlKey == true),
+      alt: modifier && (alt == true || key?.isAltKey == true),
+      shift: modifier && (shift == true || key?.isShiftKey == true),
+      meta: modifier && (meta == true || key?.isMetaKey == true),
     );
   }
 

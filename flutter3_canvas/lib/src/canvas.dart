@@ -590,6 +590,13 @@ class CanvasRenderBox extends RenderBox
         canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
       //快捷按键匹配
       handler = super.handleKeyEventResultMixin(event);
+      final keyHandler = canvasDelegate.canvasKeyManager.handleKeyEvent(
+        this,
+        event,
+      );
+      if (keyHandler == KeyEventResult.handled) {
+        handler = keyHandler;
+      }
       //debugger();
     }
     if (canvasDelegate.handleKeyEvent(this, event, handler)) {
