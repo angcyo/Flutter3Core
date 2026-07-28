@@ -2935,7 +2935,7 @@ extension WidgetEx on Widget {
     Widget button = this;
     if (minSize == true) {
       iconSize ??= 28;
-      button = button.insets(all: 6, insets: padding);
+      button = button.insets(all: kL, insets: padding);
       padding = EdgeInsets.zero;
     }
     //--
