@@ -45,12 +45,14 @@ class CanvasMenuManager
     ShortcutConfigBean? shortcutConfig,
   }) {
     return (text ?? "")
-        .text(textColor: enable ? null : globalTheme.disableTextColor)
+        .text(
+          textColor: enable ? null : globalTheme.disableTextColor,
+          maxLines: 1,
+        )
+        .expanded()
         .rowOf(
-          shortcutConfig != null
-              ? ShortcutLabelWidget(configBean: shortcutConfig)
-              : null,
-          mainAxisSize: .min,
+          ShortcutLabelWidget(configBean: shortcutConfig),
+          mainAxisSize: .max,
           mainAxisAlignment: .spaceBetween,
         )
         .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)

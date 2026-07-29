@@ -3297,7 +3297,8 @@ extension WidgetEx on Widget {
     double? gap,
     Widget? gapWidget,
     //--
-    bool lastExtend = false,
+    bool? firstExtend = false,
+    bool? lastExtend = false,
   }) => other == null && before == null && after == null
       ? this
       : [before, this, after, other].row(
@@ -3310,6 +3311,7 @@ extension WidgetEx on Widget {
           textBaseline: textBaseline,
           gap: gap,
           gapWidget: gapWidget,
+          firstExtend: firstExtend,
           lastExtend: lastExtend,
         )!;
 

@@ -127,7 +127,7 @@ class LastExtendRenderFlex extends RenderFlex {
       //debugger();
       if ((firstExtend == true && child == children.first) ||
           (lastExtend == true && child == children.last)) {
-        //第一个或/最后一个child
+        //第一个或最后一个child
         final maxWidth = constraints.maxWidth - childUseWidth;
         //debugger();
         if (child.size.width > maxWidth) {
@@ -136,7 +136,7 @@ class LastExtendRenderFlex extends RenderFlex {
           final lastChildConstraints = BoxConstraints(
             maxWidth:
                 maxWidth +
-                (child == children.first ? firstExcludeWidth ?? 0 : 0),
+                (child == children.first ? (firstExcludeWidth ?? 0) : 0),
           );
           final childSize = ChildLayoutHelper.layoutChild(
             child,
@@ -216,6 +216,7 @@ class LastExtendRenderFlex extends RenderFlex {
       defaultPaint(context, offset);
       return;
     }
+    //溢出之后使用系统的绘制会绘制溢出提示
     //会绘制[paintOverflowIndicator]
     super.paint(context, offset);
   }

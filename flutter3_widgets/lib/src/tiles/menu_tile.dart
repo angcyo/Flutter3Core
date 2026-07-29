@@ -355,6 +355,8 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
         widget.tileMinWidth ?? (shortcutConfig == null ? kMenuMinWidth : null);
     final width =
         widget.tileWidth ?? (shortcutConfig == null ? null : kMenuItemMinWidth);
+    final textMaxLines =
+        widget.textMaxLines ?? (shortcutConfig == null ? null : 1);
 
     final isSelected = widget.isSelected || isShowPopupMixin;
     final isEnableTap =
@@ -381,17 +383,14 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
           widget.leadingWidget ??
               SizedBox.fromSize(size: widget.placeholderSize),
           (widget.text ?? "")
-              .text(
-                style: globalTheme.textBodyStyle,
-                maxLines: widget.textMaxLines,
-              )
+              .text(style: globalTheme.textBodyStyle, maxLines: textMaxLines)
               .expanded(),
           if (shortcutConfig != null)
             ShortcutLabelWidget(configBean: shortcutConfig).insets(left: kH),
           //-- trailing
           trailingWidget ?? SizedBox.fromSize(size: widget.placeholderSize),
         ]
-        .row()!
+        .row(/*mainAxisSize: .max*/)!
         .insets(vertical: kL)
         .colorFiltered(
           color: (widget.enable ?? isEnableTap)
