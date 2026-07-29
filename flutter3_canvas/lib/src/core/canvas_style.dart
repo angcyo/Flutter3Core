@@ -341,7 +341,7 @@ class CanvasStyle {
 
   /// 菜单的项的宽度
   @dp
-  double menuItemWidth = 200;
+  double menuItemWidth = kMenuItemMinWidth;
 
   //endregion menu
 

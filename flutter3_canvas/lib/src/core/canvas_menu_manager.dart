@@ -36,6 +36,28 @@ class CanvasMenuManager
 
   //--
 
+  /// 构建一个菜单项
+  Widget buildMenuItem(
+    GlobalTheme globalTheme,
+    String? text,
+    GestureTapCallback? onTap, {
+    bool enable = true,
+    ShortcutConfigBean? shortcutConfig,
+  }) {
+    return (text ?? "")
+        .text(textColor: enable ? null : globalTheme.disableTextColor)
+        .rowOf(
+          shortcutConfig != null
+              ? ShortcutLabelWidget(configBean: shortcutConfig)
+              : null,
+          mainAxisSize: .min,
+          mainAxisAlignment: .spaceBetween,
+        )
+        .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
+        .inkWell(onTap, enable: enable)
+        .popMenu(enable: enable);
+  }
+
   /// 画布菜单, 右键菜单
   /// 构建画布相关菜单, 未选择元素时的菜单
   /// - [buildMenuWidget]
@@ -49,38 +71,28 @@ class CanvasMenuManager
     final shortcutConfigManager =
         canvasDelegate.canvasKeyManager.shortcutConfigManager;
     return [
-      (libRes?.libPaste ?? "粘贴")
-          .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.pasteElement.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.pasteSelectedElement();
-          }, enable: enablePaste)
-          .popMenu(enable: enablePaste),
-      (libRes?.libSelectAll ?? "全选")
-          .text(textColor: enableSelect ? null : globalTheme.disableTextColor)
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.selectAllElement.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.selectAllElement();
-          }, enable: enableSelect)
-          .popMenu(enable: enableSelect),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libPaste,
+        () {
+          canvasKeyManager.pasteSelectedElement();
+        },
+        enable: enablePaste,
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.pasteElement.id)
+            .firstOrNull,
+      ),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libSelectAll,
+        () {
+          canvasKeyManager.selectAllElement();
+        },
+        enable: enableSelect,
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.selectAllElement.id)
+            .firstOrNull,
+      ),
       "100%"
           .text()
           .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
@@ -88,38 +100,26 @@ class CanvasMenuManager
             canvasViewBox.scaleTo(sx: 1, sy: 1);
           })
           .popMenu(),
-      (libRes?.libZoomIn ?? "放大")
-          .text()
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.zoomIn.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
-          })
-          .popMenu(),
-      (libRes?.libZoomOut ?? "缩小")
-          .text()
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.zoomOut.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.zoomOut(anchorPosition: anchorPosition);
-          })
-          .popMenu(),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libZoomIn,
+        () {
+          canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
+        },
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.zoomIn.id)
+            .firstOrNull,
+      ),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libZoomOut,
+        () {
+          canvasKeyManager.zoomOut(anchorPosition: anchorPosition);
+        },
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.zoomOut.id)
+            .firstOrNull,
+      ),
       (libRes?.libCanvasOptions ?? "画布选项")
           .text()
           .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
@@ -193,91 +193,63 @@ class CanvasMenuManager
         canvasDelegate.canvasKeyManager.shortcutConfigManager;
     return [
       //--
-      libRes?.libCopy
-          .text()
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.copyElement.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.copySelectedElement();
-          })
-          .popMenu(),
-      libRes?.libPaste
-          .text(textColor: enablePaste ? null : globalTheme.disableTextColor)
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.selectAllElement.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.pasteSelectedElement();
-          }, enable: enablePaste)
-          .popMenu(enable: enablePaste),
-      libRes?.libDelete
-          .text()
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(
-                    id: CanvasKeyActions.deleteSelectedElement.id,
-                  )
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.deleteSelectedElement();
-          })
-          .popMenu(),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libCopy,
+        () {
+          canvasKeyManager.copySelectedElement();
+        },
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.copyElement.id)
+            .firstOrNull,
+      ),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libPaste,
+        () {
+          canvasKeyManager.pasteSelectedElement();
+        },
+        enable: enablePaste,
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.pasteElement.id)
+            .firstOrNull,
+      ),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libDelete,
+        () {
+          canvasKeyManager.deleteSelectedElement();
+        },
+        enable: enablePaste,
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.deleteSelectedElement.id)
+            .firstOrNull,
+      ),
       //--
       hLine(context).size(width: canvasDelegate.canvasStyle.menuItemWidth),
-      libRes?.libGroup
-          .text(textColor: enableGroup ? null : globalTheme.disableTextColor)
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.groupElement.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.groupSelectedElement();
-          }, enable: enableGroup)
-          .popMenu(enable: enableGroup),
-      libRes?.libUngroup
-          .text(textColor: enableUngroup ? null : globalTheme.disableTextColor)
-          .rowOf(
-            ShortcutLabelWidget(
-              configBean: shortcutConfigManager
-                  .findShortcutConfig(id: CanvasKeyActions.ungroupElement.id)
-                  .firstOrNull,
-            ),
-            mainAxisSize: .min,
-            mainAxisAlignment: .spaceBetween,
-            gap: kX,
-          )
-          .menuStyleItem(width: canvasDelegate.canvasStyle.menuItemWidth)
-          .inkWell(() {
-            canvasKeyManager.ungroupSelectedElement();
-          }, enable: enableUngroup)
-          .popMenu(enable: enableUngroup),
+      buildMenuItem(
+        globalTheme,
+        libRes?.libGroup,
+        () {
+          canvasKeyManager.groupSelectedElement();
+        },
+        enable: enableGroup,
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.groupElement.id)
+            .firstOrNull,
+      ),
+
+      buildMenuItem(
+        globalTheme,
+        libRes?.libUngroup,
+        () {
+          canvasKeyManager.ungroupSelectedElement();
+        },
+        enable: enableUngroup,
+        shortcutConfig: shortcutConfigManager
+            .findShortcutConfig(id: CanvasKeyActions.ungroupElement.id)
+            .firstOrNull,
+      ),
       //--
       hLine(context).size(width: canvasDelegate.canvasStyle.menuItemWidth),
       libRes?.libHideElement

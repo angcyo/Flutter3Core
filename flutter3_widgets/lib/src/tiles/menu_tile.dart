@@ -298,14 +298,24 @@ class DesktopTextMenuTile extends StatefulWidget {
   /// [onContextTap]的基础上, 添加了按下的事件信息
   final GestureContextTapDownCallback? onContextClickDown;
 
+  /// 菜单的宽度
+  @defInjectMark
+  final double? tileWidth;
+
   /// 菜单最小宽度
-  final double tileMinWidth;
+  @defInjectMark
+  final double? tileMinWidth;
 
   //--
 
   /// 菜单的填充
   @defInjectMark
   final EdgeInsets? tilePadding;
+
+  //--
+
+  /// 快捷键配置信息
+  final ShortcutConfigBean? shortcutConfig;
 
   const DesktopTextMenuTile({
     super.key,
@@ -318,7 +328,8 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.enable,
     this.isSelected = false,
     this.isChecked,
-    this.tileMinWidth = 100,
+    this.tileWidth,
+    this.tileMinWidth,
     this.popupBodyWidget,
     this.autoClosePopup,
     this.onTap,
@@ -326,6 +337,7 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.onContextClickDown,
     //--
     this.tilePadding,
+    this.shortcutConfig,
   });
 
   @override
@@ -338,6 +350,11 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final radius = kDefaultBorderRadiusH;
+    final shortcutConfig = widget.shortcutConfig;
+    final tileMinWidth =
+        widget.tileMinWidth ?? (shortcutConfig == null ? kMenuMinWidth : null);
+    final width =
+        widget.tileWidth ?? (shortcutConfig == null ? null : kMenuItemMinWidth);
 
     final isSelected = widget.isSelected || isShowPopupMixin;
     final isEnableTap =
@@ -369,6 +386,8 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
                 maxLines: widget.textMaxLines,
               )
               .expanded(),
+          if (shortcutConfig != null)
+            ShortcutLabelWidget(configBean: shortcutConfig).insets(left: kH),
           //-- trailing
           trailingWidget ?? SizedBox.fromSize(size: widget.placeholderSize),
         ]
@@ -379,7 +398,7 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
               ? null
               : globalTheme.textDisableStyle.color,
         )
-        .constrainedMin(minWidth: widget.tileMinWidth)
+        .constrainedMin(minWidth: tileMinWidth, width: width)
         .backgroundColor(
           isSelected ? globalTheme.hoverColor : null,
           fillRadius: radius,

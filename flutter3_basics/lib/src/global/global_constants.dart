@@ -94,6 +94,10 @@ const kNumberMinHeight = 26.0;
 /// 菜单最小宽度
 const kMenuMinWidth = 160.0;
 
+/// 菜单项最小宽度
+/// - 带快捷键显示样式
+const kMenuItemMinWidth = 200.0;
+
 /// 系统[Dialog]最小宽度280.0
 /// - [Dialog.build] 代码中写死了最小宽度
 const kDialogMinWidth = 280.0;

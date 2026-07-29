@@ -20,27 +20,38 @@ class ShortcutConfigManager {
 
   /// 添加快捷键配置
   @api
-  void addShortcutConfig(ShortcutConfigBean? shortcutConfigBean) {
+  void addShortcutConfig(
+    ShortcutConfigBean? shortcutConfigBean, {
+    ShortcutIntentAction? action,
+    bool? ignoreDebug,
+  }) {
     if (shortcutConfigBean == null) {
+      debugger();
       return;
     }
     assert(() {
       final find = shortcutConfigList.findFirst(
         (e) => e.id == shortcutConfigBean.id,
       );
-      debugger(when: find != null);
+      debugger(when: ignoreDebug != true && find != null);
       return true;
     }());
     shortcutConfigList.add(shortcutConfigBean);
+    if (action != null) {
+      registerShortcutAction(shortcutConfigBean.id, action);
+    }
   }
 
   /// 移除快捷键配置
   @api
-  void removeShortcutConfig(ShortcutConfigBean? shortcutConfigBean) {
-    if (shortcutConfigBean == null) {
+  void removeShortcutConfig({String? id, ShortcutConfigBean? config}) {
+    if (id == null && config == null) {
+      debugger();
       return;
     }
-    shortcutConfigList.removeWhere((e) => e.id == shortcutConfigBean.id);
+    shortcutConfigList.removeWhere(
+      (e) => id != null ? e.id == id : e == config,
+    );
   }
 
   /// 查找快捷键配置
@@ -66,6 +77,7 @@ class ShortcutConfigManager {
     ShortcutIntentAction shortcutIntentAction,
   ) {
     if (id == null) {
+      debugger();
       return;
     }
     shortcutActionMap[id] = shortcutIntentAction;
@@ -75,6 +87,7 @@ class ShortcutConfigManager {
   @api
   void unregisterShortcutAction(String? id) {
     if (id == null) {
+      debugger();
       return;
     }
     shortcutActionMap.remove(id);
@@ -112,24 +125,31 @@ class ShortcutConfigManager {
         list.addAll(findShortcutConfig(id: id));
       } else if (event != null) {
         //用event查找
-        list.addAll(
-          findShortcutConfig(
-            config: ShortcutConfigBean.fromKeyEvent(
-              event,
-              control: isCtrlPressed,
-              alt: isAltPressed,
-              shift: isShiftPressed,
-              meta: isMetaPressed,
-            ),
-          ),
+        final keyConfig = ShortcutConfigBean.fromKeyEvent(
+          event,
+          control: isCtrlPressed,
+          alt: isAltPressed,
+          shift: isShiftPressed,
+          meta: isMetaPressed,
         );
+        list.addAll(findShortcutConfig(config: keyConfig));
       }
     } else {
       list.add(config);
     }
     //--action
-    KeyEventResult? result;
+    KeyEventResult? result; //!event.isModifierKey
     for (final element in list) {
+      if (event != null) {
+        //键盘事件
+        if (element.byKeyDown == true) {
+          if (element.includeRepeats == true && event.isKeyRepeat) {
+            //需要处理重复按键
+          } else if (!event.isKeyDown) {
+            continue;
+          }
+        }
+      }
       final action = shortcutActionMap[element.id];
       if (action != null) {
         final elementResult = action(context, event, host, data);

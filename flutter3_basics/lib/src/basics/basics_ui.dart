@@ -2655,6 +2655,7 @@ extension WidgetEx on Widget {
   Widget constrainedMin({
     BoxConstraints? constraints,
     //
+    double? width,
     double? minSize,
     double? minWidth,
     double? minHeight,
@@ -2663,9 +2664,9 @@ extension WidgetEx on Widget {
     double? maxWidth,
     double? maxHeight,
   }) {
-    minWidth ??= minSize;
+    minWidth ??= width ?? minSize;
     minHeight ??= minSize;
-    maxWidth ??= maxSize;
+    maxWidth ??= width ?? maxSize;
     maxHeight ??= maxSize;
     if (constraints == null &&
         maxWidth == null &&

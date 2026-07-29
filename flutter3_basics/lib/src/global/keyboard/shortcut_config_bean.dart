@@ -34,6 +34,8 @@ class ShortcutConfigBean with Equatable {
   /// 快捷键的唯一标识，如 "save_document"
   final String? id;
 
+  //--
+
   /// 主按键，如 keyS
   final int? keyId;
   final bool? control;
@@ -44,6 +46,16 @@ class ShortcutConfigBean with Equatable {
   /// - macOS:
   /// - Windows:
   final bool? meta;
+
+  //--
+
+  /// 是否只在key down时触发
+  /// - [KeyDownEvent]
+  final bool? byKeyDown;
+
+  /// 是否包含重复触发
+  /// - [KeyRepeatEvent]
+  final bool? includeRepeats;
 
   //MARK: - get
 
@@ -70,6 +82,8 @@ class ShortcutConfigBean with Equatable {
     this.alt,
     this.shift,
     this.meta,
+    this.byKeyDown,
+    this.includeRepeats,
   }) : keyId = key?.keyId ?? keyId;
 
   /// 序列化为 JSON 保存
@@ -80,6 +94,8 @@ class ShortcutConfigBean with Equatable {
     'alt': alt,
     'shift': shift,
     'meta': meta,
+    'byKeyDown': byKeyDown,
+    'includeRepeats': includeRepeats,
   };
 
   /// 反序列化
@@ -91,6 +107,8 @@ class ShortcutConfigBean with Equatable {
       alt: json['alt'],
       shift: json['shift'],
       meta: json['meta'],
+      byKeyDown: json['byKeyDown'],
+      includeRepeats: json['includeRepeats'],
     );
   }
 
@@ -103,6 +121,9 @@ class ShortcutConfigBean with Equatable {
     bool? alt,
     bool? shift,
     bool? meta,
+    //--
+    bool? byKeyDown,
+    bool? includeRepeats,
   }) => ShortcutConfigBean.fromKey(
     event?.logicalKey,
     id: id,
@@ -111,6 +132,8 @@ class ShortcutConfigBean with Equatable {
     alt: alt,
     shift: shift,
     meta: meta,
+    byKeyDown: byKeyDown,
+    includeRepeats: includeRepeats,
   );
 
   /// - [modifier] 是否过滤掉修饰符的[key]
@@ -123,6 +146,9 @@ class ShortcutConfigBean with Equatable {
     bool? alt,
     bool? shift,
     bool? meta,
+    //--
+    bool? byKeyDown,
+    bool? includeRepeats,
   }) {
     return ShortcutConfigBean(
       id: id,
@@ -131,6 +157,8 @@ class ShortcutConfigBean with Equatable {
       alt: modifier && (alt == true || key?.isAltKey == true),
       shift: modifier && (shift == true || key?.isShiftKey == true),
       meta: modifier && (meta == true || key?.isMetaKey == true),
+      byKeyDown: byKeyDown,
+      includeRepeats: includeRepeats,
     );
   }
 
@@ -145,6 +173,7 @@ class ShortcutConfigBean with Equatable {
       alt: alt == true,
       shift: shift == true,
       meta: meta == true,
+      includeRepeats: includeRepeats == true,
     );
   }
 
