@@ -31,8 +31,13 @@ class SplitButton extends StatefulWidget {
   /// - 弹出弹窗之后, 会自动进入选中状态
   final Widget? popupBodyWidget;
 
-  /// 弹窗对齐锚点的位置
-  final Alignment? popupAlignment;
+  /// 弹窗对齐目标什么位置
+  @defInjectMark
+  final Alignment? popupTargetAnchor;
+
+  /// 弹窗的什么位置对齐锚点
+  @defInjectMark
+  final Alignment? popupPreferredFollowerAlignment;
 
   //MARK: - part
 
@@ -64,7 +69,8 @@ class SplitButton extends StatefulWidget {
     this.optionWidget,
     this.optionColor,
     this.popupBodyWidget,
-    this.popupAlignment,
+    this.popupTargetAnchor,
+    this.popupPreferredFollowerAlignment,
     //--
     this.mainAxisSize = .min,
     this.fillColor,
@@ -209,7 +215,9 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
       wrapShowPopupMixin(() async {
         await context?.showPopupDialog(
           popupBodyWidget,
-          followerAnchor: widget.popupAlignment ?? Alignment.topCenter,
+          targetAnchor: widget.popupTargetAnchor ?? .bottomCenter,
+          preferredFollowerAlignment:
+              widget.popupPreferredFollowerAlignment ?? .topCenter,
         );
       });
     }
