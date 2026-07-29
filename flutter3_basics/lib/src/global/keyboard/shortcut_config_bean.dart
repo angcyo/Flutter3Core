@@ -231,7 +231,7 @@ extension LogicalKeyboardKeyLabelEx on LogicalKeyboardKey {
     if (this == .pageUp) return isMac ? '⇞' : 'Page Up';
     if (this == .pageDown) return isMac ? '⇟' : 'Page Down';
     if (this == .arrowLeft) return isMac ? '←' : 'Left';
-    if (this == .arrowRight) return isMac ? '→' : 'Left';
+    if (this == .arrowRight) return isMac ? '→' : 'Right';
     if (this == .arrowUp) return isMac ? '↑' : 'Up';
     if (this == .arrowDown) return isMac ? '↓' : 'Down';
     /*if (this == .bracketLeft) return '[';
