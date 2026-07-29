@@ -363,6 +363,9 @@ class ByteReader {
   /// 是否读取完毕
   bool get isDone => _index >= sumLength;
 
+  /// 是否还有数据
+  bool get hasNext => !isDone;
+
   /// 读取一个字节
   int readByte([int overflow = -1]) {
     if (isDone) {
