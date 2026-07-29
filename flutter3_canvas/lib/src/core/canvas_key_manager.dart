@@ -456,6 +456,8 @@ class CanvasKeyManager
   /// - [unregisterKeyEventHandler]
   @callPoint
   void unregisterKeyEventHandler(CanvasRenderBox renderObject) {
+    shortcutConfigManager.clearShortcutConfig();
+    //shortcutConfigManager.clearShortcutAction();
     renderObject.removeAllKeyEventRegister(tag: keyTag);
   }
 

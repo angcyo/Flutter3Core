@@ -68,6 +68,12 @@ class ShortcutConfigManager {
     }).toList();
   }
 
+  /// 清除所有快捷键配置
+  @api
+  void clearShortcutConfig() {
+    shortcutConfigList.clear();
+  }
+
   //MARK: - action
 
   /// 注册一个快捷键执行动作

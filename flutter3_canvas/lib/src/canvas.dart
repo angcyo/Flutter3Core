@@ -443,6 +443,9 @@ class CanvasRenderBox extends RenderBox
       ..unfocus()
       ..removeListener(onFocusChange);
     _focusAttachment?.detach();
+
+    canvasDelegate.canvasKeyManager.unregisterKeyEventHandler(this);
+
     //--
     _validForMouseTracker = false;
     visitWidgetElementPainter((painter) {
