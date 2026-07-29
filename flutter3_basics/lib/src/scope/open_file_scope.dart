@@ -111,6 +111,7 @@ mixin OpenFileScopeStateMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
+  /// 重写此方法, 处理需要打开的文件
   /// - [isLastOpenFileHandler]
   ///@return 返回true 表示处理了数据
   @overridePoint

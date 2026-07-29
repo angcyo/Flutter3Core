@@ -348,6 +348,11 @@ extension TextSpanPaintEx on InlineSpan {
 
   /// 获取文本的高度
   double textHeight() => textSize().height;
+
+  /// [ObjectEx.text]
+  /*Widget text(){
+    return Text.rich(this);
+  }*/
 }
 
 /// 画布[Canvas]的一些扩展
@@ -1109,6 +1114,23 @@ extension CanvasEx on Canvas {
         ..strokeWidth = strokeWidth ?? 1
         ..style = PaintingStyle.stroke;
       drawCircle(center, radius, strokePaint);
+    }
+  }
+
+  /// 将所有的点连成一条线
+  void drawLines(
+    @dp List<Offset> points,
+    Paint paint, {
+    @dp Offset? offset,
+    bool close = false,
+  }) {
+    if (offset != null) {
+      withMatrix(createTranslateMatrix(offset: offset), () {
+        drawLines(points, paint, close: close);
+      });
+    } else {
+      final path = Path()..addPolygon(points, close);
+      drawPath(path, paint);
     }
   }
 

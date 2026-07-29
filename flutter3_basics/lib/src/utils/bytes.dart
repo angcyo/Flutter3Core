@@ -507,8 +507,24 @@ class ByteReader {
   }
 
   /// 读取指定字节的ASCII字符
-  /// 读取指定字节长度的一个字符串
   /// [length] 需要读取的字节长度
+  /// - [readAscii]
+  /// - [readString]
+  String? readAscii(int length, [String? overflow]) {
+    if (isDone) {
+      return overflow;
+    }
+    final result = bytes
+        .sublist(_index, math.min(_index + length, sumLength))
+        .charCodes;
+    _index += length;
+    return result;
+  }
+
+  /// 读取指定字节长度的一个字符串, 在单字符编码数据时, 结果会与[readAscii]一致
+  /// [length] 需要读取的字节长度
+  /// - [readAscii]
+  /// - [readString]
   String? readString(int length, [String? overflow]) {
     if (isDone) {
       return overflow;
@@ -648,14 +664,15 @@ class ByteReader {
   /// @return [length]描述的所有字节数据, 不够返回null
   List<int>? readLengthBytes(
     int length, [
-    Endian? endian,
     BytesReaderFn? bytesAction,
+    Endian? endian,
   ]) {
     //读取后续字节的长度
+    endian ??= this.endian;
     final byteCount = readInt(length, 0, endian);
     final bytes = readBytes(byteCount);
     if (bytes != null && bytesAction != null) {
-      bytesReader(bytes, bytesAction);
+      bytesReader(bytes, bytesAction, endian);
     }
     return bytes;
   }

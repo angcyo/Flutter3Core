@@ -19,6 +19,9 @@ class LogScopeData {
   /// 日志的内容
   final String content;
 
+  /// [content]的富文本
+  final TextSpan? contentSpan;
+
   @tempFlag
   Color? _color;
 
@@ -50,6 +53,13 @@ class LogScopeData {
 
   String get time => timestamp.toTimeString("yyyy-MM-dd HH:mm:ss.SSS");
 
+  /// 是否包含指定文本
+  @api
+  bool contains(Pattern other) {
+    return content.contains(other) ||
+        contentSpan?.toPlainText().contains(other) == true;
+  }
+
   //MARK: -
 
   /// 用于过滤的类型
@@ -61,13 +71,18 @@ class LogScopeData {
   /// 消息类型的日志
   LogScopeData.message(
     this.content, {
+    this.contentSpan,
     this.filterTypeList,
     this.isReceived = false,
   }) : timestamp = nowTimestamp();
 
   /// 日志类型
-  LogScopeData.log(this.content, {this.filterTypeList, this.isReceived = false})
-    : timestamp = nowTimestamp();
+  LogScopeData.log(
+    this.content, {
+    this.filterTypeList,
+    this.contentSpan,
+    this.isReceived = false,
+  }) : timestamp = nowTimestamp();
 }
 
 /// 控制器

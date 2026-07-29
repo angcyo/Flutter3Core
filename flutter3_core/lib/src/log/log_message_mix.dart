@@ -46,7 +46,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
       (e) =>
           (e.filterTypeList?.contains(filterType) == true ||
               isNil(filterType)) &&
-          (isNil(filterContent) || e.content.contains(filterContent!) == true),
+          (isNil(filterContent) || e.contains(filterContent!) == true),
     );
     return list;
   }
@@ -73,6 +73,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
                 item.content.limit().text(
                   selectable: true,
                   textAlign: item.isReceived ? .start : .end,
+                  textSpan: item.contentSpan,
                 ),
               ].column(
                 crossAxisAlignment: item.isReceived ? .start : .end,
@@ -111,6 +112,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
                 item.content.limit().text(
                   selectable: true,
                   textColor: item.color,
+                  textSpan: item.contentSpan,
                 ),
               ].column(crossAxisAlignment: .start) /*?.bounds()*/;
       },
@@ -123,24 +125,36 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
   @api
   void addLastMessage(
     String? message, {
+    TextSpan? messageSpan,
     bool isReceived = false,
     bool? replaceLast,
   }) {
     //debugger(when: isReceived);
-    if (message == null) {
+    if (message == null && messageSpan == null) {
       return;
     }
     if (replaceLast == true) {
       logDataList.removeLast();
     }
-    logDataList.add(LogScopeData.message(message, isReceived: isReceived));
+    logDataList.add(
+      LogScopeData.message(
+        message ?? "",
+        isReceived: isReceived,
+        contentSpan: messageSpan,
+      ),
+    );
     updateState();
     autoScrollToBottom();
   }
 
   /// 添加一条日志记录, 并且滚动到底部
   @api
-  void addLastLog(String? log, {String? filterType, bool isReceived = false}) {
+  void addLastLog(
+    String? log, {
+    String? filterType,
+    bool isReceived = false,
+    TextSpan? messageSpan,
+  }) {
     //debugger(when: isReceived);
     if (log == null) {
       return;
@@ -150,6 +164,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
         log,
         filterTypeList: [?filterType],
         isReceived: isReceived,
+        contentSpan: messageSpan,
       ),
     );
     updateState();

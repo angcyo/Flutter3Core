@@ -339,7 +339,9 @@ class _LogPanelWidgetState extends State<LogPanelWidget>
               for (final item in list) {
                 builder.write(item.time);
                 builder.write("/");
-                builder.writeln(item.content);
+                builder.writeln(
+                  item.contentSpan?.toPlainText() ?? item.content,
+                );
               }
             }).copy();
           }, borderRadius: buttonRadius.borderRadius)
