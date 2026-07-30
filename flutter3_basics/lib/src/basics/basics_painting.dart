@@ -1134,6 +1134,18 @@ extension CanvasEx on Canvas {
     }
   }
 
+  /// 绘制一个背景颜色
+  /// ```
+  /// // 方式 A：drawColor 依然会把整个可视屏幕涂满白色！
+  /// canvas.drawColor(Colors.white, BlendMode.srcOver);
+  /// ```
+  void drawBgColor({Paint? paint, Rect? bounds, Color? color}) {
+    paint ??= Paint()
+      ..color = color ?? Colors.transparent
+      ..style = PaintingStyle.fill;
+    drawRect(bounds ?? getLocalClipBounds(), paint);
+  }
+
   //endregion ---draw---
 
   //MARK: - debug
