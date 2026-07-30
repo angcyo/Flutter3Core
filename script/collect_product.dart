@@ -280,7 +280,7 @@ void main(List<String> arguments) async {
                   "/Qp",
                   "/F$setupExeName",
                   "/O$toDir",
-                  '/DMyAppVersion=v$appVersion',
+                  '/DMyAppVersion=$appVersion',
                   '/DMySource=$from',
                   '/DMyAppExeName=$exeFileName',
                   issFile.path,
