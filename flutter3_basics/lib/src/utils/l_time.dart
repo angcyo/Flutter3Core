@@ -31,6 +31,9 @@ class LTime {
   final StackList<int> stack = StackList();
 
   /// 计算2个毫秒时间的差值
+  /// ```
+  /// 1s97ms
+  /// ```
   /// [pattern] 当前位置的值是否要输出显示. 0智能判断 1强制 -1忽略.
   static String diffTime(
     int? startTime, {
