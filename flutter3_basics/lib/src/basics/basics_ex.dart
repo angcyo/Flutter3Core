@@ -1305,6 +1305,9 @@ extension StringEx on String {
   Future<bool> openUrl([BuildContext? context]) => openWebUrl(this, context);
 
   /// 复制当前的字符串到剪切板
+  /// ```
+  /// ￼
+  /// ```
   /// [getClipboardText]
   @allPlatformFlag
   String copy() {

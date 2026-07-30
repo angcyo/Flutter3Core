@@ -81,11 +81,11 @@ class GCodeParser {
   /// 仿真数据构造器
   PathSimulationBuilder? simulationBuilder;
 
+  /// 已按照gcode数值单位转换为dp单位了
+  @dp
+  @api
   @entryPoint
-  Path? parse(
-    String? gcode, {
-    bool? simulation,
-  }) {
+  Path? parse(String? gcode, {bool? simulation}) {
     if (gcode == null || isNil(gcode)) {
       return null;
     }
@@ -110,10 +110,7 @@ class GCodeParser {
 
   /// 异步解析
   @entryPoint
-  Future<Path?> parseAsync(
-    String? gcode, {
-    bool? simulation,
-  }) async {
+  Future<Path?> parseAsync(String? gcode, {bool? simulation}) async {
     if (gcode == null || isNil(gcode)) {
       return null;
     }
@@ -203,6 +200,7 @@ class GCodeParser {
   //region---GCode解析---
 
   /// [mmFactor] `G21` 毫米单位时, 数值要乘以的倍数
+  /// `6.299212598425197`
   double mmFactor = 1.0.toDpFromMm();
 
   /// [inchFactor] `G20` 英寸单位时, 数值要乘以的倍数
@@ -450,8 +448,13 @@ class GCodeParser {
         double dRadius = r; // 输入半径
 
         final centerList = centerOfCircleRadius(p1, p2, dRadius);
-        final center =
-            judgeCenter(centerList[0], centerList[1], p1, p2, gCmd == "G2");
+        final center = judgeCenter(
+          centerList[0],
+          centerList[1],
+          p1,
+          p2,
+          gCmd == "G2",
+        );
         if (!center.dx.isValid || !center.dy.isValid) {
           //不是一个有效的数值
           //l.d("test:%f %f", center[0], center[1]);
@@ -688,10 +691,7 @@ class GCodeParser {
 
   /// 读取任意指令后面的数字
   /// [rollBackPosition]是否要回滚文件内容的读取位置
-  double? obtainAnyCmdNumber(
-    String cmd, {
-    bool rollBackPosition = false,
-  }) {
+  double? obtainAnyCmdNumber(String cmd, {bool rollBackPosition = false}) {
     double? number;
     int oldIndex = index;
     while (index < gcodeText.length) {
@@ -772,8 +772,13 @@ class GCodeParser {
   }
 
   /// 判断获取需要的圆心
-  Offset judgeCenter(Offset center1, Offset center2, Offset p1, Offset p2,
-      bool cw /*是否是顺时针*/) {
+  Offset judgeCenter(
+    Offset center1,
+    Offset center2,
+    Offset p1,
+    Offset p2,
+    bool cw /*是否是顺时针*/,
+  ) {
     if (cw) {
       //顺时针
       if (p2.dx <= p1.dx) {
@@ -851,7 +856,7 @@ class GCodeParser {
     }
   }
 
-//endregion---辅助方法---
+  //endregion---辅助方法---
 }
 
 /// [SvgPicture.network]
@@ -959,11 +964,9 @@ class _GCodeWidgetState extends State<GCodeWidget> {
         alignment: widget.alignment,
       );
     } else {
-      child = widget.placeholderBuilder?.call(context) ??
-          SizedBox(
-            width: widget.width,
-            height: widget.height,
-          );
+      child =
+          widget.placeholderBuilder?.call(context) ??
+          SizedBox(width: widget.width, height: widget.height);
     }
     return child;
   }
@@ -972,6 +975,7 @@ class _GCodeWidgetState extends State<GCodeWidget> {
 extension GCodeStringEx on String {
   /// GCode数据转换成[Path]可绘制对象
   /// [SvgStringEx.toUiPath]
+  @dp
   Path? toUiPathFromGCode() {
     GCodeParser parser = GCodeParser();
     return parser.parse(this)?..fillType = PathFillType.evenOdd;

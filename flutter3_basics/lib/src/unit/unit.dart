@@ -613,6 +613,7 @@ extension UnitNumEx on num {
 
   /// ```
   /// 1.toDpFromMm() = 6.299212598425196
+  /// 1.toMmFromDp() = 0.15875
   /// ```
   @Dp()
   double toDpFromMm([@unit IUnit unit = IUnit.mm]) {
