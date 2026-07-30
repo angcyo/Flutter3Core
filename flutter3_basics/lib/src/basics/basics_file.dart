@@ -126,12 +126,22 @@ extension FileStringEx on String {
   }
 
   /// 当前文件/文件夹是否存在
-  Future<bool> isExists() async =>
-      await File(this).exists() || await Directory(this).exists();
+  Future<bool> isExists() async {
+    try {
+      return await File(this).exists() || await Directory(this).exists();
+    } catch (e) {
+      return false;
+    }
+  }
 
   ///[isExists]
-  bool isExistsSync() =>
-      File(this).existsSync() || Directory(this).existsSync();
+  bool isExistsSync() {
+    try {
+      return File(this).existsSync() || Directory(this).existsSync();
+    } catch (e) {
+      return false;
+    }
+  }
 
   /// 文件是否存在
   bool isFileExistsSync() => File(this).existsSync();
