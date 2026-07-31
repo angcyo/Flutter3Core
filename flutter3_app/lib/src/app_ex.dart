@@ -168,15 +168,26 @@ Future<BaseDeviceInfo> get $platformDeviceInfo async {
 /// ## WindowsDeviceInfo
 ///
 /// ```
-///{computerName: Hi-angcyo-pc, numberOfCores: 16, systemMemoryInMegabytes: 65534,
-///userName: angcyo, majorVersion: 10, minorVersion: 0, buildNumber: 19045, platformId: 2,
-///csdVersion: , servicePackMajor: 0, servicePackMinor: 0, suitMask: 256, productType: 1,
-///reserved: 0, buildLab: 19041.vb_release.191206-1406,
-///buildLabEx: 19041.1.amd64fre.vb_release.191206-1406,
-///digitalProductId: [164, 0, 0, 0, 3, 0, 0, 0, 48, 48, 51, 51, 48, 45, 56, 48, 48, 48, 48, 45, 48, 48, 48, 48, 48, 45, 65, 65, 48, 53, 53, 0, 236, 12, 0, 0, 91, 84, 72, 93, 88, 49, 57, 45, 57, 56, 56, 52, 49, 0, 0, 0, 236, 12, 0, 0, 0, 0, 168, 210, 123, 110, 137, 129, 79, 109, 9, 0, 0, 0, 0, 0, 61, 18, 63, 98, 207, 87, 18, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 97, 221, 128],
-///displayVersion: 22H2, editionId: Professional, installDate: 2022-03-26 13:17:42.000,
-///productId: 00330-80000-00000-AA055, productName: Windows 10 Pro, registeredOwner: angcyo@126.com,
-///releaseId: 2009, deviceId: {E401667C-1DD8-42E3-9245-F91D5CFCF200}}
+/// {computerName: Hi-angcyo-pc, numberOfCores: 16, systemMemoryInMegabytes: 65534,
+/// userName: angcyo, majorVersion: 10, minorVersion: 0, buildNumber: 19045, platformId: 2,
+/// csdVersion: , servicePackMajor: 0, servicePackMinor: 0, suitMask: 256, productType: 1,
+/// reserved: 0, buildLab: 19041.vb_release.191206-1406,
+/// buildLabEx: 19041.1.amd64fre.vb_release.191206-1406,
+/// digitalProductId: [164, 0, 0, 0, 3, 0, 0, 0, 48, 48, 51, 51, 48, 45, 56, 48, 48, 48, 48, 45, 48, 48, 48, 48, 48, 45, 65, 65, 48, 53, 53, 0, 236, 12, 0, 0, 91, 84, 72, 93, 88, 49, 57, 45, 57, 56, 56, 52, 49, 0, 0, 0, 236, 12, 0, 0, 0, 0, 168, 210, 123, 110, 137, 129, 79, 109, 9, 0, 0, 0, 0, 0, 61, 18, 63, 98, 207, 87, 18, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 97, 221, 128],
+/// displayVersion: 22H2, editionId: Professional, installDate: 2022-03-26 13:17:42.000,
+/// productId: 00330-80000-00000-AA055, productName: Windows 10 Pro, registeredOwner: angcyo@126.com,
+/// releaseId: 2009, deviceId: {E401667C-1DD8-42E3-9245-F91D5CFCF200}}
+/// ```
+///
+/// ```
+/// {computerName: XLB-20240902UHB, numberOfCores: 24, systemMemoryInMegabytes: 65536,
+/// userName: Administrator, majorVersion: 10, minorVersion: 0, buildNumber: 26200, platformId: 2,
+/// csdVersion: , servicePackMajor: 0, servicePackMinor: 0, suitMask: 256, productType: 1, reserved: 0, buildLab: 26100.ge_release.240331-1435, b
+/// uildLabEx: 26100.1.amd64fre.ge_release.240331-1435,
+/// digitalProductId: [164, 0, 0, 0, 3, 0, 0, 0, 48, 48, 51, 51, 49, 45, 49, 48, 48, 48, 48, 45, 48, 48, 48, 48, 49, 45, 65, 65, 49, 56, 51, 0, 239, 12, 0, 0, 91, 84, 72, 93, 88, 49, 57, 45, 57, 56, 55, 57, 53, 0, 0, 0, 239, 12, 16, 0, 0, 0, 52, 61, 197, 57, 78, 189, 110, 47, 9, 0, 0, 0, 0, 0, 152, 36, 239, 105, 47, 32, 212, 57, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 236, 34, 76, 145],
+/// displayVersion: 25H2, editionId: Professional, installDate: 2025-02-10 21:37:36.000,
+/// productId: 00331-10000-00001-AA183, productName: Windows 11 Pro, registeredOwner: User,
+/// releaseId: 2009, deviceId: {45B2B64F-3C49-4888-8654-DD8157884B7B}}
 /// ```
 ///
 /// ## MacOsDeviceInfo
@@ -263,9 +274,15 @@ extension PlatformDeviceInfoEx on BaseDeviceInfo {
     // 一加 13T angcyo(PKX110) 36
     AndroidDeviceInfo info =>
       "${info.name}(${info.model}) ${info.version.sdkInt}",
-    WindowsDeviceInfo info => info.productName,
-    IosDeviceInfo info => info.modelName,
-    MacOsDeviceInfo info => info.modelName /*MacBook Pro (14-inch, 2023)*/,
+    // Windows 11 Pro(Professional) 25H2
+    WindowsDeviceInfo info =>
+      "${info.productName}(${info.editionId}) ${info.displayVersion}",
+    // iPhone(iPhone 13 Pro Max) 18.2.1
+    IosDeviceInfo info =>
+      "${info.name}(${info.modelName}) ${info.systemVersion}",
+    // MacBook Pro (14-inch, 2023)(Version 15.2 (Build 24C101)) Darwin Kernel Version 24.2.0
+    MacOsDeviceInfo info =>
+      "${info.modelName}(${info.osRelease}) ${info.kernelVersion}",
     LinuxDeviceInfo info => info.prettyName,
     _ => null,
   };
