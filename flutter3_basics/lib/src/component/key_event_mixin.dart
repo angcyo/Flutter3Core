@@ -5,7 +5,7 @@ part of '../../flutter3_basics.dart';
 /// @author angcyo
 /// @date 2024/12/27
 ///
-/// 全局键盘事件监听
+/// 全局键盘事件监听, 如果处理了键盘事件, 则会拦截输入框中的输入.
 /// [HardwareKeyboard]
 /// [KeyboardListener]
 /// [ServicesBinding.instance.keyEventManager.keyMessageHandler]
