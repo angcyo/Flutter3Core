@@ -1772,7 +1772,7 @@ class ElementSelectComponent extends ElementGroupPainter
   }) {
     //debugger();
     dispatchElementSelectChanged ??= true;
-    List<ElementPainter>? old = children;
+    List<ElementPainter>? old = [...?children];
     if (isNullOrEmpty(elements)) {
       //取消元素选择
       if (!isNullOrEmpty(children)) {
