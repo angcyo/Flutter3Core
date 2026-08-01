@@ -15,11 +15,13 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
 
   /// 标题
   final String? title;
+  final TextSpan? titleSpan;
   final Widget? titleWidget;
   final TextAlign? titleTextAlign;
 
   /// 内容
   final String? message;
+  final TextSpan? messageSpan;
   final Widget? messageWidget;
   final TextAlign? messageTextAlign;
 
@@ -84,9 +86,11 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   const AndroidNormalDialog({
     super.key,
     this.title,
+    this.titleSpan,
     this.titleTextAlign,
     this.titleWidget,
     this.message,
+    this.messageSpan,
     this.messageWidget,
     this.messageTextAlign,
     this.cancel,
@@ -211,7 +215,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   }) {
     final globalTheme = GlobalTheme.of(context);
     return messageWidget ??
-        message
+        (message ?? messageSpan?.toString())
             ?.text(
               style:
                   textStyle ??
@@ -219,6 +223,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
                     fontSize: globalTheme.textInfoStyle.fontSize,
                   ),
               textAlign: messageTextAlign ?? textAlign,
+              textSpan: messageSpan,
             )
             .paddingAll(padding ?? gap);
   }
@@ -231,7 +236,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   }) {
     final globalTheme = GlobalTheme.of(context);
     return titleWidget ??
-        title
+        (title ?? titleSpan?.toString())
             ?.text(
               style:
                   textStyle ??
@@ -239,6 +244,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
                     fontWeight: FontWeight.bold,
                   ),
               textAlign: titleTextAlign ?? textAlign,
+              textSpan: titleSpan,
             )
             .padding(
               gap,

@@ -16,8 +16,10 @@ class MessageDialog extends AndroidNormalDialog {
   const MessageDialog({
     super.key,
     super.title,
+    super.titleSpan,
     super.titleWidget,
     super.message,
+    super.messageSpan,
     super.messageWidget,
     super.messageTextAlign,
     super.confirm,
@@ -52,8 +54,10 @@ class DesktopMessageDialog extends AndroidNormalDialog {
   const DesktopMessageDialog({
     super.key,
     super.title,
+    super.titleSpan,
     super.titleWidget,
     super.message,
+    super.messageSpan,
     super.messageWidget,
     super.messageTextAlign,
     super.confirm,
