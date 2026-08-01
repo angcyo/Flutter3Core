@@ -94,6 +94,23 @@ final class PixelsImage extends ffi.Struct {
 typedef PixelsImage_t = PixelsImage;
 
 /// \brief
+/// Same as [`Vec<T>`][`rust::Vec`], but with guaranteed `#[repr(C)]` layout
+final class Vec_PixelsImage extends ffi.Struct {
+  /// <No documentation available>
+  external ffi.Pointer<PixelsImage_t> ptr;
+
+  /// <No documentation available>
+  @ffi.Size()
+  external int len;
+
+  /// <No documentation available>
+  @ffi.Size()
+  external int cap;
+}
+
+typedef Vec_PixelsImage_t = Vec_PixelsImage;
+
+/// \brief
 /// `Arc<dyn Send + Sync + Fn() -> Ret>`
 final class ArcDynFn0_void extends ffi.Struct {
   /// <No documentation available>
