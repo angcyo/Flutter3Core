@@ -714,7 +714,7 @@ extension WidgetEx on Widget {
     GestureTapCallback? onTap, {
     bool enable = true,
     GestureLongPressCallback? onLongPress,
-    HitTestBehavior? behavior = HitTestBehavior.translucent /*后代和自己都可以命中*/,
+    HitTestBehavior? behavior = .translucent /*后代和自己都可以命中*/,
     //--
     MouseCursor? cursor,
     GestureContextTapCallback? onContextTap /*具有上下文的点击事件回调*/,

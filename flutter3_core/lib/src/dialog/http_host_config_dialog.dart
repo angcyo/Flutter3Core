@@ -92,7 +92,7 @@ class _HttpHostConfigDialogState extends State<HttpHostConfigDialog> {
 
 extension HttpHostConfigBuildContextEx on BuildContext {
   /// 显示主机切换对话框
-  void showHttpHostConfigDialog() {
-    showWidgetDialog(const HttpHostConfigDialog());
+  Future<T?> showHttpHostConfigDialog<T>() {
+    return showWidgetDialog<T>(const HttpHostConfigDialog());
   }
 }
