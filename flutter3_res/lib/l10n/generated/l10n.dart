@@ -104,6 +104,11 @@ class LibRes {
     );
   }
 
+  /// `点击后加载`
+  String get libAdapterManual {
+    return Intl.message('点击后加载', name: 'libAdapterManual', desc: '', args: []);
+  }
+
   /// `加载失败, 点击重试`
   String get libAdapterLoadMoreError {
     return Intl.message(

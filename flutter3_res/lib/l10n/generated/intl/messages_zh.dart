@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAdapterLoadMoreError": MessageLookupByLibrary.simpleMessage(
       "加载失败, 点击重试",
     ),
+    "libAdapterManual": MessageLookupByLibrary.simpleMessage("点击后加载"),
     "libAdapterNoData": MessageLookupByLibrary.simpleMessage("暂无数据"),
     "libAdapterNoMoreData": MessageLookupByLibrary.simpleMessage("~已经到底啦~"),
     "libAdd": MessageLookupByLibrary.simpleMessage("添加"),

@@ -3288,9 +3288,9 @@ extension WidgetEx on Widget {
     Key? key,
     Widget? before,
     Widget? after,
-    MainAxisAlignment? mainAxisAlignment = MainAxisAlignment.center,
+    MainAxisAlignment? mainAxisAlignment = .center,
     MainAxisSize? mainAxisSize, //MainAxisSize.max
-    CrossAxisAlignment? crossAxisAlignment = CrossAxisAlignment.center,
+    CrossAxisAlignment? crossAxisAlignment = .center,
     TextDirection? textDirection,
     VerticalDirection? verticalDirection,
     TextBaseline? textBaseline,

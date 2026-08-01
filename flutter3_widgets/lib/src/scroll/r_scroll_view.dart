@@ -75,11 +75,11 @@ class RScrollView extends StatefulWidget {
   /// [ScrollView.controller]
   final RScrollController? controller;
 
-  /// 是否启用下拉刷新
+  /// 是否启用下拉刷新小部件
   /// [RScrollController.wrapRefreshWidget]
   final bool enableRefresh;
 
-  /// 是否启用上拉加载更多
+  /// 是否启用上拉加载更多小部件
   final bool enableLoadMore;
 
   /// 是否要显示底部的加载更多
@@ -201,9 +201,9 @@ class _RScrollViewState extends State<RScrollView>
     if (widget.enableLoadMore) {
       //debugger();
       Widget? loadMoreWidget;
-      var controller = widget.controller;
+      final controller = widget.controller;
       if (controller != null) {
-        var callback = widget.showLoadMoreCallback;
+        final callback = widget.showLoadMoreCallback;
         if ((callback == null &&
                 children.length >= controller.requestPage.requestPageSize) ||
             (callback != null && callback())) {

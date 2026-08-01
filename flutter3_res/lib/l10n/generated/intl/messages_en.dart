@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAdapterLoadMoreError": MessageLookupByLibrary.simpleMessage(
       "Load failed, click retry",
     ),
+    "libAdapterManual": MessageLookupByLibrary.simpleMessage("Load On Click"),
     "libAdapterNoData": MessageLookupByLibrary.simpleMessage("No data"),
     "libAdapterNoMoreData": MessageLookupByLibrary.simpleMessage(
       "~It\'s the end~",

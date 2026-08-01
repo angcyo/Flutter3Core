@@ -22,6 +22,7 @@
     "description": "列表加载暂无数据"
   },
   "libAdapterNoMoreData": "~已经到底啦~",
+  "libAdapterManual": "点击后加载",
   "@libAdapterNoMoreData": {
     "description": "列表无更多数据加载"
   },

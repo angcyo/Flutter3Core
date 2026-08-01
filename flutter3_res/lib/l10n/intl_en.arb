@@ -16,6 +16,7 @@
   "@libAdapterNoMoreData": {
     "description": "列表无更多数据加载"
   },
+  "libAdapterManual": "Load On Click",
   "libAdapterLoadMoreError": "Load failed, click retry",
   "@libAdapterLoadMoreError": {
     "description": "列表加载更多数据失败"

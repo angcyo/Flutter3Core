@@ -443,13 +443,35 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   //region 页面控制
 
-  /// 是否启用下拉刷新
-  @configProperty
-  bool get enablePageRefresh => true;
+  bool? _enablePageRefresh;
 
-  /// 是否启用加载更多
+  /// 是否启用下拉刷新, 需要在[pageRScrollView]调用之前设置
   @configProperty
-  bool get enablePageLoadMore => !requestPage.isSinglePage;
+  bool get enablePageRefresh => _enablePageRefresh ?? true;
+
+  set enablePageRefresh(bool? value) {
+    _enablePageRefresh = value;
+  }
+
+  bool? _enablePageLoadMore;
+
+  /// 是否启用加载更多, 需要在[pageRScrollView]调用之前设置
+  @configProperty
+  bool get enablePageLoadMore =>
+      _enablePageLoadMore ?? !requestPage.isSinglePage;
+
+  set enablePageLoadMore(bool? value) {
+    _enablePageLoadMore = value;
+  }
+
+  /// [enablePageLoadMore]时, 是否自动触发加载更多
+  /// - [pageRScrollView]
+  @configProperty
+  bool get enablePageAutoLoadMore => scrollController.enableAutoLoadMore;
+
+  set enablePageAutoLoadMore(bool? value) {
+    scrollController.enableAutoLoadMore = value;
+  }
 
   @output
   RequestPage get requestPage => scrollController.requestPage;
@@ -885,6 +907,7 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
   /// 是否激活过滤功能
   /// - [RScrollPageRefreshMixin.pageRScrollView]中注册对应的快捷键
   /// - [showInputFilterOverlay] 显示对应的过滤输入框
+  /// - [pageRScrollView]
   @configProperty
   bool enableInputFilterMixin = false;
 

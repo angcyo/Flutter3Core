@@ -37,6 +37,10 @@ enum WidgetBuildState {
   /// 加载中状态
   loading,
 
+  /// 等待手动触发状态
+  /// - 手动触发加载更多
+  manual,
+
   /// 正常数据状态
   none,
 
@@ -162,6 +166,9 @@ class WidgetStateBuildWidget extends StatefulWidget {
   /// 细分的[WidgetBuildState.error]状态
   final WidgetStateBuilder? buildErrorWidgetStateWidget;
 
+  /// 细分的[WidgetBuildState.manual]状态
+  final WidgetStateBuilder? buildManualWidgetStateWidget;
+
   const WidgetStateBuildWidget({
     super.key,
     required this.widgetState,
@@ -173,6 +180,7 @@ class WidgetStateBuildWidget extends StatefulWidget {
     this.buildLoadingWidgetState,
     this.buildEmptyWidgetStateWidget,
     this.buildErrorWidgetStateWidget,
+    this.buildManualWidgetStateWidget,
     this.onClick,
   });
 
@@ -237,12 +245,36 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
         super.defBuildErrorWidget(context, error);
   }
 
+  /// [WidgetBuildState.manual]状态
+  @override
+  Widget defBuildManualWidget(BuildContext context, [data]) {
+    return (widget.buildManualWidgetStateWidget ??
+                widget.buildWidgetStateWidget)
+            ?.call(context, buildState, buildStateData) ??
+        super.defBuildManualWidget(context, data).click(() {
+          //手动触发加载
+          if (widget.requestChangeStateFn?.call(
+                context,
+                buildState,
+                WidgetBuildState.loading,
+              ) ==
+              false) {
+            _updateState = WidgetBuildState.loading;
+            updateState();
+          }
+        }, cursor: SystemMouseCursors.click);
+  }
+
   /// 其他默认状态
-  Widget _buildDefaultWidget(BuildContext context) {
-    var result = widget.buildWidgetStateWidget?.call(
+  Widget _buildDefaultWidget(
+    BuildContext context,
+    WidgetBuildState state,
+    dynamic stateData,
+  ) {
+    final result = widget.buildWidgetStateWidget?.call(
       context,
-      buildState,
-      buildStateData,
+      state,
+      stateData,
     );
     if (result != null) {
       return result;
@@ -265,7 +297,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
       return true;
     }());
     return (buildStateWidget(context, buildState, buildStateData) ??
-            _buildDefaultWidget(context))
+            _buildDefaultWidget(context, buildState, buildStateData))
         .click(widget.onClick);
   }
 
@@ -402,7 +434,11 @@ class LoadMoreStateWidget extends WidgetStateBuildWidget {
 
 class LoadMoreStateWidgetState extends WidgetStateBuildWidgetState {
   @override
-  Widget _buildDefaultWidget(BuildContext context) {
+  Widget _buildDefaultWidget(
+    BuildContext context,
+    WidgetBuildState state,
+    dynamic stateData,
+  ) {
     return defBuildLoadingWidget(context);
   }
 
@@ -486,12 +522,14 @@ mixin StateWidgetBuildMixin {
     WidgetStateBuilder? otherBuilder,
   ]) {
     switch (state) {
-      case WidgetBuildState.preLoading:
-      case WidgetBuildState.loading:
+      case .preLoading:
+      case .loading:
         return defBuildLoadingWidget(context, stateData);
-      case WidgetBuildState.empty:
+      case .empty:
         return defBuildEmptyWidget(context, stateData);
-      case WidgetBuildState.error:
+      case .manual:
+        return defBuildManualWidget(context, stateData);
+      case .error:
         return defBuildErrorWidget(context, stateData);
       default:
         return otherBuilder?.call(context, state, stateData);
@@ -518,5 +556,21 @@ mixin StateWidgetBuildMixin {
   /// [WidgetBuildState.error]状态
   Widget defBuildErrorWidget(BuildContext context, [dynamic error]) {
     return GlobalConfig.of(context).errorPlaceholderBuilder(context, error);
+  }
+
+  /// [WidgetBuildState.manual]状态
+  /// - [Icons.watch_later_outlined]
+  /// - [Icons.timer_sharp]
+  /// - [Icons.access_time]
+  Widget defBuildManualWidget(BuildContext context, [dynamic data]) {
+    final globalTheme = GlobalTheme.of(context);
+    final libRes = context.libRes;
+    return Icon(Icons.access_time, color: globalTheme.icoNormalColor)
+        .rowOf(
+          libRes?.libAdapterManual.text(),
+          crossAxisAlignment: .center,
+          gap: kL,
+        )
+        .insets(all: kL);
   }
 }

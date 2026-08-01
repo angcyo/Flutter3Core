@@ -20,6 +20,7 @@ class RScrollController extends ScrollController {
   final GlobalKey<RefreshIndicatorState> scrollRefreshKey = GlobalKey();
 
   /// 用来控制加载更多的key
+  /// - [buildLoadMoreStateWidget] 中使用
   final GlobalKey<WidgetStateBuildWidgetState> loadMoreKey = GlobalKey();
 
   /// 滚动视图更新信号, 调用更新信号, 更新滚动小部件重构更新
@@ -57,7 +58,18 @@ class RScrollController extends ScrollController {
   WidgetBuildStateIntercept widgetStateIntercept = WidgetBuildStateIntercept();
 
   /// 请求的分页信息
+  @configProperty
   RequestPage requestPage = RequestPage();
+
+  bool? _enableAutoLoadMore;
+
+  /// 是否自动触发支持加载更多
+  @configProperty
+  bool get enableAutoLoadMore => _enableAutoLoadMore ?? _isEnableLoadMore;
+
+  set enableAutoLoadMore(bool? value) {
+    _enableAutoLoadMore = value;
+  }
 
   //MARK: callback
 
@@ -149,7 +161,7 @@ class RScrollController extends ScrollController {
             );
             return true;
           }());
-          updateLoadMoreState(.loading);
+          updateLoadMoreState(enableAutoLoadMore ? .loading : .manual);
         } else {
           assert(() {
             l.d(
@@ -310,7 +322,7 @@ class RScrollController extends ScrollController {
           l.d("[${tag ?? debugLabel}]未处理的状态[$widgetState]");
           return true;
         }());
-        debugger(when: widgetState != .error);
+        debugger(when: widgetState != .manual && widgetState != .error);
       }
       return true;
     } else {
