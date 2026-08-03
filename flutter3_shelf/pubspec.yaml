@@ -93,7 +93,12 @@ dependencies:
   # https://pub.dev/packages/nm
   # 需要对应的权限
   # 8.0.0 : BREAKING FEAT(network_info_plus): Bump win32 from 5.15.0 to 6.0.0 (#3761). (582b93f2)
-  network_info_plus: ^7.0.0
+  # Minimum OS Requirements / 最小支持系统版本
+  # Minimum Flutter version is 3.41.6
+  # Minimum Dart version is 3.11.0
+  # Min iOS is 13.0
+  # Min macOS is 10.15
+  network_info_plus: ^8.2.1
   #connectivity_plus: ^6.1.4
 
   # https://pub.dev/packages/udp

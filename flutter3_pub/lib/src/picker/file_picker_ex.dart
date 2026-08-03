@@ -143,6 +143,10 @@ Future<String?> pickDirectoryPath({
 ///
 /// 桌面端显示本地对话框保存文件.
 ///
+/// - [fromPath] 待保存文件路径
+/// - [fileName] 弹窗默认的文件名
+/// - [bytes] 需要保存的数据
+///
 /// ## macOS
 ///
 /// 需要权限: ENTITLEMENT_REQUIRED_WRITE, 在 `DebugProfile.entitlements`和`Release.entitlements` 文件中加入:
@@ -154,21 +158,24 @@ Future<String?> pickDirectoryPath({
 ///
 /// https://github.com/miguelpruivo/flutter_file_picker/wiki/Setup#--desktop
 ///
-/// @return 待保存文件的路径(文件可能不存在)
+/// @return 保存文件的全路径
 ///
 /// https://pub.dev/packages/file_picker
 @PlatformFlag("Android iOS Linux macOS Windows")
 Future<String?> saveFile({
+  String? fromPath,
   String? dialogTitle,
-  String? fileName,
+  @defInjectMark String? fileName,
+  @defInjectMark Uint8List? bytes,
   String? initialDirectory,
   FileType type = FileType.any,
   List<String>? allowedExtensions,
   bool lockParentWindow = false,
 }) async {
   final path = await FilePicker.saveFile(
+    fileName: fromPath?.fileName() ?? fileName ?? "Untitled",
+    bytes: bytes ?? fromPath?.file().readAsBytesSync().bytes ?? Uint8List(0),
     dialogTitle: dialogTitle,
-    fileName: fileName,
     initialDirectory: initialDirectory ?? _lastPickDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
@@ -194,64 +201,51 @@ String? _lastPickDirectory;
 extension PickerImageEx on UiImage {
   /// 调用系统弹窗, 选择文件路径, 保存图片
   @desktopFlag
-  Future<File?> saveAsFile({
+  Future<String?> saveAsFile({
     String? dialogTitle,
     String? fileName,
     String? initialDirectory,
     UiImageByteFormat format = UiImageByteFormat.png,
   }) async {
-    final filePath = await saveFile(
+    return await saveFile(
       dialogTitle: dialogTitle,
       fileName: fileName,
       initialDirectory: initialDirectory,
+      bytes: await toBytes(format),
     );
-    if (!isNil(filePath)) {
-      final Uint8List? bytes = await toBytes(format);
-      if (bytes == null) {
-        return null;
-      }
-      return filePath!.file().writeAsBytes(bytes);
-    }
-    return null;
   }
 }
 
 extension PickerFileEx on File {
   /// 调用系统弹窗, 选择文件路径, 保存文件数据
   @desktopFlag
-  Future<File?> saveAs({
+  Future<String?> saveAs({
     String? dialogTitle,
     String? fileName,
     String? initialDirectory,
   }) async {
-    final filePath = await saveFile(
+    return await saveFile(
       dialogTitle: dialogTitle ?? "Save As",
       fileName: fileName ?? filename,
       initialDirectory: initialDirectory,
+      bytes: readAsBytesSync(),
     );
-    if (!isNil(filePath)) {
-      return await copyToPath(filePath!);
-    }
-    return null;
   }
 }
 
 extension PickerBytesEx on List<int> {
   /// 调用系统弹窗, 选择文件路径, 保存数据
   @desktopFlag
-  Future<File?> saveAsFile({
+  Future<String?> saveAsFile({
     String? dialogTitle,
     String? fileName,
     String? initialDirectory,
   }) async {
-    final filePath = await saveFile(
+    return await saveFile(
       dialogTitle: dialogTitle,
       fileName: fileName,
       initialDirectory: initialDirectory,
+      bytes: bytes,
     );
-    if (!isNil(filePath)) {
-      return filePath!.file().writeAsBytes(this);
-    }
-    return null;
   }
 }

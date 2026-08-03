@@ -53,3 +53,45 @@ https://pub.dev/packages/mobile_scanner
 - Android : SDK 23+ (Android 6.0)
 - iOS: 12.0+ (iPhone XR)
 - macOS: 10.14+
+
+## image_gallery_saver_plus
+
+https://pub.dev/packages/image_gallery_saver_plus
+
+- iOS: 13.0 (iPhone11)
+
+## package_info_plus
+
+https://pub.dev/packages/package_info_plus
+
+- iOS: 13.0 (iPhone11)
+- macOS: 10.15 (Catalina)
+
+## device_info_plus
+
+https://pub.dev/packages/device_info_plus
+
+- iOS: 13.0 (iPhone11)
+- macOS: 10.15 (Catalina)
+
+## share_plus
+
+https://pub.dev/packages/share_plus
+
+- iOS: 13.0 (iPhone11)
+- macOS: 10.15 (Catalina)
+
+## network_info_plus
+
+https://pub.dev/packages/network_info_plus
+
+- iOS: 13.0 (iPhone11)
+- macOS: 10.15 (Catalina)
+
+## flutter_local_notifications
+
+https://pub.dev/packages/flutter_local_notifications
+
+- Android: API level 24 (Android 7.0)
+- iOS: 13.0 (iPhone11)
+- macOS: 10.15 (Catalina)

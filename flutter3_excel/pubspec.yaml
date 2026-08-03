@@ -34,9 +34,9 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/web
   # https://pub.dev/packages/xml
-  excel_plus: ^0.0.4
+  excel_plus: ^2.12.4
   # https://pub.dev/packages/csv_plus
-  #csv_plus: ^0.0.2
+  #csv_plus: ^1.2.0
 
 dependency_overrides:
   # in flutter3_pub

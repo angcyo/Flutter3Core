@@ -9,6 +9,7 @@ topics:
   - angcyo
 screenshots:
   - description: "angcyo screenshot"
+    path: assets/png/state_load_error.png
   # path: png/png.png
 
 environment:
@@ -76,7 +77,7 @@ dependencies:
   # https://pub.dev/packages/sprintf
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/fixnum
-  uuid: ^4.5.3
+  uuid: ^4.6.0
   # https://pub.dev/packages/crypto
   crypto: ^3.0.7
   # https://pub.dev/packages/fixnum
@@ -136,7 +137,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   # https://pub.dev/packages/flutter_gen
-  flutter_gen: ^5.14.1
+  flutter_gen: ^5.15.0
   # https://pub.dev/packages/build_runner
   # https://pub.dev/packages/web_socket_channel # async, crypto, stream_channel, web
   # https://pub.dev/packages/stream_channel

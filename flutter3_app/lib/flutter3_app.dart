@@ -22,7 +22,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
-
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
@@ -103,13 +102,9 @@ Future runGlobalApp(
     if (isDesktopOrWeb) {
       final savePath = await saveFile(
         dialogTitle: meta?.toString(),
-        fileName: filePath.fileName(),
+        fromPath: filePath,
       );
-      if (savePath != null) {
-        return (await filePath.copyTo(savePath)) != null;
-      } else {
-        return false;
-      }
+      return savePath != null;
     }
     return filePath.shareFile();
   };
