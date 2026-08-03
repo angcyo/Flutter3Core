@@ -42,7 +42,7 @@ void initPlatformNotification({required String notifyIcon}) {
     windows: initializationSettingsWindows,
   );
 
-  flutterLocalNotificationsPlugin?.initialize(initializationSettings);
+  flutterLocalNotificationsPlugin?.initialize(settings: initializationSettings);
 }
 
 late FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
@@ -113,16 +113,16 @@ Future<void> showPlatformNotification({
     windows: windowsNotificationDetails,
   );
   await flutterLocalNotificationsPlugin?.show(
-    id,
-    title,
-    content,
+    id: id,
+    title: title,
+    body: content,
     payload: payload,
-    notificationDetails,
+    notificationDetails: notificationDetails,
   );
 }
 
 Future<void> cancelNotification(int id, {String? tag}) async {
-  await flutterLocalNotificationsPlugin?.cancel(id, tag: tag);
+  await flutterLocalNotificationsPlugin?.cancel(id: id, tag: tag);
 }
 
 //region 通知权限
