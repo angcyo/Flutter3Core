@@ -12,6 +12,8 @@ void main() {
   const int n = 1024; // 1024 个采样点
 
   print('1. 生成测试信号: 1.0*sin(2*pi*50*t) + 0.5*sin(2*pi*120*t)');
+  final buffer = StringBuffer();
+  buffer.write("M0 0");
   final timeDomain = List<Complex>.generate(n, (i) {
     final t = i / sampleRate;
     // 50Hz 振幅为 1.0 的波形 + 120Hz 振幅为 0.5 的波形
@@ -19,8 +21,10 @@ void main() {
         1.0 * math.sin(2 * math.pi * 50 * t) +
         0.5 * math.sin(2 * math.pi * 120 * t) +
         0.2 * math.sin(2 * math.pi * 100 * t) /* 100Hz 振幅为 0.2 的波形*/;
+    buffer.write("L$i ${signal * 10}");
     return Complex(signal, 0.0);
   });
+  print(buffer.toString());
 
   print('2. 运行 Cooley-Tukey FFT...');
   final stopwatch = Stopwatch()..start();
