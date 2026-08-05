@@ -611,6 +611,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = false,
     bool followPainter = false,
     bool followContent = false,
+    bool? animate,
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -634,6 +635,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       selected: selected,
       followPainter: followPainter,
       followContent: followContent,
+      animate: animate,
       undoType: undoType,
       selectType: selectType,
     );
@@ -653,6 +655,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = false,
     bool followPainter = false,
     bool followContent = false,
+    bool? animate,
     UndoType undoType = UndoType.normal,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
@@ -699,6 +702,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       followPainter: followPainter,
       followContent: followContent,
       selectType: selectType,
+      animate: animate,
     );
 
     if (undoType == UndoType.normal) {
@@ -744,6 +748,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = false,
     bool followPainter = false,
     bool followContent = false,
+    bool? animate,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
     if (selected) {
@@ -755,7 +760,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         }
       }
       if (followPainter) {
-        canvasDelegate.followPainter(elementPainter: selectComponent);
+        canvasDelegate.followPainter(
+          elementPainter: selectComponent,
+          animate: animate,
+        );
       }
     } else {
       if (followContent) {
@@ -767,7 +775,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       if (followPainter) {
         ElementGroupPainter painter = ElementGroupPainter();
         painter.resetChildren(elements);
-        canvasDelegate.followPainter(elementPainter: painter);
+        canvasDelegate.followPainter(elementPainter: painter, animate: animate);
       }
     }
   }

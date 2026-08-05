@@ -646,6 +646,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     @viewCoordinate EdgeInsets? margin,
     BoxFit? fit = BoxFit.none,
     Alignment? alignment /*= Alignment.center*/,
+    bool? animate,
   }) {
     rect ??= elementPainter?.paintProperty?.getBounds(
       canvasElementManager.canvasElementControlManager.enableResetElementAngle,
@@ -662,7 +663,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       margin: margin,
       fit: fit,
       alignment: alignment,
-      animate: true,
+      animate: animate ?? true,
       awaitAnimate: false,
     );
   }
