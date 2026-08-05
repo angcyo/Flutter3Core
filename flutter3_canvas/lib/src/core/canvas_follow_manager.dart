@@ -89,8 +89,11 @@ class CanvasFollowManager with CanvasComponentMixin {
     bool? animate,
     bool? awaitAnimate,
   }) {
-    final sceneBounds = canvasDelegate
-            .canvasPaintManager.contentManager.canvasContentFollowRectInner ??
+    final sceneBounds =
+        canvasDelegate
+            .canvasPaintManager
+            .contentManager
+            .canvasContentFollowRectInner ??
         (rollbackPainter
             ? canvasDelegate.canvasElementManager.allElementsBounds
             : null);
@@ -201,20 +204,24 @@ class CanvasFollowManager with CanvasComponentMixin {
         marginTop = margin.top / sy;
         marginRight = margin.right / sx;
         marginBottom = margin.bottom / sy;
-        rect = rect.inflateValue(EdgeInsets.only(
-          left: marginLeft,
-          top: marginTop,
-          right: marginRight,
-          bottom: marginBottom,
-        ));
+        rect = rect.inflateValue(
+          EdgeInsets.only(
+            left: marginLeft,
+            top: marginTop,
+            right: marginRight,
+            bottom: marginBottom,
+          ),
+        );
         sx = canvasBounds.width / rect.width;
         sy = canvasBounds.height / rect.height;
       }
 
       anchor = rect.center;
 
-      final canvasCenter =
-          Offset(canvasBounds.width / 2, canvasBounds.height / 2);
+      final canvasCenter = Offset(
+        canvasBounds.width / 2,
+        canvasBounds.height / 2,
+      );
       final offset = canvasCenter - rect.center;
       translateMatrix.translate(offset.dx, offset.dy);
     } else if (alignment == Alignment.topLeft) {
@@ -284,10 +291,18 @@ class CanvasFollowManager with CanvasComponentMixin {
     bool? animate,
     bool? awaitAnimate,
     bool? restoreDefault /*当没有rect时, 是否恢复默认的100%*/,
+    int? scheduleCount,
   }) {
     //debugger();
     if (!canvasViewBox.isCanvasBoxInitialize) {
       //画布还没有初始化完成
+      if ((scheduleCount ?? 0) >= 1000) {
+        assert(() {
+          l.w('画布无法完成初始化, 操作[followRect]被取消!');
+          return true;
+        }());
+        return;
+      }
       scheduleMicrotask(() {
         followRect(
           rect,
@@ -297,6 +312,7 @@ class CanvasFollowManager with CanvasComponentMixin {
           animate: animate,
           awaitAnimate: awaitAnimate,
           restoreDefault: restoreDefault,
+          scheduleCount: (scheduleCount ?? 0) + 1,
         );
       });
       return;
@@ -387,8 +403,9 @@ class CanvasFollowManager with CanvasComponentMixin {
         final translateMatrix = Matrix4.identity();
         //特殊处理: 内容顶部对齐时, follow统一排除顶部偏移
         translateMatrix.translateTo(
-            x: translateOffset.dx,
-            y: /*this.alignment.y == -1 ? 0 :*/ translateOffset.dy);
+          x: translateOffset.dx,
+          y: /*this.alignment.y == -1 ? 0 :*/ translateOffset.dy,
+        );
 
         final scaleMatrix = Matrix4.identity();
         scaleMatrix.scale(sx, sy);
@@ -440,15 +457,19 @@ class CanvasFollowManager with CanvasComponentMixin {
 
     @viewCoordinate
     final fromRect = Rect.fromLTWH(
-        marginLeft,
-        marginTop,
-        canvasBounds.width - (marginLeft + marginRight),
-        canvasBounds.height - (marginTop + marginBottom));
+      marginLeft,
+      marginTop,
+      canvasBounds.width - (marginLeft + marginRight),
+      canvasBounds.height - (marginTop + marginBottom),
+    );
 
-    final alignMatrix = applyAlignMatrix(fromRect.size, toRect.size,
-        fit: fit,
-        alignment: alignment,
-        anchorOffset: Offset(toRect.left, toRect.top));
+    final alignMatrix = applyAlignMatrix(
+      fromRect.size,
+      toRect.size,
+      fit: fit,
+      alignment: alignment,
+      anchorOffset: Offset(toRect.left, toRect.top),
+    );
 
     //边距在此生效
     final translateMatrix = Matrix4.identity();
@@ -473,7 +494,11 @@ class CanvasFollowManager with CanvasComponentMixin {
   void testFollow() {
     alignment = Alignment.center;
     fit = BoxFit.contain;
-    followRect(canvasDelegate
-        .canvasPaintManager.contentManager.canvasContentFollowRectInner);
+    followRect(
+      canvasDelegate
+          .canvasPaintManager
+          .contentManager
+          .canvasContentFollowRectInner,
+    );
   }
 }

@@ -373,9 +373,12 @@ class CanvasRenderBox extends RenderBox
     }
     final hitInterceptBox = GestureHitInterceptScope.of(context);
     hitInterceptBox?.interceptHitBox = this;
-    context.postNotification(
-      PullBackControlNotification(event.isPointerFinish),
-    );
+    if (event.isTouchPointerEvent) {
+      //在canvas内, 不触发下拉返回, 直到手势触发结束
+      context.postNotification(
+        PullBackControlNotification(event.isPointerFinish),
+      );
+    }
     canvasDelegate.handlePointerEvent(event, entry);
     /*assert((){
       l.w("handleEvent:${event.runtimeType} ${event.buttons}");
