@@ -447,6 +447,7 @@ extension StateDecorationWidgetEx on Widget {
     strokeWidth: strokeWidth,
     strokeStyle: strokeStyle,
     strokeAlign: strokeAlign,
+    clip: clip,
   );
 
   /// 绘制背景

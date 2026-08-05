@@ -176,7 +176,7 @@ extension PopupEx on BuildContext {
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
     @defInjectMark Color? backgroundColor,
-    double? radius,
+    @defInjectMark double? radius,
     Color? arrowColor,
     bool showArrow = true,
     bool animate = true,

@@ -123,6 +123,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
       }
     }
 
+    final borderRadius = BorderRadius.circular(widget.radius ?? 8);
     return Stack(
       children: [
         (widget.wrapChild
@@ -138,9 +139,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                     decoration: widget.backgroundColor != null
                         ? BoxDecoration(
                             color: widget.backgroundColor,
-                            borderRadius: BorderRadius.circular(
-                              widget.radius ?? 8,
-                            ),
+                            borderRadius: borderRadius,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -150,7 +149,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                           )
                         : null,
                     child: widget.child,
-                  )
+                  ).clipRadius(borderRadius: borderRadius)
                 : widget.child)
             .childKeyed(widget.childKey),
         if (widget.showArrow)

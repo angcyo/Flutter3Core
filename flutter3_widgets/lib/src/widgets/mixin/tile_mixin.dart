@@ -798,6 +798,7 @@ mixin TileMixin {
     dynamic number, {
     Widget? numberWidget,
     GestureTapCallback? onTap,
+    GestureContextTapCallback? onContextTap,
     EdgeInsetsGeometry? padding = kNumberPadding,
     EdgeInsetsGeometry? margin,
     Decoration? decoration,
@@ -806,7 +807,7 @@ mixin TileMixin {
     double? radius = kDefaultBorderRadiusL,
   }) {
     final globalTheme = GlobalTheme.of(context);
-    if (onTap == null) {
+    if (onTap == null && onContextTap == null) {
       //默认的点击事件
     }
     return Container(
@@ -814,7 +815,7 @@ mixin TileMixin {
         color: globalTheme.whiteSubBgColor,
         borderRadius: kDefaultBorderRadiusL,
       )*/
-          decoration: decoration,
+          /*decoration: decoration,*/
           constraints: constraints,
           padding: padding,
           child: (numberWidget ?? "${number ?? ""}".text()).center(),
@@ -823,15 +824,18 @@ mixin TileMixin {
           () {
             onTap?.call();
           },
+          onContextTap: onContextTap,
           backgroundColor:
               backgroundColor ??
               context.darkOr(
                 globalTheme.lineDarkColor,
                 globalTheme.whiteSubBgColor,
               ),
+          decoration: decoration,
           radius: radius,
         )
-        .paddingInsets(margin);
+        .paddingInsets(margin)
+        .material();
   }
 
   /// 数字输入的小部件

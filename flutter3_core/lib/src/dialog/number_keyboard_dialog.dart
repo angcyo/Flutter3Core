@@ -101,7 +101,13 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   final EdgeInsetsGeometry? numberPadding;
 
   /// 是否显示顶部的阴影
-  final bool showTopShadow;
+  @defInjectMark
+  final bool? showTopShadow;
+
+  /// 是否在弹窗中显示当前的对话框
+  /// - 影响样式
+  @override
+  final bool? dialogInPopup;
 
   @override
   double? get dialogMaxWidth => isDesktopOrWeb ? kDesktopPopupWidth : null;
@@ -121,9 +127,10 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
     this.supportNegative,
     this.onNumberInputFinishIntercept,
     this.onNumberResult,
-    this.showTopShadow = true,
+    this.showTopShadow,
     this.numberStyle,
     this.numberPadding,
+    this.dialogInPopup,
     NumType? numType,
   }) : _numType = numType ?? (number is int ? NumType.i : NumType.d);
 
@@ -198,6 +205,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final lRes = libRes(context);
+    final dialogIsPopupStyle = widget.dialogIsPopupStyle == true;
+    final showTopShadow = widget.showTopShadow ?? !dialogIsPopupStyle;
+    final inputNumberPadding =
+        widget.numberPadding ??
+        const EdgeInsets.symmetric(vertical: kX, horizontal: kX);
 
     final keyboard = NumberKeyboardLayout(
       showDecimal: isSupportDecimal,
@@ -227,83 +239,86 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
       rangeText = "$prefixText$rangeText";
     }
 
-    return [
-          //渐变阴影
-          if (widget.showTopShadow)
-            linearGradientWidget(
-              [Colors.transparent, Colors.black12],
-              height: 10,
-              gradientDirection: Axis.vertical,
-            ),
-          //输入框
-          [
-                [
-                  if (isNullOrEmpty(_controller.numberText))
-                    widget.hintText?.text(style: numberHintStyle),
-                  _controller.numberText
-                      .text(
-                        style: (widget.numberStyle ?? numberValueStyle)
-                            .copyWith(
-                              color: context.isThemeDark
-                                  ? globalTheme.textTitleStyle.color
-                                  : globalTheme.textGeneralStyle.color,
-                            ),
-                      )
-                      .container(
-                        color: _controller.isFirstClearAll
-                            ? globalTheme.accentColor
-                            : null,
-                      ),
-                ].stack()?.expanded(),
-                rangeText?.text(style: rangeHintStyle),
-              ]
-              .row()
-              ?.container(
-                color: globalTheme.surfaceBgColor,
-                padding:
-                    widget.numberPadding ??
-                    const EdgeInsets.symmetric(vertical: kX, horizontal: kX),
-              )
-              .click(() {
-                _controller.isFirstClearAll = !_controller.isFirstClearAll;
-                updateState();
-              }),
-          //键盘布局
-          keyboard.safeBottomArea().backgroundColor(
-            globalTheme.whiteSubBgColor,
-          ),
-        ]
-        .column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        )!
-        .adaptiveTablet(
-          context,
-          maxWidth: widget.dialogMaxWidth,
-          maxHeight: widget.dialogMaxHeight,
-        )
-        .willPop(() async {
-          return widget.canPop;
-        })
-        .focus(
-          onKeyEvent: (node, event) {
-            if (event.isKeyDownOrRepeat) {
-              if (event.isEnterKey) {
-                _onSelfFinishInput();
-                return .handled;
-              } else if (event.isEscKey) {
-                context.pop(result: null);
-                return .handled;
-              }
-            }
-            final result = _controller.onKeyEventInput(context, event);
-            if (result) {
-              updateState();
-            }
-            return result ? .handled : .ignored;
-          },
-        )
-        .material();
+    final body =
+        [
+              //渐变阴影
+              if (showTopShadow)
+                linearGradientWidget(
+                  [Colors.transparent, Colors.black12],
+                  height: 10,
+                  gradientDirection: Axis.vertical,
+                ),
+              //输入框
+              [
+                    [
+                      if (isNullOrEmpty(_controller.numberText))
+                        widget.hintText?.text(style: numberHintStyle),
+                      _controller.numberText
+                          .text(
+                            style: (widget.numberStyle ?? numberValueStyle)
+                                .copyWith(
+                                  color: context.isThemeDark
+                                      ? globalTheme.textTitleStyle.color
+                                      : globalTheme.textGeneralStyle.color,
+                                ),
+                          )
+                          .container(
+                            color: _controller.isFirstClearAll
+                                ? globalTheme.accentColor
+                                : null,
+                          ),
+                    ].stack()?.expanded(),
+                    rangeText?.text(style: rangeHintStyle),
+                  ]
+                  .row()
+                  ?.container(
+                    color: globalTheme.surfaceBgColor,
+                    padding: inputNumberPadding,
+                  )
+                  .click(() {
+                    _controller.isFirstClearAll = !_controller.isFirstClearAll;
+                    updateState();
+                  }),
+              //键盘布局
+              keyboard.safeBottomArea().backgroundColor(
+                globalTheme.whiteSubBgColor,
+              ),
+            ]
+            .column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+            )!
+            .adaptiveTablet(
+              context,
+              maxWidth: widget.dialogMaxWidth,
+              maxHeight: widget.dialogMaxHeight,
+            )
+            .willPop(() async {
+              return widget.canPop;
+            })
+            .focus(
+              onKeyEvent: (node, event) {
+                if (event.isKeyDownOrRepeat) {
+                  if (event.isEnterKey) {
+                    _onSelfFinishInput();
+                    return .handled;
+                  } else if (event.isEscKey) {
+                    context.pop(result: null);
+                    return .handled;
+                  }
+                }
+                final result = _controller.onKeyEventInput(context, event);
+                if (result) {
+                  updateState();
+                }
+                return result ? .handled : .ignored;
+              },
+            )
+            .material();
+    if (dialogIsPopupStyle) {
+      return body.size(width: 260, height: 224 + inputNumberPadding.vertical);
+    }
+    return body;
   }
 
   String? _formatValue(num? value) {

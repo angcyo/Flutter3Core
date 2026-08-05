@@ -40,6 +40,9 @@ class SwitchTile extends StatefulWidget {
   /// tile的填充
   final EdgeInsets? tilePadding;
 
+  /// tile的圆角
+  final double? tileRadius;
+
   //--
 
   /// 布局方向
@@ -62,6 +65,7 @@ class SwitchTile extends StatefulWidget {
     this.trackOutlineColor,
     //--
     this.tilePadding = kTilePadding,
+    this.tileRadius,
     //--
     this.axis = Axis.horizontal,
   });
@@ -78,8 +82,8 @@ class _SwitchTileState extends State<SwitchTile>
   @override
   Widget build(BuildContext context) {
     final isVertical = widget.axis == Axis.vertical;
-    // build text
-    Widget? text = buildTextWidget(
+    // build textWidget
+    final textWidget = buildTextWidget(
       context,
       textWidget: widget.textWidget,
       text: widget.text,
@@ -89,52 +93,32 @@ class _SwitchTileState extends State<SwitchTile>
       textPadding: isVertical ? null : widget.textPadding,
       constraints: null,
     );
-
+    final switchWidget = buildSwitchWidget(
+      context,
+      currentValueMixin!,
+      height: widget.switchHeight,
+      inactiveThumbColor: widget.switchInactiveThumbColor,
+      trackOutlineColor: widget.trackOutlineColor,
+      onChanged: (value) {
+        _changeValue(value);
+      },
+    );
+    Widget result;
     if (isVertical) {
-      return [
-            text,
-            buildSwitchWidget(
-              context,
-              currentValueMixin!,
-              height: widget.switchHeight,
-              inactiveThumbColor: widget.switchInactiveThumbColor,
-              trackOutlineColor: widget.trackOutlineColor,
-              onChanged: (value) {
-                _changeValue(value);
-              },
-            ),
-          ]
-          .column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-          )!
-          .ink(() {
-            //debugger();
-            _changeValue(!currentValueMixin!);
-          })
-          .material();
+      result = [textWidget, switchWidget].column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+      )!;
+    } else {
+      result = [
+        textWidget?.expanded(),
+        switchWidget,
+      ].row(crossAxisAlignment: CrossAxisAlignment.center)!;
     }
-
-    return [
-          text?.expanded(),
-          buildSwitchWidget(
-            context,
-            currentValueMixin!,
-            height: widget.switchHeight,
-            inactiveThumbColor: widget.switchInactiveThumbColor,
-            trackOutlineColor: widget.trackOutlineColor,
-            onChanged: (value) {
-              _changeValue(value);
-            },
-          ),
-        ]
-        .row(crossAxisAlignment: CrossAxisAlignment.center)!
-        .paddingInsets(widget.tilePadding)
-        .ink(() {
-          //debugger();
-          _changeValue(!currentValueMixin!);
-        })
-        .material();
+    return result.paddingInsets(widget.tilePadding).ink(() {
+      //debugger();
+      _changeValue(!currentValueMixin!);
+    }, radius: widget.tileRadius).material();
   }
 
   void _changeValue(bool toValue) async {

@@ -136,8 +136,10 @@ mixin AbsScrollPage {
     //构建子节点
     WidgetList? buildChildren() {
       WidgetList? result = children ?? buildScrollBody(context);
+      final enableAppBar = this.enableAppBar(context) == true;
       final useSliverAppBar = this.useSliverAppBar(context) == true;
-      if (useSliverAppBar) {
+      if (enableAppBar && useSliverAppBar) {
+        //只能使用[SliverAppBar]
         result = [
           buildAppBar(context, useSliverAppBar: true),
           ...?result,
@@ -304,7 +306,8 @@ mixin AbsScrollPage {
 
   /// 是否激活标题栏
   @property
-  bool? enableAppBar(BuildContext context) => context.isInRootNavigator;
+  bool? enableAppBar(BuildContext context) =>
+      context.isInRootNavigator || useSliverAppBar(context) == true;
 
   /// 状态栏是否是暗色模式
   /// # 暗色模式

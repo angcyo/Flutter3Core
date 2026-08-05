@@ -41,7 +41,7 @@ typedef AppBarBuilderFn =
       Object? page, {
       bool? useSliverAppBar,
       Widget? leading,
-      Widget? dismissal,
+      @defInjectMark Widget? dismissal,
       bool? automaticallyImplyLeading,
       Widget? title,
       List<Widget>? actions,
