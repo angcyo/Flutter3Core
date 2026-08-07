@@ -348,7 +348,11 @@ mixin DialogMixin implements TranslationTypeImpl {
           topRight: Radius.circular(radius),
         ),
       ),
-    ).autoCloseDialog(context, enableAutoClose: dialogBarrierDismissible);
+    ).autoCloseDialog(
+      context,
+      enableAutoClose: dialogBarrierDismissible,
+      tag: classHash(),
+    );
   }
 
   /// 底部撑满显示的对话框样式
@@ -452,6 +456,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         .autoCloseDialog(
           context,
           enableAutoClose: enableAutoClose ?? dialogBarrierDismissible,
+          tag: classHash(),
         );
   }
 
@@ -775,6 +780,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           context,
           enableAutoClose: dialogBarrierDismissible,
           onEnterAction: onEnterAction,
+          tag: classHash(),
         );
   }
 

@@ -414,6 +414,8 @@ class KeyEventWidget extends StatefulWidget {
   final bool autofocus;
   final ValueChanged<bool>? onFocusChange;
 
+  final FocusNode? focusNode;
+
   const KeyEventWidget({
     super.key,
     required this.keyEventRegisterList,
@@ -421,6 +423,7 @@ class KeyEventWidget extends StatefulWidget {
     this.autofocus = true,
     this.onFocusChange,
     this.tag,
+    this.focusNode,
   });
 
   @override
@@ -443,7 +446,7 @@ class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
   @override
   Widget build(BuildContext context) {
     return Focus(
-      focusNode: null,
+      focusNode: widget.focusNode,
       parentNode: null,
       autofocus: widget.autofocus,
       canRequestFocus: null,

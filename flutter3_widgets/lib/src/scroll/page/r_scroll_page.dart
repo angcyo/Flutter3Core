@@ -128,6 +128,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   //region 生命周期
 
+  /// 界面的焦点节点
+  ///
+  /// - [RScrollPageRefreshMixin.pageRScrollView] 中会使用
+  FocusNode pageFocusNode = FocusNode();
+
   @override
   void initState() {
     if (defWidgetState != null) {
@@ -892,7 +897,8 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
         .keyEvent(
           null,
           null,
-          tag: runtimeType.toString(),
+          tag: classHash(),
+          focusNode: pageFocusNode,
           keyEventRegisterList: [
             refreshKeyEventRegister,
             if (enableInputFilterMixin) inputFilterKeyEventRegister,

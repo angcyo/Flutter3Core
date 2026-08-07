@@ -118,6 +118,10 @@ class _SingleFieldDialogState extends State<SingleFieldDialog>
         .clipRadius(radius: kDefaultBorderRadiusXX)
         .material()
         .scaffold()
-        .autoCloseDialog(context, onResultAction: () => currentInputText);
+        .autoCloseDialog(
+          context,
+          onResultAction: () => currentInputText,
+          tag: classHash(),
+        );
   }
 }

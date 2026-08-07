@@ -16,10 +16,13 @@ extension MarkdownStringEx on String {
     bool selectable = false,
     MarkdownTapLinkCallback? onLinkTap,
     VoidCallback? onAnchorTap,
+    //--样式
+    MarkdownStyleSheet? styleSheet,
   }) {
     return SingleMarkdown(
       data: this,
       selectable: selectable,
+      styleSheet: styleSheet,
       useScrollView: useScrollView,
       onTapLink: (text, href, title) {
         assert(() {
@@ -120,8 +123,9 @@ class SingleMarkdown extends MarkdownWidget {
     }
     return Column(
       mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-      crossAxisAlignment:
-          fitContent ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
+      crossAxisAlignment: fitContent
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.stretch,
       children: children,
     );
   }

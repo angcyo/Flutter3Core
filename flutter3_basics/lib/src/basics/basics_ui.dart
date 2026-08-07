@@ -1055,6 +1055,7 @@ extension WidgetEx on Widget {
     bool autofocus = true,
     ValueChanged<bool>? onFocusChange,
     String? tag,
+    FocusNode? focusNode,
     //--
     Key? key,
     List<List<KeyboardKey>>? eventGroupKeys,
@@ -1071,6 +1072,7 @@ extension WidgetEx on Widget {
           key: key,
           tag: tag,
           autofocus: autofocus,
+          focusNode: focusNode,
           onFocusChange: onFocusChange,
           keyEventRegisterList: [
             if ((keys != null && keys.isNotEmpty) ||

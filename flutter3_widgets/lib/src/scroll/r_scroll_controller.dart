@@ -102,6 +102,8 @@ class RScrollController extends ScrollController {
   @tempFlag
   Completer<void> _refreshCompleter = Completer();
 
+  /// 标签
+  /// - [ScrollController.debugLabel]
   String? tag;
 
   /// 状态对应的任意数据

@@ -994,9 +994,9 @@ extension FlowLayoutListEx on WidgetNullList {
     String? equalWidthRange,
     int? lineMaxChildCount /*一行最大多少个child*/,
     int? lineChildCount /*一行多少个child*/,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.center,
-    MainAxisAlignment lineMainAxisAlignment = MainAxisAlignment.center,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
+    MainAxisAlignment mainAxisAlignment = .center,
+    MainAxisAlignment lineMainAxisAlignment = .center,
+    CrossAxisAlignment crossAxisAlignment = .start,
     bool? matchLineHeight /*撑满行高?*/,
     //--
     AnyWidgetPaintAction? onBeforePaint,
