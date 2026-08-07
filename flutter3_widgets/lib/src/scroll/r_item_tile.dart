@@ -40,6 +40,7 @@ class RItemTile extends StatefulWidget {
     this.bottomLineHeight,
     this.bottomLineMargin,
     this.bottomLeading,
+    this.bottomWidgetBuilder,
     //SliverPadding
     this.sliverPadding,
     //DecoratedSliver
@@ -158,7 +159,7 @@ class RItemTile extends StatefulWidget {
   //region Divider style 下划线
 
   /// 底部分割线的颜色
-  /// [buildListWrapChild]->[_buildBottomWidget]
+  /// [buildListWrapChild]->[buildBottomWidget]
   final Color? bottomLineColor;
 
   /// 线的高度, 也就是厚度
@@ -170,6 +171,11 @@ class RItemTile extends StatefulWidget {
 
   /// 覆盖在底部的小部件, 比如分割线
   final Widget? bottomLeading;
+
+  /// 构建底部小部件的回调
+  /// - [buildBottomWidget]
+  final Widget? Function(BuildContext context, RItemTile? anchorTile)?
+  bottomWidgetBuilder;
 
   //endregion style
 
@@ -389,9 +395,10 @@ class RItemTile extends StatefulWidget {
 
   //---
 
-  /// [buildListWrapChild]->[_buildBottomWidget]
-  Widget? _buildBottomWidget(BuildContext context) {
-    return bottomLeading ??
+  /// [buildListWrapChild]->[buildBottomWidget]
+  Widget? buildBottomWidget(BuildContext context, RItemTile? anchorTile) {
+    return bottomWidgetBuilder?.call(context, anchorTile) ??
+        bottomLeading ??
         (bottomLineColor == null
             ? null
             : Divider(
@@ -442,9 +449,10 @@ class RItemTile extends StatefulWidget {
     }
 
     if (length > 1 && index < length - 1) {
+      final anchorTile = first is RItemTile ? first : null;
       bottomWidget =
-          _buildBottomWidget(context) ??
-          (first as RItemTile?)?._buildBottomWidget(context);
+          buildBottomWidget(context, anchorTile) ??
+          anchorTile?.buildBottomWidget(context, anchorTile);
     }
 
     if (last is RItemTile && length > 1 && index == length - 1) {
@@ -785,6 +793,8 @@ extension RItemTileExtension on Widget {
     double? bottomLineHeight,
     EdgeInsets? bottomLineMargin,
     Widget? bottomLeading,
+    Widget? Function(BuildContext context, RItemTile? anchorTile)?
+    bottomWidgetBuilder,
     //--
     bool hide = false,
     bool part = false,
@@ -813,6 +823,7 @@ extension RItemTileExtension on Widget {
       bottomLineHeight: bottomLineHeight,
       bottomLineMargin: bottomLineMargin,
       bottomLeading: bottomLeading,
+      bottomWidgetBuilder: bottomWidgetBuilder,
       //--
       sliverDecoration:
           sliverDecoration ??
