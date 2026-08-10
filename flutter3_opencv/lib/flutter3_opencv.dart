@@ -17,6 +17,13 @@ part 'src/opencv_mat_image.dart';
 part 'src/opencv_ximgproc.dart';
 part 'src/widgets/histogram_widget.dart';
 
+extension UiColorEx on UiColor {
+  /// 颜色转换为 [cv.Scalar]
+  cv.Scalar toColorScalar() {
+    return cv.Scalar(blue.toDouble(), green.toDouble(), red.toDouble(), 255.0);
+  }
+}
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/06/09

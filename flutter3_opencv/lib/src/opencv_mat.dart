@@ -337,12 +337,7 @@ extension MatEx on cv.Mat {
             width ?? uiRect?.width.imageInt ?? width ?? 0,
             height ?? uiRect?.height.imageInt ?? height ?? 0,
           ),
-      color ??
-          cv.Scalar.fromRgb(
-            uiColor?.red ?? 0,
-            uiColor?.green ?? 255,
-            uiColor?.blue ?? 0,
-          ),
+      color ?? (uiColor ?? Colors.green).toColorScalar(),
       thickness: thickness,
       lineType: lineType,
       shift: shift,
@@ -392,12 +387,7 @@ extension MatEx on cv.Mat {
       cv.Point(x ?? 0, y ?? 0),
       fontFace ?? cv.FONT_HERSHEY_SIMPLEX,
       fontScale,
-      color ??
-          cv.Scalar.fromRgb(
-            uiColor?.red ?? 0,
-            uiColor?.green ?? 255,
-            uiColor?.blue ?? 0,
-          ),
+      color ?? (uiColor ?? Colors.green).toColorScalar(),
       thickness: thickness,
       lineType: lineType,
       bottomLeftOrigin: bottomLeftOrigin,
@@ -448,12 +438,7 @@ extension MatEx on cv.Mat {
       this,
       ptsList,
       isClosed,
-      color ?? cv.Scalar(0, 255, 0, 0)
-          /*cv.Scalar.fromRgb(
-            uiColor?.red ?? 0,
-            uiColor?.green ?? 255,
-            uiColor?.blue ?? 0,
-          )*/,
+      color ?? (uiColor ?? Colors.green).toColorScalar(),
       thickness: thickness,
       lineType: lineType,
       shift: shift,
