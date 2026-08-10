@@ -754,6 +754,9 @@ Matrix4 createRotateMatrix(
   double? anchorY,
   Offset? anchor, //优先
 }) {
+  if (radians == null || radians == 0) {
+    return Matrix4.identity();
+  }
   anchorX ??= 0;
   anchorY ??= 0;
   final translation = vector.Vector3(
@@ -763,7 +766,7 @@ Matrix4 createRotateMatrix(
   );
   return Matrix4.identity()
     ..translateByVector3(translation)
-    ..rotateZ(radians ?? 0)
+    ..rotateZ(radians)
     ..translateByVector3(-translation);
 }
 

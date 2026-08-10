@@ -6,7 +6,7 @@ part of "../flutter3_opencv.dart";
 ///
 //MARK: - UiImage
 extension MatUiImageEx on UiImage {
-  /// 获取4通道颜色对应的[cv.Mat]
+  /// 获取4通道颜色对应的[cv.Mat],自动适配颜色通道
   /// - [toMatAsync]
   @alias
   Future<cv.Mat> get cvMat async => await toMatAsync();
@@ -35,7 +35,7 @@ extension MatUiImageEx on UiImage {
   Future<cv.Mat> get cvAdaptiveMat async =>
       cvAdaptiveThresholdMat(await cvGrayMat, size: 15, c: -2);
 
-  /// [UiImage]图片转成[cv.Mat]
+  /// [UiImage]图片转成[cv.Mat], 自动适配颜色通道
   ///
   /// - [cv.IMREAD_GRAYSCALE] 读取灰度图片[cv.MatType.CV_8UC1]
   /// - [cv.IMREAD_COLOR] 读取彩色图片[cv.MatType.CV_8UC3]

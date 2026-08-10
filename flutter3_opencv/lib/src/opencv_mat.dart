@@ -403,6 +403,62 @@ extension MatEx on cv.Mat {
       bottomLeftOrigin: bottomLeftOrigin,
     );
   }
+
+  /// 绘制多边形
+  cv.Mat cvDrawPolylines({
+    List<Rect>? rectList,
+    List<Offset>? pointList,
+    List<List<Offset>>? pointListList,
+    //--
+    bool isClosed = true,
+    //--
+    UiColor? uiColor,
+    cv.Scalar? color,
+    //--
+    int thickness = 1,
+    int lineType = cv.LINE_8,
+    int shift = 0,
+  }) {
+    final List<List<cv.Point>> pts = [];
+    if (rectList != null) {
+      for (final rect in rectList) {
+        pts.add([
+          cv.Point(rect.left.imageInt, rect.top.imageInt),
+          cv.Point(rect.right.imageInt, rect.top.imageInt),
+          cv.Point(rect.right.imageInt, rect.bottom.imageInt),
+          cv.Point(rect.left.imageInt, rect.bottom.imageInt),
+        ]);
+      }
+    }
+    if (pointList != null) {
+      pts.add(
+        pointList.map((e) => cv.Point(e.dx.imageInt, e.dy.imageInt)).toList(),
+      );
+    }
+    if (pointListList != null) {
+      pts.addAll(
+        pointListList.map(
+          (e) => e.map((e) => cv.Point(e.dx.imageInt, e.dy.imageInt)).toList(),
+        ),
+      );
+    }
+    //--
+    final ptsList = cv.VecVecPoint.fromList(pts);
+    return cv.polylines(
+      this,
+      ptsList,
+      isClosed,
+      color ?? cv.Scalar(0, 255, 0, 0)
+          /*cv.Scalar.fromRgb(
+            uiColor?.red ?? 0,
+            uiColor?.green ?? 255,
+            uiColor?.blue ?? 0,
+          )*/,
+      thickness: thickness,
+      lineType: lineType,
+      shift: shift,
+    );
+  }
 }
 
 /// 拟合轮廓
