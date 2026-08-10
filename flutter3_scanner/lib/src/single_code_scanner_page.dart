@@ -13,7 +13,11 @@ const kScannerControlButtonSize = 32.0;
 const kScannerControlButtonBottom = 26.0;
 
 /// 简单的二维码扫描界面
-/// 返回扫码结果, 可能包含多个
+/// - [onCodeScannerCallback] 扫描结果回调
+/// ```
+/// buildContext?.pushWidget(SingleCodeScannerPage());
+/// ```
+/// @return 返回扫码结果, 可能包含多个
 /// - [List<String>]
 class SingleCodeScannerPage extends StatefulWidget {
   /// 扫描的格式, 默认[BarcodeFormat.qrCode]
@@ -33,6 +37,9 @@ class SingleCodeScannerPage extends StatefulWidget {
   /// 扫描窗口大小
   final Size scanWindowSize;
 
+  /// 是否使用扫描窗口覆盖层
+  final bool useBarcodeOverlay;
+
   /// 扫码成功后,是否自动关闭页面
   final bool autoPop;
 
@@ -48,6 +55,18 @@ class SingleCodeScannerPage extends StatefulWidget {
   /// 双击放大的倍数[0~1]
   final double doubleZoomFactor;
 
+  //--
+
+  /// 是否自动启动相机
+  final bool autoStart;
+
+  /// 相机距离太远时, 是否自动放大
+  @PlatformFlag("Android")
+  final bool autoZoom;
+
+  /// 相机预览的缩放模式
+  final BoxFit boxFit;
+
   const SingleCodeScannerPage({
     super.key,
     this.scanFormats = const [BarcodeFormat.qrCode],
@@ -60,6 +79,10 @@ class SingleCodeScannerPage extends StatefulWidget {
     this.showAnalyzeImageButton = true,
     this.doubleZoomFactor = 0.5,
     this.scanWindowSize = const Size(200, 200),
+    this.useBarcodeOverlay = false,
+    this.autoStart = true,
+    this.autoZoom = true,
+    this.boxFit = .cover,
   });
 
   @override
@@ -71,7 +94,12 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
   late final MobileScannerController controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     formats: widget.scanFormats,
+    //闪光灯
     torchEnabled: widget.torchEnabled,
+    autoStart: widget.autoStart,
+    //自动放大
+    autoZoom: widget.autoZoom,
+    /*returnImage: */
   );
 
   StreamSubscription<Object?>? _subscription;
@@ -97,19 +125,20 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
   void _handleStringResult(List<String>? list) {
     if (!isNil(list)) {
       assert(() {
-        l.i("扫码结果->$list");
+        l.i("[${classHash()}]扫码结果->$list");
         return true;
       }());
       Feedback.forLongPress(buildContext!);
-      widget.onCodeScannerCallback?.call(list!);
-      if (widget.onCodeScannerCallback == null) {
-        toastMessage(list!.join("\n").text());
-      }
       if (widget.autoPop) {
         _isDisposed = true;
         postFrameCallback((_) {
           buildContext?.pop(result: list);
+          widget.onCodeScannerCallback?.call(list!);
         });
+      } else if (widget.onCodeScannerCallback == null) {
+        toastMessage(list!.join("\n").text());
+      } else {
+        widget.onCodeScannerCallback?.call(list!);
       }
     }
   }
@@ -119,7 +148,9 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _subscription = controller.barcodes.listen(_handleBarcode);
-    unawaited(controller.start());
+    if (!widget.autoStart) {
+      unawaited(controller.start());
+    }
   }
 
   @override
@@ -153,73 +184,10 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
     await controller.dispose();
   }
 
-  Widget _buildBarcodeOverlay() {
-    return ValueListenableBuilder(
-      valueListenable: controller,
-      builder: (context, value, child) {
-        // Not ready.
-        if (!value.isInitialized || !value.isRunning || value.error != null) {
-          return const SizedBox();
-        }
-
-        return StreamBuilder<BarcodeCapture>(
-          stream: controller.barcodes,
-          builder: (context, snapshot) {
-            final BarcodeCapture? barcodeCapture = snapshot.data;
-
-            // No barcode.
-            if (barcodeCapture == null || barcodeCapture.barcodes.isEmpty) {
-              return const SizedBox();
-            }
-
-            final scannedBarcode = barcodeCapture.barcodes.first;
-
-            // No barcode corners, or size, or no camera preview size.
-            if (scannedBarcode.corners.isEmpty ||
-                value.size.isEmpty ||
-                barcodeCapture.size.isEmpty) {
-              return const SizedBox();
-            }
-
-            return CustomPaint(
-              size: const Size(double.infinity, double.infinity),
-              painter: BarcodeOverlay(
-                barcodeCorners: scannedBarcode.corners,
-                barcodeSize: barcodeCapture.size,
-                boxFit: BoxFit.contain,
-                cameraPreviewSize: value.size,
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildScanWindow(Rect scanWindowRect) {
-    return ValueListenableBuilder(
-      valueListenable: controller,
-      builder: (context, value, child) {
-        // Not ready.
-        if (!value.isInitialized ||
-            !value.isRunning ||
-            value.error != null ||
-            value.size.isEmpty) {
-          return const SizedBox();
-        }
-
-        return CustomPaint(
-          size: const Size(double.infinity, double.infinity),
-          painter: ScannerOverlay(scanWindow: scanWindowRect),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     //debugger();
-    final Rect? scanWindowRect = widget.showScanWindow
+    final scanWindowRect = widget.showScanWindow
         ? Rect.fromCenter(
             center: MediaQuery.sizeOf(context).center(Offset.zero),
             width: widget.scanWindowSize.width,
@@ -232,14 +200,32 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
         children: [
           MobileScanner(
             controller: controller,
+            //点击聚焦 @PlatformFlag("Android iOS")
+            tapToFocus: true,
             scanWindow: scanWindowRect,
             errorBuilder: (context, error) {
               return ScannerErrorWidget(error: error);
             },
-            fit: BoxFit.cover,
+            fit: widget.boxFit,
+            /*onDetect: (barcodes) {
+              //debugger();
+            },*/
           ),
-          _buildBarcodeOverlay(),
-          if (scanWindowRect != null) _buildScanWindow(scanWindowRect),
+          if (widget.useBarcodeOverlay /*|| isDebug*/ )
+            // Needed for tapToFocus
+            IgnorePointer(
+              child: BarcodeOverlay(
+                controller: controller,
+                boxFit: widget.boxFit,
+              ),
+            ),
+          if (scanWindowRect != null)
+            IgnorePointer(
+              child: ScanWindowOverlay(
+                scanWindow: scanWindowRect,
+                controller: controller,
+              ),
+            ),
           const SizedBox(
             width: double.infinity,
             height: double.infinity,
@@ -252,6 +238,7 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
             }
             controller.setZoomScale(_zoomFactor);
           }),
+          //控制按钮
           if (widget.showSwitchCameraButton)
             SwitchCameraButton(controller: controller)
                 .paddingOnly(left: kX, bottom: kScannerControlButtonBottom)
@@ -261,7 +248,7 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
                 .paddingAll(kScannerControlButtonBottom)
                 .align(Alignment.bottomCenter),
           if (widget.showAnalyzeImageButton)
-            AnalyzeImageFromGalleryButton(
+            AnalyzeImageButton(
                   controller: controller,
                   onCodeScannerCallback: (result) {
                     _handleStringResult(result);
@@ -380,268 +367,5 @@ class ScannerOverlay extends CustomPainter {
   bool shouldRepaint(ScannerOverlay oldDelegate) {
     return scanWindow != oldDelegate.scanWindow ||
         borderRadius != oldDelegate.borderRadius;
-  }
-}
-
-/// ?
-class BarcodeOverlay extends CustomPainter {
-  BarcodeOverlay({
-    required this.barcodeCorners,
-    required this.barcodeSize,
-    required this.boxFit,
-    required this.cameraPreviewSize,
-  });
-
-  final List<Offset> barcodeCorners;
-  final Size barcodeSize;
-  final BoxFit boxFit;
-  final Size cameraPreviewSize;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (barcodeCorners.isEmpty ||
-        barcodeSize.isEmpty ||
-        cameraPreviewSize.isEmpty) {
-      return;
-    }
-
-    final adjustedSize = applyBoxFit(boxFit, cameraPreviewSize, size);
-
-    double verticalPadding = size.height - adjustedSize.destination.height;
-    double horizontalPadding = size.width - adjustedSize.destination.width;
-    if (verticalPadding > 0) {
-      verticalPadding = verticalPadding / 2;
-    } else {
-      verticalPadding = 0;
-    }
-
-    if (horizontalPadding > 0) {
-      horizontalPadding = horizontalPadding / 2;
-    } else {
-      horizontalPadding = 0;
-    }
-
-    final double ratioWidth;
-    final double ratioHeight;
-
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
-      ratioWidth = barcodeSize.width / adjustedSize.destination.width;
-      ratioHeight = barcodeSize.height / adjustedSize.destination.height;
-    } else {
-      ratioWidth = cameraPreviewSize.width / adjustedSize.destination.width;
-      ratioHeight = cameraPreviewSize.height / adjustedSize.destination.height;
-    }
-
-    final List<Offset> adjustedOffset = [
-      for (final offset in barcodeCorners)
-        Offset(
-          offset.dx / ratioWidth + horizontalPadding,
-          offset.dy / ratioHeight + verticalPadding,
-        ),
-    ];
-
-    final cutoutPath = Path()..addPolygon(adjustedOffset, true);
-
-    final backgroundPaint = Paint()
-      ..color = Colors.red.withOpacity(0.3)
-      ..style = PaintingStyle.fill
-      ..blendMode = BlendMode.dstOut;
-
-    canvas.drawPath(cutoutPath, backgroundPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
-/// 开关闪光灯
-class ToggleFlashlightButton extends StatelessWidget {
-  const ToggleFlashlightButton({required this.controller, super.key});
-
-  final MobileScannerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: controller,
-      builder: (context, state, child) {
-        if (!state.isInitialized || !state.isRunning) {
-          return const SizedBox.shrink();
-        }
-
-        switch (state.torchState) {
-          case TorchState.auto:
-            return IconButton(
-              color: Colors.white,
-              iconSize: kScannerControlButtonSize,
-              icon: const Icon(Icons.flash_auto),
-              onPressed: () async {
-                await controller.toggleTorch();
-              },
-            );
-          case TorchState.off:
-            return IconButton(
-              color: Colors.white,
-              iconSize: kScannerControlButtonSize,
-              icon: const Icon(Icons.flashlight_off),
-              onPressed: () async {
-                await controller.toggleTorch();
-              },
-            );
-          case TorchState.on:
-            return IconButton(
-              color: Colors.white,
-              iconSize: kScannerControlButtonSize,
-              icon: const Icon(Icons.flashlight_on),
-              onPressed: () async {
-                await controller.toggleTorch();
-              },
-            );
-          case TorchState.unavailable:
-            return const IconButton(
-              color: Colors.grey,
-              iconSize: kScannerControlButtonSize,
-              icon: Icon(Icons.no_flash, color: Colors.grey),
-              onPressed: null,
-            );
-        }
-      },
-    );
-  }
-}
-
-/// 从相册中选择图片, 分析二维码
-class AnalyzeImageFromGalleryButton extends StatelessWidget {
-  /// 扫描结果回调
-  final OnCodeScannerCallback? onCodeScannerCallback;
-
-  const AnalyzeImageFromGalleryButton({
-    required this.controller,
-    super.key,
-    this.onCodeScannerCallback,
-  });
-
-  final MobileScannerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      color: Colors.white,
-      icon: const Icon(Icons.image),
-      iconSize: kScannerControlButtonSize,
-      onPressed: () async {
-        final ImagePicker picker = ImagePicker();
-
-        final XFile? image = await picker.pickImage(
-          source: ImageSource.gallery,
-        );
-
-        if (image == null) {
-          return;
-        }
-
-        final BarcodeCapture? barcodes = await controller.analyzeImage(
-          image.path,
-        );
-
-        if (!context.mounted) {
-          return;
-        }
-
-        //result
-        final list =
-            barcodes?.barcodes
-                .map((e) => e.displayValue)
-                .filterNull<String>()
-                .toList() ??
-            [];
-        if (!isNil(list)) {
-          Feedback.forLongPress(context);
-          onCodeScannerCallback?.call(list);
-        }
-      },
-    );
-  }
-}
-
-/// 开始/停止扫描
-class StartStopMobileScannerButton extends StatelessWidget {
-  const StartStopMobileScannerButton({required this.controller, super.key});
-
-  final MobileScannerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: controller,
-      builder: (context, state, child) {
-        if (!state.isInitialized || !state.isRunning) {
-          return IconButton(
-            color: Colors.white,
-            icon: const Icon(Icons.play_arrow),
-            iconSize: kScannerControlButtonSize,
-            onPressed: () async {
-              await controller.start();
-            },
-          );
-        }
-
-        return IconButton(
-          color: Colors.white,
-          icon: const Icon(Icons.stop),
-          iconSize: kScannerControlButtonSize,
-          onPressed: () async {
-            await controller.stop();
-          },
-        );
-      },
-    );
-  }
-}
-
-/// 切换摄像头
-class SwitchCameraButton extends StatelessWidget {
-  const SwitchCameraButton({required this.controller, super.key});
-
-  final MobileScannerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: controller,
-      builder: (context, state, child) {
-        if (!state.isInitialized || !state.isRunning) {
-          return const SizedBox.shrink();
-        }
-
-        final int? availableCameras = state.availableCameras;
-
-        if (availableCameras != null && availableCameras < 2) {
-          return const SizedBox.shrink();
-        }
-
-        final Widget icon;
-
-        switch (state.cameraDirection) {
-          case CameraFacing.front:
-            icon = const Icon(Icons.camera_front);
-          case CameraFacing.back:
-            icon = const Icon(Icons.camera_rear);
-          default:
-            icon = empty;
-        }
-
-        return IconButton(
-          color: Colors.white,
-          iconSize: kScannerControlButtonSize,
-          icon: icon,
-          onPressed: () async {
-            await controller.switchCamera();
-          },
-        );
-      },
-    );
   }
 }

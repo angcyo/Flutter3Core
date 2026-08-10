@@ -389,8 +389,14 @@ mixin AbsScrollPage {
   /// - [getAppBarForegroundColor]
   /// - [getAppBarBackgroundColor]
   @property
-  Color? getAppBarForegroundColor(BuildContext context) =>
-      GlobalTheme.of(context).appBarForegroundColor;
+  Color? getAppBarForegroundColor(BuildContext context) {
+    final foregroundColor = GlobalTheme.of(context).appBarForegroundColor;
+    /*final backgroundColor = getAppBarBackgroundColor(context);
+    if(backgroundColor == Colors.transparent){
+      return foregroundColor.darkColor;
+    }*/
+    return foregroundColor;
+  }
 
   /// 获取标题栏背景色
   /// 要实现渐变效果请使用[buildAppBarFlexibleSpace]

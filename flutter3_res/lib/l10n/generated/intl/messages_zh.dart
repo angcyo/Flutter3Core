@@ -68,6 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libNext": MessageLookupByLibrary.simpleMessage("下一步"),
     "libNextTime": MessageLookupByLibrary.simpleMessage("下次再说"),
     "libNo": MessageLookupByLibrary.simpleMessage("否"),
+    "libNotSupported": MessageLookupByLibrary.simpleMessage("暂不支持"),
     "libOpen": MessageLookupByLibrary.simpleMessage("打开"),
     "libPaste": MessageLookupByLibrary.simpleMessage("粘贴"),
     "libRefresh": MessageLookupByLibrary.simpleMessage("刷新"),

@@ -88,6 +88,7 @@
   "libGroup": "Group",
   "libUngroup": "Ungroup",
   "libHideElement": "Hide Element",
+  "libNotSupported": "Not Supported Yet",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

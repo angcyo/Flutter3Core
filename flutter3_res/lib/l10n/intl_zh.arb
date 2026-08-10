@@ -97,6 +97,7 @@
   "libGroup": "组合",
   "libUngroup": "取消组合",
   "libHideElement": "隐藏元素",
+  "libNotSupported": "暂不支持",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

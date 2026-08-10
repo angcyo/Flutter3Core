@@ -936,7 +936,17 @@ extension StringEx on String {
   /// 使用json解析字符串, 返回[Map], [List]数据结构
   ///
   /// 支持带有注释和尾随逗号的 JSON https://pub.dev/packages/jsonc
-  dynamic jsonDecode() => json.decode(this);
+  dynamic jsonDecode() {
+    try {
+      return json.decode(this);
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      return null;
+    }
+  }
 
   /// 从json字符串中解析出对应的数据类型
   /// [DynamicEx.fromJson]

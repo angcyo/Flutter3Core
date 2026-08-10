@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -492,6 +493,11 @@ class LibRes {
   /// `隐藏元素`
   String get libHideElement {
     return Intl.message('隐藏元素', name: 'libHideElement', desc: '', args: []);
+  }
+
+  /// `暂不支持`
+  String get libNotSupported {
+    return Intl.message('暂不支持', name: 'libNotSupported', desc: '', args: []);
   }
 }
 

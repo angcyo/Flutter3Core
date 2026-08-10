@@ -80,6 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "libNext": MessageLookupByLibrary.simpleMessage("Next"),
     "libNextTime": MessageLookupByLibrary.simpleMessage("Remind me later"),
     "libNo": MessageLookupByLibrary.simpleMessage("No"),
+    "libNotSupported": MessageLookupByLibrary.simpleMessage(
+      "Not Supported Yet",
+    ),
     "libOpen": MessageLookupByLibrary.simpleMessage("Open"),
     "libPaste": MessageLookupByLibrary.simpleMessage("Paste"),
     "libRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),

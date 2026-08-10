@@ -103,6 +103,7 @@ extension ColorEx on Color {
   /// [Scheme]
   Color get darkColor => HSLuvColor.fromColor(this).addLightness(-4).toColor();
 
+  /// 获取当前颜色亮一点的颜色变体
   Color get lightColor => HSLuvColor.fromColor(this).addLightness(4).toColor();
 
   /// 反色

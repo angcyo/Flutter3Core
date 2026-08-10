@@ -23,6 +23,15 @@ dependencies:
   # mobile_scanner ^5.2.3
   # mobile_scanner ^6.0.0 # 最小支持iOS 15.5.0 支持16KB 需要Kotlin 2.x
   # mobile_scanner ^7.0.0 # 最小支持iOS 12.0.0
+  # 需要配置:
+  # ## ios https://pub.dev/packages/mobile_scanner#ios
+  # ```
+  # <key>NSCameraUsageDescription</key>
+  # <string>This app needs camera access to scan QR codes</string>
+  #
+  # <key>NSPhotoLibraryUsageDescription</key>
+  # <string>This app needs photos access to get QR code from photo library</string>
+  # ```
   mobile_scanner: ^7.4.0
 #  mobile_scanner:
 #    git:
