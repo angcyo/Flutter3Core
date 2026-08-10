@@ -146,7 +146,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
   final bool enableBottomLine;
   final Widget? bottomLine;
 
-  /// 填充内边距
+  /// 标题填充内边距, 不包含线
   final EdgeInsetsGeometry? padding;
 
   /// 最小的标题栏高度

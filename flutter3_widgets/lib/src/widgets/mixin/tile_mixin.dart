@@ -23,8 +23,8 @@ const kInputSubPadding = EdgeInsets.fromLTRB(kH, kL, kH, kL);
 const kNumberInputPadding = EdgeInsets.only(
   left: kM,
   right: kM,
-  top: 0,
-  bottom: 0,
+  top: kS,
+  bottom: kS,
 );
 
 /// number input输入框label的填充
@@ -845,7 +845,7 @@ mixin TileMixin {
     dynamic number, {
     NumType? numType,
     GestureTapCallback? onTap,
-    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(vertical: kS),
+    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(vertical: kL),
     EdgeInsetsGeometry? contentPadding = kNumberInputPadding,
     EdgeInsetsGeometry? margin,
     Decoration? decoration,
