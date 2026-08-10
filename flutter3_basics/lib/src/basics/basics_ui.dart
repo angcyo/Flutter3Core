@@ -1827,14 +1827,15 @@ extension WidgetEx on Widget {
   /// [ClipRRect]
   /// [ClipPath]
   Widget clip({
+    double? radius,
     BorderRadiusGeometry? borderRadius,
     CustomClipper<RRect>? clipper,
     Clip clipBehavior = Clip.antiAlias,
   }) {
-    return borderRadius == null
+    return borderRadius == null && radius == null
         ? this
         : ClipRRect(
-            borderRadius: borderRadius,
+            borderRadius: borderRadius ?? radius?.borderRadius ?? .zero,
             clipper: clipper,
             clipBehavior: clipBehavior,
             child: this,
@@ -2243,7 +2244,7 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 模糊背景
+  /// 模糊背景, 可能需要调用[clip]裁剪模糊区域, 防止其它小部件被模糊.
   /// [ColorFiltered]
   /// 将所有绘制放在一个模糊的[Layer]上, 以实现模糊的效果
   /// [BackdropFilterLayer]

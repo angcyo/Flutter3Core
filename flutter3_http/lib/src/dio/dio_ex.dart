@@ -140,10 +140,10 @@ extension DioStringEx on String {
       queryParameters: sseClientId == null
           ? queryParameters
           : {"sseClientId": sseClientId, ...?queryParameters},
-      options: _mergeOptions(options, {
-        "accept": "text/event-stream",
-        ...?headers,
-      })?..responseType = ResponseType.stream,
+      options: _mergeOptions(
+        options ?? Options(receiveTimeout: Duration.zero),
+        {"accept": "text/event-stream", ...?headers},
+      )?..responseType = ResponseType.stream,
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
