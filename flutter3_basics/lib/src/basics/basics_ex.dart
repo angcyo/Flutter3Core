@@ -217,7 +217,7 @@ extension ObjectEx on Object {
   /// 类型转换
   List<T> ofList<T>() => [this as T];
 
-  /// 转换成json字符串
+  /// 数据结构转换成json字符串
   /// ```
   /// @JsonKey(ignore: true)
   /// @JsonKey(includeFromJson: false, includeToJson: false)
@@ -947,9 +947,10 @@ extension StringEx on String {
   /// [encode]
   /// [_defaultToEncodable]
   /// [jsonDecode]
-  /// 将`jsonObject`解析成`Map<String, dynamic>`类型
-  /// 将`jsonArray`解析成`List<dynamic>`类型
+  /// - 将`jsonObject`解析成`Map<String, dynamic>`类型
+  /// - 将`jsonArray`解析成`List<dynamic>`类型
   /// [fromJsonBeanList]
+  /// @return [Map] / [List]
   dynamic fromJson() => json.decode(this);
 
   /// 将json字符串, 转换成数组对象

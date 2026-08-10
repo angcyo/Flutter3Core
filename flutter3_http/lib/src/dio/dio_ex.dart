@@ -102,6 +102,10 @@ extension DioStringEx on String {
   /// ```
   /// SseEvent(id: null, event: null, data: "id:9\n\nevent:message\n\ndata:9\n\n", retry: null)
   /// ```
+  /// ```
+  /// event:ping
+  /// data:{"code":200,"data":"WAITING","msg":"Waiting for QR code scanning"}↵↵
+  /// ```
   /// # 注释事件
   /// ```
   /// :xxx
@@ -120,7 +124,7 @@ extension DioStringEx on String {
   /// [DioSseClient]
   /// [SseEventTransformer]
   Future<Response<ResponseBody>> sseEvent(
-    void Function(SseEvent event) onEvent, {
+    void Function(SseEvent? event, Object? error) onEvent, {
     Object? body,
     String? sseClientId,
     Map<String, dynamic>? queryParameters,
@@ -150,9 +154,22 @@ extension DioStringEx on String {
         .transform(const LineSplitter())
         .transform(const SseEventTransformer());
 
-    final subscription = stream.listen((event) {
-      onEvent(event);
-    }, cancelOnError: true);
+    final subscription = stream.listen(
+      (event) {
+        if (cancelToken?.isCancelled == true) {
+          //cancel
+        } else {
+          onEvent(event, null);
+        }
+      },
+      onDone: () {
+        onEvent(null, null);
+      },
+      onError: (error) {
+        onEvent(null, error);
+      },
+      cancelOnError: true,
+    );
 
     return response;
   }
@@ -231,6 +248,8 @@ extension DioStringEx on String {
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
+    //--
+    void Function(Response response)? onResult,
   }) async {
     final response = await RDio.get(context: context).dio.get(
       transformUrl(),
@@ -241,6 +260,7 @@ extension DioStringEx on String {
       onReceiveProgress: onReceiveProgress,
     );
     //debugger();
+    onResult?.call(response);
     return Uint8List.fromList(response.data);
   }
 

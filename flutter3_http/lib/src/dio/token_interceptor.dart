@@ -13,15 +13,19 @@ part of '../../flutter3_http.dart';
 class TokenInterceptor extends Interceptor {
   /// 当前接口不需要传Token
   /// String:String
-  static const String kNoTokenHeader = 'noTokenHeader';
+  static const String kNoTokenHeader = '_noTokenHeader';
 
   /// 当前接口禁止验证Token
   /// String:String
-  static const String kNoTokenVerify = 'noTokenVerify';
+  static const String kNoTokenVerify = '_noTokenVerify';
 
   /// 当前接口禁止请求刷新token
   /// String:String
-  static const String kNoRefreshTokenKey = 'noRefreshToken';
+  static const String kNoRefreshTokenKey = '_noRefreshToken';
+
+  /// 当前接口的调试标签
+  /// String:String
+  static const String kDebugLabel = '_debugLabel';
 
   //--
 

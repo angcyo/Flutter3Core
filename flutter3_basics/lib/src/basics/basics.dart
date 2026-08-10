@@ -450,6 +450,9 @@ int rgbToGray(int r, int g, int b) {
   return (r * 0.34 + g * 0.5 + b * 0.16).toInt().clamp(0, 255);
 }
 
+/// 操作系统的名称
+String get $operatingSystem => Platform.operatingSystem;
+
 /// 平台的名称, 例如: Android, iOS, Windows, Linux, MacOS, Fuchsia, Web
 ///
 /// ```
@@ -463,8 +466,9 @@ int rgbToGray(int r, int g, int b) {
 /// ```
 ///
 /// 统一小写
+/// - [$operatingSystem]
 /// - [Platform.operatingSystem]
-String get $platformName => Platform.operatingSystem.toLowerCase(); /*{
+String get $platformName => $operatingSystem.toLowerCase(); /*{
   if (isAndroid) {
     return "Android".toLowerCase();
   } else if (isIos) {
