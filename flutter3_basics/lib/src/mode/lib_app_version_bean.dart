@@ -265,6 +265,21 @@ class LibAppVersionBean {
   /// 跳转市场的地址
   /// - [marketUrl]
   /// - [jumpToMarket]
+  ///
+  /// # ios app store
+  /// ```
+  /// itms-apps://itunes.apple.com/app/id6670739251
+  /// itms-apps://itunes.apple.com/app/id6762029425
+  /// ```
+  /// # android google play
+  /// ```
+  /// market://details?id=com.laser.abc.light
+  /// market://details?id=com.kop.laser.mobile
+  /// //--
+  /// https://play.google.com/store/apps/details?id=com.laser.abc.light
+  /// https://play.google.com/store/apps/details?id=com.kop.laser.mobile
+  /// //&reviewId=0
+  /// ```
   String? marketUrl;
 
   /// [downloadUrl] 外链下载? 还是直接下载
