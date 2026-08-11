@@ -123,8 +123,8 @@ class Shapes {
       return buildArrowPath(
         sx: values[1],
         sy: values[2],
-        tx: values[3],
-        ty: values[4],
+        ex: values[3],
+        ey: values[4],
         lx: values[5],
         ly: values[6],
         rx: values[7],
@@ -508,8 +508,8 @@ class Shapes {
     required double sx,
     required double sy,
     //尖头点
-    required double tx,
-    required double ty,
+    required double ex,
+    required double ey,
     //左翼点
     required double lx,
     required double ly,
@@ -527,18 +527,18 @@ class Shapes {
     pathBuilder?.write(
       'M${sx.toDigits(digits: digits)} ${sy.toDigits(digits: digits)} ',
     );
-    path.lineTo(tx, ty);
+    path.lineTo(ex, ey);
     pathBuilder?.write(
-      'L${tx.toDigits(digits: digits)} ${ty.toDigits(digits: digits)} ',
+      'L${ex.toDigits(digits: digits)} ${ey.toDigits(digits: digits)} ',
     );
     //--
     path.moveTo(lx, ly);
     pathBuilder?.write(
       'M${lx.toDigits(digits: digits)} ${ly.toDigits(digits: digits)} ',
     );
-    path.lineTo(tx, ty);
+    path.lineTo(ex, ey);
     pathBuilder?.write(
-      'L${tx.toDigits(digits: digits)} ${ty.toDigits(digits: digits)} ',
+      'L${ex.toDigits(digits: digits)} ${ey.toDigits(digits: digits)} ',
     );
     path.lineTo(rx, ry);
     pathBuilder?.write(

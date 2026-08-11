@@ -1027,6 +1027,10 @@ extension StringEx on String {
   bool isMatch(String regex) => regex.toRegex().hasMatch(this);
 
   /// 获取匹配的字符串集合
+  /// - [StringEx.getIntList]
+  /// - [StringEx.getFloatList]
+  /// - [StringEx.matchList]
+  /// - [RegExp.allMatches]
   List<String> matchList(String regex) =>
       regex.toRegex().allMatches(this).map((e) => e.group(0)!).toList();
 
@@ -1097,12 +1101,20 @@ extension StringEx on String {
   }
 
   /// 使用正则, 获取字符串中所有的正负浮点数
+  /// - [StringEx.getIntList]
+  /// - [StringEx.getFloatList]
+  /// - [StringEx.matchList]
+  /// - [RegExp.allMatches]
   List<double> getFloatList() {
     const regex = r"[-+]?\d?\.?\d+";
     return allMatches(regex).map((e) => double.parse(e.group(0)!)).toList();
   }
 
   /// 使用正则, 获取字符串中所有的正负整数
+  /// - [StringEx.getIntList]
+  /// - [StringEx.getFloatList]
+  /// - [StringEx.matchList]
+  /// - [RegExp.allMatches]
   List<int> getIntList() {
     const regex = r"[-+]?[0-9]+";
     return allMatches(regex).map((e) => int.parse(e.group(0)!)).toList();

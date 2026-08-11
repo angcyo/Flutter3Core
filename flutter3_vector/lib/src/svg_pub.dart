@@ -85,6 +85,15 @@ extension SvgStringEx on String {
     return path..fillType = PathFillType.evenOdd;
   }
 
+  /// 从`M 768,95L 860,177L 779,267L 688,185Z`中提取第1个点和第3个点计算旋转角度(弧度)
+  double? toUiPathRotateAngle() {
+    final numList = getFloatList();
+    if (numList.length != 8) {
+      return null;
+    }
+    return $a(numList[0], numList[1], numList[4], numList[5]);
+  }
+
   /// 将svg的xml文档转换成[Path]对象
   /// [mergePath] 是否将多个[Path]合并到一个[Path]中?
   Future<List<Path>> toUiPathFromXml({bool mergePath = false}) async {

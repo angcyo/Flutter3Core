@@ -51,28 +51,41 @@ extension OffsetMathEx on Offset {
 }
 
 /// c边的长度, 求长度
+/// - [c]
+/// - [$c]
+/// - [cl]
 double c(double x1, double y1, double x2, double y2) {
   return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
 }
 
+/// - [c]
+/// - [$c]
+/// - [cl]
 double $c(double x1, double y1, double x2, double y2) {
   return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
 }
 
-/// 求2点之间的角度,与水平面的夹角, 弧度, 求角度
-double $a(double x1, double y1, double x2, double y2) {
-  return math.atan2(y2 - y1, x2 - x1);
-}
-
 /// 对角线的长度, c边的长度. 返回值正负数
+/// - [c]
+/// - [$c]
+/// - [cl]
 double cl(double x, double y) {
   return math.sqrt(math.pow(x, 2) + math.pow(y, 2));
+}
+
+/// 求2点之间的角度,与水平面的夹角, 弧度, 求角度
+/// - [$a]
+/// - [angleBetween]
+double $a(double x1, double y1, double x2, double y2) {
+  return math.atan2(y2 - y1, x2 - x1);
 }
 
 /// 求2根线之间的角度, 夹角, 弧度, 求角度
 /// 返回的弧度有正负值
 /// [fp1].[fp2] 第一根线的2个点
 /// [sp1].[sp2] 第二根线的2个点
+/// - [$a]
+/// - [angleBetween]
 double angleBetween(Offset fp1, Offset fp2, Offset sp1, Offset sp2) {
   double angle1 = math.atan2(fp2.dy - fp1.dy, fp2.dx - fp1.dx);
   double angle2 = math.atan2(sp2.dy - sp1.dy, sp2.dx - sp1.dx);
