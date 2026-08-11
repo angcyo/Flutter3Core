@@ -3655,10 +3655,17 @@ extension ContextEx on BuildContext {
   /// [StateEx.updateState]
   void tryUpdateState() {
     final el = this;
-    if (el is Element) {
-      if (el.mounted) {
-        el.markNeedsBuild();
-      }
+    if (el is Element && el.mounted) {
+      assert(() {
+        l.i("尝试更新界面[${el.classHash()}]");
+        return true;
+      }());
+      el.markNeedsBuild();
+    } else {
+      assert(() {
+        l.w("无法更新界面[${el.classHash()}]");
+        return true;
+      }());
     }
   }
 
