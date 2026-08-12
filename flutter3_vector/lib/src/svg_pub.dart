@@ -53,7 +53,7 @@ extension SvgStringEx on String {
   ///
   /// [https://pub.dev/packages/svg_path_parser]
   /// ```
-  /// #大写: 绝对坐标 小写: 相对坐标
+  /// # 大写: 绝对坐标 小写: 相对坐标
   /// Path path = parseSvgPath('m.29 47.85 14.58 14.57 62.2-62.2h-29.02z');
   /// ```
   /// [failSilently] 是否忽略解析错误, 否则会抛出异常
@@ -91,7 +91,34 @@ extension SvgStringEx on String {
     if (numList.length != 8) {
       return null;
     }
-    return $a(numList[0], numList[1], numList[4], numList[5]);
+    //return $a(numList[0], numList[1], numList[4], numList[5]);
+    double distanceSquared(Offset a, Offset b) {
+      final dx = b.dx - a.dx;
+      final dy = b.dy - a.dy;
+      return dx * dx + dy * dy;
+    }
+
+    final p = [
+      Offset(numList[0], numList[1]),
+      Offset(numList[2], numList[3]),
+      Offset(numList[4], numList[5]),
+    ];
+    final d01 = distanceSquared(p[0], p[1]);
+    final d12 = distanceSquared(p[1], p[2]);
+
+    // 选择较长的边作为 OBB 的方向
+    final Offset a;
+    final Offset b;
+
+    if (d01 >= d12) {
+      a = p[0];
+      b = p[1];
+    } else {
+      a = p[1];
+      b = p[2];
+    }
+
+    return atan2(b.dy - a.dy, b.dx - a.dx);
   }
 
   /// 将svg的xml文档转换成[Path]对象

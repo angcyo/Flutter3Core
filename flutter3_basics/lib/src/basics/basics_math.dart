@@ -74,6 +74,17 @@ double cl(double x, double y) {
 }
 
 /// 求2点之间的角度,与水平面的夹角, 弧度, 求角度
+/// ```
+/// -π  ~  π
+/// ---
+///         -π/2
+///           ↑
+///           |
+/// π ←-------+-------→ 0
+///           |
+///           ↓
+///          π/2
+/// ```
 /// - [$a]
 /// - [angleBetween]
 double $a(double x1, double y1, double x2, double y2) {

@@ -969,7 +969,7 @@ extension CanvasEx on Canvas {
     ui.ColorFilter? colorFilter,
     BoxFit? fit,
     Alignment? alignment = .center,
-    Paint? paint,
+    @defInjectMark Paint? paint,
   }) {
     if (image == null) {
       return;
