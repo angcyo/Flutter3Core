@@ -40,6 +40,10 @@ cv.Net cvNetFromFile(String path, {String config = "", String framework = ""}) {
   return cv.Net.fromFile(path, config: config, framework: framework);
 }
 
+cv.Net cvNetOnnxFromFile(String path) {
+  return cv.Net.fromOnnx(path);
+}
+
 /// - [image] 需要一个三通道的图片
 /// - [size] 指定输出图片的大小
 /// ```
