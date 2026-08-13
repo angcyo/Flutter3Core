@@ -614,7 +614,63 @@ extension MatImageEx on cv.Mat {
   @implementation
   Future<UiImage?> removeBackground2() async {
     final image = this;
-    final remover = OpenCVBackgroundRemover(
+
+    final segmenter = PureOpenCVSegmenter(
+      //
+      // 大图先缩放
+      //
+      maxProcessSize: 1600,
+
+      //
+      // FloodFill Lab 容差
+      //
+      floodL: 10,
+      floodA: 7,
+      floodB: 7,
+
+      //
+      // Lab 背景距离基础阈值
+      //
+      baseDistanceThreshold: 15,
+
+      //
+      // 背景统计标准差权重
+      //
+      stdFactor: 2.0,
+
+      //
+      // 形态学
+      //
+      morphologySize: 5,
+
+      //
+      // 物体中心区域
+      //
+      sureForegroundRatio: 0.35,
+
+      //
+      // 最小物体
+      //
+      minObjectAreaRatio: 0.0005,
+    );
+
+    //
+    // ----------------------------------------------------------
+    // 分割
+    // ----------------------------------------------------------
+    //
+
+    final segmentation = segmenter.segment(image);
+
+    final mask = segmentation.mask;
+    final foreground = createTransparentForeground(image, mask);
+    final result = await foreground.toUiImage();
+
+    foreground.dispose();
+    mask.dispose();
+    image.dispose();
+
+    /*final remover = OpenCVBackgroundRemover(
       //
       // 图片边缘采样宽度
       //
@@ -650,6 +706,7 @@ extension MatImageEx on cv.Mat {
     foreground.dispose();
     mask.dispose();
     image.dispose();
+    */
 
     return result;
   }

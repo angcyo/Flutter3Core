@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_opencv/src/opencv_background_remover.dart';
+import 'package:flutter3_opencv/src/opencv_segmenter.dart';
 import 'package:opencv_dart/opencv.dart' as cv;
 
 export 'package:opencv_dart/opencv.dart';
