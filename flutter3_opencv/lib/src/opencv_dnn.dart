@@ -49,7 +49,7 @@ cv.Net cvNetFromFile(String path, {String config = "", String framework = ""}) {
 /// https://docs.opencv.org/4.x/d6/d0f/group__dnn.html#ga29f34df9376379a603acd8df581ac8d7
 cv.Mat? cvBlobFromImage(
   cv.InputArray? image, {
-  double scalefactor = 1.0,
+  double scaleFactor = 1.0,
   (int, int) size = (0, 0),
   cv.Scalar? mean,
   bool swapRB = false,
@@ -61,7 +61,7 @@ cv.Mat? cvBlobFromImage(
   }
   return cv.blobFromImage(
     image,
-    scalefactor: scalefactor,
+    scalefactor: scaleFactor,
     size: size,
     mean: mean,
     swapRB: swapRB,

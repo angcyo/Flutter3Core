@@ -10,6 +10,7 @@ export 'package:opencv_dart/opencv.dart';
 
 part 'src/camera_calibrate.dart';
 part 'src/image_frame_info.dart';
+part 'src/onnx_helper.dart';
 part 'src/opencv.dart';
 part 'src/opencv_dnn.dart';
 part 'src/opencv_image.dart';
