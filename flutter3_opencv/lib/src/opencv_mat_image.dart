@@ -218,6 +218,11 @@ extension MatImageEx on cv.Mat {
   ///   - 值越小： 拟合越精细，顶点越多，越接近原图。
   ///   - 值越大： 拟合越粗糙，顶点越少，看起来更像几何形。
   ///
+  /// - [cv.threshold] 将灰度值>=thresh的像素全部变成`maxval`
+  ///   - [cvThresholdMat]
+  /// - [cv.contourArea] 计算轮廓的面积
+  /// - [cv.minAreaRect] 计算最小外接旋转矩形
+  ///
   /// @return 轮廓坐标数据, [debug]下额外返回调试图片
   Future<(cv.Contours, UiImage?)> findContours({
     //--

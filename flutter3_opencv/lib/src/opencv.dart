@@ -189,7 +189,7 @@ cv.Mat cvGetRMat(cv.InputArray img) {
   return cv.merge(cv.VecMat.fromList([b, g, r]));
 }
 
-/// 二值化图片
+/// 二值化图片, 将灰度值`>=thresh`的像素全部变成`maxval`
 /// - [src] 源图片, 建议已经灰度化了. 否则二值化的输出结果可能有问题
 /// - [threshold] 阈值,
 ///   - [cv.THRESH_BINARY] <=这个值的像素值变成0, 其它像素变成[maxVal]
