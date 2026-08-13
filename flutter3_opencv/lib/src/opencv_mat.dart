@@ -313,6 +313,8 @@ extension MatEx on cv.Mat {
   /// - [cv.LINE_4] (4 连通线)
   /// - [cv.LINE_8] (8 连通线)
   /// - [cv.LINE_AA] (Anti-Aliasing，抗锯齿线)
+  ///
+  /// - [cv.boxPoints] 计算旋转矩形的顶点
   cv.Mat cvDrawRectangle({
     UiRect? uiRect,
     cv.Rect? rect,
@@ -395,6 +397,7 @@ extension MatEx on cv.Mat {
   }
 
   /// 绘制多边形
+  /// - [cv.boxPoints] 计算旋转矩形的顶点
   cv.Mat cvDrawPolylines({
     List<Rect>? rectList,
     List<Offset>? pointList,

@@ -204,6 +204,7 @@ extension MatImageEx on cv.Mat {
   }
 
   /// 查看轮廓, 寻找物体的整体边界和形状. 请先将图片二值化
+  /// - [resultObb] 是否返回最小外接矩形. 方向包围盒（Oriented Bounding Box）
   /// - [mode] 检索模式
   ///   - [cv.RETR_EXTERNAL]: 只提取最外层轮廓。
   ///   - [cv.RETR_LIST]: 提取所有轮廓，但不建立等级关系。它们在层级上都是“平级”的（只有 Next 和 Previous）。
@@ -222,6 +223,7 @@ extension MatImageEx on cv.Mat {
   ///   - [cvThresholdMat]
   /// - [cv.contourArea] 计算轮廓的面积
   /// - [cv.minAreaRect] 计算最小外接旋转矩形
+  /// - [cv.boxPoints] 计算旋转矩形的顶点
   ///
   /// @return 轮廓坐标数据, [debug]下额外返回调试图片
   Future<(cv.Contours, UiImage?)> findContours({
@@ -307,5 +309,200 @@ extension MatImageEx on cv.Mat {
     return ret.uiImage;*/
     //debugger();
     return (contours2, null);
+  }
+
+  ///- [findContours]
+  ///- [findContoursPath]
+  Future<(List<(String /*svg path*/, double? /*obb旋转弧度*/)>, UiImage?)>
+  findContoursPath({
+    //--
+    bool? resultObb,
+    int digits = 3 /*小数点位数*/,
+    //--
+    bool enableBlur = true,
+    int kSize = 5 /*卷积核的大小, 影响性能*/,
+    double sigmaX = kSigma /*高斯核的sigma值, 影响性能*/,
+    //--
+    int? mode,
+    int method = cv.CHAIN_APPROX_SIMPLE,
+    //--
+    double? epsilon /*拟合精度阈值*/,
+    //--
+    bool? debug,
+    Size? imageSize,
+    UiImage? originImage /*原图*/,
+  }) async {
+    //debugger();
+    mode ??= resultObb == true ? cv.RETR_EXTERNAL : cv.RETR_TREE;
+    cv.Mat mat = this;
+    //高斯模糊 - 消除噪点
+    if (enableBlur) {
+      mat = cv.gaussianBlur(mat, (kSize, kSize), sigmaX);
+    }
+    //查找轮廓
+    final (contours, hierarchy) = cv.findContours(mat, mode, method);
+    final contoursX = epsilon != null
+        ? cvApproxPolyDP(contours, epsilon: epsilon)
+        : contours;
+    //debugger();
+    assert(() {
+      for (final hierarchy in hierarchy) {
+        //Next (下一个): 与当前轮廓处于同一层级的下一个轮廓的索引。
+        //Previous (上一个): 与当前轮廓处于同一层级的上一个轮廓的索引。
+        //First_Child (第一个子轮廓): 当前轮廓内部包含的第一个子轮廓的索引。
+        //Parent (父轮廓): 包含当前轮廓的外部轮廓索引。
+        hierarchy.val1;
+        hierarchy.val2;
+        hierarchy.val3;
+        hierarchy.val4;
+      }
+      return true;
+    }());
+    final data = <(String, double?)>[];
+    if (resultObb == true) {
+      for (final contour in contoursX) {
+        final obb = cv.minAreaRect(contour);
+        //左下，左上，右上，右下
+        final obbPoints = cv.boxPoints(obb);
+        //debugger();
+        //左上 右上 右下 左下
+        final ltx = obbPoints[1].x;
+        final lty = obbPoints[1].y;
+        final rtx = obbPoints[2].x;
+        final rty = obbPoints[2].y;
+        final rbx = obbPoints[3].x;
+        final rby = obbPoints[3].y;
+        final lbx = obbPoints[0].x;
+        final lby = obbPoints[0].y;
+        /*final ltx = obb.center.x - obb.size.width / 2;
+        final lty = obb.center.y - obb.size.height / 2;
+        final rtx = obb.center.x + obb.size.width / 2;
+        final rty = obb.center.y - obb.size.height / 2;
+        final rbx = obb.center.x + obb.size.width / 2;
+        final rby = obb.center.y + obb.size.height / 2;
+        final lbx = obb.center.x - obb.size.width / 2;
+        final lby = obb.center.y + obb.size.height / 2;*/
+        final svgPath =
+            "M ${ltx.toStringAsFixed(digits)},${lty.toStringAsFixed(digits)}"
+            "L ${rtx.toStringAsFixed(digits)},${rty.toStringAsFixed(digits)}"
+            "L ${rbx.toStringAsFixed(digits)},${rby.toStringAsFixed(digits)}"
+            "L ${lbx.toStringAsFixed(digits)},${lby.toStringAsFixed(digits)} Z";
+        data.add((svgPath, obb.angle));
+      }
+
+      if (debug == true) {
+        final debugImage = await drawImage(
+          imageSize ?? originImage?.imageSize ?? Size.zero,
+          (canvas) {
+            if (originImage != null) {
+              canvas.drawImage(originImage, .zero, Paint());
+            }
+            for (final contour in contoursX) {
+              final color = randomColor();
+              final obb = cv.minAreaRect(contour);
+              //左下，左上，右上，右下
+              final obbPoints = cv.boxPoints(obb);
+              canvas.drawPoints(
+                .polygon,
+                obbPoints
+                    .mapFlat(
+                      (e) => [
+                        Offset(obbPoints[0].x, obbPoints[0].y),
+                        Offset(obbPoints[1].x, obbPoints[1].y),
+                        Offset(obbPoints[2].x, obbPoints[2].y),
+                        Offset(obbPoints[3].x, obbPoints[3].y),
+                      ],
+                    )
+                    .toList(),
+                Paint()..color = color,
+              );
+              /*canvas.drawRect(
+                Rect.fromCenter(
+                  center: Offset(obb.center.x, obb.center.y),
+                  width: obb.size.width,
+                  height: obb.size.height,
+                ),
+                Paint()
+                  ..color = color
+                  ..style = .stroke,
+              );*/
+
+              /*for (final point in contour) {
+          canvas.drawCircle(
+            Offset(point.x.roundToDouble(), point.y.roundToDouble()),
+            1,
+            Paint()..color = color,
+          );
+        }*/
+            }
+          },
+        );
+        return (data, debugImage);
+      }
+    } else {
+      for (final contour in contoursX) {
+        final pathBuilder = StringBuffer();
+        for (int i = 0; i < contour.length - 1; i++) {
+          final point = contour[i];
+          final nextPoint = contour[i + 1];
+          if (pathBuilder.isEmpty) {
+            pathBuilder.write(
+              "M ${point.x.toStringAsFixed(digits)},${point.y.toStringAsFixed(digits)}",
+            );
+          }
+          pathBuilder.write(
+            "L ${nextPoint.x.toStringAsFixed(digits)},${nextPoint.y.toStringAsFixed(digits)}",
+          );
+        }
+        data.add((pathBuilder.toString(), null));
+      }
+      if (debug == true) {
+        final debugImage = await drawImage(
+          imageSize ?? originImage?.imageSize ?? Size.zero,
+          (canvas) {
+            if (originImage != null) {
+              canvas.drawImage(originImage, .zero, Paint());
+            }
+            for (final contour in contoursX) {
+              final color = randomColor();
+              for (int i = 0; i < contour.length - 1; i++) {
+                final point = contour[i];
+                final nextPoint = contour[i + 1];
+                canvas.drawLine(
+                  Offset(point.x.roundToDouble(), point.y.roundToDouble()),
+                  Offset(
+                    nextPoint.x.roundToDouble(),
+                    nextPoint.y.roundToDouble(),
+                  ),
+                  Paint()
+                    ..color = color
+                    ..style = .stroke,
+                );
+              }
+              //--
+              /*for (final point in contour) {
+          canvas.drawCircle(
+            Offset(point.x.roundToDouble(), point.y.roundToDouble()),
+            1,
+            Paint()..color = color,
+          );
+        }*/
+            }
+          },
+        );
+        return (data, debugImage);
+      }
+    }
+    /*final ret = cv.drawContours(
+      mat.gray2rgb,
+      contours,
+      0,
+      cv.Scalar.fromRgb(250, 255, 100),
+      thickness: 1,
+    );
+    //debugger();
+    return ret.uiImage;*/
+    //debugger();
+    return (data, null);
   }
 }

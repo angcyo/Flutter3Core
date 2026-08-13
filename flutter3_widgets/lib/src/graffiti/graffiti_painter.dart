@@ -179,6 +179,13 @@ class GraffitiFountainPenPainter extends GraffitiPainter
 }
 
 /// 毛笔数据绘制, 宽度不等
+/// ```
+/// | 模式                  | 点的解释方式    | 例如 4 个点 | 最终绘制   |
+/// | ------------------- | --------- | ------- | ------ |
+/// | `PointMode.points`  | 每个点独立     | A B C D | 4 个独立点 |
+/// | `PointMode.lines`   | 每两个点组成一条线 | A-B、C-D | 2 条线   |
+/// | `PointMode.polygon` | 所有点首尾连续连接 | A-B-C-D | 1 个折线  |
+/// ```
 class GraffitiBrushPenPainter extends GraffitiPainter
     with CurvePointEventMixin {
   final List<PointEventMeta> pointListCache = [];
