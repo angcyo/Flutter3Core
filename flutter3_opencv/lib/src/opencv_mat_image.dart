@@ -505,4 +505,109 @@ extension MatImageEx on cv.Mat {
     //debugger();
     return (data, null);
   }
+
+  //MARK: grabCut
+
+  /// 移除图片背景
+  /// GrabCut 要求 8-bit 3-channel 图像, 通常为 BGR/RGB
+  ///
+  /// - [iterCount] 迭代次数，默认为 5
+  /// ```
+  /// (-5:Bad argument) image must have CV_8UC3 type in function 'cv::grabCut'
+  /// ```
+  Future<UiImage?> removeBackground({int iterCount = 5}) async {
+    final img = this;
+
+    // 3. 定义包含目标物体的矩形框 (x, y, width, height)
+    // 注意：矩形框必须完整包含目标前景，且尽量少留背景空间
+    final rect = cv.Rect(
+      (img.cols * 0.1).toInt(), // x 0.1
+      (img.rows * 0.1).toInt(), // y 0.1
+      (img.cols * 0.8).toInt(), // width 0.8
+      (img.rows * 0.8).toInt(), // height 0.8
+    );
+
+    // 4. 初始化 GrabCut 所需的参数
+    // mask: 单通道 8-bit 图像，大小与原图一致
+    final mask = cv.Mat.zeros(img.rows, img.cols, cv.MatType.CV_8UC1);
+
+    // bgdModel 与 fgdModel: 必须为 1x65 的 64 位浮点数矩阵 (CV_64FC1)
+    final bgdModel = cv.Mat.zeros(1, 65, cv.MatType.CV_64FC1);
+    final fgdModel = cv.Mat.zeros(1, 65, cv.MatType.CV_64FC1);
+
+    // 5. 执行 GrabCut 算法
+    // iterCount: 迭代轮数，推荐设为 5
+    // mode: GC_INIT_WITH_RECT 表示基于矩形框初始化
+    //print('正在运行 GrabCut 前景分割算法...');
+    cv.grabCut(
+      img,
+      mask,
+      rect,
+      bgdModel,
+      fgdModel,
+      iterCount,
+      mode: cv.GC_INIT_WITH_RECT,
+    );
+
+    // 6. 后处理：解析 Mask 提取最终的前景
+    // GrabCut Mask 对应的数值含义:
+    // 0: GC_BGD (确信背景)
+    // 1: GC_FGD (确信前景)
+    // 2: GC_PR_BGD (可能背景)
+    // 3: GC_PR_FGD (可能前景)
+    // 我们将值为 1 (确信前景) 或 3 (可能前景) 的像素提出来作为最终前景蒙版
+
+    final foregroundMask = cv.Mat.zeros(img.rows, img.cols, cv.MatType.CV_8UC1);
+
+    // 遍历像素提取 1 和 3 (也可以通过位运算或逻辑矩阵快速筛选)
+    for (var y = 0; y < mask.rows; y++) {
+      for (var x = 0; x < mask.cols; x++) {
+        final val = mask.at<int>(y, x);
+        if (val == cv.GC_FGD || val == cv.GC_PR_FGD) {
+          foregroundMask.set<int>(y, x, 255); // 标记为白色
+        } else {
+          foregroundMask.set<int>(y, x, 0); // 标记为黑色
+        }
+      }
+    }
+
+    //final resultWithAlpha = cv.bitwiseAND(img, img, mask: foregroundMask);
+
+    // 7. 生成 4 通道 (BGRA) 带透明背景的 PNG 图像
+    final resultWithAlpha = cv.Mat.zeros(
+      img.rows,
+      img.cols,
+      cv.MatType.CV_8UC4,
+    );
+
+    for (var y = 0; y < img.rows; y++) {
+      for (var x = 0; x < img.cols; x++) {
+        final isFg = foregroundMask.at<int>(y, x) == 255;
+        if (isFg) {
+          //final pixel = img.atPixel(y, x);
+          final vec = img.atVec<cv.Vec3b>(y, x).val; // 获取原图的 BGR 像素值
+          //debugger();
+          resultWithAlpha.setVec<cv.Vec4b>(
+            y,
+            x,
+            cv.Vec4b(vec[0], vec[1], vec[2], 255),
+          );
+        } else {
+          // 透明背景
+          resultWithAlpha.setVec<cv.Vec4b>(y, x, cv.Vec4b(0, 0, 0, 0));
+        }
+      }
+    }
+    final result = await resultWithAlpha.toUiImage();
+
+    // 9. 释放 C++ 层面的底层 OpenCV 内存资源
+    img.dispose();
+    mask.dispose();
+    bgdModel.dispose();
+    fgdModel.dispose();
+    foregroundMask.dispose();
+    resultWithAlpha.dispose();
+
+    return result;
+  }
 }

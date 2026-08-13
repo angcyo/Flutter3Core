@@ -80,6 +80,7 @@ Future<int> measureTime(Future Function() callback) async {
     await callback();
   } catch (e) {
     //print(e);
+    l.w("callback error: ${e.runtimeType}");
     l.e(e);
   }
   final end = DateTime.now();
