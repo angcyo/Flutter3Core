@@ -610,4 +610,47 @@ extension MatImageEx on cv.Mat {
 
     return result;
   }
+
+  @implementation
+  Future<UiImage?> removeBackground2() async {
+    final image = this;
+    final remover = OpenCVBackgroundRemover(
+      //
+      // 图片边缘采样宽度
+      //
+      border: 10,
+
+      //
+      // 小于图片面积 0.1% 的区域删除
+      //
+      minAreaRatio: 0.001,
+
+      //
+      // Lab 背景差异阈值
+      //
+      threshold: 18,
+
+      //
+      // 形态学核
+      //
+      morphologySize: 5,
+    );
+
+    //
+    // =========================================================
+    // 分割
+    // =========================================================
+    //
+
+    final mask = remover.removeBackground(image);
+    final foreground = makeTransparentForeground(image, mask);
+    final result = await foreground.toUiImage();
+
+    // 9. 释放 C++ 层面的底层 OpenCV 内存资源
+    foreground.dispose();
+    mask.dispose();
+    image.dispose();
+
+    return result;
+  }
 }
