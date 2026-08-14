@@ -55,6 +55,10 @@ class BirefnetIsolateManager {
     bool binary,
   ) async {
     if (modelPath?.isFileExistsSync() != true) {
+      assert(() {
+        l.w("模型文件不存在->$modelPath");
+        return true;
+      }());
       return image;
     }
     if (image == null) {

@@ -28,6 +28,10 @@ class BirefnetManager {
     bool binary,
   ) async {
     if (modelPath == null || modelPath.isFileExistsSync() != true) {
+      assert(() {
+        l.w("模型文件不存在->$modelPath");
+        return true;
+      }());
       return image;
     }
     if (image == null) {
