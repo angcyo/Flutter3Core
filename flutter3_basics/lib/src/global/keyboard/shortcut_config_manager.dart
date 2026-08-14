@@ -5,6 +5,11 @@ part of '../../../flutter3_basics.dart';
 /// @date 2026/07/28
 ///
 /// 全局快捷键配置管理
+///
+/// - [addShortcutConfig] 添加快捷键配置
+/// - [registerShortcutAction] 添加快捷键配置
+/// - [triggerShortcutAction] 触发快捷键执行动作
+///
 /// - [ShortcutConfigBean]
 class ShortcutConfigManager {
   /// 快捷键配置列表

@@ -5,8 +5,11 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @since 2023/11/09
 ///
-
-Size kDefaultLoadingSize = const Size(50, 50);
+/// 默认的加载提示大小
+Size kDefaultLoadingSize = const Size(
+  kStrokeLoadingIndicatorDimension + kM,
+  kStrokeLoadingIndicatorDimension + kM,
+);
 
 /// 弱引用
 WeakReference<OverlayEntry>? _currentLoadingEntryRef;
@@ -23,6 +26,7 @@ bool $pauseLoadingTimeoutCheck = false;
 ///
 /// [builder] 构建加载提示的Widget
 /// [progressValue] 进度值[0~1]
+///   - -1: 不确定的进度
 ///
 /// [showStrokeLoading]
 /// [postShow] 是否要延迟显示
@@ -40,6 +44,9 @@ OverlayEntry? showLoading({
   double? progressValue,
   bool postShow = true,
 }) {
+  if (loadingInfoNotifier == null) {
+    progressValue = -1;
+  }
   var currentLoadingEntry = _currentLoadingEntryRef?.target;
   if (currentLoadingEntry != null) {
     currentLoadingEntry.remove();
@@ -82,7 +89,7 @@ OverlayEntry? showLoading({
             result = result
                 .stackOf(
                   message.text(
-                    style: globalTheme.textPlaceStyle.copyWith(
+                    style: globalTheme.textBodyStyle.copyWith(
                       color: globalTheme.whiteColor,
                     ),
                   ),
@@ -167,10 +174,11 @@ Future wrapLoading(
   Timer? timer;
   bool isTimeout = false;
   bool isEnd = false;
+  final startTime = nowTimestamp();
 
   if (onStart == null) {
     if (timeout != null) {
-      loadingInfoNotifier ??= LoadingValueNotifier(
+      loadingInfoNotifier ??= LoadingValueNotifier.fromValue(
         LoadingInfo(message: showCountDown ? "${timeout.inSeconds}" : null),
       );
     }
@@ -228,7 +236,11 @@ Future wrapLoading(
     }, timeout);
   }
   return future.get((value, error) {
+    final endTime = nowTimestamp();
     assert(() {
+      l.i(
+        "[${debugLabel ?? "wrapLoading"}]耗时->${LTime.diffTime(startTime, endTime: endTime)}",
+      );
       if (error != null) {
         l.e('wrapLoading error->$error');
       }
@@ -308,7 +320,9 @@ class LoadingInfo {
 /// - [ValueListenableBuilder]
 class LoadingValueNotifier extends ValueNotifier<LoadingInfo?>
     with NotifierMixin {
-  LoadingValueNotifier(super.value);
+  LoadingValueNotifier() : super(null);
+
+  LoadingValueNotifier.fromValue(super.value);
 }
 
 /// [_LoadingOverlay.loadingInfoNotifier]

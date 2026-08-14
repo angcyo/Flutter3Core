@@ -16,7 +16,8 @@ class StrokeLoadingWidget extends LeafRenderObjectWidget {
   final Size? contentSize;
 
   /// 当前的进度
-  /// 为空时表示 不确定性的进度
+  /// 为空时, 不绘制进度
+  /// -1: 不确定性的进度
   /// [0.0-1.0]
   final double? progress;
 
@@ -91,8 +92,9 @@ class StrokeLoadingRenderObject extends RenderBox {
     //debugger();
     final biggest = constraints.biggest;
     size = biggest.ensureValid(
-        width: minOf(biggest.width, biggest.height),
-        height: minOf(biggest.width, biggest.height));
+      width: minOf(biggest.width, biggest.height),
+      height: minOf(biggest.width, biggest.height),
+    );
     //debugger();
   }
 
@@ -125,6 +127,9 @@ class StrokeLoadingRenderObject extends RenderBox {
 
     rect = rect.deflateValue(lineWidth + lineWidth / 2);
     if (progress == null) {
+      //no
+    } else if (progress == -1) {
+      //无线进度
       canvas.drawArc(
         rect,
         _startAngle.hds,
@@ -141,6 +146,13 @@ class StrokeLoadingRenderObject extends RenderBox {
         paint,
       );
     }
+
+    /*assert(() {
+      l.d(
+        "startAngle:$_startAngle ${_startAngle.hds} sweepAngle:${(360 * progress!).hds}",
+      );
+      return true;
+    }());*/
 
     if (!pause) {
       postMarkNeedsPaint();

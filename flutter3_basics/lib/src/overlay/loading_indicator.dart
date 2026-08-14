@@ -7,7 +7,9 @@ part of '../../flutter3_basics.dart';
 
 /// 加载圈圈最小的尺寸大小
 const double kMinLoadingIndicatorDimension = 28.0;
-const double kStrokeLoadingIndicatorDimension = 36.0;
+
+/// - [kDefaultLoadingSize]
+const double kStrokeLoadingIndicatorDimension = 50.0;
 
 /// [CircularProgressIndicator]
 /// [StrokeLoadingWidget]
@@ -16,6 +18,7 @@ class LoadingIndicator extends StatelessWidget {
 
   /// 当前进度的值, 如果有. [0.0-1.0]
   /// 指定表示明确的进度, null未指定表示不明确的进度.
+  /// -1 表示不明确的进度.
   final double? progressValue;
 
   /// 是否使用系统样式
@@ -38,11 +41,13 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double? width = size?.width ??
+    double? width =
+        size?.width ??
         (useSystemStyle
             ? kMinLoadingIndicatorDimension
             : kStrokeLoadingIndicatorDimension);
-    double? height = size?.height ??
+    double? height =
+        size?.height ??
         (useSystemStyle
             ? kMinLoadingIndicatorDimension
             : kStrokeLoadingIndicatorDimension);
@@ -60,7 +65,7 @@ class LoadingIndicator extends StatelessWidget {
                 strokeWidth: 2,
               )
             : StrokeLoadingWidget(
-                progress: progressValue == -1 ? null : progressValue,
+                progress: progressValue,
                 color: color ?? Colors.white,
               ),
       ),
@@ -87,8 +92,9 @@ class LoadingWrapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget indicator = GlobalConfig.of(context)
-        .loadingIndicatorBuilder(context, this, progressValue, color);
+    Widget indicator = GlobalConfig.of(
+      context,
+    ).loadingIndicatorBuilder(context, this, progressValue, color);
     return Container(
       width: width,
       height: height,
@@ -125,9 +131,11 @@ class LoadingStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget loading = this.loading ??
-        GlobalConfig.of(context)
-            .loadingIndicatorBuilder(context, this, progressValue, color);
+    Widget loading =
+        this.loading ??
+        GlobalConfig.of(
+          context,
+        ).loadingIndicatorBuilder(context, this, progressValue, color);
     return AnimatedSwitcher(
       duration: kDefaultAnimationDuration,
       child: isLoading ? loading : child,
@@ -137,10 +145,7 @@ class LoadingStateWidget extends StatelessWidget {
 
 extension LoadingWidgetEx on Widget {
   /// 加载圈圈包裹小部件
-  Widget loadingWidget(
-    bool isLoading, {
-    Widget? loading,
-  }) {
+  Widget loadingWidget(bool isLoading, {Widget? loading}) {
     return LoadingStateWidget(
       isLoading: isLoading,
       loading: loading,
@@ -151,10 +156,7 @@ extension LoadingWidgetEx on Widget {
 
 extension LoadingValueListenableEx on ValueListenable<bool> {
   /// 加载圈圈包裹小部件
-  Widget loadingWidget({
-    required Widget child,
-    Widget? loading,
-  }) {
+  Widget loadingWidget({required Widget child, Widget? loading}) {
     return ValueListenableBuilder<bool>(
       valueListenable: this,
       builder: (context, value, child) {
@@ -178,5 +180,4 @@ enum LoadingIndicatorStyle {
 
   ///
   strokeLoading,
-  ;
 }
