@@ -22,10 +22,12 @@ mixin MultiValueConfigMixin {
   /// 选中的值列表
   List? get selectedValues => null;
 
-  /// 值列表对应的Widget
+  /// 值列表对应的Widget, 不指定则从[values]生成
+  @autoInjectMark
   List<Widget>? get valuesWidget => null;
 
   /// 在指定value上的点击事件回调
+  /// @return true 标识拦截默认行为
   ValueCallback? get onTapValue => null;
 
   /// 选中的值列表改变回调
@@ -119,33 +121,32 @@ mixin MultiValueMixin<T extends StatefulWidget> on State<T> {
     values ??= multipleValueConfig?.values;
     valuesWidget ??= multipleValueConfig?.valuesWidget;
 
-    final widgetList =
-        valuesWidget ??
-        values?.mapIndexed((index, value) {
-          return widgetOf(
-                context,
-                value,
-                tryTextWidget: true,
-                textAlign: textAlign ?? TextAlign.center,
-                textStyle: isSelectedValueMixin(value)
-                    ? textSelectedStyle
-                    : textStyle,
-              )
-              ?.paddingOnly(all: kL)
-              .backgroundDecoration(
-                !enable
-                    ? fillDecoration(
-                        color: globalTheme.disableColor,
-                        radius: radius,
-                      )
-                    : isSelectedValueMixin(value) && enableSelectedDecoration
-                    ? fillDecoration(
-                        color: selectedBgColor ?? globalTheme.accentColor,
-                        radius: radius,
-                      )
-                    : null,
-              );
-        });
+    final widgetList = (valuesWidget ?? values)?.mapIndexed((index, e) {
+      final value = values?[index];
+      return widgetOf(
+            context,
+            e,
+            tryTextWidget: true,
+            textAlign: textAlign ?? TextAlign.center,
+            textStyle: isSelectedValueMixin(value)
+                ? textSelectedStyle
+                : textStyle,
+          )
+          ?.paddingOnly(all: kL)
+          .backgroundDecoration(
+            !enable
+                ? fillDecoration(
+                    color: globalTheme.disableColor,
+                    radius: radius,
+                  )
+                : isSelectedValueMixin(value) && enableSelectedDecoration
+                ? fillDecoration(
+                    color: selectedBgColor ?? globalTheme.accentColor,
+                    radius: radius,
+                  )
+                : null,
+          );
+    });
     //map
     return widgetList?.mapIndexed((index, widget) {
       final value = values?[index];
@@ -175,7 +176,10 @@ mixin MultiValueMixin<T extends StatefulWidget> on State<T> {
   @api
   bool clickChildItemValueWidget(int index, dynamic value) {
     //debugger();
-    multipleValueConfig?.onTapValue?.call(value);
+    final intercept = multipleValueConfig?.onTapValue?.call(value);
+    if (intercept is bool && intercept) {
+      return false;
+    }
     if (isSelectedValueMixin(value)) {
       if (canCancelSelectedValueMixin(value)) {
         selectedValuesMixin.remove(value);

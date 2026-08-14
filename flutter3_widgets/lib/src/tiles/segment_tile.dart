@@ -310,11 +310,13 @@ class ValueSegmentTile extends StatefulWidget with MultiValueConfigMixin {
   @override
   final List? selectedValues;
 
-  /// 值列表对应的Widget
+  /// 值列表对应的Widget, 不指定则从[values]生成
   @override
+  @autoInjectMark
   final List<Widget>? valuesWidget;
 
-  /// 点击事件回调
+  /// 在指定value上的点击事件回调
+  /// @return true 标识拦截默认行为
   @override
   final ValueCallback? onTapValue;
 
@@ -339,6 +341,7 @@ class ValueSegmentTile extends StatefulWidget with MultiValueConfigMixin {
   final Color? selectedBgColor;
 
   /// 选中样式: 圆角大小
+  @defInjectMark
   final double? selectedBorderRadius;
 
   /// 正常情况下的文本样式
@@ -368,7 +371,7 @@ class ValueSegmentTile extends StatefulWidget with MultiValueConfigMixin {
     this.values,
     this.selectedValues,
     this.valuesWidget,
-    this.onTapValue,
+    this.onTapValue /*点击回调, 或拦截*/,
     this.onValuesSelected,
     this.maxSelectedCount = 1,
     this.enableSelectedEmpty = false,
