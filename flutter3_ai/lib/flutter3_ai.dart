@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter3_ai/src/gemma/chat_message.dart';
-import 'package:flutter3_ai/src/gemma/thinking_widget.dart';
+//import 'package:flutter3_ai/src/gemma/chat_message.dart';
+//import 'package:flutter3_ai/src/gemma/thinking_widget.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
 //import 'package:flutter_gemma/core/chat.dart';
 //import 'package:flutter_gemma/core/message.dart';
