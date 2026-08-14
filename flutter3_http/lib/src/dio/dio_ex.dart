@@ -428,6 +428,7 @@ extension DioStringEx on String {
   /// [deleteOnError] 是否在下载失败时, 删除文件
   /// [overwrite] 是否覆盖已存在的文件
   /// [onDownloadAction] 下载结束的回调
+  /// [loadingInfoNotifier] 下载进度通知
   /// https://pub.dev/packages/network_to_file_image
   ///
   /// [Dio.download]
@@ -450,10 +451,17 @@ extension DioStringEx on String {
     bool? toastError = false,
     //--
     void Function(String? savePath, Object? error)? onDownloadAction,
+    //--
+    LoadingValueNotifier? loadingInfoNotifier,
   }) async {
+    loadingInfoNotifier?.value = LoadingInfo(progress: -1);
     final url = transformUrl();
     final dio = RDio.get(context: context).dio;
     String? saveFilePath = savePath ?? (await getSavePath);
+    if (isNil(saveFilePath)) {
+      //获取系统缓存文件路径
+      saveFilePath = Directory.systemTemp.path + pathSeparator + $uuid;
+    }
     if (overwrite == false && saveFilePath?.isExistsSync() == true) {
       //文件已经存在
       final length = saveFilePath!.length;
@@ -472,8 +480,10 @@ extension DioStringEx on String {
         transformUrl(),
         saveFilePath,
         onReceiveProgress: (count, total) {
+          int progressInt = (count / total * 100).round();
           if (count >= total) {
-            l.i("下载完成: $url -> $savePath");
+            progressInt = 100;
+            l.i("下载完成: $url -> $saveFilePath");
           }
           assert(() {
             if (debugLog) {
@@ -489,6 +499,10 @@ extension DioStringEx on String {
             return true;
           }());
           onReceiveProgress?.call(count, total);
+          loadingInfoNotifier?.value = LoadingInfo(
+            /*progress: count / total,*/
+            message: "$progressInt",
+          );
         },
         lengthHeader: lengthHeader,
         deleteOnError: deleteOnError,
@@ -511,7 +525,7 @@ extension DioStringEx on String {
         if (newFileName != null) {
           final file = saveFilePath!.toFile();
           final newFile = file.renameSync(
-            "${file.parent.path}${pathSeparator}$newFileName",
+            "${file.parent.path}$pathSeparator$newFileName",
           );
           saveFilePath = newFile.path;
         }
