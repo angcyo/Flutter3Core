@@ -68,28 +68,47 @@ class LibAppVersionBean {
         if (data is String) {
           appVersionUrl = url;
           final bean = LibAppVersionBean.fromJson(data.jsonDecode());
-          _appVersionBean = bean;
-          if (checkUpdate || forceShow == true || forceForbiddenShow == true) {
-            final update = await AppUpdateDialog.checkUpdateAndShow(
-              GlobalConfig.def.globalContext,
-              bean,
-              forceShow: forceShow,
-              forceForbiddenShow: forceForbiddenShow,
-              debugLabel: debugLabel,
-            );
-            onUpdateAction?.call(update);
-          } else {
-            onUpdateAction?.call(false);
-          }
-          assert(() {
-            l.i("当前版本信息->${$appVersionBean}");
-            return true;
-          }());
+          checkVersionAndShow(
+            bean,
+            checkUpdate: checkUpdate,
+            onUpdateAction: onUpdateAction,
+            forceShow: forceShow,
+            forceForbiddenShow: forceForbiddenShow,
+            debugLabel: debugLabel,
+          );
         } else {
           onUpdateAction?.call(false);
         }
       },
     );
+  }
+
+  /// 检查版本信息and显示
+  static Future checkVersionAndShow(
+    LibAppVersionBean bean, {
+    bool checkUpdate = true,
+    BoolCallback? onUpdateAction,
+    bool? forceShow,
+    bool? forceForbiddenShow,
+    String? debugLabel,
+  }) async {
+    _appVersionBean = bean;
+    if (checkUpdate || forceShow == true || forceForbiddenShow == true) {
+      final update = await AppUpdateDialog.checkUpdateAndShow(
+        GlobalConfig.def.globalContext,
+        bean,
+        forceShow: forceShow,
+        forceForbiddenShow: forceForbiddenShow,
+        debugLabel: debugLabel,
+      );
+      onUpdateAction?.call(update);
+    } else {
+      onUpdateAction?.call(false);
+    }
+    assert(() {
+      l.i("当前版本信息->${$appVersionBean}");
+      return true;
+    }());
   }
 
   static List<LibAppVersionBean>? fromMarkdownList(String? markdown) {
