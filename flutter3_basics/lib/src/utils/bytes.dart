@@ -504,8 +504,9 @@ class ByteReader {
     if (isDone || length > sumLength - _index) {
       return overflow;
     }
-    final result = bytes.sublist(_index, math.min(_index + length, sumLength));
-    _index += length;
+    final end = math.min(_index + length, sumLength);
+    final result = bytes.sublist(_index, end);
+    _index += end - _index;
     return result;
   }
 
