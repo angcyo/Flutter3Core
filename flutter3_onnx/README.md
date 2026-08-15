@@ -58,3 +58,18 @@ https://huggingface.co/ZhengPeng7/BiRefNet_lite
 https://huggingface.co/briaai/RMBG-1.4
 
 https://huggingface.co/mujibanget/rmbg-onnx
+
+# macOS 
+
+https://pub.dev/packages/flutter_onnxruntime#macos
+
+最低需要系统版本`platform :osx, '14.0'`
+
+还需要`use_frameworks! :linkage => :static` 或者 
+
+```
+# 禁用 CocoaPods 的静态传递依赖校验
+pre_install do |installer|
+  Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
+end
+```
