@@ -1618,7 +1618,9 @@ extension WidgetEx on Widget {
     );
   }
 
-  /// 移除MediaQuery的padding
+  /// 移除[MediaQuery]的padding, 会影响安全区域的数值
+  /// - [SafeArea]
+  /// - [SliverSafeArea]
   Widget removePadding(
     BuildContext context, {
     bool removeAll = false,

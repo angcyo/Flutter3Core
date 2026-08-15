@@ -92,8 +92,11 @@ double get $screenMaxSize => max(screenWidth, screenHeight);
 @dp
 Size get $screenSize => Size(screenWidth, screenHeight);
 
-/// 是否是横屏
+/// 屏幕方向是否是横屏
 bool get isLandscape => screenWidth > screenHeight;
+
+@alias
+bool get $isLandscape => isLandscape;
 
 /// 对角线长度
 @dp

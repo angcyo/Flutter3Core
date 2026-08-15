@@ -52,7 +52,7 @@ Future<void> setScreenPortrait([
   ],
 ]) => setScreenOrientations(orientations);
 
-/// 根据屏幕方向进行布局
+/// 根据屏幕方向进行布局, 监听屏幕方向
 /// ```
 /// MediaQuery.of(context).orientation;
 /// ```

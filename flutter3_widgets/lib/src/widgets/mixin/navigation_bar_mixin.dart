@@ -115,6 +115,9 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// [kBottomNavigationBarHeight] 固定高度 56.0
+  ///
+  /// - [NavigationRail]
+  /// - [BottomNavigationBar]
   @api
   @callPoint
   Widget buildBottomNavigationBar(
@@ -132,6 +135,15 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     double? unselectedIconSize,
     bool? showSelectedLabels,
     bool? showUnselectedLabels,
+    //--
+    BottomNavigationBarLandscapeLayout? landscapeLayout,
+    //--[NavigationRail]
+    bool? useNavigationRail,
+    bool? railItemExtended,
+    bool? railScrollable,
+    NavigationRailLabelType? railLabelType /*label 显示的类型*/,
+    Widget? railTrailing,
+    Widget? railLeading,
   }) {
     final globalTheme = GlobalTheme.of(context);
     items ??= buildBottomNavigationBarItems(context);
@@ -156,14 +168,45 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
     final selectedLabelStyle = showLabel
         ? unselectedLabelStyle?.copyWith(color: selectedItemColor)
         : null;
-
+    //--
+    final selectedIndex = clamp(currentNavigateIndexMixin, 0, items.length - 1);
+    if (useNavigationRail == true) {
+      return NavigationRail(
+        elevation: elevation == 0 ? null : elevation,
+        /*useIndicator: ,*/
+        /*indicatorColor: ,*/
+        backgroundColor: backgroundColor,
+        selectedIconTheme: selectedIconTheme,
+        labelType: railLabelType,
+        selectedLabelTextStyle: selectedLabelStyle,
+        unselectedLabelTextStyle: unselectedLabelStyle,
+        extended: railItemExtended == true,
+        scrollable: railScrollable == true,
+        //--
+        onDestinationSelected: (index) {
+          onSelfNavigationIndexChanged(context, index);
+        },
+        destinations: items.map2List(
+          (e) => NavigationRailDestination(
+            icon: e.icon,
+            selectedIcon: e.activeIcon,
+            label: e.label?.text() ?? empty,
+          ),
+        ),
+        selectedIndex: selectedIndex,
+        //--
+        trailing: railTrailing,
+        leading: railLeading,
+      );
+    }
     return BottomNavigationBar(
       items: items,
       elevation: elevation,
-      currentIndex: clamp(currentNavigateIndexMixin, 0, items.length - 1),
+      currentIndex: selectedIndex,
       type: BottomNavigationBarType.fixed,
       backgroundColor: backgroundColor,
       iconSize: selectedIconSize,
+      landscapeLayout: landscapeLayout,
       //--
       selectedItemColor: selectedItemColor,
       unselectedItemColor: unselectedItemColor,
