@@ -15,7 +15,13 @@ class LibLabelValueBean with ITextProvider, Equatable {
 
   Map<String, dynamic> toJson() => _$LibLabelValueBeanToJson(this);
 
-  LibLabelValueBean({this.label, this.des, this.value, this.summary});
+  LibLabelValueBean({
+    this.label,
+    this.des,
+    this.value,
+    this.strValue,
+    this.summary,
+  });
 
   /// 唯一标识符
   String? uuid;
@@ -32,6 +38,9 @@ class LibLabelValueBean with ITextProvider, Equatable {
   /// 数值
   int? value;
 
+  /// 字符串的值
+  String? strValue;
+
   @override
   String? get provideText => label;
 
@@ -39,5 +48,5 @@ class LibLabelValueBean with ITextProvider, Equatable {
   String toString() => toJson().toString();
 
   @override
-  List<Object?> get props => [uuid, value];
+  List<Object?> get props => [uuid, value, strValue];
 }

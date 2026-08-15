@@ -32,7 +32,7 @@ class ConfigFile {
     String? package,
     String? subFolder,
     bool forceFetch = false,
-    bool forceAssetToFile = false,
+    bool forceAssetToFile = isDebug,
     bool waitHttp = false,
     String? httpUrl,
     ValueCallback? onHttpAction,

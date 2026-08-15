@@ -459,6 +459,10 @@ Future<String?> getClipboardText() async {
 Future<void> setClipboardText([String? text]) =>
     Clipboard.setData(ClipboardData(text: text ?? ""));
 
+extension PatternEx on Pattern {
+  RegExp toRegex() => this is RegExp ? this as RegExp : RegExp("$this");
+}
+
 extension StringEx on String {
   //MARK: - json
 
@@ -768,6 +772,9 @@ extension StringEx on String {
   /// 判断当前字符是否是数字
   bool get isNumber => isMatch(r'^\d+$');
 
+  /// 移除数字
+  String get removeNumbers => this.replaceAll(RegExp(r'\d'), '');
+
   /// 从字符串中提取正负整数数字
   int? get getIntOrNull {
     final reg = RegExp(r'[+-]?\d+');
@@ -1013,8 +1020,6 @@ extension StringEx on String {
   /// 正则表达式
   RegExp get regex => toRegex();
 
-  RegExp toRegex() => RegExp(this);
-
   /// 当前的文本是否正则匹配通过
   /// ```dart
   /// var string = 'Dash is a bird';
@@ -1031,14 +1036,19 @@ extension StringEx on String {
   /// - [StringEx.getFloatList]
   /// - [StringEx.matchList]
   /// - [RegExp.allMatches]
-  List<String> matchList(String regex) =>
+  List<String> matchList(Pattern from) =>
       regex.toRegex().allMatches(this).map((e) => e.group(0)!).toList();
 
   /// 使用正则替换字符串
-  String replaceAll(String regex, String replace) =>
-      regex.toRegex().allMatches(this).fold(this, (previousValue, element) {
-        return previousValue.replaceRange(element.start, element.end, replace);
-      });
+  String replaceAll(Pattern from, String replace) => from is RegExp
+      ? this.replaceAll(from, replace)
+      : regex.toRegex().allMatches(this).fold(this, (previousValue, element) {
+          return previousValue.replaceRange(
+            element.start,
+            element.end,
+            replace,
+          );
+        });
 
   /// 使用正则替换字符串中的{xxx}字符
   /// - 支持 `{xxx}`

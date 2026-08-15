@@ -49,9 +49,7 @@ class $AssetsSvgGen {
   List<String> get values => [matchCase, matchWord];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const String package = 'flutter3_basics';
 
   static const $AssetsPngGen png = $AssetsPngGen();
