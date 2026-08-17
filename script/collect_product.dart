@@ -51,6 +51,21 @@ void main(List<String> arguments) async {
     throw "❌ 请在[$currentPath]目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本的收集产品名称";
   }
 
+  //MARK: input args
+  String argBuildType = "release";
+  String argBuildFlavor = "";
+  for (final arg in arguments) {
+    if (arg.startsWith("--buildType=")) {
+      argBuildType = arg.split("=")[1];
+    } else if (arg.startsWith("--buildFlavor=")) {
+      argBuildFlavor = arg.split("=")[1];
+    }
+  }
+  String buildTypeTag = argBuildType.isEmpty ? "" : "-$argBuildType";
+  String buildFlavorTag = argBuildFlavor.isEmpty ? "" : "-$argBuildFlavor";
+
+  //MARK: yaml config
+
   final time = DateTime.now();
 
   final appName = _getAppName();
@@ -59,7 +74,9 @@ void main(List<String> arguments) async {
   print(
     "💡 appName:$appName"
     " versionName:$versionName"
-    " versionCode:$versionCode",
+    " versionCode:$versionCode"
+    " buildType:$argBuildType"
+    " buildFlavor:$argBuildFlavor",
   );
 
   //输出路径
@@ -75,13 +92,18 @@ void main(List<String> arguments) async {
 
   //MARK: - Android apk
 
-  final androidApkName = config["android_apk_name"];
-  if (androidApkName is String) {
+  final apkNameConfig = config["android_apk_name"];
+  if (apkNameConfig is String) {
     //收集 apk
-    final outputName = formatName(androidApkName, "android");
-    final from = "$currentPath/build/app/outputs/flutter-apk/app-release.apk";
+    final outputName = formatName(
+      apkNameConfig,
+      "android",
+      defBuildFlavor: argBuildFlavor,
+    );
+    final apkName = "app$buildFlavorTag$buildTypeTag.apk";
+    final from = "$currentPath/build/app/outputs/flutter-apk/$apkName";
     if (File(from).existsSync()) {
-      final key = "app-release.apk/${File(from).lastModifiedSync()}";
+      final key = "$apkName/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("⚠️ 已复制过: $from");
         exitProductCount++;
@@ -99,14 +121,18 @@ void main(List<String> arguments) async {
 
   //MARK: - Android aab
 
-  final androidAppbundleName = config["android_appbundle_name"];
-  if (androidAppbundleName is String) {
+  final appBundleNameConfig = config["android_appbundle_name"];
+  if (appBundleNameConfig is String) {
     //收集 aab
-    final outputName = formatName(androidAppbundleName, "android");
-    final from =
-        "$currentPath/build/app/outputs/bundle/release/app-release.aab";
+    final outputName = formatName(
+      appBundleNameConfig,
+      "android",
+      defBuildFlavor: argBuildFlavor,
+    );
+    final aabName = "app$buildFlavorTag$buildTypeTag.aab";
+    final from = "$currentPath/build/app/outputs/bundle/release/$aabName";
     if (File(from).existsSync()) {
-      final key = "app-release.aab/${File(from).lastModifiedSync()}";
+      final key = "$aabName/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("⚠️ 已复制过: $from");
         exitProductCount++;
@@ -124,11 +150,15 @@ void main(List<String> arguments) async {
 
   //MARK: - iOS
 
-  final iosIpaName = config["ios_ipa_name"];
-  if (iosIpaName is String) {
+  final ipaNameConfig = config["ios_ipa_name"];
+  if (ipaNameConfig is String) {
     //收集 ipa
     final targetFileName = readIosBundleName();
-    final outputName = formatName(iosIpaName, "ios");
+    final outputName = formatName(
+      ipaNameConfig,
+      "ios",
+      defBuildFlavor: argBuildFlavor,
+    );
     final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
     if (File(from).existsSync()) {
       final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
@@ -149,11 +179,15 @@ void main(List<String> arguments) async {
 
   //MARK: - macOS
 
-  final macosAppName = config["macos_app_name"];
-  if (macosAppName is String) {
+  final macosAppNameConfig = config["macos_app_name"];
+  if (macosAppNameConfig is String) {
     //收集 app
     final productFileName = readMacosProductName();
-    final outputName = formatName(macosAppName, "macos");
+    final outputName = formatName(
+      macosAppNameConfig,
+      "macos",
+      defBuildFlavor: argBuildFlavor,
+    );
     final from =
         "$currentPath/build/macos/Build/Products/Release/$productFileName.app";
     if (Directory(from).existsSync()) {
@@ -231,11 +265,15 @@ void main(List<String> arguments) async {
 
   //MARK: - windows
 
-  final windowsExeName = config["windows_exe_name"];
-  if (windowsExeName is String) {
+  final windowsExeNameConfig = config["windows_exe_name"];
+  if (windowsExeNameConfig is String) {
     //收集 exe
     final exeFileName = "${readWindowsExeName()}.exe";
-    final outputName = formatName(windowsExeName, "windows");
+    final outputName = formatName(
+      windowsExeNameConfig,
+      "windows",
+      defBuildFlavor: argBuildFlavor,
+    );
     final from = "$currentPath/build/windows/x64/runner/Release";
     if (Directory(from).existsSync()) {
       final key =
@@ -261,9 +299,9 @@ void main(List<String> arguments) async {
           }
         }
         //使用Inno Setup打包安装程序
-        final windowsInnoSetup = config["windows_inno_setup"];
-        if (windowsInnoSetup is String) {
-          final issFile = File("$currentPath/$windowsInnoSetup");
+        final windowsInnoSetupConfig = config["windows_inno_setup"];
+        if (windowsInnoSetupConfig is String) {
+          final issFile = File("$currentPath/$windowsInnoSetupConfig");
           if (issFile.existsSync()) {
             final isccPath = await _findISCCPath();
             if (isccPath != null) {
@@ -331,9 +369,9 @@ String? _getVersionCode() {
   return $pubspec?["version"]?.toString().split("+")[1];
 }
 
-String? _getBuildTypeName(String? platformName) {
+String? _getBuildTypeName(String? platformName, {String? def}) {
   final buildConfig = readBuildConfigMap("build_config");
-  final def = buildConfig?["json"]?["buildType"];
+  def ??= buildConfig?["json"]?["buildType"];
   if (platformName == null || platformName.isEmpty) {
     return def;
   }
@@ -341,9 +379,9 @@ String? _getBuildTypeName(String? platformName) {
       def;
 }
 
-String? _getBuildFlavorName(String? platformName) {
+String? _getBuildFlavorName(String? platformName, {String? def}) {
   final buildConfig = readBuildConfigMap("build_config");
-  final def = buildConfig?["json"]?["buildFlavor"];
+  def ??= buildConfig?["json"]?["buildFlavor"];
   if (platformName == null || platformName.isEmpty) {
     return def;
   }
@@ -352,13 +390,24 @@ String? _getBuildFlavorName(String? platformName) {
 }
 
 /// 格式化名称
-String formatName(String pattern, String? platformName) {
+String formatName(
+  String pattern,
+  String? platformName, {
+  String? defBuildType,
+  String? defBuildFlavor,
+}) {
   String output = pattern;
   output = output.replaceAll("#an", _getAppName() ?? "APP");
   output = output.replaceAll("#vn", _getVersionName() ?? "0.0.1");
   output = output.replaceAll("#vc", _getVersionCode() ?? "1");
-  output = output.replaceAll("#bn", _getBuildTypeName(platformName) ?? "");
-  output = output.replaceAll("#fn", _getBuildFlavorName(platformName) ?? "");
+  output = output.replaceAll(
+    "#bn",
+    _getBuildTypeName(platformName, def: defBuildType) ?? "",
+  );
+  output = output.replaceAll(
+    "#fn",
+    _getBuildFlavorName(platformName, def: defBuildFlavor) ?? "",
+  );
   output = output.replaceAll("--", "-");
   output = output.replaceAll("__", "_");
   output = output.replaceAll("-.", ".");

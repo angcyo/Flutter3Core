@@ -11,6 +11,12 @@ import '_script_common.dart';
 ///
 /// 用来构建[BuildConfig]
 void main(List<String> arguments) {
+  colorLog(
+    '[${Platform.script.toFilePath(windows: isWindows).split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
+  );
+  final currentPath = Directory.current.path;
+
+  //MARK: input args
   String? argBuildType;
   String? argBuildFlavor;
   for (final arg in arguments) {
@@ -20,10 +26,8 @@ void main(List<String> arguments) {
       argBuildFlavor = arg.split("=")[1];
     }
   }
-  colorLog(
-    '[${Platform.script.toFilePath(windows: isWindows).split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
-  );
-  final currentPath = Directory.current.path;
+
+  //MARK: yaml config
 
   //从`pubspec.yaml`中获取版本信息
   final pubspecFile = File("$currentPath/pubspec.yaml");
