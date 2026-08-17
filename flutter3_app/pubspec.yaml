@@ -89,7 +89,7 @@ dependencies:
   # https://pub.dev/packages/permission_handler
   # https://github.com/baseflow/flutter-permission-handler
   # https://pub.dev/packages/meta
-  permission_handler: ^13.0.0
+  permission_handler: ^13.0.1
 
   # 保存图片到相册 #ANDROID IOS
   # https://pub.dev/packages/image_gallery_saver

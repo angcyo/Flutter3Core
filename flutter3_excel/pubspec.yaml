@@ -34,7 +34,7 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/web
   # https://pub.dev/packages/xml
-  excel_plus: ^2.12.4
+  excel_plus: ^2.14.2
   # https://pub.dev/packages/csv_plus
   #csv_plus: ^1.2.0
 

@@ -32,7 +32,7 @@ dependencies:
   # [Android] minimum Android version is now 7.0 (API level 24)
   # [iOS] minimum iOS version is now 13
   # [macOS] minimum macOS version is now 10.15
-  flutter_local_notifications: ^22.2.0
+  flutter_local_notifications: ^22.3.0
 
 dev_dependencies:
   flutter_test:

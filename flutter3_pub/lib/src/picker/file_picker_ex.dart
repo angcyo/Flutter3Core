@@ -18,7 +18,7 @@ Future<PlatformFile?> pickSingleImage({
     allowCompression: allowCompression,
     compressionQuality: compressionQuality,
     allowMultiple: false,
-  ))?.files.firstOrNull;
+  ))?.firstOrNull;
 }
 
 /// 选择单个文件, 选择多个文件请使用[pickFiles]
@@ -30,8 +30,6 @@ Future<PlatformFile?> pickFile({
   String? dialogTitle,
   String? initialDirectory,
   List<String>? allowedExtensions,
-  bool withData = false,
-  bool withReadStream = false,
 }) async {
   return (await pickFiles(
     type: type ?? (isNil(allowedExtensions) ? FileType.any : FileType.custom),
@@ -41,9 +39,7 @@ Future<PlatformFile?> pickFile({
     dialogTitle: dialogTitle,
     initialDirectory: initialDirectory,
     allowedExtensions: allowedExtensions,
-    withData: withData,
-    withReadStream: withReadStream,
-  ))?.files.firstOrNull;
+  ))?.firstOrNull;
 }
 
 /// 选择多个文件[allowMultiple], 使用系统自带的文件选择器
@@ -65,7 +61,7 @@ Future<PlatformFile?> pickFile({
 ///
 ///  - [PlatformFile.path]
 @allPlatformFlag
-Future<FilePickerResult?> pickFiles({
+Future<List<PlatformFile>?> pickFiles({
   FileType type = FileType.any,
   bool allowMultiple = true,
   String? dialogTitle,
@@ -74,39 +70,42 @@ Future<FilePickerResult?> pickFiles({
   Function(FilePickerStatus)? onFileLoading,
   bool allowCompression = true,
   int? compressionQuality,
-  bool withData = false,
-  bool withReadStream = false,
-  bool lockParentWindow = false,
-  bool readSequential = false,
+  bool lockParentWindow = true,
 }) async {
-  final FilePickerResult? result = await FilePicker.pickFiles(
-    dialogTitle: dialogTitle,
-    initialDirectory: initialDirectory ?? _lastPickDirectory,
-    type: type,
-    allowedExtensions: allowedExtensions,
-    onFileLoading: onFileLoading,
-    compressionQuality: allowCompression ? (compressionQuality ?? 30) : 0,
-    allowMultiple: allowMultiple,
-    withData: withData,
-    withReadStream: withReadStream,
-    lockParentWindow: lockParentWindow,
-    readSequential: readSequential,
-  );
+  final List<PlatformFile> result = allowMultiple
+      ? await FilePicker.pickFiles(
+          dialogTitle: dialogTitle,
+          initialDirectory: initialDirectory ?? _lastPickDirectory,
+          type: type,
+          allowedExtensions: allowedExtensions,
+          onFileLoading: onFileLoading,
+          compressionQuality: allowCompression ? (compressionQuality ?? 30) : 0,
+          windowsOptions: WindowsOptions(lockParentWindow: lockParentWindow),
+        )
+      : [
+          ?await FilePicker.pickFile(
+            dialogTitle: dialogTitle,
+            initialDirectory: initialDirectory ?? _lastPickDirectory,
+            type: type,
+            allowedExtensions: allowedExtensions,
+            onFileLoading: onFileLoading,
+            compressionQuality: allowCompression
+                ? (compressionQuality ?? 30)
+                : 0,
+            windowsOptions: WindowsOptions(lockParentWindow: lockParentWindow),
+          ),
+        ];
 
   //temp
-  _lastPickDirectory = result?.files.firstOrNull?.path ?? _lastPickDirectory;
+  _lastPickDirectory = result.firstOrNull?.path ?? _lastPickDirectory;
 
   //Android girl.jpg:/data/user/0/com.angcyo.flutter3.abc/cache/file_picker/girl.jpg
   assert(() {
-    if (result != null) {
-      result.files.forEachIndexed((index, element) {
-        l.d(
-          '选择文件[$index][${element.name}:${element.size.toSizeStr()}][${element.path?.mimeType(element.bytes)}]->${element.path} bytes:${element.bytes?.length}',
-        );
-      });
-    } else {
-      l.d('取消选择文件');
-    }
+    result.forEachIndexed((index, element) async {
+      l.d(
+        '选择文件[$index][${element.name}:${(await element.length()).toSizeStr()}][${element.path?.mimeType()}]->${element.path}',
+      );
+    });
     return true;
   }());
 
@@ -119,13 +118,13 @@ Future<FilePickerResult?> pickFiles({
 @PlatformFlag("Android iOS Linux macOS Windows")
 Future<String?> pickDirectoryPath({
   String? dialogTitle,
-  bool lockParentWindow = false,
+  bool lockParentWindow = true,
   String? initialDirectory,
 }) async {
   final path = await FilePicker.getDirectoryPath(
     dialogTitle: dialogTitle,
-    lockParentWindow: lockParentWindow,
     initialDirectory: initialDirectory ?? _lastPickDirectory,
+    windowsOptions: WindowsOptions(lockParentWindow: lockParentWindow),
   );
   assert(() {
     if (path != null) {
@@ -170,17 +169,18 @@ Future<String?> saveFile({
   String? initialDirectory,
   FileType type = FileType.any,
   List<String>? allowedExtensions,
-  bool lockParentWindow = false,
+  bool lockParentWindow = true,
 }) async {
-  final path = await FilePicker.saveFile(
+  final uri = await FilePicker.saveFile(
     fileName: fromPath?.fileName() ?? fileName ?? "Untitled",
     bytes: bytes ?? fromPath?.file().readAsBytesSync().bytes ?? Uint8List(0),
     dialogTitle: dialogTitle,
     initialDirectory: initialDirectory ?? _lastPickDirectory,
     type: type,
     allowedExtensions: allowedExtensions,
-    lockParentWindow: lockParentWindow,
+    windowsOptions: WindowsOptions(lockParentWindow: lockParentWindow),
   );
+  final path = uri?.filePath;
   //temp
   _lastPickDirectory = path ?? _lastPickDirectory;
   assert(() {
@@ -248,4 +248,9 @@ extension PickerBytesEx on List<int> {
       bytes: bytes,
     );
   }
+}
+
+extension PickerPlatformFileListEx on List<PlatformFile> {
+  /// 获取本地磁盘所在的路径
+  List<String?> get paths => map((e) => e.path).toList();
 }
