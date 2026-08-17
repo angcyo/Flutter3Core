@@ -117,6 +117,11 @@ abstract class IUnit {
     return toUnit(value.toPixelFromMm());
   }
 
+  @unit
+  double toMmFromUnit(@unit num value) {
+    return IUnit.mm.toUnit(value.toPixelFromUnit(this));
+  }
+
   /// 格式化当前单位数值的输出
   /// [showSuffix] 是否显示单位后缀
   /// [fractionDigits] 小数点位数
@@ -505,6 +510,12 @@ extension UnitNumEx on num {
   ///[toPixel]
   @pixel
   double toPixelFromMm([@unit IUnit unit = IUnit.mm]) {
+    return unit.toPx(this);
+  }
+
+  ///[toPixel]
+  @pixel
+  double toPixelFromUnit([@unit IUnit unit = IUnit.mm]) {
     return unit.toPx(this);
   }
 
