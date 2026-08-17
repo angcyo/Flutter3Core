@@ -11,6 +11,15 @@ import '_script_common.dart';
 ///
 /// 用来构建[BuildConfig]
 void main(List<String> arguments) {
+  String? argBuildType;
+  String? argBuildFlavor;
+  for (final arg in arguments) {
+    if (arg.startsWith("--buildType=")) {
+      argBuildType = arg.split("=")[1];
+    } else if (arg.startsWith("--buildFlavor=")) {
+      argBuildFlavor = arg.split("=")[1];
+    }
+  }
   colorLog(
     '[${Platform.script.toFilePath(windows: isWindows).split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
   );
@@ -54,6 +63,12 @@ void main(List<String> arguments) {
   } else {
     colorErrorLog("不支持的[build_config]数据类[${buildConfig.runtimeType}]");
     json = {"json": buildInfoJson};
+  }
+  if (argBuildType != null) {
+    json["json"]["buildType"] = argBuildType;
+  }
+  if (argBuildFlavor != null) {
+    json["json"]["buildFlavor"] = argBuildFlavor;
   }
   //debugger();
 
