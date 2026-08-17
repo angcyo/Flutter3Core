@@ -43,15 +43,16 @@ mixin DioDownloadMixin {
     downloadStateMixin = .downloading;
     String name = url.fileName();
     /*if (name.endsWith(".apk.1")) {
-      //是否需要重命名为 .apk ?
-      //name = name.replace(".apk.1", ".apk");
+      //是否需要重命名为 .apk ? 不需要.
+      name = name.substring(0, name.length - 2);
+      //name = name.replaceAll(".apk.1", ".apk");
     }*/
     final filePath = await cacheFilePath(name, kDownloadsPathName);
     downloadFilePathCacheMixin = filePath;
     await url
         .download(
           savePath: filePath,
-          overwrite: false/*isDebug*/,
+          overwrite: false /*isDebug*/,
           cancelToken: downloadTokenMixin,
           onReceiveProgress: (count, total) {
             if (total > 0) {
