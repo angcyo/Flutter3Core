@@ -464,6 +464,15 @@ extension PatternEx on Pattern {
 }
 
 extension StringEx on String {
+  /// 默认不区分大小写判断2个字符串是否相等
+  /// - [caseSensitive] 是否区分大小写
+  bool equalsIgnoreCase(String? other, {bool caseSensitive = false}) {
+    if (other == null) {
+      return false;
+    }
+    return caseSensitive ? toLowerCase() == other.toLowerCase() : this == other;
+  }
+
   //MARK: - json
 
   /// - [DynamicEx.toJson]

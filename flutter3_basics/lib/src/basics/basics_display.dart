@@ -93,6 +93,9 @@ double get $screenMaxSize => max(screenWidth, screenHeight);
 Size get $screenSize => Size(screenWidth, screenHeight);
 
 /// 屏幕方向是否是横屏
+/// - [$isLandscape]
+/// - [isTabletLandscape]
+@Deprecated(r"Use $isLandscape instead")
 bool get isLandscape => screenWidth > screenHeight;
 
 @alias
@@ -206,6 +209,8 @@ bool get isTabletDevice => deviceInch >= 7 || screenInch >= 7;
 /// - [isTabletWindow]
 bool get isTabletWindow => isTabletDevice /*display.size.shortestSide >= 600*/;
 
-/// 是否处于平板宽屏模式
+/// 是否处于平板下的宽屏模式
+/// - [$isLandscape]
+/// - [isTabletLandscape]
 bool get isTabletLandscape =>
     isTabletWindow && screenWidth > screenHeight && screenWidth >= 600;
