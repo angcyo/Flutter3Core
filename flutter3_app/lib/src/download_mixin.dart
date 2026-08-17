@@ -51,7 +51,7 @@ mixin DioDownloadMixin {
     await url
         .download(
           savePath: filePath,
-          overwrite: isDebug,
+          overwrite: false/*isDebug*/,
           cancelToken: downloadTokenMixin,
           onReceiveProgress: (count, total) {
             if (total > 0) {

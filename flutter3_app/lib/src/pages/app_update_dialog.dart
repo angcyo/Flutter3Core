@@ -33,6 +33,10 @@ import '../../flutter3_app.dart';
 /// - [AppUpdateDialog.checkUpdateAndShow] 检测更新并显示[LibAppVersionBean]
 ///
 class AppUpdateDialog extends StatefulWidget with DialogMixin {
+  /// 海外市场（Google Play）：使用 in_app_update 插件，
+  /// 调用 Google Play 官方的应用内更新 API，无需申请 `REQUEST_INSTALL_PACKAGES` 权限。
+  static bool Function() isInGooglePlayFn = () => $buildFlavor != "mainland";
+
   /// 检查更新并且显示
   /// [forceShow] 是否强制显示更新, 不检查版本号
   /// 在[AppVersionBean.fetchConfig]中触发
@@ -168,7 +172,8 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
     final lRes = libRes(context);
     final bean = widget.versionBean;
     final forceUpdate = widget.forceUpdate == true || bean.forceUpdate == true;
-
+    final inGooglePlay = AppUpdateDialog.isInGooglePlayFn();
+    final jumpToMarket = inGooglePlay || bean.jumpToMarket == true;
     //控制按钮
     Widget control = [
       if (forceUpdate != true)
@@ -184,11 +189,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
             fontWeight: FontWeight.bold,
           ),
         ).expanded(),
-      if (bean.jumpToMarket == true || bean.outLink == true)
+      if (jumpToMarket || bean.outLink == true)
         //跳转下载
         GradientButton(
           onTap: () {
-            if (bean.jumpToMarket == true) {
+            if (jumpToMarket) {
               bean.marketUrl?.launch();
             } else if (bean.outLink == true) {
               bean.downloadUrl?.launch();
@@ -204,33 +209,24 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
         //直接下载
         GradientButton(
           onTap: () {
-            switch (downloadStateMixin) {
-              case DownloadState.none:
-                startDownloadMixin(bean.downloadUrl ?? "");
-                break;
-              case DownloadState.downloading:
-                break;
-              case DownloadState.downloaded:
-                //开始安装
-                _startInstall();
-                break;
-              case DownloadState.downloadFailed:
-                startDownloadMixin(bean.downloadUrl ?? "");
-                break;
-              default:
-                break;
-            }
+            final _ = switch (downloadStateMixin) {
+              DownloadState.none => startDownloadMixin(bean.downloadUrl ?? ""),
+              DownloadState.downloaded => _startInstall(),
+              DownloadState.downloadFailed => startDownloadMixin(
+                bean.downloadUrl ?? "",
+              ),
+              _ => null,
+            };
           },
           radius: kMaxBorderRadius,
           child:
-              (downloadStateMixin == DownloadState.none
+              (downloadStateMixin == .none
                       ? lRes?.libDownloadNow
-                      : (downloadStateMixin == DownloadState.downloading
+                      : (downloadStateMixin == .downloading
                             ? lRes?.libDownloading
-                            : (downloadStateMixin == DownloadState.downloaded
+                            : (downloadStateMixin == .downloaded
                                   ? lRes?.libInstallNow
-                                  : (downloadStateMixin ==
-                                            DownloadState.downloadFailed
+                                  : (downloadStateMixin == .downloadFailed
                                         ? lRes?.libClickRetry
                                         : "Unknown"))))
                   ?.text(
@@ -315,16 +311,43 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
         .focusScope(tag: classHash());
   }
 
-  /// iOS 平台无法安装APK
+  /// iOS 平台无法安装ipa
+  /// Android 平台需要权限
+  /// ```
+  /// <!-- Android 11+ Permissions -->
+  /// <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+  /// ```
   void _startInstall({String? path}) {
     //debugger();
     path ??= downloadFilePathCacheMixin;
     if (isAndroid) {
-      AndroidPackageInstaller.installApk(apkFilePath: path);
+      assert(() {
+        l.d("准备安装->$path");
+        return true;
+      }());
+      Permission.requestInstallPackages.request().get((value, error) {
+        assert(() {
+          l.d("安装权限返回->$value:$error");
+          return true;
+        }());
+        if (value == PermissionStatus.granted) {
+          AndroidPackageInstaller.installApk(apkFilePath: path!).get((
+            value,
+            error,
+          ) {
+            assert(() {
+              l.d("安装结果->$value:$error");
+              return true;
+            }());
+          });
+        }
+      });
     } else if (isMacOS) {
       runCommand("open", [path], throwOnError: false, mode: .detached);
     } else if (isIos) {
+      //no op
     } else if (isWeb) {
+      //no op
     } else if (isWindows) {
       //runCommand("explorer", [path], throwOnError: false, mode: .detached);
       runCommand(
