@@ -52,8 +52,8 @@ void main(List<String> arguments) async {
   }
 
   //MARK: input args
-  String argBuildType = "release";
-  String argBuildFlavor = "";
+  String? argBuildType;
+  String? argBuildFlavor;
   for (final arg in arguments) {
     if (arg.startsWith("--buildType=")) {
       argBuildType = arg.split("=")[1];
@@ -61,8 +61,13 @@ void main(List<String> arguments) async {
       argBuildFlavor = arg.split("=")[1];
     }
   }
-  String buildTypeTag = argBuildType.isEmpty ? "" : "-$argBuildType";
-  String buildFlavorTag = argBuildFlavor.isEmpty ? "" : "-$argBuildFlavor";
+  String buildTypeTag = argBuildType == null || argBuildType.isEmpty == true
+      ? "-release"
+      : "-$argBuildType";
+  String buildFlavorTag =
+      argBuildFlavor == null || argBuildFlavor.isEmpty == true
+      ? ""
+      : "-$argBuildFlavor";
 
   //MARK: yaml config
 
@@ -75,8 +80,8 @@ void main(List<String> arguments) async {
     "💡 appName:$appName"
     " versionName:$versionName"
     " versionCode:$versionCode"
-    " buildType:$argBuildType"
-    " buildFlavor:$argBuildFlavor",
+    " buildType:${argBuildType ?? "N/A"}"
+    " buildFlavor:${argBuildFlavor ?? "N/A"}",
   );
 
   //输出路径
@@ -98,6 +103,7 @@ void main(List<String> arguments) async {
     final outputName = formatName(
       apkNameConfig,
       "android",
+      defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
     final apkName = "app$buildFlavorTag$buildTypeTag.apk";
@@ -127,6 +133,7 @@ void main(List<String> arguments) async {
     final outputName = formatName(
       appBundleNameConfig,
       "android",
+      defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
     final aabName = "app$buildFlavorTag$buildTypeTag.aab";
@@ -157,6 +164,7 @@ void main(List<String> arguments) async {
     final outputName = formatName(
       ipaNameConfig,
       "ios",
+      defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
     final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
@@ -186,6 +194,7 @@ void main(List<String> arguments) async {
     final outputName = formatName(
       macosAppNameConfig,
       "macos",
+      defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
     final from =
@@ -272,6 +281,7 @@ void main(List<String> arguments) async {
     final outputName = formatName(
       windowsExeNameConfig,
       "windows",
+      defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
     final from = "$currentPath/build/windows/x64/runner/Release";
