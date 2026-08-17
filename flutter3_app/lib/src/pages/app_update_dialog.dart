@@ -35,7 +35,8 @@ import '../../flutter3_app.dart';
 class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 海外市场（Google Play）：使用 in_app_update 插件，
   /// 调用 Google Play 官方的应用内更新 API，无需申请 `REQUEST_INSTALL_PACKAGES` 权限。
-  static bool Function() isInGooglePlayFn = () => $buildFlavor != "mainland";
+  static bool Function() isInGooglePlayFn = () =>
+      isAndroid && $buildFlavor != "mainland";
 
   /// 检查更新并且显示
   /// [forceShow] 是否强制显示更新, 不检查版本号
