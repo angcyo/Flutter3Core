@@ -267,7 +267,7 @@ Future<R> scheduleTask<R>(
 /// [ErrorWidget.builder] 错误小部件构建器
 /// [reportError]
 /// [printError]
-void reportError(exception) {
+void reportError(Object exception) {
   FlutterError.reportError(
     FlutterErrorDetails(exception: exception, stack: StackTrace.current),
   );
