@@ -15,6 +15,8 @@ mixin DioDownloadMixin {
   /// 下载进度[0~1]
   double downloadProgressMixin = 0;
 
+  /// 下载到本地的文件路径
+  @tempFlag
   String downloadFilePathCacheMixin = "";
 
   //MARK: - api
@@ -39,7 +41,11 @@ mixin DioDownloadMixin {
 
     downloadProgressMixin = 0;
     downloadStateMixin = .downloading;
-    final name = url.fileName();
+    String name = url.fileName();
+    /*if (name.endsWith(".apk.1")) {
+      //是否需要重命名为 .apk ?
+      //name = name.replace(".apk.1", ".apk");
+    }*/
     final filePath = await cacheFilePath(name, kDownloadsPathName);
     downloadFilePathCacheMixin = filePath;
     await url
