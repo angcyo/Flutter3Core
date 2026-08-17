@@ -155,7 +155,22 @@ class BuildConfig {
 
   /// 短日志
   String get shortString {
-    return "$buildPackageName $buildType ${buildFlavor ?? ""} $buildVersionName($buildVersionCode)\n$buildTime";
+    return stringBuilder((builder) {
+      if (buildPackageName != null) {
+        builder.append(buildPackageName);
+        builder.append(" ");
+      }
+      if (buildType != null) {
+        builder.append(buildType);
+        builder.append(" ");
+      }
+      final flavor = buildFlavor ?? flutterAppFlavor;
+      if (flavor != null) {
+        builder.append(flavor);
+        builder.append(" ");
+      }
+      builder.append("$buildVersionName($buildVersionCode)\n$buildTime");
+    });
   }
 
   @override
