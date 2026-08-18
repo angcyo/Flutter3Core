@@ -1375,6 +1375,13 @@ extension StringEx on String {
   /// "name": "Other Countries/Regions",
   /// "i18nName": "{\"zh\":\"其他国家/地区\"}",
   /// ````
+  /// ```
+  /// {
+  ///   "zh": "- 修复已知问题",
+  ///   "en": "- Fix known issues",
+  ///   "de": "- Bekannte Probleme behoben",
+  /// }
+  /// ```
   String orI18n(String? i18nString, {String? lang}) {
     if (i18nString == null || i18nString.isEmpty) {
       return this;
