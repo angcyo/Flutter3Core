@@ -149,7 +149,7 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
     WidgetsBinding.instance.addObserver(this);
     _subscription = controller.barcodes.listen(_handleBarcode);
     if (!widget.autoStart) {
-      unawaited(controller.start());
+      controller.start().ignore();
     }
   }
 
@@ -158,27 +158,25 @@ class _SingleCodeScannerPageState extends State<SingleCodeScannerPage>
     if (!controller.value.isInitialized) {
       return;
     }
-
     switch (state) {
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.paused:
+      case .detached:
+      case .hidden:
+      case .paused:
         return;
-      case AppLifecycleState.resumed:
+      case .resumed:
         _subscription = controller.barcodes.listen(_handleBarcode);
-
-        unawaited(controller.start());
-      case AppLifecycleState.inactive:
-        unawaited(_subscription?.cancel());
+        controller.start().ignore();
+      case .inactive:
+        _subscription?.cancel().ignore();
         _subscription = null;
-        unawaited(controller.stop());
+        controller.stop().ignore();
     }
   }
 
   @override
   Future<void> dispose() async {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_subscription?.cancel());
+    _subscription?.cancel().ignore();
     _subscription = null;
     super.dispose();
     await controller.dispose();
