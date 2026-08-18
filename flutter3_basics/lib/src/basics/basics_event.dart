@@ -921,6 +921,9 @@ mixin TouchDetectorMixin {
   @configProperty
   double touchDetectorSlop = kTouchSlop;
 
+  /// 第一个按下的手指id
+  int? _firstDownPointer;
+
   /// N个手指对应的按下事件
   @output
   final Map<int, PointerEvent> _pointerDownMap = {};
@@ -938,6 +941,9 @@ mixin TouchDetectorMixin {
   bool addTouchDetectorPointerEvent(PointerEvent event) {
     bool handle = false;
     final pointer = event.pointer;
+    if (_firstDownPointer == null && event.isPointerDown) {
+      _firstDownPointer = pointer;
+    }
     isMouseRightDownDetector = event.isMouseRightDown;
     if (event.isPointerDown) {
       _loopLongPressTimer?.cancel();
@@ -972,6 +978,9 @@ mixin TouchDetectorMixin {
       handle = _checkClick(event);
     }
     if (event.isPointerFinish) {
+      if (isFirstPointer(event)) {
+        _firstDownPointer = null;
+      }
       _loopLongPressTimer?.cancel();
       _loopLongPressTimer = null;
       _clear(event);
@@ -988,6 +997,13 @@ mixin TouchDetectorMixin {
     PointerEvent event,
     TouchDetectorType touchType,
   ) => false;
+
+  /// 当前手指是否是第一个按下的手指
+  @api
+  bool isFirstPointer(PointerEvent? event) {
+    if (event == null) return false;
+    return _firstDownPointer == null || _firstDownPointer == event.pointer;
+  }
 
   /// 检查当前的手势, 是否应该触发点击事件
   bool _checkClick(PointerEvent event) {

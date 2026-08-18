@@ -77,6 +77,9 @@ class PointEventHandler {
     if (!event.isTouchPointerEvent) {
       return;
     }
+    if (!isFirstPointer(event)) {
+      return;
+    }
     final localPosition = event.localPosition;
     final eventMeta = PointEventMeta(localPosition, nowTimestamp());
     if (event.isPointerDown) {
@@ -127,6 +130,26 @@ class PointEventHandler {
   @autoInjectMark
   void detachFromManager(GraffitiEventManager manager) {
     eventManager = null;
+  }
+
+  //--
+
+  /// 第一个按下的手指id
+  int? _firstDownPointer;
+
+  /// 当前手指是否是第一个按下的手指
+  @api
+  bool isFirstPointer(PointerEvent? event) {
+    if (event == null) return false;
+    final pointer = event.pointer;
+    final result = _firstDownPointer == null || _firstDownPointer == pointer;
+    if (_firstDownPointer == null && event.isPointerDown) {
+      _firstDownPointer = pointer;
+    }
+    if (event.isPointerFinish && result) {
+      _firstDownPointer = null;
+    }
+    return result;
   }
 }
 
@@ -200,7 +223,8 @@ class GraffitiPencilHandler extends GraffitiPainterHandler {
 
   @override
   GraffitiPainter? createPainter() =>
-      GraffitiPencilPainter()..paint.strokeWidth = painterWidth;
+      GraffitiPencilPainter()
+        ..paint.strokeWidth = painterWidth;
 }
 
 /// 钢笔对象, 输出的数据是矢量, 粗细一致
@@ -247,10 +271,8 @@ class GraffitiFountainShapePenHandler extends GraffitiFountainPenHandler
   }
 
   @override
-  bool onTouchDetectorPointerEvent(
-    PointerEvent event,
-    TouchDetectorType touchType,
-  ) {
+  bool onTouchDetectorPointerEvent(PointerEvent event,
+      TouchDetectorType touchType,) {
     if (touchType == .longPress) {
       isTouching = false;
       //开始智能识别图形
@@ -266,10 +288,8 @@ class GraffitiFountainShapePenHandler extends GraffitiFountainPenHandler
   /// 停留一段时候后, 尝试识别图形
   /// 重写此方法, 实现图形识别
   @overridePoint
-  bool onGraffitiShapeFittedHandler(
-    GraffitiFountainPenPainter painter,
-    List<PointEventMeta> pointList,
-  ) {
+  bool onGraffitiShapeFittedHandler(GraffitiFountainPenPainter painter,
+      List<PointEventMeta> pointList,) {
     //painter.pointListCache;
     //_pointList.map((e) => e.position)
     return false;
@@ -286,5 +306,6 @@ class GraffitiBrushPenHandler extends GraffitiPainterHandler {
 
   @override
   GraffitiPainter? createPainter() =>
-      GraffitiBrushPenPainter()..updateMaxWidth(painterWidth);
+      GraffitiBrushPenPainter()
+        ..updateMaxWidth(painterWidth);
 }
