@@ -49,6 +49,34 @@ dependencies:
   # https://pub.dev/packages/flutter_chatflow
   #flutter_chatflow: ^2.0.2
 
+  # https://pub.dev/packages/ai_chat_plus
+  #ai_chat_plus: ^1.2.4
+
+  # https://pub.dev/packages/openrouter
+  #openrouter: ^1.0.1
+
+  # https://pub.dev/packages/dart_openai
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/fetch_client
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/meta
+  #dart_openai: ^6.1.1
+
+  # https://pub.dev/packages/openai_dart
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/http_parser
+  # https://pub.dev/packages/meta
+  # https://pub.dev/packages/logging
+  # https://pub.dev/packages/web_socket
+  openai_dart: ^8.0.0
+  # https://pub.dev/packages/ollama_dart
+  #ollama_dart: ^2.5.0
+  # https://pub.dev/packages/googleai_dart
+  #googleai_dart: ^11.0.0
+  # https://pub.dev/packages/anthropic_sdk_dart
+  #anthropic_sdk_dart: ^7.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
