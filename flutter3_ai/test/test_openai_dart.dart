@@ -7,16 +7,21 @@ import 'package:openai_dart/openai_dart.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2026/08/18
 ///
+/// OpenAI 调用测试
+///
 final key = "";
 
 //final baseUrl = "https://api.openai.com/v1";
 final baseUrl = "https://openrouter.ai/api/v1";
+// final baseUrl = "https://api.deepseek.com";
 /*final baseUrl =
       "https://ws-1jlwl58hlx3p5jjz.cn-beijing.maas.aliyuncs.com/compatible-mode/v1";*/
 
 //final String model = 'gpt-5.5';
 //final String model = 'qwen3.8-max';
 final String model = 'openai/gpt-5.5';
+//final String model = 'deepseek-v4-pro';
+//final String model = 'deepseek/deepseek-v4-pro';
 
 void main() async {
   final String? organization = null;
