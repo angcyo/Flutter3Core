@@ -12,6 +12,16 @@ import '../../flutter3_app.dart';
 ///
 /// # flutter_install_app: ^1.3.0
 ///
+/// https://pub.dev/packages/flutter_install_app
+///
+/// # in_app_update_flutter: ^3.0.0
+///
+/// https://pub.dev/packages/in_app_update_flutter
+///
+/// # app_badger: ^3.0.1
+///
+/// https://pub.dev/packages/app_badger
+///
 /// ```
 /// /// App Info
 /// String androidAppId = 'com.angcyo.tasks';
