@@ -170,14 +170,16 @@ class TextFieldConfig {
   /// - [onChanged]
   final TextFieldConfigValueChanged<String>? onConfigChanged;
 
+  /// [TextField.onChanged]
   final ContextValueChanged<String>? onContextValueChanged;
-
-  /// [textInputAction]
-  /// [TextField.onSubmitted]
-  final ValueChanged<String>? onSubmitted;
 
   /// [TextField.onEditingComplete]
   final VoidCallback? onEditingComplete;
+
+  /// [onEditingComplete]回调之后会马上触发[onSubmitted]回调
+  /// 按回车键之后会触发此回调
+  /// [TextField.onSubmitted]
+  final ValueChanged<String>? onSubmitted;
 
   /// 焦点改变后的回调
   /// [FocusNode]
