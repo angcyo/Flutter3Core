@@ -35,27 +35,25 @@ mixin DialogMixin implements TranslationTypeImpl {
     final type = runtimeType.toString().toLowerCase();
     //debugger();
     if (type.isScreenName) {
-      return TranslationType.translation;
+      return .translation;
     }
     if (type.contains("desktop")) {
-      return TranslationType.scaleFade;
+      return .scaleFade;
     }
     if (type.contains("bottom")) {
-      return TranslationType.translationFade;
+      return .translationFade;
     }
     if (isDesktopOrWeb) {
       //桌面从右到左滑动
       if (adaptiveDialogDesktopSlideStyle == null && type.contains("slide")) {
-        return TranslationType.slide;
+        return .slide;
       }
       if (adaptiveDialogDesktopSlideStyle != null &&
           adaptiveDialogDesktopSlideStyle == true) {
-        return TranslationType.slide;
+        return .slide;
       }
     }
-    return isDesktopOrWeb
-        ? TranslationType.scaleFade
-        : TranslationType.translationFade;
+    return isDesktopOrWeb ? .scaleFade : .translationFade;
   }
 
   @override
