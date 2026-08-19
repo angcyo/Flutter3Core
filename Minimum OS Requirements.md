@@ -6,6 +6,7 @@
 - iOS: 13.0 (iPhone 11)
 - macOS: 10.15 (Catalina) (Apple Silicon)
 - Windows 10 (19H1/1903) (Mai 2019 Update)
+- iOS: 14.0 (iPhone 12)
 
 ## nsd
 
@@ -35,6 +36,12 @@ https://pub.dev/packages/file_picker
 - macOS: 10.13+
 - Windows: Windows 10+
 - Linux: Any
+
+## file_picker: ^12.0.0
+
+https://pub.dev/packages/file_picker
+
+- iOS: 14.0+ (iPhone 12)
 
 ## image_picker
 
