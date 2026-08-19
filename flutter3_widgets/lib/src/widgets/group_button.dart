@@ -233,6 +233,9 @@ class CapsuleButton extends StatefulWidget {
   /// 结束的按钮
   final Widget? end;
 
+  final String? startTooltip;
+  final String? endTooltip;
+
   /// 图标
   @defInjectMark
   final IconData? iconStart;
@@ -297,6 +300,8 @@ class CapsuleButton extends StatefulWidget {
     this.iconStart,
     this.end,
     this.iconEnd,
+    this.startTooltip,
+    this.endTooltip,
     this.iconSize,
     this.iconColor,
     this.onStartTap,
@@ -362,7 +367,8 @@ class _CapsuleButtonState extends State<CapsuleButton> {
                       () {
                         buildContext?.popDialog(maybePop: true);
                       },
-                ),
+                )
+                .tooltip(widget.startTooltip),
             line,
             end
                 .size(width: width / 2, height: height)
@@ -371,7 +377,8 @@ class _CapsuleButtonState extends State<CapsuleButton> {
                       () {
                         buildContext?.popDialog();
                       },
-                ),
+                )
+                .tooltip(widget.endTooltip),
           ],
         )
         .decoration(
