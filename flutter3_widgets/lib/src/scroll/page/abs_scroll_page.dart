@@ -52,7 +52,9 @@ mixin AbsScrollPage {
     Widget? body,
     //--
     bool useSafeArea = true,
+    bool safeAreaLeft = true,
     bool safeAreaTop = false,
+    bool safeAreaRight = true,
     bool safeAreaBottom = true,
   }) {
     //debugger();
@@ -76,7 +78,9 @@ mixin AbsScrollPage {
                       : buildBody(context, children)))
               .safeArea(
                 useSafeArea: useSafeArea,
+                left: safeAreaLeft,
                 top: safeAreaTop,
+                right: safeAreaRight,
                 bottom: safeAreaBottom,
                 maintainBottomViewPadding: safeAreaBottom,
               ),
