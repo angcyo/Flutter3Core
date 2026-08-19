@@ -2287,13 +2287,13 @@ extension WidgetEx on Widget {
           shaderCallback:
               shaderCallback ??
               (Rect bounds) {
-                return shader!;
                 /*return RadialGradient(
-            center: Alignment.topLeft,
-            radius: 1.0,
-            colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
-            tileMode: TileMode.mirror,
-          ).createShader(bounds);*/
+                  center: Alignment.topLeft,
+                  radius: 1.0,
+                  colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
+                  tileMode: TileMode.mirror,
+                ).createShader(bounds);*/
+                return shader!;
               },
           blendMode: blendMode,
           child: this,
