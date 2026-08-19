@@ -21,6 +21,10 @@ https://flutter.dev/blog/whats-new-in-flutter-3-47
 | iOS	   | 	13	    | 	15                     |
 | macOS	 | 	10.15	 | 	12                     |
 
+```shell
+dart fix --apply --code=migrate_design_widgets
+```
+
 ## nsd
 
 https://pub.dev/packages/nsd
