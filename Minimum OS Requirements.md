@@ -8,6 +8,19 @@
 - Windows 10 (19H1/1903) (Mai 2019 Update)
 - iOS: 14.0 (iPhone 12)
 
+# 为下一波苹果更新做好准备
+
+https://flutter.dev/blog/whats-new-in-flutter-3-47
+
+随着 `Xcode 27`、`iOS 27` 和 `macOS 27` 将于今年秋季发布，我们已投入大量精力确保 Flutter 为即将到来的更新做好准备。为了避免用户在上线首日遇到任何问题，我们建议您现在就针对 Apple 测试版对您的应用进行测试。
+
+此外，为了支持 `Xcode 27`，最低支持的操作系统版本也已提高：
+
+| 平台	    | 先前最低    | 新的最低版本要求（Flutter 3.47+） |
+|--------|---------|-------------------------|
+| iOS	   | 	13	    | 	15                     |
+| macOS	 | 	10.15	 | 	12                     |
+
 ## nsd
 
 https://pub.dev/packages/nsd
