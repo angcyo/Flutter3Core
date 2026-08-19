@@ -12,14 +12,16 @@ import 'package:openai_dart/openai_dart.dart';
 final key = "";
 
 //final baseUrl = "https://api.openai.com/v1";
-final baseUrl = "https://openrouter.ai/api/v1";
+//final baseUrl = "https://openrouter.ai/api/v1";
 // final baseUrl = "https://api.deepseek.com";
-/*final baseUrl =
-      "https://ws-1jlwl58hlx3p5jjz.cn-beijing.maas.aliyuncs.com/compatible-mode/v1";*/
+final baseUrl =
+      "https://ws-1jlwl58hlx3p5jjz.cn-beijing.maas.aliyuncs.com/compatible-mode/v1";
 
 //final String model = 'gpt-5.5';
 //final String model = 'qwen3.8-max';
-final String model = 'openai/gpt-5.5';
+//final String model = 'qwen-image-3.0-pro';
+final String model = 'qwen3-vl-plus-2025-12-19';
+//final String model = 'openai/gpt-5.5';
 //final String model = 'deepseek-v4-pro';
 //final String model = 'deepseek/deepseek-v4-pro';
 
@@ -178,7 +180,7 @@ Future<String> readImageBase64Data(String path) async {
 /// }
 /// ```
 
-/// # qwen3.8-max 分析图像
+/// # qwen3.8-max 视觉理解
 /// https://pub.dev/packages/openai_dart#how-do-i-analyze-images
 /// ```
 /// {
@@ -215,7 +217,7 @@ Future<String> readImageBase64Data(String path) async {
 /// }
 /// ```
 
-/// # openai/gpt-5.5 分析图像
+/// # openai/gpt-5.5 视觉理解
 /// ```
 /// {
 ///   "id": "gen-1787044926-BWYd9C36DN9QYmsbQNvz",
@@ -275,6 +277,41 @@ Future<String> readImageBase64Data(String path) async {
 ///       "reasoning_tokens": 2588,
 ///       "image_tokens": 0,
 ///       "audio_tokens": 0
+///     }
+///   }
+/// }
+/// ```
+
+/// # qwen3-vl-plus-2025-12-19 视觉理解
+///
+/// ```
+/// {
+///   "id": "chatcmpl-07bbe922-ce4d-93fd-b4a1-ff86fbb56e8d",
+///   "object": "chat.completion",
+///   "created": 1787103091,
+///   "model": "qwen3-vl-plus-2025-12-19",
+///   "choices": [
+///     {
+///       "index": 0,
+///       "message": {
+///         "role": "assistant",
+///         "reasoning_content": "",
+///         "content": "392,350,104,104,0.0,622,370,104,104,0.0,792,222,104,104,0.0,628,160,80,80,0.0,540,578,104,104,0.3,722,676,104,104,0.0,866,602,80,80,0.0,558,772,80,80,0.0,824,826,80,80,0.0,340,606,80,80,0.0"
+///       },
+///       "finish_reason": "stop",
+///       "logprobs": null
+///     }
+///   ],
+///   "usage": {
+///     "prompt_tokens": 812,
+///     "total_tokens": 1002,
+///     "completion_tokens": 190,
+///     "prompt_tokens_details": {
+///       "image_tokens": 752,
+///       "text_tokens": 60
+///     },
+///     "completion_tokens_details": {
+///       "text_tokens": 190
 ///     }
 ///   }
 /// }
