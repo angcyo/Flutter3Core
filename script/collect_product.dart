@@ -24,10 +24,16 @@ import 'build_config.dart';
 /// - [formatName]
 ///
 /// # 收集Android apk/aab 产物
-/// `flutter build apk --release`
+///
+/// ## `flutter build apk --release`
 /// 默认输出路径在: `build/app/outputs/flutter-apk/app-release.apk` (41.9MB)
-/// `flutter build appbundle --release`
+/// ## `call flutter build apk --release --flavor overseas`
+/// 默认输出路径在: `build/app/outputs/flutter-apk/app-overseas-release.apk` (91.4MB)
+///
+/// ## `flutter build appbundle --release`
 /// 默认输出路径在: `build/app/outputs/bundle/release/app-release.aab` (38.2MB)
+/// ## `call flutter build appbundle --release --flavor overseas`
+/// 默认输出路径在: `build/app/outputs/bundle/overseasRelease/app-overseas-release.aab` (83.6MB)
 ///
 /// # 收集ios ipa产物
 /// 请使用`flutter build ipa --release --export-method ad-hoc`构建ipa
@@ -111,7 +117,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "$apkName/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️ 已复制过: $from");
+        colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
@@ -137,11 +143,13 @@ void main(List<String> arguments) async {
       defBuildFlavor: argBuildFlavor,
     );
     final aabName = "app$buildFlavorTag$buildTypeTag.aab";
-    final from = "$currentPath/build/app/outputs/bundle/release/$aabName";
+    final from = argBuildFlavor == null
+        ? "$currentPath/build/app/outputs/bundle/release/$aabName"
+        : "$currentPath/build/app/outputs/bundle/${argBuildFlavor}Release/$aabName";
     if (File(from).existsSync()) {
       final key = "$aabName/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️ 已复制过: $from");
+        colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.apk/$outputName";
@@ -171,7 +179,7 @@ void main(List<String> arguments) async {
     if (File(from).existsSync()) {
       final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️ 已复制过: $from");
+        colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
         final to = "$currentPath/$outputPath/.ipa/$outputName";
@@ -203,7 +211,7 @@ void main(List<String> arguments) async {
       final key =
           "$productFileName.app/${File("$from/Contents/MacOS/$productFileName").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️ 已复制过: $from");
+        colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
         final toDir = "$currentPath/$outputPath/.app";
@@ -289,7 +297,7 @@ void main(List<String> arguments) async {
       final key =
           "$exeFileName/${File("$from/data/app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("⚠️ 已复制过: $from/$exeFileName");
+        colorLog("🚨 已复制过: $from/$exeFileName");
         exitProductCount++;
       } else {
         final toDir = "$currentPath/$outputPath/.exe";
@@ -521,7 +529,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
       );
     });
     if (!inner) {
-      colorLog('🎉-> $dstPath');
+      colorLog('🎉         -> $dstPath');
     }
     return true;
   }
@@ -541,7 +549,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
   dstFile.createSync(recursive: true);
   dstFile.writeAsBytesSync(srcFile.readAsBytesSync());
   if (!inner) {
-    colorLog('🎉-> $dstPath');
+    colorLog('🎉         -> $dstPath');
   }
 
   return true;
@@ -624,7 +632,7 @@ Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
     srcPath,
     dstPath,
   ], runInShell: true);
-  colorLog('🎉-> $dstPath');
+  colorLog('🎉         -> $dstPath');
   if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }
