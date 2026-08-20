@@ -255,6 +255,10 @@ void main(List<String> arguments) async {
               final dmgTitle = "$appName v$appVersion";
               final json = jsonDecode(appdmgConfigFile.readAsStringSync());
               json["title"] = dmgTitle;
+              (json["contents"] as List?)
+                      ?.where((e) => e["type"] == "file")
+                      .firstOrNull?["path"] =
+                  from;
               final tempConfigFile = File(
                 "$currentPath$ps.appdmg.config.temp.json",
               );
@@ -269,7 +273,9 @@ void main(List<String> arguments) async {
               tempConfigFile.path.safeDelete();
               if (result?.exitCode == 0) {
                 collectProductCount++;
-                colorLog('🎉-> $outputDmgPath ${outputDmgPath.fileSizeStr}');
+                colorLog(
+                  '🎉$_rSpace-> $outputDmgPath ${outputDmgPath.fileSizeStr}',
+                );
               }
             } else {
               colorErrorLog("请先安装`appdmg` -> npm install -g appdmg");
@@ -350,7 +356,9 @@ void main(List<String> arguments) async {
               if (result?.exitCode == 0) {
                 collectProductCount++;
                 final outputExePath = "$toDir$ps$setupExeName.exe";
-                colorLog('🎉-> $outputExePath ${outputExePath.fileSizeStr}');
+                colorLog(
+                  '🎉$_rSpace-> $outputExePath ${outputExePath.fileSizeStr}',
+                );
               }
             } else {
               colorErrorLog(
@@ -375,6 +383,8 @@ void main(List<String> arguments) async {
     '✅ 收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}s',
   );
 }
+
+const _rSpace = "         ";
 
 String? _getAppName() {
   return $value(currentFileName)["app_name"] ??
@@ -532,7 +542,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
       );
     });
     if (!inner) {
-      colorLog('🎉         -> $dstPath');
+      colorLog('🎉$_rSpace-> $dstPath');
     }
     return true;
   }
@@ -552,7 +562,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
   dstFile.createSync(recursive: true);
   dstFile.writeAsBytesSync(srcFile.readAsBytesSync());
   if (!inner) {
-    colorLog('🎉         -> $dstPath');
+    colorLog('🎉$_rSpace-> $dstPath');
   }
 
   return true;
@@ -583,7 +593,7 @@ Future<bool> zipFolder(
     } else {
       await [srcPath].zipEncoder(encoder);
     }
-    colorLog('🎉-> $dstPath ${dstPath.fileSizeStr}');
+    colorLog('🎉$_rSpace-> $dstPath ${dstPath.fileSizeStr}');
     return true;
   } catch (e) {
     colorErrorLog(e);
@@ -620,7 +630,7 @@ Future<bool> zipFolderByPlatform(
     workingDirectory: workPath,
     /*runInShell: true,*/
   );
-  colorLog('🎉-> $dstPath ${dstPath.fileSizeStr}');
+  colorLog('🎉$_rSpace-> $dstPath ${dstPath.fileSizeStr}');
   if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }
@@ -635,7 +645,7 @@ Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
     srcPath,
     dstPath,
   ], runInShell: true);
-  colorLog('🎉         -> $dstPath');
+  colorLog('🎉$_rSpace-> $dstPath');
   if (result.exitCode < 0) {
     colorErrorLog(result.stderr);
   }
