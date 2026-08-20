@@ -3526,7 +3526,17 @@ extension StateEx on State {
   BuildContext? get buildContext => isMounted ? context : null;
 
   /// 元素是否还在树中
-  bool get isMounted => context.mounted;
+  bool get isMounted {
+    try {
+      return context.mounted;
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+      return false;
+    }
+  }
 
   /// 标记当前状态脏, 会在下一帧重建
   /// ```
