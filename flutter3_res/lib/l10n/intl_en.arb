@@ -89,6 +89,22 @@
   "libUngroup": "Ungroup",
   "libHideElement": "Hide Element",
   "libNotSupported": "Not Supported Yet",
+  "libDragCanvas": "Drag Canvas",
+  "libIgnoreLockRatio": "Ignore Lock Ratio",
+  "libDeleteSelectedElem": "Delete Selected Elements",
+  "libMoveElemUp": "Move Element Up",
+  "libMoveElemDown": "Move Element Down",
+  "libMoveElemLeft": "Move Element Left",
+  "libMoveElemRight": "Move Element Right",
+  "libUndo": "Undo",
+  "libRedo": "Redo",
+  "libCopySelectedElem": "Copy Selected Elements",
+  "libPasteSelectedElem": "Paste Selected Elements",
+  "libZoomInCanvas": "Zoom In Canvas",
+  "libZoomOutCanvas": "Zoom Out Canvas",
+  "libGroupElements": "Group Elements",
+  "libUngroupElements": "Ungroup Elements",
+  "libHotkeySettings": "Hotkeys",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

@@ -7,10 +7,12 @@ part of '../../../flutter3_widgets.dart';
 /// 用来显示快捷键的小部件
 /// - [ShortcutConfigBean]
 class ShortcutLabelWidget extends StatelessWidget {
+  /// 快捷键配置信息
   final ShortcutConfigBean? configBean;
 
-  //--
+  //--style
 
+  /// 文本样式
   @defInjectMark
   final TextStyle? textStyle;
 

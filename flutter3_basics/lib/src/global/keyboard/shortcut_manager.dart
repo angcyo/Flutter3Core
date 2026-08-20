@@ -6,6 +6,8 @@ part of '../../../flutter3_basics.dart';
 ///
 /// 全局快捷方式管理
 /// - [ShortcutMatcher]
+///
+/// - [ShortcutConfigManager] √
 class ShortcutManager {
   final List<ShortcutDescription> shortcutDescriptions;
 

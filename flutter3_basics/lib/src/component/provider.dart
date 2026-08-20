@@ -55,8 +55,14 @@ String? textOf(dynamic data, [BuildContext? context]) {
     return null;
   }
   if (data is ITextProvider) {
+    context ??= GlobalConfig.def.globalAppContext;
     if (context != null) {
       return data.provideIntlText(context) ?? data.provideText ?? strOf(data);
+    } else {
+      assert(() {
+        l.w('[${data.classHash()}] context is null');
+        return true;
+      }());
     }
     return data.provideText ?? strOf(data);
   } else {

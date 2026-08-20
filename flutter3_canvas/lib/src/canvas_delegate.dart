@@ -399,9 +399,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   late CanvasMultiManager canvasMultiManager = CanvasMultiManager(this);
 
   /// 管理按键事件
+  /// - [CanvasKeyManager.shortcutConfigManager] 快捷键配置管理
   late CanvasKeyManager canvasKeyManager = CanvasKeyManager(this);
 
   /// 关键鼠标右键菜单
+  /// - 画布菜单
   late CanvasMenuManager canvasMenuManager = CanvasMenuManager(this);
 
   /// 画布回调监听

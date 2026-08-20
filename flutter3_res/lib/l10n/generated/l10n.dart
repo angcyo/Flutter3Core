@@ -499,6 +499,106 @@ class LibRes {
   String get libNotSupported {
     return Intl.message('暂不支持', name: 'libNotSupported', desc: '', args: []);
   }
+
+  /// `拖拽画布`
+  String get libDragCanvas {
+    return Intl.message('拖拽画布', name: 'libDragCanvas', desc: '', args: []);
+  }
+
+  /// `忽略锁定比例`
+  String get libIgnoreLockRatio {
+    return Intl.message(
+      '忽略锁定比例',
+      name: 'libIgnoreLockRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `删除选中的元素`
+  String get libDeleteSelectedElem {
+    return Intl.message(
+      '删除选中的元素',
+      name: 'libDeleteSelectedElem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `向上移动元素`
+  String get libMoveElemUp {
+    return Intl.message('向上移动元素', name: 'libMoveElemUp', desc: '', args: []);
+  }
+
+  /// `向下移动元素`
+  String get libMoveElemDown {
+    return Intl.message('向下移动元素', name: 'libMoveElemDown', desc: '', args: []);
+  }
+
+  /// `向左移动元素`
+  String get libMoveElemLeft {
+    return Intl.message('向左移动元素', name: 'libMoveElemLeft', desc: '', args: []);
+  }
+
+  /// `向右移动元素`
+  String get libMoveElemRight {
+    return Intl.message('向右移动元素', name: 'libMoveElemRight', desc: '', args: []);
+  }
+
+  /// `撤销`
+  String get libUndo {
+    return Intl.message('撤销', name: 'libUndo', desc: '', args: []);
+  }
+
+  /// `重做`
+  String get libRedo {
+    return Intl.message('重做', name: 'libRedo', desc: '', args: []);
+  }
+
+  /// `复制选中元素`
+  String get libCopySelectedElem {
+    return Intl.message(
+      '复制选中元素',
+      name: 'libCopySelectedElem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `粘贴选中元素`
+  String get libPasteSelectedElem {
+    return Intl.message(
+      '粘贴选中元素',
+      name: 'libPasteSelectedElem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `放大画布`
+  String get libZoomInCanvas {
+    return Intl.message('放大画布', name: 'libZoomInCanvas', desc: '', args: []);
+  }
+
+  /// `缩小画布`
+  String get libZoomOutCanvas {
+    return Intl.message('缩小画布', name: 'libZoomOutCanvas', desc: '', args: []);
+  }
+
+  /// `组合元素`
+  String get libGroupElements {
+    return Intl.message('组合元素', name: 'libGroupElements', desc: '', args: []);
+  }
+
+  /// `解组元素`
+  String get libUngroupElements {
+    return Intl.message('解组元素', name: 'libUngroupElements', desc: '', args: []);
+  }
+
+  /// `快捷键`
+  String get libHotkeySettings {
+    return Intl.message('快捷键', name: 'libHotkeySettings', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

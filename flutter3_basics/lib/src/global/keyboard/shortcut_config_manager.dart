@@ -11,6 +11,7 @@ part of '../../../flutter3_basics.dart';
 /// - [triggerShortcutAction] 触发快捷键执行动作
 ///
 /// - [ShortcutConfigBean]
+/// - [ShortcutLabelWidget] 快捷键标签小部件
 class ShortcutConfigManager {
   /// 快捷键配置列表
   final List<ShortcutConfigBean> shortcutConfigList;

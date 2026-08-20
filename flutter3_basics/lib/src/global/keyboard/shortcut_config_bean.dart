@@ -30,9 +30,12 @@ part of '../../../flutter3_basics.dart';
 /// - [KeyEventMixin]
 /// - [KeyEventStateMixin]
 @immutable
-class ShortcutConfigBean with Equatable {
+class ShortcutConfigBean with Equatable, IProviderText {
   /// 快捷键的唯一标识，如 "save_document"
   final String? id;
+
+  /// 快捷键显示的标签国际化资源key / assets key
+  final String? labelAssetsKey;
 
   //--
 
@@ -76,6 +79,7 @@ class ShortcutConfigBean with Equatable {
 
   ShortcutConfigBean({
     this.id,
+    this.labelAssetsKey,
     int? keyId,
     LogicalKeyboardKey? key,
     this.control,
@@ -89,6 +93,7 @@ class ShortcutConfigBean with Equatable {
   /// 序列化为 JSON 保存
   Map<String, dynamic> toJson() => {
     'id': id,
+    'labelAssetsKey': labelAssetsKey,
     'keyId': keyId,
     'control': control,
     'alt': alt,
@@ -102,6 +107,7 @@ class ShortcutConfigBean with Equatable {
   factory ShortcutConfigBean.fromJson(Map<String, dynamic> json) {
     return ShortcutConfigBean(
       id: json['id'],
+      labelAssetsKey: json['labelAssetsKey'],
       keyId: json['keyId'],
       control: json['control'],
       alt: json['alt'],
@@ -115,6 +121,7 @@ class ShortcutConfigBean with Equatable {
   factory ShortcutConfigBean.fromKeyEvent(
     KeyEvent? event, {
     String? id,
+    String? labelAssetsKey,
     bool modifier = true,
     //--
     bool? control,
@@ -127,6 +134,7 @@ class ShortcutConfigBean with Equatable {
   }) => ShortcutConfigBean.fromKey(
     event?.logicalKey,
     id: id,
+    labelAssetsKey: labelAssetsKey,
     modifier: modifier,
     control: control,
     alt: alt,
@@ -140,6 +148,7 @@ class ShortcutConfigBean with Equatable {
   factory ShortcutConfigBean.fromKey(
     LogicalKeyboardKey? key, {
     String? id,
+    String? labelAssetsKey,
     bool modifier = true,
     //--
     bool? control,
@@ -152,6 +161,7 @@ class ShortcutConfigBean with Equatable {
   }) {
     return ShortcutConfigBean(
       id: id,
+      labelAssetsKey: labelAssetsKey,
       keyId: modifier && key?.isModifier == true ? null : key?.keyId,
       control: modifier && (control == true || key?.isControlKey == true),
       alt: modifier && (alt == true || key?.isAltKey == true),
@@ -207,6 +217,11 @@ class ShortcutConfigBean with Equatable {
   }
 
   @override
+  String? provideIntlText(BuildContext context) {
+    return labelAssetsKey?.intlMessage();
+  }
+
+  @override
   String toString() => getShortcutLabel();
 
   /// 快捷键相同即可认为相同
@@ -230,10 +245,10 @@ extension LogicalKeyboardKeyLabelEx on LogicalKeyboardKey {
     if (this == .end) return isMac ? '↘' : 'End';
     if (this == .pageUp) return isMac ? '⇞' : 'Page Up';
     if (this == .pageDown) return isMac ? '⇟' : 'Page Down';
-    if (this == .arrowLeft) return isMac ? '←' : 'Left';
-    if (this == .arrowRight) return isMac ? '→' : 'Right';
-    if (this == .arrowUp) return isMac ? '↑' : 'Up';
-    if (this == .arrowDown) return isMac ? '↓' : 'Down';
+    if (this == .arrowLeft) return isDesktopOrWeb ? '←' : 'Left';
+    if (this == .arrowRight) return isDesktopOrWeb ? '→' : 'Right';
+    if (this == .arrowUp) return isDesktopOrWeb ? '↑' : 'Up';
+    if (this == .arrowDown) return isDesktopOrWeb ? '↓' : 'Down';
     /*if (this == .bracketLeft) return '[';
     if (this == .bracketRight) return ']';
     if (this == .comma) return ',';

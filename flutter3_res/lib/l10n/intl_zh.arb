@@ -98,6 +98,22 @@
   "libUngroup": "取消组合",
   "libHideElement": "隐藏元素",
   "libNotSupported": "暂不支持",
+  "libDragCanvas": "拖拽画布",
+  "libIgnoreLockRatio": "忽略锁定比例",
+  "libDeleteSelectedElem": "删除选中的元素",
+  "libMoveElemUp": "向上移动元素",
+  "libMoveElemDown": "向下移动元素",
+  "libMoveElemLeft": "向左移动元素",
+  "libMoveElemRight": "向右移动元素",
+  "libUndo": "撤销",
+  "libRedo": "重做",
+  "libCopySelectedElem": "复制选中元素",
+  "libPasteSelectedElem": "粘贴选中元素",
+  "libZoomInCanvas": "放大画布",
+  "libZoomOutCanvas": "缩小画布",
+  "libGroupElements": "组合元素",
+  "libUngroupElements": "解组元素",
+  "libHotkeySettings": "快捷键",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

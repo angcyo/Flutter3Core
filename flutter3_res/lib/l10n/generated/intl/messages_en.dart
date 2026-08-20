@@ -45,7 +45,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "libConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "libContinue": MessageLookupByLibrary.simpleMessage("Continue"),
     "libCopy": MessageLookupByLibrary.simpleMessage("Copy"),
+    "libCopySelectedElem": MessageLookupByLibrary.simpleMessage(
+      "Copy Selected Elements",
+    ),
     "libDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "libDeleteSelectedElem": MessageLookupByLibrary.simpleMessage(
+      "Delete Selected Elements",
+    ),
     "libDeleteTip": MessageLookupByLibrary.simpleMessage(
       "Deleted data cannot be recovered. Are you sure to delete?",
     ),
@@ -55,17 +61,23 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libDownloadNow": MessageLookupByLibrary.simpleMessage("Download Now"),
     "libDownloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
+    "libDragCanvas": MessageLookupByLibrary.simpleMessage("Drag Canvas"),
     "libEdit": MessageLookupByLibrary.simpleMessage("Edit"),
     "libExternalShare": MessageLookupByLibrary.simpleMessage("External Share"),
     "libFind": MessageLookupByLibrary.simpleMessage("Find"),
     "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),
     "libGoDownload": MessageLookupByLibrary.simpleMessage("Go to Download"),
     "libGroup": MessageLookupByLibrary.simpleMessage("Group"),
+    "libGroupElements": MessageLookupByLibrary.simpleMessage("Group Elements"),
     "libHideAllElements": MessageLookupByLibrary.simpleMessage(
       "Hide All Elements",
     ),
     "libHideElement": MessageLookupByLibrary.simpleMessage("Hide Element"),
     "libHidePassword": MessageLookupByLibrary.simpleMessage("Hide Password"),
+    "libHotkeySettings": MessageLookupByLibrary.simpleMessage("Hotkeys"),
+    "libIgnoreLockRatio": MessageLookupByLibrary.simpleMessage(
+      "Ignore Lock Ratio",
+    ),
     "libInstallNow": MessageLookupByLibrary.simpleMessage("Install Now"),
     "libKnown": MessageLookupByLibrary.simpleMessage("Got it"),
     "libLatestVersion": MessageLookupByLibrary.simpleMessage(
@@ -74,6 +86,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "libLoading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "libMatchCase": MessageLookupByLibrary.simpleMessage("Match Case"),
     "libMatchWord": MessageLookupByLibrary.simpleMessage("Match Word"),
+    "libMoveElemDown": MessageLookupByLibrary.simpleMessage(
+      "Move Element Down",
+    ),
+    "libMoveElemLeft": MessageLookupByLibrary.simpleMessage(
+      "Move Element Left",
+    ),
+    "libMoveElemRight": MessageLookupByLibrary.simpleMessage(
+      "Move Element Right",
+    ),
+    "libMoveElemUp": MessageLookupByLibrary.simpleMessage("Move Element Up"),
     "libNewReleases": MessageLookupByLibrary.simpleMessage(
       "New version available",
     ),
@@ -85,6 +107,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libOpen": MessageLookupByLibrary.simpleMessage("Open"),
     "libPaste": MessageLookupByLibrary.simpleMessage("Paste"),
+    "libPasteSelectedElem": MessageLookupByLibrary.simpleMessage(
+      "Paste Selected Elements",
+    ),
+    "libRedo": MessageLookupByLibrary.simpleMessage("Redo"),
     "libRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "libRename": MessageLookupByLibrary.simpleMessage("Rename"),
     "libSave": MessageLookupByLibrary.simpleMessage("Save"),
@@ -110,7 +136,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "libShowPassword": MessageLookupByLibrary.simpleMessage("Show Password"),
     "libSmartSnap": MessageLookupByLibrary.simpleMessage("Smart Snap"),
     "libTips": MessageLookupByLibrary.simpleMessage("Tip"),
+    "libUndo": MessageLookupByLibrary.simpleMessage("Undo"),
     "libUngroup": MessageLookupByLibrary.simpleMessage("Ungroup"),
+    "libUngroupElements": MessageLookupByLibrary.simpleMessage(
+      "Ungroup Elements",
+    ),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("Upgrade failed"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("Start Upgrade"),
     "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage(
@@ -127,7 +157,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
     "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
     "libZoomIn": MessageLookupByLibrary.simpleMessage("Zoom In"),
+    "libZoomInCanvas": MessageLookupByLibrary.simpleMessage("Zoom In Canvas"),
     "libZoomOut": MessageLookupByLibrary.simpleMessage("Zoom Out"),
+    "libZoomOutCanvas": MessageLookupByLibrary.simpleMessage("Zoom Out Canvas"),
     "testResKey": MessageLookupByLibrary.simpleMessage(
       "testResKey Translation resources",
     ),

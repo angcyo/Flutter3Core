@@ -48,6 +48,7 @@ class CanvasKeyManager
           ShortcutConfigBean.fromKey(
             canvasStyle.dragKeyboardKey,
             id: CanvasKeyActions.dragCanvas.id,
+            labelAssetsKey: CanvasKeyActions.dragCanvas.assetsKey,
           ),
         );
       }
@@ -57,6 +58,7 @@ class CanvasKeyManager
           ShortcutConfigBean.fromKey(
             canvasStyle.ignoreLockKeyboardKey,
             id: CanvasKeyActions.ignoreLocalRatio.id,
+            labelAssetsKey: CanvasKeyActions.ignoreLocalRatio.assetsKey,
           ),
         );
       }
@@ -65,6 +67,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.delete,
           id: CanvasKeyActions.deleteSelectedElement.id,
+          labelAssetsKey: CanvasKeyActions.deleteSelectedElement.assetsKey,
         ),
       );
       //方向键, 移动选中元素
@@ -73,24 +76,28 @@ class CanvasKeyManager
           ShortcutConfigBean.fromKey(
             LogicalKeyboardKey.arrowUp,
             id: CanvasKeyActions.moveElementUp.id,
+            labelAssetsKey: CanvasKeyActions.moveElementUp.assetsKey,
           ),
         )
         ..addShortcutConfig(
           ShortcutConfigBean.fromKey(
             LogicalKeyboardKey.arrowDown,
             id: CanvasKeyActions.moveElementDown.id,
+            labelAssetsKey: CanvasKeyActions.moveElementDown.assetsKey,
           ),
         )
         ..addShortcutConfig(
           ShortcutConfigBean.fromKey(
             LogicalKeyboardKey.arrowLeft,
             id: CanvasKeyActions.moveElementLeft.id,
+            labelAssetsKey: CanvasKeyActions.moveElementLeft.assetsKey,
           ),
         )
         ..addShortcutConfig(
           ShortcutConfigBean.fromKey(
             LogicalKeyboardKey.arrowRight,
             id: CanvasKeyActions.moveElementRight.id,
+            labelAssetsKey: CanvasKeyActions.moveElementRight.assetsKey,
           ),
         );
 
@@ -99,6 +106,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyZ,
           id: CanvasKeyActions.undo.id,
+          labelAssetsKey: CanvasKeyActions.undo.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -109,6 +117,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyY,
           id: CanvasKeyActions.redo.id,
+          labelAssetsKey: CanvasKeyActions.redo.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
           shift: !isMacOS,
@@ -120,6 +129,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyC,
           id: CanvasKeyActions.copyElement.id,
+          labelAssetsKey: CanvasKeyActions.copyElement.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -129,6 +139,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyV,
           id: CanvasKeyActions.pasteElement.id,
+          labelAssetsKey: CanvasKeyActions.pasteElement.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -139,6 +150,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyA,
           id: CanvasKeyActions.selectAllElement.id,
+          labelAssetsKey: CanvasKeyActions.selectAllElement.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -149,6 +161,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.equal,
           id: CanvasKeyActions.zoomIn.id,
+          labelAssetsKey: CanvasKeyActions.zoomIn.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -158,6 +171,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.minus,
           id: CanvasKeyActions.zoomOut.id,
+          labelAssetsKey: CanvasKeyActions.zoomOut.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -167,6 +181,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyG,
           id: CanvasKeyActions.groupElement.id,
+          labelAssetsKey: CanvasKeyActions.groupElement.assetsKey,
           meta: isMacOS,
           control: !isMacOS,
         ),
@@ -176,6 +191,7 @@ class CanvasKeyManager
         ShortcutConfigBean.fromKey(
           LogicalKeyboardKey.keyG,
           id: CanvasKeyActions.ungroupElement.id,
+          labelAssetsKey: CanvasKeyActions.ungroupElement.assetsKey,
           shift: true,
           meta: isMacOS,
           control: !isMacOS,
@@ -860,55 +876,34 @@ class CanvasKeyManager
 
 /// 画布按键操作
 enum CanvasKeyActions {
-  /// 拖拽画布
-  dragCanvas("canvas_drag_canvas"),
+  dragCanvas("canvas_drag_canvas", "libDragCanvas", "拖拽画布"),
+  ignoreLocalRatio("canvas_ignore_local_ratio", "libIgnoreLockRatio", "忽略锁定比例"),
+  deleteSelectedElement(
+    "canvas_delete_selected_element",
+    "libDeleteSelectedElem",
+    "删除选中的元素",
+  ),
+  moveElementUp("canvas_move_element_up", "libMoveElemUp", "向上移动元素"),
+  moveElementDown("canvas_move_element_down", "libMoveElemDown", "向下移动元素"),
+  moveElementLeft("canvas_move_element_left", "libMoveElemLeft", "向左移动元素"),
+  moveElementRight("canvas_move_element_right", "libMoveElemRight", "向右移动元素"),
+  undo("canvas_undo", "libUndo", "撤销"),
+  redo("canvas_redo", "libRedo", "重做"),
+  copyElement("canvas_copy_selected_element", "libCopySelectedElem", "复制选中元素"),
+  pasteElement(
+    "canvas_paste_selected_element",
+    "libPasteSelectedElem",
+    "粘贴选中元素",
+  ),
+  selectAllElement("canvas_select_all_element", "libSelectAll", "全选"),
+  zoomIn("canvas_zoom_in", "libZoomInCanvas", "放大画布"),
+  zoomOut("canvas_zoom_out", "libZoomOutCanvas", "缩小画布"),
+  groupElement("canvas_group_element", "libGroupElements", "组合元素"),
+  ungroupElement("canvas_ungroup_element", "libUngroupElements", "解组元素");
 
-  /// 忽略锁定比例
-  ignoreLocalRatio("canvas_ignore_local_ratio"),
-
-  /// 删除选中的元素
-  deleteSelectedElement("canvas_delete_selected_element"),
-
-  /// 向上移动元素
-  moveElementUp("canvas_move_element_up"),
-
-  /// 向下移动元素
-  moveElementDown("canvas_move_element_down"),
-
-  /// 向左移动元素
-  moveElementLeft("canvas_move_element_left"),
-
-  /// 向右移动元素
-  moveElementRight("canvas_move_element_right"),
-
-  /// 撤销
-  undo("canvas_undo"),
-
-  /// 重做
-  redo("canvas_redo"),
-
-  /// 复制选中元素
-  copyElement("canvas_copy_selected_element"),
-
-  /// 粘贴选中元素
-  pasteElement("canvas_paste_selected_element"),
-
-  /// 全选
-  selectAllElement("canvas_select_all_element"),
-
-  /// 放大画布
-  zoomIn("canvas_zoom_in"),
-
-  /// 缩小画布
-  zoomOut("canvas_zoom_out"),
-
-  /// 组合元素
-  groupElement("canvas_group_element"),
-
-  /// 解组元素
-  ungroupElement("canvas_ungroup_element");
+  const CanvasKeyActions(this.id, this.assetsKey, this.des);
 
   final String id;
-
-  const CanvasKeyActions(this.id);
+  final String des;
+  final String? assetsKey;
 }

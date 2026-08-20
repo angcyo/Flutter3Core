@@ -143,6 +143,8 @@ class LabelSwitchTile extends StatefulWidget {
   /// 标签
   final String? label;
   final double? labelFontSize;
+
+  @defInjectMark
   final TextStyle? labelTextStyle;
   final EdgeInsets? labelPadding;
   final Widget? labelWidget;
@@ -181,6 +183,9 @@ class LabelSwitchTile extends StatefulWidget {
   /// tile的填充
   final EdgeInsets? tilePadding;
 
+  /// ink背景的的圆角
+  final double? radius;
+
   /// 涟漪的圆角大小
   final BorderRadius? inkBorderRadius;
 
@@ -205,6 +210,7 @@ class LabelSwitchTile extends StatefulWidget {
     this.trackOutlineColor,
     //--
     this.tilePadding = kTilePadding,
+    this.radius,
     this.inkBorderRadius,
   });
 
@@ -266,6 +272,7 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
           },
           splashColor: Colors.transparent,
           borderRadius: widget.inkBorderRadius,
+          borderRadiusNum: widget.radius,
         )
         .material();
   }
