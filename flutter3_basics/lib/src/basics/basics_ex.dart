@@ -449,8 +449,16 @@ typedef StringIndexEachCallback = dynamic Function(int index, String element);
 /// [StringEx.copy]
 @allPlatformFlag
 Future<String?> getClipboardText() async {
-  final data = await Clipboard.getData(Clipboard.kTextPlain);
-  return data?.text;
+  try {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    return data?.text;
+  } catch (e) {
+    assert(() {
+      l.w(e);
+      return true;
+    }());
+    return null;
+  }
 }
 
 /// 设置剪切板文本
