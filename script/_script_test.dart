@@ -36,10 +36,10 @@ Future<String?> _findISCCPath() async {
       args: ["query", key],
       printLog: false,
     );
-    if (result.exitCode != 0) {
+    if (result?.exitCode != 0) {
       continue;
     }
-    final output = result.stdout;
+    final output = result?.stdout;
     if (output is String) {
       for (final line
           in output
@@ -53,11 +53,11 @@ Future<String?> _findISCCPath() async {
           args: ["query", subKey],
           printLog: false,
         );
-        if (subOutput.exitCode != 0) {
+        if (subOutput?.exitCode != 0) {
           continue;
         }
         //print("subKey:" + subKey + " -> " + subOutput.stdout);
-        final path = _findInnoSetupPath(subOutput.stdout);
+        final path = _findInnoSetupPath(subOutput?.stdout);
         if (path != null) {
           final isccPath = p.join(path, 'ISCC.exe');
           if (File(isccPath).existsSync()) {
