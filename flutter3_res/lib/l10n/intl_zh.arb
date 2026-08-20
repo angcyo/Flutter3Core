@@ -30,6 +30,13 @@
   "@libAdapterLoadMoreError": {
     "description": "列表加载更多数据失败"
   },
+  "libJustNow": "刚刚",
+  "libSecondsAgo": "秒前",
+  "libMinutesAgo": "分钟前",
+  "libHoursAgo": "小时前",
+  "libDaysAgo": "天前",
+  "libYesterday": "昨天",
+  "libTheDayBeforeYesterday": "前天",
   "libRefresh": "刷新",
   "libFinish": "完成",
   "libBack": "返回",

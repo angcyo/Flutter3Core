@@ -76,15 +76,24 @@ extension TimeEx on int {
   /// moment
   /// [TimeEx.toTimeAgo]
   String toTimeAgo({
-    String just = "刚刚",
-    String s = "秒前",
-    String m = "分钟前",
-    String h = "小时前",
-    String d = "天前",
-    String yesterday = "昨天",
-    String beforeYesterday = "前天",
+    BuildContext? context,
+    String? just,
+    String? s,
+    String? m,
+    String? h,
+    String? d,
+    String? yesterday,
+    String? beforeYesterday,
     String? timePattern = "yyyy-MM-dd HH:mm:ss",
   }) {
+    final libRes = (context ?? GlobalConfig.def.globalAppContext)?.libRes;
+    just ??= libRes?.libJustNow ?? "刚刚";
+    s ??= libRes?.libSecondsAgo ?? "秒前";
+    m ??= libRes?.libMinutesAgo ?? "分钟前";
+    h ??= libRes?.libHoursAgo ?? "小时前";
+    d ??= libRes?.libDaysAgo ?? "天前";
+    yesterday ??= libRes?.libYesterday ?? "昨天";
+    beforeYesterday ??= libRes?.libTheDayBeforeYesterday ?? "前天";
     //10秒之内, 显示刚刚
     //debugger();
     final now = nowTimestamp();

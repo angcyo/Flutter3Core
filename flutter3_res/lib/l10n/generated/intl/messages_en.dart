@@ -48,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libCopySelectedElem": MessageLookupByLibrary.simpleMessage(
       "Copy Selected Elements",
     ),
+    "libDaysAgo": MessageLookupByLibrary.simpleMessage("days ago"),
     "libDelete": MessageLookupByLibrary.simpleMessage("Delete"),
     "libDeleteSelectedElem": MessageLookupByLibrary.simpleMessage(
       "Delete Selected Elements",
@@ -75,10 +76,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "libHideElement": MessageLookupByLibrary.simpleMessage("Hide Element"),
     "libHidePassword": MessageLookupByLibrary.simpleMessage("Hide Password"),
     "libHotkeySettings": MessageLookupByLibrary.simpleMessage("Hotkeys"),
+    "libHoursAgo": MessageLookupByLibrary.simpleMessage("hr ago"),
     "libIgnoreLockRatio": MessageLookupByLibrary.simpleMessage(
       "Ignore Lock Ratio",
     ),
     "libInstallNow": MessageLookupByLibrary.simpleMessage("Install Now"),
+    "libJustNow": MessageLookupByLibrary.simpleMessage("Just now"),
     "libKnown": MessageLookupByLibrary.simpleMessage("Got it"),
     "libLatestVersion": MessageLookupByLibrary.simpleMessage(
       "You are on the latest version",
@@ -86,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libLoading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "libMatchCase": MessageLookupByLibrary.simpleMessage("Match Case"),
     "libMatchWord": MessageLookupByLibrary.simpleMessage("Match Word"),
+    "libMinutesAgo": MessageLookupByLibrary.simpleMessage("min ago"),
     "libMoveElemDown": MessageLookupByLibrary.simpleMessage(
       "Move Element Down",
     ),
@@ -118,6 +122,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libSaveSuccessful": MessageLookupByLibrary.simpleMessage(
       "Saved successfully",
     ),
+    "libSecondsAgo": MessageLookupByLibrary.simpleMessage("sec ago"),
     "libSelectAll": MessageLookupByLibrary.simpleMessage("Select All"),
     "libSetHotkeys": MessageLookupByLibrary.simpleMessage(
       "Set Directly With Hotkeys",
@@ -135,6 +140,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libShowPassword": MessageLookupByLibrary.simpleMessage("Show Password"),
     "libSmartSnap": MessageLookupByLibrary.simpleMessage("Smart Snap"),
+    "libTheDayBeforeYesterday": MessageLookupByLibrary.simpleMessage(
+      "The day before yesterday",
+    ),
     "libTips": MessageLookupByLibrary.simpleMessage("Tip"),
     "libUndo": MessageLookupByLibrary.simpleMessage("Undo"),
     "libUngroup": MessageLookupByLibrary.simpleMessage("Ungroup"),
@@ -156,6 +164,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),
     "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
     "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "libYesterday": MessageLookupByLibrary.simpleMessage("Yesterday"),
     "libZoomIn": MessageLookupByLibrary.simpleMessage("Zoom In"),
     "libZoomInCanvas": MessageLookupByLibrary.simpleMessage("Zoom In Canvas"),
     "libZoomOut": MessageLookupByLibrary.simpleMessage("Zoom Out"),

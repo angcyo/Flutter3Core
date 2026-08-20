@@ -120,6 +120,46 @@ class LibRes {
     );
   }
 
+  /// `刚刚`
+  String get libJustNow {
+    return Intl.message('刚刚', name: 'libJustNow', desc: '', args: []);
+  }
+
+  /// `秒前`
+  String get libSecondsAgo {
+    return Intl.message('秒前', name: 'libSecondsAgo', desc: '', args: []);
+  }
+
+  /// `分钟前`
+  String get libMinutesAgo {
+    return Intl.message('分钟前', name: 'libMinutesAgo', desc: '', args: []);
+  }
+
+  /// `小时前`
+  String get libHoursAgo {
+    return Intl.message('小时前', name: 'libHoursAgo', desc: '', args: []);
+  }
+
+  /// `天前`
+  String get libDaysAgo {
+    return Intl.message('天前', name: 'libDaysAgo', desc: '', args: []);
+  }
+
+  /// `昨天`
+  String get libYesterday {
+    return Intl.message('昨天', name: 'libYesterday', desc: '', args: []);
+  }
+
+  /// `前天`
+  String get libTheDayBeforeYesterday {
+    return Intl.message(
+      '前天',
+      name: 'libTheDayBeforeYesterday',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `刷新`
   String get libRefresh {
     return Intl.message('刷新', name: 'libRefresh', desc: '', args: []);
