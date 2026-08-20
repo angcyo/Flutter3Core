@@ -94,13 +94,13 @@ extension TimeEx on int {
     d ??= libRes?.libDaysAgo ?? "天前";
     yesterday ??= libRes?.libYesterday ?? "昨天";
     beforeYesterday ??= libRes?.libTheDayBeforeYesterday ?? "前天";
-    //10秒之内, 显示刚刚
-    //debugger();
     final now = nowTimestamp();
     final diff = now - this;
+    //10秒之内, 显示刚刚
+    //debugger();
     if (diff < 10 * kSecond) return just;
     //1分钟之内, 显示几秒前
-    if (diff < 1 * kMinute) return "$diff$s";
+    if (diff < 1 * kMinute) return "${diff ~/ kSecond}$s";
     //1小时之内, 显示几分钟前
     if (diff < 1 * kHour) return "${diff ~/ kMinute}$m";
     //1天之内, 显示几小时前
