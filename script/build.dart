@@ -92,7 +92,7 @@ void main(List<String> arguments) {
     //end
     //print(text);
     targetFile.writeAsStringSync(text);
-    print('构建信息修改->${targetFile.path}');
+    print('构建信息修改-> ${targetFile.path}');
 
     //成功退出
     //exit(0);

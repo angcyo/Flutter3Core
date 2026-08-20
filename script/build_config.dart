@@ -15,6 +15,7 @@ void main(List<String> arguments) {
     '[${Platform.script.toFilePath(windows: isWindows).split("/").last.split(".")[0]}]工作路径->${Directory.current.path}',
   );
   final currentPath = Directory.current.path;
+  final ps = Platform.pathSeparator;
 
   //MARK: input args
   String? argBuildType;
@@ -30,7 +31,7 @@ void main(List<String> arguments) {
   //MARK: yaml config
 
   //从`pubspec.yaml`中获取版本信息
-  final pubspecFile = File("$currentPath/pubspec.yaml");
+  final pubspecFile = File("$currentPath${ps}pubspec.yaml");
   final pubspecYaml = loadYaml(
     pubspecFile.existsSync() ? pubspecFile.readAsStringSync() : "",
   );
@@ -77,12 +78,12 @@ void main(List<String> arguments) {
   //debugger();
 
   //MARK: 3.输出目标文件
-  const outputPath = "assets/config";
-  final outputFile = File("$currentPath/$outputPath/build_config.json");
+  final outputPath = "assets${ps}config";
+  final outputFile = File("$currentPath$ps$outputPath${ps}build_config.json");
   outputFile.parent.createSync(recursive: true);
 
   outputFile.writeAsStringSync(jsonEncode(json));
-  colorLog('构建信息修改->${outputFile.path}↓\n$json');
+  colorLog('构建信息修改-> ${outputFile.path} ↓\n$json\n');
 }
 
 /// 读取指定key对应的map数据

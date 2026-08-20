@@ -372,7 +372,7 @@ void main(List<String> arguments) async {
     colorErrorLog('请检查是否执行过`flutter build xxx --release`');
   }
   colorLog(
-    '✅ 收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}',
+    '✅ 收集完成[$collectProductCount], 耗时: ${DateTime.now().difference(time)}s',
   );
 }
 
