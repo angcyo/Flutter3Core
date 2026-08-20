@@ -39,7 +39,11 @@ dependencies:
   # 需要配置:
   # - https://pub.dev/packages/flutter_onnxruntime#android
   # `1.8.3` birefnet 模型在macos上加载会报错
-  flutter_onnxruntime: 1.8.0
+  #flutter_onnxruntime: 1.8.0
+  flutter_onnxruntime:
+    git:
+      url: git@github.com:angcyo/flutter_onnxruntime.git
+      ref: windows-v1.8.3-fix1
   # https://pub.dev/packages/onnxruntime_plus
   # Updated to OnnxRuntime 1.22
   # Minimum OS Requirements / 最小支持系统版本
