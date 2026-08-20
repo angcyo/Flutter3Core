@@ -78,6 +78,7 @@ void main(List<String> arguments) async {
   //MARK: yaml config
 
   final time = DateTime.now();
+  final ps = Platform.pathSeparator;
 
   final appName = _getAppName();
   final versionName = _getVersionName();
@@ -93,7 +94,7 @@ void main(List<String> arguments) async {
   //输出路径
   final outputPath = config["output_path"] ?? ".output";
   //记录复制过的文件
-  final copiedFile = ensureFile("$currentPath/$outputPath/.copy");
+  final copiedFile = ensureFile("$currentPath$ps$outputPath$ps.copy");
   final copiedLines = copiedFile?.readAsLinesSync() ?? [];
 
   //已经复制过的产物数量
@@ -113,14 +114,15 @@ void main(List<String> arguments) async {
       defBuildFlavor: argBuildFlavor,
     );
     final apkName = "app$buildFlavorTag$buildTypeTag.apk";
-    final from = "$currentPath/build/app/outputs/flutter-apk/$apkName";
+    final from =
+        "$currentPath${ps}build${ps}app${ps}outputs${ps}flutter-apk$ps$apkName";
     if (File(from).existsSync()) {
-      final key = "$apkName/${File(from).lastModifiedSync()}";
+      final key = "$apkName$ps${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath/$outputPath/.apk/$outputName";
+        final to = "$currentPath$ps$outputPath$ps.apk$ps$outputName";
         ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
@@ -144,15 +146,15 @@ void main(List<String> arguments) async {
     );
     final aabName = "app$buildFlavorTag$buildTypeTag.aab";
     final from = argBuildFlavor == null
-        ? "$currentPath/build/app/outputs/bundle/release/$aabName"
-        : "$currentPath/build/app/outputs/bundle/${argBuildFlavor}Release/$aabName";
+        ? "$currentPath${ps}build${ps}app${ps}outputs${ps}bundle${ps}release$ps$aabName"
+        : "$currentPath${ps}build${ps}app${ps}outputs${ps}bundle$ps${argBuildFlavor}Release$ps$aabName";
     if (File(from).existsSync()) {
-      final key = "$aabName/${File(from).lastModifiedSync()}";
+      final key = "$aabName$ps${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath/$outputPath/.apk/$outputName";
+        final to = "$currentPath$ps$outputPath$ps.apk$ps$outputName";
         ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
@@ -175,14 +177,14 @@ void main(List<String> arguments) async {
       defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
-    final from = "$currentPath/build/ios/ipa/$targetFileName.ipa";
+    final from = "$currentPath${ps}build${ps}ios${ps}ipa$ps$targetFileName.ipa";
     if (File(from).existsSync()) {
-      final key = "$targetFileName.ipa/${File(from).lastModifiedSync()}";
+      final key = "$targetFileName.ipa$ps${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath/$outputPath/.ipa/$outputName";
+        final to = "$currentPath$ps$outputPath$ps.ipa$ps$outputName";
         ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
@@ -206,16 +208,16 @@ void main(List<String> arguments) async {
       defBuildFlavor: argBuildFlavor,
     );
     final from =
-        "$currentPath/build/macos/Build/Products/Release/$productFileName.app";
+        "$currentPath${ps}build${ps}macos${ps}Build${ps}Products${ps}Release$ps$productFileName.app";
     if (Directory(from).existsSync()) {
       final key =
-          "$productFileName.app/${File("$from/Contents/MacOS/$productFileName").lastModifiedSync()}";
+          "$productFileName.app$ps${File("$from${ps}Contents${ps}MacOS$ps$productFileName").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final toDir = "$currentPath/$outputPath/.app";
-        final to = "$toDir/$outputName";
+        final toDir = "$currentPath$ps$outputPath$ps.app";
+        final to = "$toDir$ps$outputName";
         ensureFolder(to, parent: true);
         if (outputName.endsWith(".app")) {
           if (await copyFolderByPlatform(from, to)) {
@@ -233,7 +235,7 @@ void main(List<String> arguments) async {
         //使用appdmg打包安装程序
         final macosAppdmgConfig = config["macos_appdmg_config"];
         if (macosAppdmgConfig is String) {
-          final appdmgConfigFile = File("$currentPath/$macosAppdmgConfig");
+          final appdmgConfigFile = File("$currentPath$ps$macosAppdmgConfig");
           if (appdmgConfigFile.existsSync()) {
             final result = await runCommand(
               "appdmg",
@@ -245,7 +247,7 @@ void main(List<String> arguments) async {
                 0,
                 outputName.lastIndexOf("."),
               );
-              final outputDmgPath = "$toDir/$dmgName.dmg";
+              final outputDmgPath = "$toDir$ps$dmgName.dmg";
               outputDmgPath.safeDelete();
 
               //修改appdmg配置文件
@@ -254,7 +256,7 @@ void main(List<String> arguments) async {
               final json = jsonDecode(appdmgConfigFile.readAsStringSync());
               json["title"] = dmgTitle;
               final tempConfigFile = File(
-                "$currentPath/.appdmg.config.temp.json",
+                "$currentPath$ps.appdmg.config.temp.json",
               );
               tempConfigFile.writeAsStringSync(jsonEncode(json));
 
@@ -292,16 +294,17 @@ void main(List<String> arguments) async {
       defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
-    final from = "$currentPath/build/windows/x64/runner/Release";
+    final from =
+        "$currentPath${ps}build${ps}windows${ps}x64${ps}runner${ps}Release";
     if (Directory(from).existsSync()) {
       final key =
-          "$exeFileName/${File("$from/data/app.so").lastModifiedSync()}";
+          "$exeFileName$ps${File("$from${ps}data${ps}app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("🚨 已复制过: $from/$exeFileName");
+        colorLog("🚨 已复制过: $from$ps$exeFileName");
         exitProductCount++;
       } else {
-        final toDir = "$currentPath/$outputPath/.exe";
-        final to = "$toDir/$outputName";
+        final toDir = "$currentPath$ps$outputPath$ps.exe";
+        final to = "$toDir$ps$outputName";
         ensureFolder(to, parent: true);
         if (outputName.endsWith(".exe")) {
           if (copyFile(from, to)) {
@@ -319,7 +322,7 @@ void main(List<String> arguments) async {
         //使用Inno Setup打包安装程序
         final windowsInnoSetupConfig = config["windows_inno_setup"];
         if (windowsInnoSetupConfig is String) {
-          final issFile = File("$currentPath/$windowsInnoSetupConfig");
+          final issFile = File("$currentPath$ps$windowsInnoSetupConfig");
           if (issFile.existsSync()) {
             final isccPath = await _findISCCPath();
             if (isccPath != null) {
@@ -328,8 +331,8 @@ void main(List<String> arguments) async {
                 outputName.lastIndexOf("."),
               );
               final appVersion = _getVersionName() ?? "0.0.1";
-              //print("$toDir/$setupExeName:$appVersion");
-              colorLog('💡准备打包安装程序: $from/$exeFileName');
+              //print("$toDir${ps}$setupExeName:$appVersion");
+              colorLog('💡准备打包安装程序: $from$ps$exeFileName');
               final result = await runCommand(
                 isccPath,
                 args: [
@@ -346,7 +349,7 @@ void main(List<String> arguments) async {
               );
               if (result?.exitCode == 0) {
                 collectProductCount++;
-                final outputExePath = "$toDir/$setupExeName.exe";
+                final outputExePath = "$toDir$ps$setupExeName.exe";
                 colorLog('🎉-> $outputExePath ${outputExePath.fileSizeStr}');
               }
             } else {
