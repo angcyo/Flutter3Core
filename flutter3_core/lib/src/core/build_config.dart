@@ -286,3 +286,6 @@ String? get $buildFlavor =>
 /// [platformPackageInfo]
 /// [appPlatformPackageName]
 String? get $buildPackageName => $buildConfig?.buildPackageName;
+
+/// 构建app时的时间
+String? get $buildTime => $buildConfig?.buildTime;
