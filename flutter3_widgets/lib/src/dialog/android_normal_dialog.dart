@@ -53,6 +53,13 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   /// 取消按钮回调
   final GestureTapCallback? onCancelTap;
 
+  /// 中立按钮点击拦截回调
+  /// 返回true, 表示拦截默认处理
+  final FutureOrResultCallback<bool, bool>? onInterceptNeutralTap;
+
+  /// 中立按钮回调
+  final GestureTapCallback? onNeutralTap;
+
   /// 是否拦截Pop
   final bool interceptPop;
 
@@ -106,6 +113,8 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     this.onCancelTap,
     this.onInterceptConfirmTap,
     this.onConfirmTap,
+    this.onInterceptNeutralTap,
+    this.onNeutralTap,
     this.useIcon = false,
     this.interceptPop = false,
     this.contentConstraints,
@@ -119,9 +128,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final textAlign = controlAxis == Axis.vertical
-        ? TextAlign.center
-        : TextAlign.start;
+    final TextAlign textAlign = controlAxis == .vertical ? .center : .start;
 
     // 标题 / 内容
     final title = _buildTitle(context, textAlign: textAlign);
@@ -131,21 +138,17 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     );
 
     // 控制按钮
-    final controlRow = controlAxis == Axis.horizontal
+    final controlRow = controlAxis == .horizontal
         ? _buildControlRow(context)
         : null;
-    final controlColumn = controlAxis == Axis.vertical
+    final controlColumn = controlAxis == .vertical
         ? _buildControlColumn(context, globalTheme)
         : null;
 
     final bodyColumn = Column(
-      mainAxisAlignment: controlAxis == Axis.vertical
-          ? MainAxisAlignment.center
-          : MainAxisAlignment.start,
-      crossAxisAlignment: controlAxis == Axis.vertical
-          ? CrossAxisAlignment.center
-          : CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: controlAxis == .vertical ? .center : .start,
+      crossAxisAlignment: controlAxis == .vertical ? .center : .start,
+      mainAxisSize: .min,
       children: [?title, ?message, ?controlRow, ...?controlColumn],
     );
 
@@ -172,11 +175,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     final confirm = _buildConfirmButton(context);
 
     final controlRow = [cancel, neutral, confirm]
-        .row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.max,
-          gap: gap,
-        )
+        .row(mainAxisAlignment: .end, mainAxisSize: .max, gap: gap)
         ?.paddingOnly(bottom: kL, right: kH);
 
     return controlRow;
@@ -301,8 +300,19 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
             text: neutralText,
             useIcon: useIcon,
             radius: radius ?? controlRadius,
-            onTap: () {
-              Navigator.pop(context, null);
+            onTap: () async {
+              if (onInterceptNeutralTap == null) {
+                Navigator.pop(context, null);
+                onNeutralTap?.call();
+              } else {
+                final intercept = await onInterceptNeutralTap!(true) == true;
+                if (!intercept) {
+                  if (context.mounted) {
+                    Navigator.pop(context, null);
+                    onNeutralTap?.call();
+                  }
+                }
+              }
             },
           );
   }

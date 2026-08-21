@@ -102,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libShowGuideLines": MessageLookupByLibrary.simpleMessage("显示参考线"),
     "libShowPassword": MessageLookupByLibrary.simpleMessage("显示密码"),
     "libSmartSnap": MessageLookupByLibrary.simpleMessage("智能吸附"),
+    "libTempSave": MessageLookupByLibrary.simpleMessage("暂存"),
     "libTheDayBeforeYesterday": MessageLookupByLibrary.simpleMessage("前天"),
     "libTips": MessageLookupByLibrary.simpleMessage("提示"),
     "libUndo": MessageLookupByLibrary.simpleMessage("撤销"),

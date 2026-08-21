@@ -285,6 +285,11 @@ class LibRes {
     return Intl.message('否', name: 'libNo', desc: '', args: []);
   }
 
+  /// `暂存`
+  String get libTempSave {
+    return Intl.message('暂存', name: 'libTempSave', desc: '', args: []);
+  }
+
   /// `重命名`
   String get libRename {
     return Intl.message('重命名', name: 'libRename', desc: '', args: []);

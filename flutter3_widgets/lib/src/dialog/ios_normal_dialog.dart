@@ -31,8 +31,10 @@ class IosNormalDialog extends AndroidNormalDialog {
     super.showNeutral,
     //--
     super.onCancelTap,
+    super.onNeutralTap,
     super.onConfirmTap,
     super.onInterceptCancelTap,
+    super.onInterceptNeutralTap,
     super.onInterceptConfirmTap,
     super.useIcon = false,
     super.contentConstraints,

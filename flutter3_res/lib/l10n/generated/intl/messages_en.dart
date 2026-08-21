@@ -140,6 +140,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libShowPassword": MessageLookupByLibrary.simpleMessage("Show Password"),
     "libSmartSnap": MessageLookupByLibrary.simpleMessage("Smart Snap"),
+    "libTempSave": MessageLookupByLibrary.simpleMessage("Temp"),
     "libTheDayBeforeYesterday": MessageLookupByLibrary.simpleMessage(
       "The day before yesterday",
     ),

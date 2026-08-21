@@ -52,6 +52,7 @@
   "libSaveFailure": "Save failed",
   "libYes": "Yes",
   "libNo": "No",
+  "libTempSave": "Temp",
   "libRename": "Rename",
   "libCopy": "Copy",
   "libExternalShare": "External Share",
