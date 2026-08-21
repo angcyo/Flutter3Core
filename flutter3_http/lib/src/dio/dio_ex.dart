@@ -60,33 +60,61 @@ extension DioStringEx on String {
   //MARK: fetch
 
   /// 顶级入口请求
-  Future<Response<T>> fetch<T>(
+  Future<Response<T>?> fetch<T>(
     void Function(RequestOptions options) config, {
     BuildContext? context,
     RequestOptions? requestOptions,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
-    requestOptions ??= RequestOptions();
-    requestOptions.path = transformUrl();
-    config(requestOptions);
-    final response = await RDio.get(
-      context: context,
-    ).dio.fetch<T>(requestOptions);
-    //debugger();
-    return response;
+    try {
+      requestOptions ??= RequestOptions();
+      requestOptions.path = transformUrl();
+      config(requestOptions);
+      final response = await RDio.get(
+        context: context,
+      ).dio.fetch<T>(requestOptions);
+      //debugger();
+      return response;
+    } catch (e) {
+      assert(() {
+        l.e("[fetch]->$this $e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 
   /// 获取url对应资源的`Last-Modified`数据
   Future<String?> dioGetLastModified({
     BuildContext? context,
     RequestOptions? requestOptions,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
     try {
-      final response = await fetch((options) {
-        options.method = "HEAD";
-      });
-      return response.headers.value("Last-Modified");
+      final response = await fetch(
+        (options) {
+          options.method = "HEAD";
+        },
+        context: context,
+        throwError: throwError,
+        toastError: toastError,
+      );
+      return response?.headers.value("Last-Modified");
     } catch (e) {
-      l.e("[dioGetLastModified]->$this $e");
+      assert(() {
+        l.e("[dioGetLastModified]->$this $e");
+        return true;
+      }());
       return null;
     }
   }
@@ -226,17 +254,34 @@ extension DioStringEx on String {
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
-    final response = await RDio.get(context: context).dio.get<String>(
-      transformUrl(),
-      queryParameters: queryParameters,
-      options: _mergeOptions(options ?? Options(), headers)!
-        ..responseType = ResponseType.plain,
-      cancelToken: cancelToken,
-      onReceiveProgress: onReceiveProgress,
-    );
-    //debugger();
-    return response.data;
+    try {
+      final response = await RDio.get(context: context).dio.get<String>(
+        transformUrl(),
+        queryParameters: queryParameters,
+        options: _mergeOptions(options ?? Options(), headers)!
+          ..responseType = ResponseType.plain,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      //debugger();
+      return response.data;
+    } catch (e) {
+      assert(() {
+        l.e("[dioGetString]->$this $e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 
   /// 获取http字节数据
@@ -250,18 +295,35 @@ extension DioStringEx on String {
     BuildContext? context,
     //--
     void Function(Response response)? onResult,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
-    final response = await RDio.get(context: context).dio.get(
-      transformUrl(),
-      queryParameters: queryParameters,
-      options: _mergeOptions(options ?? Options(), headers)!
-        ..responseType = ResponseType.bytes,
-      cancelToken: cancelToken,
-      onReceiveProgress: onReceiveProgress,
-    );
-    //debugger();
-    onResult?.call(response);
-    return Uint8List.fromList(response.data);
+    try {
+      final response = await RDio.get(context: context).dio.get(
+        transformUrl(),
+        queryParameters: queryParameters,
+        options: _mergeOptions(options ?? Options(), headers)!
+          ..responseType = ResponseType.bytes,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      //debugger();
+      onResult?.call(response);
+      return Uint8List.fromList(response.data);
+    } catch (e) {
+      assert(() {
+        l.e("[dioGetBytes]->$this $e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 
   /// 获取http对应的图片数据
@@ -273,15 +335,32 @@ extension DioStringEx on String {
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
-    final bytes = await dioGetBytes(
-      queryParameters: queryParameters,
-      options: _mergeOptions(options, headers),
-      cancelToken: cancelToken,
-      onReceiveProgress: onReceiveProgress,
-      context: context,
-    );
-    return bytes?.toImage();
+    try {
+      final bytes = await dioGetBytes(
+        queryParameters: queryParameters,
+        options: _mergeOptions(options, headers),
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+        context: context,
+      );
+      return bytes?.toImage();
+    } catch (e) {
+      assert(() {
+        l.e("[dioGetImage]->$this $e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 
   //MARK: post
@@ -291,7 +370,7 @@ extension DioStringEx on String {
   /// [body] 请求体 [DioMixin._transformData]
   ///   - 支持[FormData]
   /// [Response.data]数据类型通常是[_Map<String, dynamic>]
-  Future<Response<T>> post<T>({
+  Future<Response<T>?> post<T>({
     Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -300,23 +379,40 @@ extension DioStringEx on String {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
-    final response = await RDio.get(context: context).dio.post<T>(
-      transformUrl(),
-      data: body,
-      queryParameters: queryParameters,
-      options: _mergeOptions(options, headers),
-      cancelToken: cancelToken,
-      onSendProgress: onSendProgress,
-      onReceiveProgress: onReceiveProgress,
-    );
-    return response;
+    try {
+      final response = await RDio.get(context: context).dio.post<T>(
+        transformUrl(),
+        data: body,
+        queryParameters: queryParameters,
+        options: _mergeOptions(options, headers),
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response;
+    } catch (e) {
+      assert(() {
+        l.e("[post]->$this $e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 
   /// put请求
   /// [context] 用来获取dio
   /// [body] 请求体 [DioMixin._transformData]
-  Future<Response<T>> put<T>({
+  Future<Response<T>?> put<T>({
     Object? body,
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -325,18 +421,35 @@ extension DioStringEx on String {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
-    final response = await RDio.get(context: context).dio.put<T>(
-      transformUrl(),
-      data: body,
-      queryParameters: queryParameters,
-      options: _mergeOptions(options, headers),
-      cancelToken: cancelToken,
-      onSendProgress: onSendProgress,
-      onReceiveProgress: onReceiveProgress,
-    );
-    //debugger();
-    return response;
+    try {
+      final response = await RDio.get(context: context).dio.put<T>(
+        transformUrl(),
+        data: body,
+        queryParameters: queryParameters,
+        options: _mergeOptions(options, headers),
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      //debugger();
+      return response;
+    } catch (e) {
+      assert(() {
+        l.e("[put]->$this $e");
+        return true;
+      }());
+      if (toastError == true) {
+        toastInfo(e.toString());
+      }
+      if (throwError == true) {
+        rethrow;
+      }
+      return null;
+    }
   }
 
   /// 使用post请求, 上传文件
@@ -345,7 +458,7 @@ extension DioStringEx on String {
   /// [filePathList] 多文件上传
   /// [formMap] 除了文件外, 额外的表单数据
   /// https://github.com/FlutterStudioIst/dio/blob/main/dio/README-ZH.md#%E5%8F%91%E9%80%81-formdata
-  Future<Response<T>> upload<T>({
+  Future<Response<T>?> upload<T>({
     Object? body,
     String? filePath,
     String filePathKey = 'file',
@@ -359,6 +472,9 @@ extension DioStringEx on String {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     BuildContext? context,
+    //--
+    bool? throwError = true,
+    bool? toastError = false,
   }) async {
     final formData = FormData.fromMap({
       'name': 'flutter-dio-angcyo',
@@ -388,6 +504,8 @@ extension DioStringEx on String {
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
       context: context,
+      throwError: throwError,
+      toastError: toastError,
     );
   }
 
