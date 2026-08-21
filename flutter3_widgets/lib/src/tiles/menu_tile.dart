@@ -27,6 +27,12 @@ const MenuStyle kMenuStyle = MenuStyle(
   padding: WidgetStatePropertyAll(.zero),
 );
 
+/// 默认菜单图标大小
+const double kMenuIconSize = 28.0;
+
+/// 默认菜单图标内填充
+const double kMenuIconPadding = kL;
+
 /// 左[label]...右[value]
 /// - 悬停时, 显示[value]菜单布局
 /// 使用[HoverAnchorLayout]实现的点击浮窗弹窗tile
@@ -247,8 +253,16 @@ class _LabelMenuTileState extends State<LabelMenuTile> {
 class DesktopTextMenuTile extends StatefulWidget {
   //--leading
 
-  ///领头的小部件. (不指定也占空间)
+  ///领头的小部件.
   final Widget? leadingWidget;
+
+  /// [leadingWidget] 后面的菜单图标小部件, 会自动限制大小, (不指定也占空间)
+  ///- 推荐大小[placeholderSize]
+  ///- [kMenuIconSize]
+  final Widget? iconWidget;
+
+  /// [iconWidget] 的内边距
+  final double? iconPadding;
 
   //--trailing
 
@@ -322,7 +336,9 @@ class DesktopTextMenuTile extends StatefulWidget {
     this.text,
     this.textMaxLines,
     this.leadingWidget,
-    this.placeholderSize = const Size(24, 24),
+    this.iconWidget,
+    this.iconPadding = kMenuIconPadding,
+    this.placeholderSize = const Size(kMenuIconSize, kMenuIconSize),
     this.trailingWidget,
     //--
     this.enable,
@@ -380,8 +396,12 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
               color: globalTheme.successColor,
             ).invisible(enable: !(widget.isChecked == true)).insets(h: kL),
           //-- leading
-          widget.leadingWidget ??
-              SizedBox.fromSize(size: widget.placeholderSize),
+          widget.leadingWidget,
+          //-- icon
+          SizedBox.fromSize(
+            size: widget.placeholderSize,
+            child: widget.iconWidget?.center().insets(all: widget.iconPadding),
+          ),
           (widget.text ?? "")
               .text(style: globalTheme.textBodyStyle, maxLines: textMaxLines)
               .expanded(),
