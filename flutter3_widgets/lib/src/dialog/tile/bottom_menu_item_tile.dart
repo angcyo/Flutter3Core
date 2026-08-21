@@ -38,8 +38,14 @@ class BottomMenuItemTile extends StatelessWidget {
   /// 点击事件
   final FutureVoidAction? onTap;
 
+  /// 带上下文的点击
+  final GestureContextTapCallback? onContextTap;
+
   /// 点击后, 关闭对话框
-  final bool closeAfterTap;
+  final bool? closeAfterTap;
+
+  /// 是否在菜单中显示
+  final bool? isInMenu;
 
   /// [closeAfterTap] 关闭对话框时的返回值
   final dynamic popResult;
@@ -52,8 +58,10 @@ class BottomMenuItemTile extends StatelessWidget {
     this.mainAxisAlignment,
     //--
     this.onTap,
+    this.onContextTap,
     this.enable = true,
-    this.closeAfterTap = true,
+    this.closeAfterTap,
+    this.isInMenu,
     this.backgroundColor,
     this.filterColor,
     this.disableFilterColor,
@@ -63,19 +71,20 @@ class BottomMenuItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final mainAxisAlignment =
+        this.mainAxisAlignment ?? (isInMenu == true ? .start : .center);
+    final closeAfterTap = isInMenu == true
+        ? false
+        : (this.closeAfterTap ?? true);
     final list = (children ?? [child]);
     final body = direction == .horizontal
         ? list.row(
             gap: kH,
-            mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
+            mainAxisAlignment: mainAxisAlignment,
             lastExtend: true,
           )!
         : list
-              .column(
-                gap: kH,
-                mainAxisAlignment:
-                    mainAxisAlignment ?? MainAxisAlignment.center,
-              )!
+              .column(gap: kH, mainAxisAlignment: mainAxisAlignment)!
               .matchParentWidth();
     return body
         .colorFiltered(
@@ -84,12 +93,16 @@ class BottomMenuItemTile extends StatelessWidget {
               : (disableFilterColor ?? filterColor ?? globalTheme.disableColor),
         )
         .paddingAll(kX)
-        .constrainedMin(minHeight: kMinInteractiveDimension)
+        .constrainedMin(
+          minHeight: kMinInteractiveDimension,
+          minWidth: isInMenu == true ? kMenuMinWidth : null,
+        )
         .ink(
           () async {
             if (closeAfterTap) {
               context.pop(result: popResult);
             }
+            onContextTap?.call(context);
             await onTap?.call();
           },
           useDisableCursorStyle: false,

@@ -13,6 +13,8 @@ part of '../../../flutter3_widgets.dart';
 /// - 支持点击触发
 /// - 支持悬停触发
 ///
+/// 使用[MenuTriggerScope.close]主动关闭菜单
+///
 /// - [MenuTriggerWidget], 使用[MenuAnchor]实现
 /// - [SubmenuTriggerWidget], 使用[SubmenuButton]实现
 class MenuTriggerWidget extends StatefulWidget {
