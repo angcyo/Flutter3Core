@@ -392,7 +392,6 @@ extension MathStringEx on String {
 
 /// 数学矩形扩展
 extension MathRectEx on Rect {
-
   /// 4个数值
   String get ltwhString => "$left,$top,$width,$height";
 
@@ -403,7 +402,7 @@ extension MathRectEx on Rect {
 extension MathListDoubleEx on List<double> {
   /// 获取矩形信息
   /// - 如果是4个值, 则表示 ltwh
-  /// - 如果是8个值, 则表示 ltrb
+  /// - 如果是8个值, 则表示 ltrb (应该是obb才对)
   Rect? get rect {
     if (length == 4) {
       return Rect.fromLTWH(this[0], this[1], this[2], this[3]);
