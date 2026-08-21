@@ -22,12 +22,12 @@ void main() async {
 
   // 4. 启动 HTTP 服务器
   // InternetAddress.anyIPv4 允许局域网内的其他设备通过你的局域网 IP 访问
-  final port = 8080;
+  final port = 9090;
   final server = await io.serve(pipeline, InternetAddress.anyIPv4, port);
 
   print('=========================================');
   print('本地文件服务已启动 🚀');
-  //print('本地访问: http://localhost:${server.port}');
+  print('本地访问: http://localhost:${server.port}');
   print('本地访问: http://${server.address.host}:${server.port}');
   //print('目录映射: 物理路径 "./$publicFolderPath" -> 路由 "/"');
   print('请求路径: /?path=xxx&speed=1048576');
