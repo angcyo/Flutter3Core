@@ -392,8 +392,11 @@ extension MathStringEx on String {
 
 /// 数学矩形扩展
 extension MathRectEx on Rect {
+
+  /// 4个数值
   String get ltwhString => "$left,$top,$width,$height";
 
+  /// 4个数值
   String get ltrbString => "$left,$top,$right,$bottom";
 }
 
