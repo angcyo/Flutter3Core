@@ -398,10 +398,13 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
           //-- leading
           widget.leadingWidget,
           //-- icon
-          SizedBox.fromSize(
-            size: widget.placeholderSize,
-            child: widget.iconWidget?.center().insets(all: widget.iconPadding),
-          ),
+          if (widget.leadingWidget == null || widget.iconWidget != null)
+            SizedBox.fromSize(
+              size: widget.placeholderSize,
+              child: widget.iconWidget?.center().insets(
+                all: widget.iconPadding,
+              ),
+            ),
           (widget.text ?? "")
               .text(style: globalTheme.textBodyStyle, maxLines: textMaxLines)
               .expanded(),
