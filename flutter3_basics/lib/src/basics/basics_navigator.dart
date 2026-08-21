@@ -619,6 +619,7 @@ extension NavigatorEx on BuildContext {
   /// 与`go_router`中的扩展命名冲突
   /// - [rootNavigator] 是否使用根导航器
   /// - [checkDismissal] 是否弹出检测, 保留最后一个根路由页面.
+  /// - [doPop] 是否执行当前操作
   ///
   /// - [isAppBarDismissal]
   void pop<T extends Object?>({
@@ -626,10 +627,10 @@ extension NavigatorEx on BuildContext {
     bool rootNavigator = false,
     bool checkDismissal = true,
     bool maybePop = false,
-    bool doRun = true,
+    bool doPop = true,
   }) {
     //debugger();
-    if (!doRun) {
+    if (!doPop) {
       //不执行
       return;
     }
@@ -657,18 +658,19 @@ extension NavigatorEx on BuildContext {
   );
 
   /// 弹出一个菜单路由
+  /// - [doPop] 是否执行当前操作
   void popDialog<T extends Object?>({
     T? result,
     bool rootNavigator = false,
     bool checkDismissal = false,
     bool maybePop = false,
-    bool doRun = true,
+    bool doPop = true,
   }) => pop(
     result: result,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
     maybePop: maybePop,
-    doRun: doRun,
+    doPop: doPop,
   );
 
   /// 弹出一个菜单路由
