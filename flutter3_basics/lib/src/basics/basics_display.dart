@@ -177,6 +177,19 @@ double get screenInch => cl(screenWidthPixel, screenHeightPixel) / dpi;
 
 /// 获取当前平台的语言设置[Locale], 系统语言.
 /// http://www.lingoes.net/en/translator/langcode.htm
+///
+/// [Locale.languageCode] zh
+/// [Locale.countryCode] CN
+/// [Locale.scriptCode] Hans
+///
+/// ```
+/// const Locale('zh', 'CN'),
+/// const Locale('en', 'US'),
+/// ```
+///
+/// - [Locale]
+/// - [ContextEx.locale]
+/// - [GlobalConfig.locale]
 Locale get platformLocale => PlatformDispatcher.instance.locale;
 
 /// 获取当前平台的语言设置列表[Locale], 系统语言列表

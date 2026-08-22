@@ -3702,6 +3702,7 @@ extension ContextEx on BuildContext {
   /// If the dependent widget's reference to the inherited widget is in a constructor or an initState() method,
   /// then the rebuilt dependent widget will not reflect the changes in the inherited widget.
   /// ```
+  /// - [platformLocale]
   Locale get locale => Localizations.localeOf(this);
 
   /// [locale]

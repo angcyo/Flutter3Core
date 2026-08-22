@@ -311,6 +311,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// ```
   /// [L10nStringEx.toLocale]
   /// [Locale.fromSubtags]
+  ///
+  /// [platformLocale]
   @configProperty
   Locale? locale;
 
