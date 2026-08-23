@@ -398,6 +398,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   }
 
   /// 包裹一个主题更改操作
+  /// - 动作执行之后, 自动处理[notifyThemeChanged]
   @api
   void updateThemeAction(FutureVoidAction action) async {
     await action();
@@ -407,6 +408,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 改变主题属性之后, 调用此方法通知
   /// 通知主题发生了改变
   /// [GlobalAppStateMixin]
+  /// - [WidgetsBindingObserver.didChangeLocales]
   @api
   void notifyThemeChanged() {
     themeStreamOnce.updateValue(this);
