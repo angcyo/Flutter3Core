@@ -470,6 +470,7 @@ extension StateDecorationWidgetEx on Widget {
     BorderStyle strokeStyle = BorderStyle.solid,
     double strokeAlign = BorderSide.strokeAlignInside,
     //--
+    Decoration? hoverDecoration,
     Decoration? foregroundDecoration,
     Decoration? pressedDecoration,
     Decoration? selectedDecoration,
@@ -511,6 +512,7 @@ extension StateDecorationWidgetEx on Widget {
       key: key,
       decoration: decoration,
       //--
+      hoverDecoration: hoverDecoration,
       foregroundDecoration: foregroundDecoration,
       pressedDecoration: pressedDecoration,
       selectedDecoration: selectedDecoration,
