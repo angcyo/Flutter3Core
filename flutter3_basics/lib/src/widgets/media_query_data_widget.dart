@@ -81,6 +81,10 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   @configProperty
   bool updateByBrightness = false;
 
+  /// 系统语言改变, 就更新界面
+  @configProperty
+  bool updateByLocale = false;
+
   //MARK: -
 
   /// 当前视图
@@ -111,6 +115,8 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     super.dispose();
   }
 
+  //MARK: - change
+
   @override
   void didChangeMetrics() {
     //super.didChangeMetrics();
@@ -135,6 +141,17 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
     //debugger();
   }
 
+  /// ```
+  /// AppLifecycle didChangeLocales:[en_US, zh_Hans_CN, ja_JP, fr_FR, es_ES]
+  /// ```
+  @override
+  void didChangeLocales(List<ui.Locale>? locales) {
+    //super.didChangeLocales(locales);
+    onSelfPlatformLocaleChanged(locales);
+  }
+
+  //MARK: - sub
+
   /// [MediaQueryData]数据改变
   @overridePoint
   void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
@@ -157,6 +174,15 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
   void onSelfPlatformBrightnessChanged(Brightness? from, Brightness to) {
     //debugger();
     if (updateByBrightness) {
+      updateState();
+    }
+  }
+
+  /// 平台[Locale]语言发生改变
+  @overridePoint
+  void onSelfPlatformLocaleChanged(List<ui.Locale>? locales) {
+    //debugger();
+    if (updateByLocale) {
       updateState();
     }
   }

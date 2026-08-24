@@ -30,7 +30,13 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
     super.didChangeAccessibilityFeatures();
   }
 
-  ///语言环境发生改变时回调这里
+  /// 语言环境发生改变时回调这里
+  /// ```
+  /// AppLifecycle didChangeLocales:[en_US, zh_Hans_CN, ja_JP, fr_FR, es_ES]
+  /// AppLifecycle didChangeLocales:[zh_Hant_TW, en_US, zh_Hans_CN, ja_JP, fr_FR, es_ES]
+  /// AppLifecycle didChangeLocales:[zh_Hant_HK, zh_Hant_TW, en_US, zh_Hans_CN, ja_JP, fr_FR, es_ES]
+  /// AppLifecycle didChangeLocales:[zh_Hant_HK, zh_Hant_TW, en_US, zh_Hans_CN, ja_JP, fr_FR, es_ES, zh_Hant_MO]
+  /// ```
   @override
   void didChangeLocales(List<Locale>? locales) {
     '[${classHash()}]AppLifecycle didChangeLocales:$locales'.writeToLog(
@@ -63,7 +69,11 @@ mixin AppLifecycleLogMixin on AppLifecycleListener {
   }
 
   /// 屏幕旋转/尺寸改变后
-  ///系统窗口改变回调 如键盘弹出 屏幕旋转等
+  /// 系统窗口改变回调 如键盘弹出 屏幕旋转等
+  /// ```
+  /// didChangeMetrics screen:360x392 3.33' device:360x780 5.37' [3.0]
+  /// viewInsets:ltrb:0 0 0 0 viewPadding:ltrb:0 27 0 0 Brightness.light
+  /// ```
   @override
   void didChangeMetrics() {
     '[${classHash()}]didChangeMetrics'
@@ -183,7 +193,7 @@ class AppLifecycleObserver extends AppLifecycleListener
     super.dispose();
   }
 
-  ///
+  /// 平台环境发生改变
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
@@ -191,10 +201,22 @@ class AppLifecycleObserver extends AppLifecycleListener
     appBottomInsetHeightStream <= platformMediaQueryData.viewInsets.bottom;
   }
 
+  /// 应用生命周期发生改变
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     appLifecycleStateStream <= state;
+  }
+
+  /// 应用语言环境发生改变
+  @override
+  void didChangeLocales(List<Locale>? locales) {
+    super.didChangeLocales(locales);
+    final gc = GlobalConfig.def;
+    if (gc.locale == null) {
+      // 跟随系统的语言
+      gc.notifyThemeChanged();
+    }
   }
 }
 

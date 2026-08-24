@@ -359,7 +359,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   }
 
   /// 初始化主题
-  /// - [locale] 指定当前语言, 不指定则使用系统
+  /// - [locale] 指定当前语言, 不指定则跟随系统
   /// - [themeMode] 指定当前主题模式, 不指定则使用系统
   /// - [onGetGlobalTheme] 获取自定义的主题样式[GlobalTheme]
   ///   - [GlobalTheme]
@@ -379,7 +379,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     ThemeMode? themeMode,
   }) {
     //语言 / 暗色模式
-    this.locale = locale ?? this.locale;
+    this.locale = locale;
     this.themeMode = themeMode ?? this.themeMode;
 
     //主题样式
@@ -408,7 +408,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 改变主题属性之后, 调用此方法通知
   /// 通知主题发生了改变
   /// [GlobalAppStateMixin]
-  /// - [WidgetsBindingObserver.didChangeLocales]
+  /// - [WidgetsBindingObserver.didChangeLocales] 监听系统语言变化
   @api
   void notifyThemeChanged() {
     themeStreamOnce.updateValue(this);
@@ -449,7 +449,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
 
   //endregion tablet平板适配
 
-  GlobalConfig({this.globalTopContext, this.globalAppContext});
+  /// - [WidgetsBindingObserver]
+  GlobalConfig({this.globalTopContext, this.globalAppContext}) {
+    //WidgetsBinding.instance.addObserver(this);
+    //WidgetsBinding.instance.addObserver(this);
+  }
 
   GlobalConfig._() {
     assert(() {
@@ -460,6 +464,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     }());
     //debugger();
   }
+
+  //MARK: - static
 
   /// 全局默认
   static GlobalConfig? _def;
@@ -498,6 +504,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 获取当前程序中的所有路由
   static List<(ModalRoute, Element?)> allModalRouteList() =>
       GlobalConfig.def.findModalRouteList();
+
+  //MARK: - fn
 
   /// 获取当前配置下, 是否是debug模式
   /// 返回null, 表示不确定
