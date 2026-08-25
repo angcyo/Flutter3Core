@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:openai_dart/openai_dart.dart';
 
@@ -8,22 +9,23 @@ import 'package:openai_dart/openai_dart.dart';
 /// @date 2026/08/18
 ///
 /// OpenAI 调用测试
-///
+/// https://pub.dev/packages/openai_dart
 final key = "";
 
 //final baseUrl = "https://api.openai.com/v1";
-//final baseUrl = "https://openrouter.ai/api/v1";
-// final baseUrl = "https://api.deepseek.com";
-final baseUrl =
-      "https://ws-1jlwl58hlx3p5jjz.cn-beijing.maas.aliyuncs.com/compatible-mode/v1";
+final baseUrl = "https://openrouter.ai/api/v1";
+//final baseUrl = "https://api.deepseek.com";
+/*final baseUrl =
+    "https://ws-1jlwl58hlx3p5jjz.cn-beijing.maas.aliyuncs.com/compatible-mode/v1";*/
 
-//final String model = 'gpt-5.5';
+// final String model = 'gpt-5.5';
 //final String model = 'qwen3.8-max';
 //final String model = 'qwen-image-3.0-pro';
-final String model = 'qwen3-vl-plus-2025-12-19';
-//final String model = 'openai/gpt-5.5';
+//final String model = 'qwen3-vl-plus-2025-12-19';
+final String model = 'openai/gpt-5.5';
 //final String model = 'deepseek-v4-pro';
 //final String model = 'deepseek/deepseek-v4-pro';
+// final String model = 'openai/gpt-image-2';
 
 void main() async {
   final String? organization = null;
@@ -57,26 +59,108 @@ void main() async {
     print('Response: ${response.outputText}');
     print('Usage: ${response.usage}');*/
 
+    /*final response = await client.chat.completions.create(
+      ChatCompletionCreateRequest(
+        model: model,
+        messages: [
+          ChatMessage.user([
+            ContentPart.text(
+              //识别图片中所有物体的中心点坐标，宽高和旋转弧度信息，严格按照 `cx,cy,w,h,a,cx,cy,w,h,a,...` 的结构输出数据字符串数据。不需要额外的多余输出。优化上述提示词并翻译成英文.
+              'Recognize the center‑point coordinates, width, height and rotation radian of all objects in the image. Output the string strictly in the format `cx,cy,w,h,a,cx,cy,w,h,a,...`. Do not output any extra content.',
+            ),
+            */ /*ContentPart.imageUrl(
+              'https://raw.githubusercontent.com/angcyo/res/refs/heads/master/LaserPecker/contours.jpg',
+            ),*/ /*
+            ContentPart.imageBase64(
+              data: await readImageBase64Data(r"E:\temp\contours.jpg"),
+              mediaType: 'image/png',
+              */ /*detail: .original,*/ /*
+            ),
+          ]),
+        ],
+      ),
+    );*/
+
+    /*final response = await client.chat.completions.create(
+      ChatCompletionCreateRequest(
+        model: model,
+        messages: [
+          ChatMessage.user([
+            ContentPart.text(
+              //移除图片中的背景，分离出前景图。并按照原图大小输出。优化上述提示词并翻译成英文.
+              'Remove the image background, isolate the foreground subject, and output with the original image size.',
+            ),
+            */ /*ContentPart.imageUrl(
+              'https://raw.githubusercontent.com/angcyo/res/refs/heads/master/LaserPecker/contours.jpg',
+            ),*/ /*
+            ContentPart.imageBase64(
+              data: await readImageBase64Data(r"E:\temp\contours.jpg"),
+              mediaType: 'image/png',
+              */ /*detail: .original,*/ /*
+            ),
+          ]),
+        ],
+      ),
+    );*/
+
     final response = await client.chat.completions.create(
       ChatCompletionCreateRequest(
         model: model,
         messages: [
           ChatMessage.user([
             ContentPart.text(
-              'Recognize the center‑point coordinates, width, height and rotation radian of all objects in the image. Output the string strictly in the format `cx,cy,w,h,a,cx,cy,w,h,a,...`. Do not output any extra content.',
+              //移除图片中的背景，分离出前景图。并按照原图大小输出 base64 格式图片。优化上述提示词并翻译成英文.
+              'Remove the image background, isolate the foreground subject, output the image in base64 format with original image size.',
             ),
-            /*ContentPart.imageUrl(
+             /*ContentPart.imageUrl(
               'https://raw.githubusercontent.com/angcyo/res/refs/heads/master/LaserPecker/contours.jpg',
             ),*/
             ContentPart.imageBase64(
               data: await readImageBase64Data(r"E:\temp\contours.jpg"),
               mediaType: 'image/png',
-              /*detail: .original,*/
+               detail: .original,
             ),
           ]),
         ],
       ),
     );
+
+    /*final response = await client.images.generate(
+      ImageGenerationRequest(
+        model: model,
+        //移除图片中的背景，分离出前景图。并按照原图大小输出。优化上述提示词并翻译成英文.
+        prompt:
+            'Remove the image background, isolate the foreground subject, and output with the original image size.',
+        quality: ImageQuality.auto,
+        background: ImageBackground.transparent,
+        outputFormat: ImageOutputFormat.webp,
+      ),
+    );
+
+    // GPT Image 2 always returns base64 — decode and save.
+    final bytes = base64Decode(response.data.first.b64Json!);
+    File('cat.webp').writeAsBytesSync(bytes);*/
+
+    /*final response = await client.images.edit(
+      ImageEditRequest(
+        model: model,
+        image: await readImageBytes(r"E:\temp\contours.jpg"),
+        imageFilename: 'contours.jpg',
+        //移除图片中的背景，分离出前景图。并按照原图大小输出。优化上述提示词并翻译成英文.
+        prompt:
+            'Remove the image background, isolate the foreground subject, and output with the original image size.',
+        size: ImageSize.auto,
+        inputFidelity: ImageInputFidelity.high,
+        quality: ImageQuality.auto,
+        */ /*model: ImageModels.gptImage2,
+        quality: ImageQuality.high,
+        size: ImageSize.size1024x1024,*/ /*
+      ),
+    );
+
+    // GPT Image 2 always returns base64 — decode and save.
+    final bytes = base64Decode(response.data.first.b64Json!);
+    File('.output.webp').writeAsBytesSync(bytes);*/
 
     print('Response: ${response.text}');
     print('Usage: ${response.usage}');
@@ -85,10 +169,16 @@ void main() async {
   }
 }
 
-/// 读取图像base64数据
-Future<String> readImageBase64Data(String path) async {
+/// 读取图像数据
+Future<Uint8List> readImageBytes(String path) async {
   final file = File(path);
   final bytes = await file.readAsBytes();
+  return bytes;
+}
+
+/// 读取图像base64数据
+Future<String> readImageBase64Data(String path) async {
+  final bytes = await readImageBytes(path);
   return base64Encode(bytes);
 }
 
@@ -314,5 +404,85 @@ Future<String> readImageBase64Data(String path) async {
 ///       "text_tokens": 190
 ///     }
 ///   }
+/// }
+/// ```
+
+/// # openai/gpt-5.5 图片编辑
+///
+/// ```
+/// {
+///   "id": "gen-1787556379-Hc0sR0Y4tpjo0HLUE6Eo",
+///   "object": "chat.completion",
+///   "created": 1787556379,
+///   "model": "openai/gpt-5.5",
+///   "provider": "OpenAI",
+///   "system_fingerprint": null,
+///   "service_tier": "default",
+///   "choices": [
+///     {
+///       "index": 0,
+///       "logprobs": null,
+///       "finish_reason": "stop",
+///       "native_finish_reason": "completed",
+///       "message": {
+///         "role": "assistant",
+///         "content": "I can’t directly attach an edited PNG from here, but you can remove the dark background and extract the white foreground shapes with this Python/OpenCV script.\n\n```python\nimport cv2\nimport numpy as np\n\n# Load image\nimg = cv2.imread(\"input.jpg\")\n\n# Convert to grayscale\ngray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)\n\n# Threshold bright foreground shapes\n_, mask = cv2.threshold(gray, 145, 255, cv2.THRESH_BINARY)\n\n# Clean mask\nkernel = np.ones((3, 3), np.uint8)\nmask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)\nmask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)\n\n# Keep only reasonably sized foreground objects\nnum_labels, labels, stats, _ = cv2.connectedComponentsWithStats(mask, 8)\nclean_mask = np.zeros_like(mask)\n\nfor i in range(1, num_labels):\n    area = stats[i, cv2.CC_STAT_AREA]\n    if area > 300:\n        clean_mask[labels == i] = 255\n\n# Slightly soften edges\nalpha = cv2.GaussianBlur(clean_mask, (3, 3), 0)\n\n# Create transparent PNG\nb, g, r = cv2.split(img)\nrgba = cv2.merge([b, g, r, alpha])\n\n# Save full-size image with transparent background\ncv2.imwrite(\"foreground_transparent.png\", rgba)\n\n# Optional: crop to foreground bounds\nys, xs = np.where(clean_mask > 0)\nx1, x2 = xs.min(), xs.max()\ny1, y2 = ys.min(), ys.max()\n\ncropped = rgba[y1:y2+1, x1:x2+1]\ncv2.imwrite(\"foreground_cropped.png\", cropped)\n```\n\nInstall requirements if needed:\n\n```bash\npip install opencv-python numpy\n```\n\nThis will output:\n\n- `foreground_transparent.png` — original canvas size with transparent background  \n- `foreground_cropped.png` — cropped foreground subject only with transparency",
+///         "refusal": null,
+///         "reasoning": "**Explaining image editing options**\n\nIt looks like the user needs help with image editing, specifically removing the background to extract the foreground. Since I can't directly edit images, I should describe how to achieve this instead. I could outline a method for producing a transparent PNG or even provide an alpha mask as Python code. I’ll focus on using OpenCV to create a script that thresholds white shapes, fills contours, and saves the image with transparency. Let's craft that response!**Providing image editing instructions**\n\nThe final response should be concise since I can't directly edit an image. Instead, I’ll provide a Python script for the user to generate a transparent PNG using OpenCV. I can instruct the user on segmenting bright objects from a dark background, creating an alpha matte, and handling anti-aliased edges. The script will involve reading the image, applying a threshold to isolate white shapes based on brightness, and filling contours to include each shape. This approach should give them a robust solution!**Finalizing image processing steps**\n\nThe user wants to focus on white objects only, so I'll suggest applying a GaussianBlur on the mask to feather the alpha. Then, I need to provide instructions to save the transparent foreground and cropped image. It's important to mention installing necessary packages like opencv-python, pillow, and numpy. I should note potential issues with any black or colored occlusions if only white is extracted. Finally, I'll include a script using \"input.jpg\" to isolate all white objects above the area threshold while preserving separate shapes.",
+///         "reasoning_details": [
+///           {
+///             "type": "reasoning.summary",
+///             "summary": "**Explaining image editing options**\n\nIt looks like the user needs help with image editing, specifically removing the background to extract the foreground. Since I can't directly edit images, I should describe how to achieve this instead. I could outline a method for producing a transparent PNG or even provide an alpha mask as Python code. I’ll focus on using OpenCV to create a script that thresholds white shapes, fills contours, and saves the image with transparency. Let's craft that response!**Providing image editing instructions**\n\nThe final response should be concise since I can't directly edit an image. Instead, I’ll provide a Python script for the user to generate a transparent PNG using OpenCV. I can instruct the user on segmenting bright objects from a dark background, creating an alpha matte, and handling anti-aliased edges. The script will involve reading the image, applying a threshold to isolate white shapes based on brightness, and filling contours to include each shape. This approach should give them a robust solution!**Finalizing image processing steps**\n\nThe user wants to focus on white objects only, so I'll suggest applying a GaussianBlur on the mask to feather the alpha. Then, I need to provide instructions to save the transparent foreground and cropped image. It's important to mention installing necessary packages like opencv-python, pillow, and numpy. I should note potential issues with any black or colored occlusions if only white is extracted. Finally, I'll include a script using \"input.jpg\" to isolate all white objects above the area threshold while preserving separate shapes.",
+///             "format": "openai-responses-v1",
+///             "index": 0
+///           },
+///           {
+///             "type": "reasoning.encrypted",
+///             "data": "gAAAAABqi_IlsiJYxOPT22c-cvzUH3JWKWMr4WeR-g_QyprPDX1NPapeld9xrqmBjwKpNEvinXmOYLEmI0VTeBpUsJljXbNhQjfJXAupmlmP0YG5lvz3L_zAExy1yuELYhGxJxWh39FUbJWFU20ifKdhJmtgsTpLJOl4EFy0SHOIj9JidLoUcsDA50F4x290Bmrt2l8NyNuIvKi-0BZXABbvkAhYFcfh5rB6W2vKJjEWLvAfJGfvCxrLvHEtRXlAU3rKHlZKFU-tkEh8kp94RQxYVwDXqDpYhjJoYmnTSWQ1lVjBB3xxayGX1YIEAdPRjOrAXVwdrFtiR7yGzycKPv4hgEzQmpvVWPIsQb6JJ8BkzcqUILVGlFvhoyZi3L1IutETHIG2msSglJe4xAg3WI7qqFTKmKVWQDPoda6qf8Cbxv-WXvfqAYF4bgP43BpyoHzwHcAo5jGriGzrdJN97rPv3j-w56tuV91XUsa1brBljTsOZtsVXJ0xyZCB7PeLdlOMiTLzqzjFEd8cgtaxOyBxnZZ8W_LUXTrNahGYgwCkCm1WqoeeEoJQiWMLEojY-er1bi6pGcVuXa74TAs8spHU0NYcEUjFLGcjN-X03svgsi1Hd7KoeiZgJoJhG9SRxz1DVRlD-pXmZ_Ow5ivcNMZmA6Wz2IQwBcuuKNRC0nKaPVzEjNJeJ1KyzVpj7vd1ZFXYZNOwW5qM6oTiMWeILV7xr8H1u_1N0A0USUqiVFtyYwCSbdEUUUQq5rwde6vUFYlVV3TY60kyFs0PxkG6zjVOs86GnO0WWLddod8pC9eBDh0c3ZfL0rozbtmVPqbzS533rywvwdbpas6tcgUb9eGnWUIyyoYxYoUfr_Io9h1isN-7PZK_RyxSaebtXH4vnPzHw4q25jaP5bfWSUOrKMcJu8wv86yjdUzSWU-rQv-sDa0vbkst8rnlflrQ7ZaWkZtZIWHOn49KvdkTQa1wynFTyY1K-VDZpUTDaMAT_HZsHPPTKXJ8rfSD4DqaXfpHQ_LpQWrgU9AXWb3vMT4AonIxFYqouRv0HYPUgoPMksbjma5NVrJqHxaAQvmQhbvjdSpP1h_0hRnmyoQeMFjVw2xqbM02dzZ67tI5ZySElw7TeEEjNw27pfOUdoDaPVQHWxD7IXmJyKD20dumjMeU5YwsGxCMLN7ashj3caxxEbGP1Yaqq7D3-qWHBrQ4_guis0kRb1UYgkbVnPrLZ926v30IbBpHQgxPV3dkTQ4DeHV_EwaMYGKbugJ1yh8_nybwM3CtvanF4P9kBzJ_R2pRJavUIyOcSNGZRbu2PvWKPBQtolMCMW-CZ6ZtqbzloF6bfEynqfVbZlH4wBjC_B_2KZbe2WVTSzT6hcOozlTtrTD65nsKROVdDCJvdRR1ULr2CzA5lFUhoCLXneszlV_eqRzc8c4OQpRPk8yU3JWUMSIDVNs-3SS3bZ7emU6Xd43oE7izszTCHmLFXNnQqNoEWL9BSTxou3Wja1OGjcPFu8rN0y6P9PhuLS7Addc0f_DDk00lPezj55k9-1GQB8oEnSl2psDzFL22cg7h3zp8l-oqcHpeKw88wLH3MHm8RNlOOcemwzzeTUn2MRt0qkX1RhUW_ym19CS7GnPeJidcD_DkuMOUkTRAPQ8xv5leG59zHgZLTEqBvib0ftbEGetLqxTlMlBIzfslhUzRruJXX6SJqeHj0NJdW1oYsc5cBNI6Q-1QASRW5pFvn0UM8qEXn4S2GHdryjiADvTD57FW4bPRrmiwPhuM9za8FXguD_OWFcXlVl7kSn-fkUlKlGSISPOxT1GrAi4cuVXITzWPLn2yGp0vN-MCxWJ5RTiwdQtq3VjJJtRbPmRjzDJTQPgshdvvpqfc4ykiTKQX7EPHDw2Kpk2KK5LaWX2NY592v4I2uoYum1rgAfZ09GDcp4rXryiAQuPiieNE8xTMCGnoPSoCYxnp7Gg03IdW1m1K5H0b8rA5-TQV63ygzh3-fRM24miNTjoVSJBGJteCPPybg2AEwanCDfJWWVMYciUY2ZLqeFKKtNsK8895D1hmp2WrvDaf_R0sct2OPu_LVjqZGiAJ5aWy1erte7Kj_EYIPEhcpcApmo7o-WKQmhxizVq1uBh9srPCpGvynukVFPH3tO0tjfFZveLgZzV-Pc6uh3vGTMcebTHTrCvFY1poTarqbZkOAtGZHj346HY5aNT50SiH2SPdS1R9m_uFC83vncbSwcIg_LKb_z9XqvW869FID8hQARKdU0F9mU2cSFLZ1TDJVBOor5bzwmjDwr1MfEuhAXfyhQWB4TNwZnUWASgf66KUzMeS1EcTXkAZh501prwRRp3SYiwQCxTJjRhEecf7SEmOWWXl_3UFiW8oSVHE1-oyJy28c0KDCRDghQfjepap_X2-a6cKewFZ4-_LU2mguZgXBHA1n9L28cKNj7gGg0MJ1O3TT7Bag818HD4c3n2RVYYsmIxe0zZYLa2l3KCQpykewpwqg5p9aw_lSaEGMpHvXxmnj5DphNbVa4aCMJ1ddsErrgdYHZ6wT6V8SVY9jd0q-8IHoO9zcKVdKF5yDRdZx7dqX1aYdr4vBW192n-1d7TExwksnUvO8dVhGlQE-vNKZ2S-NGueYkLCMmOEkxa67ZpYorgP_vjY_KOtLDZ_JnERO3E7R8gvC4x090MsJMSNGeak4yqo4eAcP4zjcenVvvInuNY3ICqRkCfu_lCVp25EQ6Ti-m-RDBqgKM4bFywtKuJ9KiIle7HbRacAqJC7AGPJlsuKGuSgsiF17wXc4zmXhXfarJGGPKZxNS5zofIvJYqohCwGzEU785SB1gdvUla-8G8JkmCyJR6F9zDCMp_mto0hsz4NI2AFbj2OQvIEm00AyqdvuTtMyLwiL8sXG4wwHTjldBrvLTDjnqJn6z3i-qiC8qEesOS_FXAH0BQuBrqrcDOiMzdt7nGHNimP35UxBhVyMODZY3OeBEJN4qYxbrQGWjZZsXNNPnnzFER_nKjJWFRaoqeySuueKo1WhH9KAE6FnXEdTLZQ6Os8IsYQFqvKMTELAIe3rtc76NgWWwUY8hwmNt8ddChbGSb33uHmlFq39X4qj-LXxaQLWuIldf5xZsXCuKXBVos-5qX-U10rhcd7Mbk8aCdd5A-pbT9wO5ykGSq2LybV-z0CmmGzr-RnZZByUDqKvaIw19uzvH5NQ5UbSOQ34qpEX4DeZ-eK1v-ytdEuevQHTdbufLwcqZP9lFvbGXckH2-8CYJyfI0lrOzYAvpTXUSicvB0OZiF5tOpMAkJkC1Oo5iqXDNffdiFPaT7vbRvceS7ZyNm7ezA-2vD6e_eEUvNwJ0eKN5HEluHkVwtfDYpy2VjczhEM_bYl4OWkaHiypZK65Z5Ok19FAesNLnTBuSh7_n1tOKoKjAnJinwLRzs1IwmeTOAguvp3nepLbhuKEUaaBBLRsmmfVKPHiF_q93Dt5ZGKeMKVPJ0EpEqPuTQk7cfXwKzBiFNiA3iVjiGwMMnQ4NK3Uk2cBF1-XBoGXeZIY8uvW2Gx6B1EGmhZIXE1bwhwokhOcfSLHdEKscZl-bNHz1sGE0Pz7jjsszxVF4LyHQn1IbL4jiVZSx9jDOSUzRvqBegNNtP-BJtGDOW4M0nGxbZ_mTuwOF-QhTAwyeNK0EVyVp-tS5AMdqPx7eU8yUYBwZ1pPf4YyuOd7e5nRZMbNTUJYXKYJ8qfY7G0lvWphbv4CH7nqChVYKuEdF3jH_Pmr2hSCrj9-iUjKFl_Q_tqJy9fH7m4ObRCdaFkvGri06AEmV60WcfvcH4tckSFp8tAFceH_63nhVQDrQOV-GhLEmBhC36XHdcm1NlrILfhgvnvLvzinyui1qyTmAVlmAg40DRvNwoWxs_V6zUadEV4sjBgP-PvmBGL3KN0GIfBJu5-8n8HJnHjkkADK0ynZZvkdYxwhT3pEMxxrb5DVh7AoDDpPrr_6g3DwUtOZ9vjPIQFYKOr-FwGPbHrJGNUROiCXqjr4lmPh7UmExpXNvqUK5cikYIzOmHzEa6qMJEmcuvg-Bg-dq0lekItko9iEWaHGAL0iv9NxHswZ1PR7GYXmTfgqRoftWBQMtIpG-nLlSWVFW6XEbyD-FKKeYc2zbsns3RBq148UpXgPxRs_kgTigYgfrDSjn34xgUCf8wwlspzAglTPfmdcMFKw5k_-mZu9l9_MFN63AtkzDjpErtAGFuKxsBwzYyfdhiKYC73eQwDXdmlmDqQwL_XUs3ud5Xg3FTsOJlmYz898PQr0KYVD5RLBmfGi8trpMAp6QSe9v4VvUNSqygCrR4NBjT-fjcBz7qiVH86zIoX_kqlyA3xSqGykTR6KNeFtljkgLAnfTdlu2ReqNK9Oq3wbe5FlwvX0el1LGXGdbS9tJt2M5x9n6-gAugV7cVeNBBGrTBOtotEiUB1Re80sh8IqdS-xJQBhyDf2hmMGLbvTZcsdzmU9gkF2_vXQ9vDQ9p3GwFsYlKXq_LBpJP7whjSI3AiXVo2EsdwK8mrCxYb2N1IkeyqpcGvmjdidiTwr8WK5Kxb7HWIpsvk7gGAeeZiINRejEihdGEdkD0ogUJuFbiSwi-zOacpBZSxDvf4cf1DJXsQgV7aLRB70iABFyEW4M9rPRrLOHo9lklxsgOp5Uwx8jLvWz1e1XGQ7AIokaAOoizGrom-94ZvFMbe9CB2kRYcF3MYO8Oa4gQadUDl677ZTtfmb-Qnhi0EXX3vmmLUsTNc3xUmY4wvxQb0EdMjt0y9mwPmuT0T6Xc43h1Dv7ukC9aMGl2kL7V5MqLSE6u6Wi5-XwIAKO3PrUvzw==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjUtMjAyNjA0MjN8b3BlbmFpIn0",
+///             "format": "openai-responses-v1",
+///             "id": "rs_01158bef096a19ce016a8bf21d695487d195d7c89e376c59d1",
+///             "index": 1
+///           }
+///         ]
+///       }
+///     }
+///   ],
+///   "usage": {
+///     "prompt_tokens": 984,
+///     "completion_tokens": 967,
+///     "total_tokens": 1951,
+///     "cost": 0.03393,
+///     "is_byok": false,
+///     "prompt_tokens_details": {
+///       "cached_tokens": 0,
+///       "cache_write_tokens": 0,
+///       "audio_tokens": 0,
+///       "video_tokens": 0
+///     },
+///     "cost_details": {
+///       "upstream_inference_cost": 0.03393,
+///       "upstream_inference_prompt_cost": 0.00492,
+///       "upstream_inference_completions_cost": 0.02901
+///     },
+///     "completion_tokens_details": {
+///       "reasoning_tokens": 516,
+///       "image_tokens": 0,
+///       "audio_tokens": 0
+///     }
+///   }
+/// }
+/// ```
+
+/// # openai/gpt-image-2 聊天错误
+/// ```
+/// {
+///   "error" : {
+///     "message" : "openai/gpt-image-2 is an image generation model and cannot be used with the chat/completions endpoint. Use the /api/v1/images endpoint instead.",
+///     "code" : 404,
+///     "metadata" : {
+///       "provider_name" : null
+///     }
+///   },
+///   "user_id" : "user_380cMxQ7hFon5UadFcPQ9RBFqAM"
 /// }
 /// ```
