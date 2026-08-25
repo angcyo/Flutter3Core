@@ -25,6 +25,7 @@ import 'package:html_unescape_xx/html_unescape.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:meta/meta_meta.dart';
+import 'package:palette_generator_master/palette_generator_master.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;

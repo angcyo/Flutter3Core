@@ -132,6 +132,9 @@ dependencies:
   # unescaping HTML-encoded
   html_unescape_xx: ^3.0.1
 
+  # https://pub.dev/packages/palette_generator_master
+  # https://pub.dev/packages/collection
+  palette_generator_master: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

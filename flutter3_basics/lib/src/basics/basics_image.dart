@@ -217,6 +217,49 @@ class UiImageProvider extends ImageProvider<UiImageProvider> {
 /// [UiImageEx]
 /// [Uint8ListImageEx]
 extension ImageEx on UiImage {
+  //MARK: - palette
+
+  /// 从图片中获取调色板
+  /// - 可以获取图片中的主要颜色
+  Future<PaletteGeneratorMaster> getPaletteMaster({
+    Rect? region,
+    int maximumColorCount = 16,
+  }) => PaletteGeneratorMaster.fromImage(
+    this,
+    region: region,
+    maximumColorCount: maximumColorCount,
+  );
+
+  /// 获取图片中的主要颜色, 填充最多的颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get dominantColor async {
+    final palette = await getPaletteMaster();
+    return palette.dominantColor?.color;
+  }
+
+  /// 获取图片中的静音颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get mutedColor async {
+    final palette = await getPaletteMaster();
+    return palette.mutedColor?.color;
+  }
+
+  /// 获取图片中的活力颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get vibrantColor async {
+    final palette = await getPaletteMaster();
+    return palette.vibrantColor?.color;
+  }
+
+  /// 获取图片中的明亮活力颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get lightVibrantColor async {
+    final palette = await getPaletteMaster();
+    return palette.lightVibrantColor?.color;
+  }
+
+  //--
+
   /// 图片尺寸
   Size get imageSize => Size(width.roundToDouble(), height.roundToDouble());
 
@@ -1083,6 +1126,49 @@ extension RenderObjectImageEx on RenderObject {
 }
 
 extension ImageProviderEx<T extends Object> on ImageProvider<T> {
+  //MARK: - palette
+
+  /// 从图片中获取调色板
+  /// - 可以获取图片中的主要颜色
+  Future<PaletteGeneratorMaster> getPaletteMaster({
+    Size? size,
+    Rect? region,
+    int maximumColorCount = 16,
+  }) => PaletteGeneratorMaster.fromImageProvider(
+    this,
+    size: size,
+    region: region,
+    maximumColorCount: maximumColorCount,
+  );
+
+  /// 获取图片中的主要颜色, 填充最多的颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get dominantColor async {
+    final palette = await getPaletteMaster();
+    return palette.dominantColor?.color;
+  }
+
+  /// 获取图片中的静音颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get mutedColor async {
+    final palette = await getPaletteMaster();
+    return palette.mutedColor?.color;
+  }
+
+  /// 获取图片中的活力颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get vibrantColor async {
+    final palette = await getPaletteMaster();
+    return palette.vibrantColor?.color;
+  }
+
+  /// 获取图片中的明亮活力颜色
+  /// - [getPaletteMaster]
+  Future<Color?> get lightVibrantColor async {
+    final palette = await getPaletteMaster();
+    return palette.lightVibrantColor?.color;
+  }
+
   /// 获取图片的字节数据
   Future<ui.Image?> toImage([
     ImageConfiguration configuration = const ImageConfiguration(),
