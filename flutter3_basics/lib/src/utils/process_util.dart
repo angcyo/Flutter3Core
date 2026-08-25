@@ -11,6 +11,13 @@ part of '../../flutter3_basics.dart';
 /// - [ProcessStartMode.detached] 脱离模式, 分离进程, 父进程退出, 子进程继续运行.
 ///   - 此模式下不可以获取进程的任何信息, 子进程自生自灭
 ///
+/// ```
+/// // MacOS / Linux 必须赋予可执行权限
+/// if (Platform.isMacOS || Platform.isLinux) {
+///   await Process.run('chmod', ['+x', destPath]);
+/// }
+/// ```
+///
 /// - [Process.runSync]
 Future<ProcessResult> runCommand(
   String executable,
