@@ -18,6 +18,8 @@ part of '../../flutter3_basics.dart';
 /// }
 /// ```
 ///
+/// - [exitCode] 0: 成功; 1: 失败
+///
 /// - [Process.runSync]
 Future<ProcessResult> runCommand(
   String executable,
