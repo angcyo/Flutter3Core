@@ -15,7 +15,15 @@ part of '../../flutter3_core.dart';
 class LabelNumberSliderTile extends StatefulWidget {
   /// label
   final String? label;
+
+  /// [labelWidget]的提示
+  final String? labelTooltip;
   final Widget? labelWidget;
+
+  /// [labelWidget]尾随的小部件
+  final Widget? labelTrailingWidget;
+
+  final EdgeInsets? labelPadding;
 
   /// value
   /// 不指定[value]时, 则使用[valueText]显示
@@ -93,7 +101,10 @@ class LabelNumberSliderTile extends StatefulWidget {
     super.key,
     //--
     this.label,
+    this.labelTooltip,
     this.labelWidget,
+    this.labelTrailingWidget,
+    this.labelPadding,
     //--
     this.value = 0.0,
     this.valueText,
@@ -170,7 +181,8 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
       context,
       label: widget.label,
       labelWidget: widget.labelWidget,
-    );
+      labelPadding: widget.labelPadding,
+    )?.tooltip(widget.labelTooltip);
 
     //MARK: - number
     final numberStr = _currentValue == null
@@ -223,7 +235,13 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
 
     //MARK: - top
     final top = [
-      labelWidget?.expanded(),
+      (widget.labelTrailingWidget == null
+              ? labelWidget
+              : [
+                  labelWidget,
+                  widget.labelTrailingWidget,
+                ].row(mainAxisSize: .min))
+          ?.expanded(),
       numberWidget?.paddingOnly(right: kX),
     ].row();
     final minValue = widget.minValue?.toDouble() ?? 0.0;
