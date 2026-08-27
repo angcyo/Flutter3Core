@@ -409,7 +409,17 @@ extension NavigatorEx on BuildContext {
   /// [OverlayRoute]
   /// [TransitionRoute]
   /// [ModalRoute]
-  ModalRoute? get modalRoute => ModalRoute.of(this);
+  ModalRoute? get modalRoute {
+    try {
+      return ModalRoute.of(this);
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      return null;
+    }
+  }
 
   /// [ModalRoute] -> [PageRoute]
   /// [ModalRoute] -> [PopupRoute]
@@ -618,12 +628,14 @@ extension NavigatorEx on BuildContext {
   ///
   /// 与`go_router`中的扩展命名冲突
   /// - [rootNavigator] 是否使用根导航器
+  /// - [checkCurrent] 是否仅弹出当前的路由
   /// - [checkDismissal] 是否弹出检测, 保留最后一个根路由页面.
   /// - [doPop] 是否执行当前操作
   ///
   /// - [isAppBarDismissal]
   void pop<T extends Object?>({
     T? result,
+    bool checkCurrent = true,
     bool rootNavigator = false,
     bool checkDismissal = true,
     bool maybePop = false,
@@ -632,6 +644,10 @@ extension NavigatorEx on BuildContext {
     //debugger();
     if (!doPop) {
       //不执行
+      return;
+    }
+    if (checkCurrent && isRouteCurrent != true) {
+      //不是当前路由, 不执行
       return;
     }
     if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
@@ -647,11 +663,13 @@ extension NavigatorEx on BuildContext {
   @alias
   void popRoute<T extends Object?>({
     T? result,
+    bool checkCurrent = true,
     bool rootNavigator = false,
     bool checkDismissal = true,
     bool maybePop = false,
   }) => pop(
     result: result,
+    checkCurrent: checkCurrent,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
     maybePop: maybePop,
@@ -661,12 +679,14 @@ extension NavigatorEx on BuildContext {
   /// - [doPop] 是否执行当前操作
   void popDialog<T extends Object?>({
     T? result,
+    bool checkCurrent = true,
     bool rootNavigator = false,
     bool checkDismissal = false,
     bool maybePop = false,
     bool doPop = true,
   }) => pop(
     result: result,
+    checkCurrent: checkCurrent,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
     maybePop: maybePop,
@@ -677,10 +697,12 @@ extension NavigatorEx on BuildContext {
   @alias
   void popMenu<T extends Object?>({
     T? result,
+    bool checkCurrent = true,
     bool rootNavigator = false,
     bool checkDismissal = false,
   }) => pop(
     result: result,
+    checkCurrent: checkCurrent,
     rootNavigator: rootNavigator,
     checkDismissal: checkDismissal,
   );
