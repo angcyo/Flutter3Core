@@ -635,7 +635,7 @@ extension NavigatorEx on BuildContext {
   /// - [isAppBarDismissal]
   void pop<T extends Object?>({
     T? result,
-    bool checkCurrent = true,
+    bool? checkCurrent,
     bool rootNavigator = false,
     bool checkDismissal = true,
     bool maybePop = false,
@@ -646,7 +646,7 @@ extension NavigatorEx on BuildContext {
       //不执行
       return;
     }
-    if (checkCurrent && isRouteCurrent != true) {
+    if (checkCurrent == true && isRouteCurrent != true) {
       //不是当前路由, 不执行
       return;
     }
@@ -663,7 +663,7 @@ extension NavigatorEx on BuildContext {
   @alias
   void popRoute<T extends Object?>({
     T? result,
-    bool checkCurrent = true,
+    bool? checkCurrent,
     bool rootNavigator = false,
     bool checkDismissal = true,
     bool maybePop = false,
@@ -679,7 +679,7 @@ extension NavigatorEx on BuildContext {
   /// - [doPop] 是否执行当前操作
   void popDialog<T extends Object?>({
     T? result,
-    bool checkCurrent = true,
+    bool? checkCurrent,
     bool rootNavigator = false,
     bool checkDismissal = false,
     bool maybePop = false,
@@ -697,7 +697,7 @@ extension NavigatorEx on BuildContext {
   @alias
   void popMenu<T extends Object?>({
     T? result,
-    bool checkCurrent = true,
+    bool? checkCurrent,
     bool rootNavigator = false,
     bool checkDismissal = false,
   }) => pop(
