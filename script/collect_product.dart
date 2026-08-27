@@ -40,6 +40,10 @@ import 'build_config.dart';
 /// 默认输出路径在: `build/ios/ipa/xxx.ipa`
 /// 默认文件名是: `ios/Runner/Info.plist`中`CFBundleName`对应的值
 ///
+/// # 收集ios archive产物
+/// 请使用`flutter build ipa --release`构建archive
+/// 默认输出路径在: `build/ios/archive/Runner.xcarchive`
+///
 /// # 收集macos app产物(macos)
 /// `flutter build macos --release`
 /// 默认输出路径在: `build/macos/Build/Products/Release/xxx.app` (36.9MB)
