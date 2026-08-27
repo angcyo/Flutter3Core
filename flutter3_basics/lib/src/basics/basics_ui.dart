@@ -2051,7 +2051,7 @@ extension WidgetEx on Widget {
     child: this,
   );
 
-  /// [Card]
+  /// [Card] 卡片小部件
   /// - [color] 卡片的颜色
   /// - [elevation] 阴影的高度, 默认1.0
   /// - [shape] 卡片形状
