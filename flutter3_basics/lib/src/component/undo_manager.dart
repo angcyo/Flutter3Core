@@ -331,7 +331,7 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
         color: disableColor ?? getDisableColorMixin(context),
       );
     }
-    return undo;
+    return undo.tooltip(context.libRes?.libUndo);
   }
 
   /// 构建重做小部件
@@ -371,7 +371,7 @@ mixin UndoStateMixin<T extends StatefulWidget> on State<T> {
         color: disableColor ?? getDisableColorMixin(context),
       );
     }
-    return redo;
+    return redo.tooltip(context.libRes?.libRedo);
   }
 
   //--
