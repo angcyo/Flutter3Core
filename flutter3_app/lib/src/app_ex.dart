@@ -305,17 +305,41 @@ extension PackageInfoEx on PackageInfo {
 extension ShareBytesEx on Uint8List {
   /// 分享字节数据
   Future<ShareResult> share({
+    String? title,
     String? subject,
-    String? text,
+    String? mimeType,
+    String? fileName,
     BuildContext? shareContext,
-    Rect? sharePositionOrigin,
+    @PlatformFlag("iPad Mac") Rect? sharePositionOrigin,
+    List<String>? fileNameOverrides,
   }) async {
-    return Share.shareXFiles(
+    /*return Share.shareXFiles(
       [XFile.fromData(this)],
       subject: subject,
       text: text,
       sharePositionOrigin:
           sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
+    );*/
+    return SharePlus.instance.share(
+      ShareParams(
+        files: [
+          XFile.fromData(
+            this,
+            mimeType:
+                mimeType ??
+                fileName?.mimeType(bytes) ??
+                'application/octet-stream',
+            name: fileName,
+          ),
+        ],
+        title: title,
+        subject: subject,
+        sharePositionOrigin:
+            sharePositionOrigin ??
+            shareContext?.findRenderObject()?.paintBounds,
+        fileNameOverrides:
+            fileNameOverrides ?? (fileName != null ? [fileName] : null),
+      ),
     );
   }
 }
@@ -323,29 +347,70 @@ extension ShareBytesEx on Uint8List {
 /// 图片分享
 extension ShareImageEx on UiImage {
   /// 分享图片
-  Future<ShareResult> share({
+  Future<ShareResult?> share({
+    String? title,
     String? subject,
-    String? text,
     String? imageName,
     UiImageByteFormat format = UiImageByteFormat.png,
     BuildContext? shareContext,
-    Rect? sharePositionOrigin,
+    @PlatformFlag("iPad Mac") Rect? sharePositionOrigin,
+    List<String>? fileNameOverrides,
   }) async {
     final byteData = await toByteData(format: format);
     final bytes = byteData?.buffer.asUint8List();
-    return Share.shareXFiles(
-      [
-        XFile.fromData(
-          bytes ?? Uint8List(0),
-          mimeType: imageName?.mimeType(bytes) ?? "image/png",
-          name: imageName,
-        ),
-      ],
+    return bytes?.share(
+      title: title,
       subject: subject,
-      text: text,
-      sharePositionOrigin:
-          sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
+      mimeType: imageName == null ? "image/png" : null,
+      fileName: imageName,
+      shareContext: shareContext,
+      sharePositionOrigin: sharePositionOrigin,
+      fileNameOverrides: fileNameOverrides,
     );
+    /* return SharePlus.instance.share(
+      ShareParams(
+        files: [
+          XFile.fromData(
+            bytes ?? Uint8List(0),
+            mimeType: imageName?.mimeType(bytes) ?? "image/png",
+            name: imageName,
+          ),
+        ],
+        title: title,
+        subject: subject,
+        sharePositionOrigin:
+            sharePositionOrigin ??
+            shareContext?.findRenderObject()?.paintBounds,
+        fileNameOverrides:
+            fileNameOverrides ?? (imageName != null ? [imageName] : null),
+      ),
+    );*/
+  }
+}
+
+extension ShareUriEx on Uri {
+  /// 分享[Uri]
+  Future<bool> share({
+    String? subject,
+    String? title,
+    String? mimeType,
+    BuildContext? shareContext,
+    @PlatformFlag("iPad Mac") Rect? sharePositionOrigin,
+  }) async {
+    final result = await SharePlus.instance.share(
+      ShareParams(
+        //要分享的Uri。
+        uri: this,
+        //内容或共享表标题（如果支持）。
+        title: title,
+        //电子邮件主题（如果支持）。
+        subject: subject,
+        sharePositionOrigin:
+            sharePositionOrigin ??
+            shareContext?.findRenderObject()?.paintBounds,
+      ),
+    );
+    return result.status == ShareResultStatus.success;
   }
 }
 
@@ -353,15 +418,15 @@ extension ShareFileEx on File {
   /// 分享文件
   Future<bool> share({
     String? subject,
-    String? text,
+    String? title,
     String? mimeType,
     BuildContext? shareContext,
-    Rect? sharePositionOrigin,
+    @PlatformFlag("iPad Mac") Rect? sharePositionOrigin,
   }) async => path.shareFile(
     otherFiles: null,
     subject: subject,
-    text: text,
-    mimeType: mimeType ?? 'application/octet-stream',
+    title: title,
+    mimeType: mimeType ?? filename.mimeType() ?? 'application/octet-stream',
     shareContext: shareContext,
     sharePositionOrigin: sharePositionOrigin,
   );
@@ -373,15 +438,29 @@ extension ShareStringEx on String {
   /// https://pub.dev/packages/share_plus
   @allPlatformFlag
   Future<bool> share({
+    String? title,
     String? subject,
     BuildContext? shareContext,
-    Rect? sharePositionOrigin,
+    @PlatformFlag("iPad Mac") Rect? sharePositionOrigin,
   }) async {
-    final result = await Share.share(
+    /*final result = await Share.share(
       this,
       subject: subject,
       sharePositionOrigin:
           sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
+    );*/
+    final result = await SharePlus.instance.share(
+      ShareParams(
+        //要分享的文本。
+        text: this,
+        //内容或共享表标题（如果支持）。
+        title: title,
+        //电子邮件主题（如果支持）。
+        subject: subject,
+        sharePositionOrigin:
+            sharePositionOrigin ??
+            shareContext?.findRenderObject()?.paintBounds,
+      ),
     );
     return result.status == ShareResultStatus.success;
   }
@@ -396,13 +475,14 @@ extension ShareStringEx on String {
   @PlatformFlag("Android iOS MacOS Web Windows")
   Future<bool> shareFile({
     List<String>? otherFiles,
+    String? title,
     String? subject,
-    String? text,
     String? mimeType,
     BuildContext? shareContext,
-    Rect? sharePositionOrigin,
+    @PlatformFlag("iPad Mac") Rect? sharePositionOrigin,
+    List<String>? fileNameOverrides,
   }) async {
-    final result = await Share.shareXFiles(
+    /*final result = await Share.shareXFiles(
       [
         XFile(this, mimeType: mimeType),
         ...?otherFiles?.map((e) => XFile(e, mimeType: mimeType)),
@@ -411,6 +491,20 @@ extension ShareStringEx on String {
       text: text,
       sharePositionOrigin:
           sharePositionOrigin ?? shareContext?.findRenderObject()?.paintBounds,
+    );*/
+    final result = await SharePlus.instance.share(
+      ShareParams(
+        files: [
+          XFile(this, mimeType: mimeType),
+          ...?otherFiles?.map((e) => XFile(e, mimeType: mimeType)),
+        ],
+        subject: subject,
+        title: title,
+        sharePositionOrigin:
+            sharePositionOrigin ??
+            shareContext?.findRenderObject()?.paintBounds,
+        fileNameOverrides: fileNameOverrides,
+      ),
     );
     return result.status == ShareResultStatus.success;
   }
