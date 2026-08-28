@@ -187,7 +187,7 @@ Image? getFileIconWidget(
     key = pngAssets.coreFileIconRar.keyName;
   } else if (ext == '.xml') {
     key = pngAssets.coreFileIconXml.keyName;
-  } else if (ext == '.apk') {
+  } else if (ext == '.apk' || fileName?.endsWith(".apk.1") == true) {
     key = pngAssets.coreFileIconApk.keyName;
   } else if (mime?.isTextMimeType == true || ext == '.txt') {
     key = pngAssets.coreFileIconText.keyName;
