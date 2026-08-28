@@ -593,26 +593,33 @@ extension WidgetEx on Widget {
       key == null ? this : KeyedSubtree(key: key, child: this);
 
   /// [Tooltip] 提示
+  /// - [richMessage] 富文本提示内容
   /// - [preferBelow] 优先显示在底部
+  /// - [decoration] 装饰
+  /// - [triggerMode] 触发模式
   ///
   /// - [TooltipTheme] 主题样式
   /// - [Tooltip.dismissAllToolTips] 移除所有tooltip
   Widget tooltip(
     String? tip, {
-    TextStyle? textStyle,
     InlineSpan? richMessage,
+    TextStyle? textStyle,
+    bool? enableFeedback,
     bool? preferBelow,
     Decoration? decoration,
     MouseCursor? cursor,
-  }) => tip == null || tip.isEmpty
+    TooltipTriggerMode? triggerMode,
+  }) => (tip == null || tip.isEmpty) && richMessage == null
       ? this
       : Tooltip(
           message: tip,
           textStyle: textStyle,
           richMessage: richMessage,
+          enableFeedback: enableFeedback,
           preferBelow: preferBelow,
           decoration: decoration,
           mouseCursor: cursor,
+          triggerMode: triggerMode,
           child: this,
         );
 
@@ -3606,6 +3613,8 @@ typedef ConditionalRenderObjectVisitorDepth =
 /// [RenderObject.showOnScreen]
 extension ContextEx on BuildContext {
   /// 震动反馈
+  /// - [Feedback.forTap]
+  /// - [Feedback.forLongPress]
   void longPressFeedback() => Feedback.forLongPress(this);
 
   /// [BuildContext]
