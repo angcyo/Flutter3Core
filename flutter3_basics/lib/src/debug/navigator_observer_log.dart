@@ -20,7 +20,9 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
   /// [RouteSettings]
   @override
   void didPop(Route route, Route? previousRoute) {
-    l.v('[${classHash()}]Navigator didPop↓\npop->$route\nold->$previousRoute');
+    l.v('[${classHash()}]Navigator didPop↓');
+    l.v('pop->$route');
+    l.v('prev->$previousRoute');
   }
 
   /// 推入新路由[route]
@@ -29,14 +31,16 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
   /// [RouteSettings]
   @override
   void didPush(Route route, Route? previousRoute) {
-    l.v(
-      '[${classHash()}]Navigator didPush↓\nold->$previousRoute\npush->$route',
-    );
+    l.v('[${classHash()}]Navigator didPush↓');
+    l.v('old->$previousRoute');
+    l.v('push->$route');
   }
 
   @override
   void didRemove(Route route, Route? previousRoute) {
-    l.v('[${classHash()}]Navigator didRemove↓\n$route\n$previousRoute');
+    l.v('[${classHash()}]Navigator didRemove↓');
+    l.v('remove->$route');
+    l.v('prev->$previousRoute');
   }
 
   @override
@@ -46,9 +50,9 @@ mixin NavigatorObserverLogMixin on NavigatorObserver {
 
   @override
   void didStartUserGesture(Route route, Route? previousRoute) {
-    l.v(
-      '[${classHash()}]Navigator didStartUserGesture↓\n$route\n$previousRoute',
-    );
+    l.v('[${classHash()}]Navigator didStartUserGesture↓');
+    l.v('route->$route');
+    l.v('prev->$previousRoute');
   }
 
   @override

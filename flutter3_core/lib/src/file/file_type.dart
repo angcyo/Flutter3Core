@@ -49,6 +49,8 @@ class CoreFileType {
 
   bool get isXlsx => ext.endsWith(".xlsx");
 
+  bool get isApk => ext.endsWith(".apk") || url.endsWith(".apk.1");
+
   /// 判断后缀是否是指定的后缀
   bool isExt(String other) => ext.endsWith(other.toLowerCase());
 }

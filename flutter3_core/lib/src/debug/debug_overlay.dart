@@ -209,6 +209,12 @@ class DebugOverlayDialog extends StatefulWidget with DialogMixin {
 class _DebugOverlayDialogState extends State<DebugOverlayDialog>
     with DebugActionMixin, GlobalAppStateMixin {
   @override
+  void initState() {
+    _buildRouteStackWidget(context);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     final defClickList = DebugOverlayButton.defDebugActions.filter(
@@ -225,23 +231,29 @@ class _DebugOverlayDialogState extends State<DebugOverlayDialog>
       (item) => item.hiveKey != null,
     );
 
+    final partBackgroundColor = globalTheme.whiteSubBgColor;
     return widget.buildBottomChildrenDialog(
       context,
       [
+        _buildPartWidget(
+          context,
+          _buildRouteStackWidget(context),
+          partBackgroundColor,
+        ),
         if (defClickList.isNotEmpty)
           //库中默认的
-          buildClickActionList(context, defClickList)
-              .wrap()!
-              .paddingOnly(all: kH)
-              .backgroundColor(globalTheme.borderColor, fillRadius: kX)
-              .paddingOnly(all: kL),
+          _buildPartWidget(
+            context,
+            buildClickActionList(context, defClickList).wrap()!,
+            partBackgroundColor,
+          ),
         if (clickList.isNotEmpty)
           //用户自定义的
-          buildClickActionList(context, clickList)
-              .wrap()!
-              .paddingOnly(all: kH)
-              .backgroundColor(globalTheme.borderColor, fillRadius: kX)
-              .paddingOnly(all: kL),
+          _buildPartWidget(
+            context,
+            buildClickActionList(context, clickList).wrap()!,
+            partBackgroundColor,
+          ),
         if (defHiveList.isNotEmpty)
           ...buildHiveActionList(context, defHiveList),
         if (hiveList.isNotEmpty) ...buildHiveActionList(context, hiveList),
@@ -250,5 +262,29 @@ class _DebugOverlayDialogState extends State<DebugOverlayDialog>
       contentMaxHeight: 0.3,
       useRScroll: true,
     );
+  }
+
+  Widget _buildPartWidget(
+    BuildContext context,
+    Widget child,
+    Color? backgroundColor,
+  ) {
+    return child
+        .paddingOnly(all: kH)
+        .backgroundColor(backgroundColor, fillRadius: kX)
+        .paddingOnly(all: kL);
+  }
+
+  Widget? _routeTextSpan;
+
+  /// 路由状态信息
+  Widget _buildRouteStackWidget(BuildContext context) {
+    if (_routeTextSpan == null) {
+      postFrameCallbackIfNeed((_) {
+        _routeTextSpan = NavigatorRouteOverlay.buildRouteStackWidget(context);
+        updateState();
+      });
+    }
+    return _routeTextSpan ?? "...".text();
   }
 }

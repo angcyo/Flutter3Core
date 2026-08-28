@@ -46,7 +46,9 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
   /// 海外市场（Google Play）：使用 in_app_update 插件，
   /// 调用 Google Play 官方的应用内更新 API，无需申请 `REQUEST_INSTALL_PACKAGES` 权限。
   static bool Function() isInGooglePlayFn = () =>
-      isAndroid && $buildFlavor != "mainland";
+      isAndroid &&
+      $buildType == BuildTypeEnum.release.name &&
+      $buildFlavor != "mainland";
 
   /// 检查更新并且显示
   /// [forceShow] 是否强制显示更新, 不检查版本号
@@ -142,6 +144,57 @@ class AppUpdateDialog extends StatefulWidget with DialogMixin {
       }
     }
     return false;
+  }
+
+  /// 安装软件
+  /// iOS 平台无法安装ipa
+  /// Android 平台需要权限
+  /// ```
+  /// <!-- Android 11+ Permissions -->
+  /// <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+  /// ```
+  static void startInstallApp({String? path}) {
+    //debugger();
+    if (path == null || isNil(path)) {
+      return;
+    }
+    if (isAndroid) {
+      assert(() {
+        l.d("准备安装->$path");
+        return true;
+      }());
+      Permission.requestInstallPackages.request().get((value, error) {
+        assert(() {
+          l.d("安装权限返回->$value:$error");
+          return true;
+        }());
+        if (value == PermissionStatus.granted) {
+          AndroidPackageInstaller.installApk(apkFilePath: path).get((
+            value,
+            error,
+          ) {
+            assert(() {
+              l.d("安装结果->$value:$error");
+              return true;
+            }());
+          });
+        }
+      });
+    } else if (isMacOS) {
+      runCommand("open", [path], throwOnError: false, mode: .detached);
+    } else if (isIos) {
+      //no op
+    } else if (isWeb) {
+      //no op
+    } else if (isWindows) {
+      //runCommand("explorer", [path], throwOnError: false, mode: .detached);
+      runCommand(
+        path,
+        ["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART"],
+        throwOnError: false,
+        mode: .detached,
+      );
+    }
   }
 
   @override
@@ -330,44 +383,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
   /// ```
   void _startInstall({String? path}) {
     //debugger();
-    path ??= downloadFilePathCacheMixin;
-    if (isAndroid) {
-      assert(() {
-        l.d("准备安装->$path");
-        return true;
-      }());
-      Permission.requestInstallPackages.request().get((value, error) {
-        assert(() {
-          l.d("安装权限返回->$value:$error");
-          return true;
-        }());
-        if (value == PermissionStatus.granted) {
-          AndroidPackageInstaller.installApk(apkFilePath: path!).get((
-            value,
-            error,
-          ) {
-            assert(() {
-              l.d("安装结果->$value:$error");
-              return true;
-            }());
-          });
-        }
-      });
-    } else if (isMacOS) {
-      runCommand("open", [path], throwOnError: false, mode: .detached);
-    } else if (isIos) {
-      //no op
-    } else if (isWeb) {
-      //no op
-    } else if (isWindows) {
-      //runCommand("explorer", [path], throwOnError: false, mode: .detached);
-      runCommand(
-        path,
-        ["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART"],
-        throwOnError: false,
-        mode: .detached,
-      );
-    }
+    AppUpdateDialog.startInstallApp(path: path ?? downloadFilePathCacheMixin);
   }
 }
 

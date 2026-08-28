@@ -33,6 +33,121 @@ class NavigatorRouteOverlay extends StatefulWidget {
     });
   }
 
+  /// 路由堆栈状态信息
+  static Widget buildRouteStackWidget(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
+    final routeList = GlobalConfig.def.findModalRouteList();
+    final length = routeList.length;
+    int index = 1;
+    final logBuffer = StringBuffer();
+    final routeTextSpan = textSpanBuilder((builder) {
+      bool isFirst = true;
+      for (final part in routeList) {
+        //debugger();
+        if (isFirst) {
+          builder.addTextStyle("当前路由信息如下[$length]↓");
+        }
+        builder.newLine();
+        final route = part.$1;
+        final element = part.$2;
+
+        final routeTypeName = route.runtimeType.toString();
+
+        final routePath = route.settings.name;
+        final widget = element?.widget;
+        String? widgetTypeName = widget.runtimeType.toString();
+        /*if (route is MaterialPageRoute) {
+              widgetTypeName = "${route.builder(context).runtimeType}";
+            } else if (route is CupertinoPageRoute) {
+              widgetTypeName = "${route.builder(context).runtimeType}";
+            } else {
+              final Animation<double> animation = ProxyAnimation();
+              widgetTypeName =
+                  "${route.buildPage(context, animation, animation).runtimeType}";
+            }*/
+        builder.addTextStyle("[$index] ");
+        builder.addTextStyle(widgetTypeName);
+        if (routePath != null) {
+          builder.addTextStyle("($routePath)");
+        }
+        builder.addTextStyle(
+          " - ${route is PopupRoute ? "Popup" : (route is PageRoute ? "Page" : routeTypeName)}",
+          style: globalTheme.textPlaceStyle,
+        );
+        if (!route.isActive) {
+          //路由是否在导航上
+          builder.addTextStyle("·!active", style: globalTheme.textPlaceStyle);
+        }
+        if (route.isCurrent) {
+          //路由是否是最顶上的
+          builder.addTextStyle("·current", style: globalTheme.textPlaceStyle);
+        }
+        if (route.fullscreenDialog) {
+          builder.addTextStyle(
+            "·fullscreen",
+            style: globalTheme.textPlaceStyle,
+          );
+        }
+        if (route.offstage) {
+          builder.addTextStyle("·offstage", style: globalTheme.textPlaceStyle);
+        }
+        if (route is PageRoute) {
+          if (!route.opaque) {
+            //是否不透明
+            builder.addTextStyle("·!opaque", style: globalTheme.textPlaceStyle);
+          }
+        } else if (route is PopupRoute) {
+          if (route.opaque) {
+            //是否不透明
+            builder.addTextStyle("·opaque", style: globalTheme.textPlaceStyle);
+          }
+        }
+        if (!route.canPop) {
+          //是否可以弹出
+          builder.addTextStyle("·!canPop", style: globalTheme.textPlaceStyle);
+        }
+        //是否暗示AppBar可以弹出
+        if (!route.impliesAppBarDismissal) {
+          builder.addTextStyle("·!aDism", style: globalTheme.textPlaceStyle);
+        }
+        if (route is PopupRoute) {
+          if (!route.barrierDismissible) {
+            //是否可以弹出
+            builder.addTextStyle("·!bDism", style: globalTheme.textPlaceStyle);
+          }
+        }
+        if (!route.requestFocus) {
+          builder.addTextStyle("·!focus", style: globalTheme.textPlaceStyle);
+        }
+        if (!route.maintainState) {
+          //是否维护状态.保留在内存中
+          builder.addTextStyle("·!maintain", style: globalTheme.textPlaceStyle);
+        }
+        if (!route.popGestureEnabled) {
+          builder.addTextStyle(
+            "·!popGesture",
+            style: globalTheme.textPlaceStyle,
+          );
+        }
+        //--
+        if (widget is TranslationTypeImpl) {
+          builder.addTextStyle(
+            " - ${(widget as TranslationTypeImpl).translationType.name}",
+            style: globalTheme.textPlaceStyle,
+          );
+        }
+        //--
+        isFirst = false;
+        index++;
+      }
+    }, logBuffer: logBuffer);
+    assert(() {
+      l.i(logBuffer);
+      return true;
+    }());
+    return routeTextSpan;
+  }
+
   /// 圆圈的大小
   @autoInjectMark
   final double? size;
@@ -205,52 +320,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
   Widget _buildRouteState(BuildContext context) {
     if (_routeTextSpan == null) {
       postFrameCallback((_) {
-        final routeList = GlobalConfig.def.findModalRouteList();
-        final length = routeList.length;
-        int index = 1;
-        final logBuffer = StringBuffer();
-        _routeTextSpan = textSpanBuilder((builder) {
-          bool isFirst = true;
-          for (final part in routeList) {
-            //debugger();
-            if (isFirst) {
-              builder.addTextStyle("当前路由信息如下[$length]↓");
-            }
-            builder.newLine();
-            final route = part.$1;
-            final element = part.$2;
-
-            final name = route.settings.name;
-            final widget = element?.widget;
-            String? widgetName = widget.runtimeType.toString();
-            /*if (route is MaterialPageRoute) {
-              widgetName = "${route.builder(context).runtimeType}";
-            } else if (route is CupertinoPageRoute) {
-              widgetName = "${route.builder(context).runtimeType}";
-            } else {
-              final Animation<double> animation = ProxyAnimation();
-              widgetName =
-                  "${route.buildPage(context, animation, animation).runtimeType}";
-            }*/
-            builder.addTextStyle("[$index] ");
-            builder.addTextStyle(widgetName);
-            if (name != null) {
-              builder.addTextStyle("($name)");
-            }
-            if (widget is TranslationTypeImpl) {
-              builder.addTextStyle(
-                " - ${(widget as TranslationTypeImpl).translationType.name}",
-              );
-            }
-            //
-            isFirst = false;
-            index++;
-          }
-        }, logBuffer: logBuffer);
-        assert(() {
-          l.i(logBuffer);
-          return true;
-        }());
+        _routeTextSpan = NavigatorRouteOverlay.buildRouteStackWidget(context);
         updateState();
       });
     }

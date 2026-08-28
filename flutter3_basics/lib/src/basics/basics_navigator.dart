@@ -421,12 +421,15 @@ extension NavigatorEx on BuildContext {
     }
   }
 
-  /// [ModalRoute] -> [PageRoute]
-  /// [ModalRoute] -> [PopupRoute]
+  /// [ModalRoute] -> [PageRoute] 页面路由
+  /// [ModalRoute] -> [PopupRoute] 弹窗路由
   PageRoute? get pageRoute {
     final route = modalRoute;
     return route is PageRoute ? route : null;
   }
+
+  /// 当前路由是否是弹窗路由[PopupRoute]
+  bool get isPopupRoute => pageRoute != null;
 
   /// [ModalRoute.settingsOf]
   RouteSettings? get routeSettings => modalRoute?.settings;
