@@ -24,6 +24,7 @@ class GradientButton extends StatefulWidget {
     this.loadingWidth,
     this.loadingHeight,
     this.enable,
+    this.bold,
     this.padding,
     this.textStyle,
     this.radius = kDefaultBorderRadiusL,
@@ -58,6 +59,7 @@ class GradientButton extends StatefulWidget {
     this.loadingHeight,
     required this.child,
     this.enable,
+    this.bold,
     this.padding = const EdgeInsets.symmetric(vertical: kS, horizontal: kM),
     this.textStyle,
     this.radius = kDefaultBorderRadiusL,
@@ -91,6 +93,7 @@ class GradientButton extends StatefulWidget {
     this.loadingWidth,
     this.loadingHeight,
     this.enable,
+    this.bold,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
     this.decoration,
@@ -126,6 +129,7 @@ class GradientButton extends StatefulWidget {
     this.loadingWidth,
     this.loadingHeight,
     this.enable,
+    this.bold,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
     this.decoration,
@@ -161,6 +165,7 @@ class GradientButton extends StatefulWidget {
     this.loadingWidth,
     this.loadingHeight,
     this.enable,
+    this.bold,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
     this.decoration,
@@ -199,6 +204,7 @@ class GradientButton extends StatefulWidget {
     this.loadingHeight,
     required this.child,
     this.enable,
+    this.bold,
     this.padding = const EdgeInsets.symmetric(vertical: kM, horizontal: kL),
     this.textStyle,
     this.textColor = const Color(0xff333333),
@@ -223,6 +229,10 @@ class GradientButton extends StatefulWidget {
   /// 是否启用
   /// 为`null`时, 自动根据[onTap]判断
   final bool? enable;
+
+  /// 是否默认使用粗体, 默认为`true`
+  @defInjectMark
+  final bool? bold;
 
   /// 渐变色数组装饰
   final List<Color>? colors;
@@ -406,7 +416,9 @@ class _GradientButtonState extends State<GradientButton> {
             child: Padding(
               padding: widget.padding ?? globalTheme.buttonPadding,
               child: DefaultTextStyle.merge(
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: (widget.bold ?? true)
+                    ? const TextStyle(fontWeight: FontWeight.bold)
+                    : null,
                 child: Center(
                   widthFactor: 1,
                   heightFactor: 1,

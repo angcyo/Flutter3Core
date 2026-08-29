@@ -77,7 +77,7 @@ class SplitButton extends StatefulWidget {
     this.strokeColor,
     this.strokeWidth = 1,
     this.height = 30,
-    this.radius = 4,
+    this.radius = kM,
   });
 
   @override
