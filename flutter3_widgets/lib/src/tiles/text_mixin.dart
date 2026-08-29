@@ -34,6 +34,9 @@ mixin LabelMixin {
 
   Widget? get labelWidget => null;
 
+  /// [labelWidget]尾随的小部件
+  Widget? get labelTrailingWidget => null;
+
   TextStyle? get labelTextStyle => null;
 
   TextAlign? get labelTextAlign => null;
@@ -51,6 +54,7 @@ mixin LabelMixin {
     EdgeInsets? padding,
     String? label,
     Widget? labelWidget,
+    Widget? labelTrailingWidget,
     TextStyle? labelTextStyle,
     TextAlign? labelTextAlign,
     //--
@@ -58,27 +62,24 @@ mixin LabelMixin {
   }) {
     label ??= this.label;
     labelWidget ??= this.labelWidget;
+    labelTrailingWidget ??= this.labelTrailingWidget;
     labelTextStyle ??= this.labelTextStyle;
     labelTextAlign ??= this.labelTextAlign;
     final globalTheme = GlobalTheme.of(context);
-    final widget =
-        labelWidget ??
-        (label
-            ?.text(
-              style:
-                  labelTextStyle ??
-                  (themeStyle ? globalTheme.tileTextLabelStyle : null),
-              textAlign: labelTextAlign,
-            )
-            .rowOf(
-              isRequired == true
-                  ? " *".text(textColor: Colors.redAccent)
-                  : null,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-            )
-            .constrainedBox(labelConstraints)
-            .paddingInsets(labelPadding));
+    final widget = [
+      labelWidget ??
+          label
+              ?.text(
+                style:
+                    labelTextStyle ??
+                    (themeStyle ? globalTheme.tileTextLabelStyle : null),
+                textAlign: labelTextAlign,
+              )
+              .constrainedBox(labelConstraints)
+              .paddingInsets(labelPadding),
+      isRequired == true ? " *".text(textColor: Colors.redAccent) : null,
+      labelTrailingWidget,
+    ].row(mainAxisAlignment: .start, mainAxisSize: .min);
     return widget?.paddingInsets(padding);
   }
 }

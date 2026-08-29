@@ -901,6 +901,9 @@ mixin TileMixin {
     double? radius = kDefaultBorderRadiusL,
     ValueChanged<dynamic>? onChanged,
     ValueChanged<dynamic>? onSubmitted,
+    //--
+    bool? ignoreInputOverflow,
+    String? debugLabel,
   }) {
     final globalTheme = GlobalTheme.of(context);
     if (onTap == null) {
@@ -924,6 +927,8 @@ mixin TileMixin {
             inputMaxDigits: maxDigits,
             onChanged: onChanged,
             onSubmitted: onSubmitted,
+            ignoreInputOverflow: ignoreInputOverflow,
+            debugLabel: debugLabel,
           ),
           /*child: TextField(
         */

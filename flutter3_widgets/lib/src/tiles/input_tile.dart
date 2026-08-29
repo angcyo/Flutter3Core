@@ -341,6 +341,10 @@ class NumberInputWidget extends StatefulWidget {
   /// 最小值, 只在数字类型时有效
   final num? inputMinValue;
 
+  /// 是否忽略输入时的溢出处理
+  /// - true: 如果值超出了输入的最大值或最小值, 则onChanged时, 不触发回调
+  final bool? ignoreInputOverflow;
+
   /// 输入格式化器, 不指定会有默认值
   @defInjectMark
   final List<TextInputFormatter>? inputFormatters;
@@ -376,6 +380,9 @@ class NumberInputWidget extends StatefulWidget {
   /// 显示后缀icon
   final bool? alwaysShowSuffixIcon;
 
+  /// 调试标签
+  final String? debugLabel;
+
   const NumberInputWidget({
     super.key,
     this.inputText,
@@ -393,8 +400,10 @@ class NumberInputWidget extends StatefulWidget {
     this.contentPadding = kNumberInputPadding,
     this.onChanged,
     this.onSubmitted,
+    this.ignoreInputOverflow,
     this.autoSubmitOnUnFocus = true,
     this.alwaysShowSuffixIcon = false,
+    this.debugLabel,
   });
 
   @override
@@ -506,6 +515,14 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
       autoSubmitOnUnFocus: widget.autoSubmitOnUnFocus,
       //--
       hintText: widget.hintText,
+      onFocusAction: (focus) {
+        if (widget.debugLabel != null) {
+          assert(() {
+            l.w("[${widget.debugLabel}]输入框焦点变化[$focus]");
+            return true;
+          }());
+        }
+      },
       onChanged: (value) {
         //debugger();
         /*assert(() {
@@ -527,23 +544,59 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
           }
         }
         _lastInputText = value;
-        widget.onChanged?.call(
-          _formatResultValue(
-            value,
-            didClamp: (clamp, value) {
-              if (clamp) {
-                inputConfig.text = _formatDigits("$value");
-              }
-            },
-          ),
+
+        bool isClamp = false;
+        final resultValue = _formatResultValue(
+          value,
+          didClamp: (clamp, value) {
+            isClamp = clamp;
+          },
         );
+        if (widget.debugLabel != null) {
+          assert(() {
+            l.w("[${widget.debugLabel}]输入框onChanged->$resultValue");
+            return true;
+          }());
+        }
+        if (isClamp) {
+          if (widget.ignoreInputOverflow != true) {
+            inputConfig.text = _formatDigits("$resultValue");
+            widget.onChanged?.call(resultValue);
+          } else {
+            //溢出并忽略了回调
+          }
+        } else {
+          widget.onChanged?.call(resultValue);
+        }
       },
       onSubmitted: (value) {
         /*assert(() {
           l.d("onSubmitted:${inputConfig.text}->$value");
           return true;
         }());*/
-        widget.onSubmitted?.call(_formatResultValue(value));
+        if (widget.debugLabel != null) {
+          assert(() {
+            l.w("[${widget.debugLabel}]输入框onSubmitted->$value");
+            return true;
+          }());
+        }
+        bool isClamp = false;
+        final resultValue = _formatResultValue(
+          value,
+          didClamp: (clamp, value) {
+            isClamp = clamp;
+          },
+        );
+        if (isClamp) {
+          if (widget.ignoreInputOverflow != true) {
+            //no op
+          } else {
+            //溢出了, 重新触发回调
+            inputConfig.text = _formatDigits("$resultValue");
+            widget.onChanged?.call(resultValue);
+          }
+        }
+        widget.onSubmitted?.call(resultValue);
       },
     );
     return input;
@@ -552,7 +605,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
   /// 格式化输出的结果值
   dynamic _formatResultValue(
     String value, {
-    void Function(bool, dynamic)? didClamp /*是否clamp过*/,
+    void Function(bool /*是否clamp过*/, dynamic /*返回的值*/)? didClamp,
   }) {
     //debugger();
     try {

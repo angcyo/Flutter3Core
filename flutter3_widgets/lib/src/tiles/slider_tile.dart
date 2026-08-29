@@ -129,7 +129,8 @@ class _SliderTileState extends State<SliderTile> with TileMixin {
 /// [start]...[end]
 /// [RangeSlider]
 ///
-class RangeSliderTile extends StatefulWidget {
+class RangeSliderTile extends StatefulWidget with LabelMixin {
+
   /// 开始值的提示小部件
   final Widget? startWidget;
   final EdgeInsetsGeometry? startPadding;
@@ -141,7 +142,7 @@ class RangeSliderTile extends StatefulWidget {
   /// 需要显示的小数位数
   final int showValueDigits;
 
-  //---RangeSlider---
+  //MARK: RangeSlider
 
   /// 是否显示值指示器
   final ShowValueIndicator showValueIndicator;
@@ -182,6 +183,7 @@ class RangeSliderTile extends StatefulWidget {
 
   const RangeSliderTile({
     super.key,
+    //--
     this.startWidget,
     this.endWidget,
     this.showValueDigits = kDefaultDigits,
@@ -229,16 +231,17 @@ class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
 
   @override
   Widget build(BuildContext context) {
+    final digits = widget.showValueDigits;
+    final startValueLabel = _startValue.toDigits(digits: digits);
+    final endValueLabel = _endValue.toDigits(digits: digits);
+    final minValue = widget.minValue ?? widget.startValue;
+    final maxValue = widget.maxValue ?? widget.endValue;
     //
     final top = LeftCenterRightLayout(
       left: widget.startWidget?.paddingInsets(widget.startPadding),
       right: widget.endWidget?.paddingInsets(widget.endPadding),
     );
     //
-    final startValueStr = _startValue.toDigits(digits: widget.showValueDigits);
-    final endValueStr = _endValue.toDigits(digits: widget.showValueDigits);
-    final minValue = widget.minValue ?? widget.startValue;
-    final maxValue = widget.maxValue ?? widget.endValue;
     //debugger();
     final bottom = buildRangeSliderWidget(
       context,
@@ -246,10 +249,10 @@ class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
       _endValue,
       minValue: minValue,
       maxValue: maxValue,
-      digits: widget.showValueDigits,
+      digits: digits,
       divisions: widget.divisions,
-      startLabel: startValueStr,
-      endLabel: endValueStr,
+      startLabel: startValueLabel,
+      endLabel: endValueLabel,
       showValueIndicator: widget.showValueIndicator,
       minThumbSeparation: widget.minThumbSeparation,
       thumbRadius: widget.thumbRadius,
@@ -259,10 +262,10 @@ class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
       onChanged: (values) {
         _startValue = values.start;
         _endValue = values.end;
-        assert(() {
+        /*assert(() {
           l.d('滑块[$minValue~$maxValue]:(${values.start}, ${values.end})');
           return true;
-        }());
+        }());*/
         widget.onChanged?.call(values);
         updateState();
       },

@@ -78,7 +78,7 @@ dynamic clamp(
   num? min,
   num? max, {
   bool correctMinMaxValue = false,
-  void Function(bool, dynamic)? didClamp /*是否clamp过*/,
+  void Function(bool /*是否clamp过*/, dynamic /*返回的值*/)? didClamp ,
 }) {
   if (correctMinMaxValue) {
     if (min != null && max != null) {

@@ -38,7 +38,7 @@ class LabelNumberSliderTile extends StatefulWidget {
   final int? divisions;
   final NumType? _numType;
 
-  /// 是否显示数字
+  /// 是否显示数字输入
   final bool showNumber;
 
   /// 是否显示滑块
