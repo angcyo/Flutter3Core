@@ -109,7 +109,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.labelTrailingWidget,
     this.labelPadding,
     //--
-    this.value = 0.0,
+    this.value,
     this.valueText,
     this.minValue,
     this.maxValue,
@@ -168,7 +168,8 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
   }
 
   void _updateValue({bool initial = false}) {
-    _initialValue = widget.value;
+    _initialValue =
+        widget.value ?? (initial ? widget.minValue ?? widget.maxValue : null);
     _currentValue = _initialValue;
     if (initial && widget.firstNotify == true && _currentValue != null) {
       //debugger();

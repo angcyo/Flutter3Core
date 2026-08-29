@@ -341,6 +341,7 @@ class ValueSegmentTile extends StatefulWidget with MultiValueConfigMixin {
   final Color? selectedBgColor;
 
   /// 选中样式: 圆角大小
+  /// - [kDefaultBorderRadiusX]
   @defInjectMark
   final double? selectedBorderRadius;
 
