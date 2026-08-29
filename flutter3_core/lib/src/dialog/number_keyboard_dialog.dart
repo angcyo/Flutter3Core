@@ -21,6 +21,18 @@ part of '../../flutter3_core.dart';
 /// 输入回调
 typedef NumberInputCallback = void Function(num? value);
 
+/// 数字范围分隔符
+/// ```
+/// enum NumberRangeSeparator {
+///   /// 范围分隔符: ~
+///   tilde,
+///
+///   /// 范围分隔符: -
+///   dash,
+/// }
+/// ```
+const String kNRS = '~';
+
 /// 按键类型
 enum NumberKeyboardType {
   /// 键盘类型: 数字
@@ -229,11 +241,11 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     String? rangeText;
     if (widget.maxValue != null && widget.minValue != null) {
       rangeText =
-          "[${_formatValue(widget.minValue)}~${_formatValue(widget.maxValue)}]";
+          "[${_formatValue(widget.minValue)}$kNRS${_formatValue(widget.maxValue)}]";
     } else if (widget.maxValue != null) {
-      rangeText = "[~${_formatValue(widget.maxValue)}]";
+      rangeText = "[$kNRS${_formatValue(widget.maxValue)}]";
     } else if (widget.minValue != null) {
-      rangeText = "[${_formatValue(widget.minValue)}~]";
+      rangeText = "[${_formatValue(widget.minValue)}$kNRS]";
     }
     if (rangeText != null) {
       rangeText = "$prefixText$rangeText";

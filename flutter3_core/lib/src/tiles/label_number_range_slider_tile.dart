@@ -146,7 +146,7 @@ class _LabelNumberRangeSliderTileState extends State<LabelNumberRangeSliderTile>
             widget.onChangeEnd?.call(RangeValues(_startValue, _endValue));
           },
         ),
-        " ~ ".text(),
+        " $kNRS ".text(),
         //end value
         _buildNumberWidget(
           context,
