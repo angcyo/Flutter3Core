@@ -9,8 +9,8 @@ part of '../../flutter3_core.dart';
 ///
 /// [SliderTile]
 /// [LabelNumberTile]
-/// [LabelNumberSliderTile]
-/// [LabelRangeNumberSliderTile]
+/// - [LabelNumberSliderTile] 单数字滑块
+/// - [LabelNumberRangeSliderTile] 范围数字滑块
 @adaptiveLayout
 class LabelNumberSliderTile extends StatefulWidget {
   /// label
@@ -49,6 +49,9 @@ class LabelNumberSliderTile extends StatefulWidget {
 
   /// 回调, 值更新就触发的回调. (拖动过程中也触发)
   final NumCallback? onValueUpdated;
+
+  /// 回调, 值提交时触发的回调. (拖动过程中不触发)
+  final NumCallback? onValueSubmitted;
 
   /// 圆角
   final double? radius;
@@ -114,6 +117,7 @@ class LabelNumberSliderTile extends StatefulWidget {
     this.divisions,
     this.onValueUpdated,
     this.onValueChanged,
+    this.onValueSubmitted,
     this.showNumber = true,
     this.showSlider = true,
     this.radius = kDefaultBorderRadiusL,
@@ -202,6 +206,12 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                   maxDigits: widget.maxDigits,
                   numType: widget._numType,
                   radius: widget.radius,
+                  ignoreInputOverflow: true,
+                  onSubmitted: (value) {
+                    if (_currentValue is num) {
+                      widget.onValueSubmitted?.call(_currentValue!);
+                    }
+                  },
                   onChanged: (value) {
                     if (value is num) {
                       _currentValue = value;
@@ -227,6 +237,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
                     if (value != null) {
                       _currentValue = value;
                       notifyValueUpdated(value);
+                      widget.onValueSubmitted?.call(value);
                       updateState();
                     }
                   },
@@ -250,7 +261,8 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
     if (value >= minValue && value <= maxValue) {
     } else {
       assert(() {
-        final msg = widget.label;
+        final msg = "${widget.label}:$value 超出范围[$minValue~$maxValue]";
+        l.w(msg);
         debugger();
         return true;
       }());
@@ -293,6 +305,7 @@ class _LabelNumberSliderTileState extends State<LabelNumberSliderTile>
           result = (_currentValue ?? value).round();
         }
         widget.onValueChanged?.call(result);
+        widget.onValueSubmitted?.call(result);
       },
     );
 

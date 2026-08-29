@@ -7,7 +7,8 @@ part of '../../flutter3_core.dart';
 /// 范围数字滑动条
 /// - [RangeSliderTile]
 ///
-/// - [LabelNumberSliderTile]
+/// - [LabelNumberSliderTile] 单数字滑块
+/// - [LabelNumberRangeSliderTile] 范围数字滑块
 class LabelNumberRangeSliderTile extends StatefulWidget with LabelMixin {
   /// 是否显示数字输入
   final bool showNumber;
@@ -139,8 +140,10 @@ class _LabelNumberRangeSliderTileState extends State<LabelNumberRangeSliderTile>
           onChanged: (value) {
             _startValue = value;
             widget.onChanged?.call(RangeValues(_startValue, _endValue));
-            widget.onChangeEnd?.call(RangeValues(_startValue, _endValue));
             updateState();
+          },
+          onSubmitted: (value) {
+            widget.onChangeEnd?.call(RangeValues(_startValue, _endValue));
           },
         ),
         " ~ ".text(),
@@ -154,8 +157,10 @@ class _LabelNumberRangeSliderTileState extends State<LabelNumberRangeSliderTile>
           onChanged: (value) {
             _endValue = value;
             widget.onChanged?.call(RangeValues(_startValue, _endValue));
-            widget.onChangeEnd?.call(RangeValues(_startValue, _endValue));
             updateState();
+          },
+          onSubmitted: (value) {
+            widget.onChangeEnd?.call(RangeValues(_startValue, _endValue));
           },
         ),
       ];
@@ -200,6 +205,7 @@ class _LabelNumberRangeSliderTileState extends State<LabelNumberRangeSliderTile>
     int? maxDigits,
     double? radius = kDefaultBorderRadiusL,
     ValueChanged<double>? onChanged,
+    ValueChanged<double>? onSubmitted,
   }) {
     return isDesktopOrWeb
         ? buildNumberInputWidget(
@@ -211,10 +217,15 @@ class _LabelNumberRangeSliderTileState extends State<LabelNumberRangeSliderTile>
             numType: .d,
             radius: radius,
             ignoreInputOverflow: true,
-            debugLabel: "buildNumberWidget",
+            /*debugLabel: "buildNumberWidget",*/
             onChanged: (value) {
               if (value is double) {
                 onChanged?.call(value);
+              }
+            },
+            onSubmitted: (value) {
+              if (value is double) {
+                onSubmitted?.call(value);
               }
             },
           )
@@ -234,6 +245,7 @@ class _LabelNumberRangeSliderTileState extends State<LabelNumberRangeSliderTile>
               );
               if (value is double) {
                 onChanged?.call(value);
+                onSubmitted?.call(value);
               }
             },
           );

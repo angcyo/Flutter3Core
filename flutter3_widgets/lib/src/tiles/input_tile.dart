@@ -518,7 +518,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
       onFocusAction: (focus) {
         if (widget.debugLabel != null) {
           assert(() {
-            l.w("[${widget.debugLabel}]输入框焦点变化[$focus]");
+            l.d("[${widget.debugLabel}]输入框焦点变化[$focus]");
             return true;
           }());
         }
@@ -554,7 +554,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
         );
         if (widget.debugLabel != null) {
           assert(() {
-            l.w("[${widget.debugLabel}]输入框onChanged->$resultValue");
+            l.d("[${widget.debugLabel}]输入框onChanged->$resultValue");
             return true;
           }());
         }
@@ -576,7 +576,7 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
         }());*/
         if (widget.debugLabel != null) {
           assert(() {
-            l.w("[${widget.debugLabel}]输入框onSubmitted->$value");
+            l.d("[${widget.debugLabel}]输入框onSubmitted->$value");
             return true;
           }());
         }
