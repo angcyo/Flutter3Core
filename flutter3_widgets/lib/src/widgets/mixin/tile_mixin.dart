@@ -466,7 +466,7 @@ mixin TileMixin {
     double maxValue = 1,
     int digits = kDefaultDigits,
     int? divisions,
-    ShowValueIndicator? showValueIndicator = ShowValueIndicator.always,
+    ShowValueIndicator? showValueIndicator = ShowValueIndicator.onDrag,
     ValueChanged<double>? onChanged,
     ValueChanged<double>? onChangeStart,
     ValueChanged<double>? onChangeEnd,
@@ -489,7 +489,7 @@ mixin TileMixin {
     SliderComponentShape? overlayShape /*光晕的shape*/,
     TextStyle? valueIndicatorTextStyle /*指示器中的文本样式*/,
     //--
-    double? additionalActiveTrackHeight /*激活时滑块的额外高度*/,
+    double? additionalActiveTrackHeight /*激活时滑块的额外补偿高度*/,
     EdgeInsetsGeometry? sliderPadding /*填充*/,
   }) {
     //debugger();
@@ -559,6 +559,11 @@ mixin TileMixin {
         activeTrackColor: activeTrackColor ?? darkAccentColor,
         overlayColor: overlayColor ?? darkAccentColor.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
+        //DropSliderValueIndicatorShape /*圆角, 带下拉箭头, 默认*/
+        //RoundedRectSliderValueIndicatorShape /*仅圆角*/
+        //RectangularSliderValueIndicatorShape /*圆角矩形*/
+        //PaddleSliderValueIndicatorShape /*圆角, 带下拉浆*/
+        valueIndicatorShape: DropSliderValueIndicatorShape(),
         inactiveTrackColor: inactiveTrackColor ?? darkAccentColor.withAlpha(10),
         thumbShape:
             thumbShape ??
@@ -615,7 +620,7 @@ mixin TileMixin {
     double maxValue = 1,
     int digits = kDefaultDigits,
     int? divisions,
-    ShowValueIndicator? showValueIndicator = ShowValueIndicator.always,
+    ShowValueIndicator? showValueIndicator = ShowValueIndicator.onDrag,
     ValueChanged<RangeValues>? onChanged,
     ValueChanged<RangeValues>? onChangeStart,
     ValueChanged<RangeValues>? onChangeEnd,
@@ -631,9 +636,14 @@ mixin TileMixin {
     Color? valueIndicatorColor,
     double? trackHeight,
     bool? useCenteredTrackShape,
+    SliderComponentShape? overlayShape /*光晕的shape*/,
+    double? overlayRadius /*光晕的半径,默认24*/,
     RangeSliderTrackShape? trackShape /*轨道shape*/,
     RangeSliderThumbShape? thumbShape /*浮子shape*/,
+    double? thumbRadius /*浮子的半径, 默认10*/,
+    double? additionalActiveTrackHeight /*激活时滑块的额外补偿高度*/,
     TextStyle? valueIndicatorTextStyle /*指示器中的文本样式*/,
+    double? minThumbSeparation /*限制2个拇指之间的最小距离像素*/,
   }) {
     /*if (rangeTrackShape == null) {
       //渐变进度在渐变颜色中的颜色值
@@ -679,7 +689,13 @@ mixin TileMixin {
     final globalTheme = GlobalTheme.of(context);
     final darkAccentColor = context.isThemeDark
         ? globalTheme.accentColor
-        : null;
+        : globalTheme.accentColor;
+    if (additionalActiveTrackHeight != null) {
+      //系统的[RoundedRectRangeSliderTrackShape]不支持设置, 需要自定义
+      trackShape ??= CustomRoundedRectRangeSliderTrackShape(
+        additionalActiveTrackHeight: additionalActiveTrackHeight,
+      );
+    }
     return SliderTheme(
       data: SliderThemeData(
         showValueIndicator: showValueIndicator,
@@ -687,13 +703,28 @@ mixin TileMixin {
         activeTrackColor: activeTrackColor ?? darkAccentColor,
         overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
+        //PaddleRangeSliderValueIndicatorShape() /*圆角, 带下拉浆*/
+        //RectangularRangeSliderValueIndicatorShape() /*圆角矩形, 默认*/
+        //RoundedRectRangeSliderValueIndicatorShape() /*仅圆角样式*/
+        rangeValueIndicatorShape:
+            DropRangeSliderValueIndicatorShape() /*圆角, 带下拉箭头*/,
         inactiveTrackColor: inactiveTrackColor,
+        overlayShape:
+            overlayShape ??
+            (overlayRadius == null
+                ? null
+                : RoundSliderOverlayShape(overlayRadius: overlayRadius)),
         rangeTrackShape: trackShape,
-        rangeThumbShape: thumbShape,
+        rangeThumbShape:
+            thumbShape ??
+            (thumbRadius == null
+                ? null
+                : RoundRangeSliderThumbShape(enabledThumbRadius: thumbRadius)),
         /*rangeValueIndicatorShape: rangeValueIndicatorShape,*/
         /*inactiveTrackColor: Colors.redAccent,*/
         trackHeight: trackHeight,
         valueIndicatorTextStyle: valueIndicatorTextStyle,
+        minThumbSeparation: minThumbSeparation,
       ),
       child: RangeSlider(
         values: RangeValues(startValue, endValue),
@@ -708,12 +739,23 @@ mixin TileMixin {
             onChanged ??
             (values) {
               assert(() {
-                l.d('滑块[$minValue~$maxValue]:(${values.start}, ${values.end})');
+                l.d(
+                  '滑块Changed[$minValue~$maxValue]:(${values.start}, ${values.end})',
+                );
                 return true;
               }());
             },
         onChangeStart: onChangeStart,
-        onChangeEnd: onChangeEnd,
+        onChangeEnd:
+            onChangeEnd ??
+            (values) {
+              assert(() {
+                l.i(
+                  '滑块End[$minValue~$maxValue]:(${values.start}, ${values.end})',
+                );
+                return true;
+              }());
+            },
       ),
     );
   }

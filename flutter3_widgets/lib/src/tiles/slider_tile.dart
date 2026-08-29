@@ -75,7 +75,7 @@ class SliderTile extends StatefulWidget {
     this.minValue = 0,
     this.maxValue = 1,
     this.gap = kH,
-    this.showValueIndicator = ShowValueIndicator.always,
+    this.showValueIndicator = ShowValueIndicator.onDrag,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
@@ -100,9 +100,7 @@ class _SliderTileState extends State<SliderTile> with TileMixin {
     return [
       widget.leadingWidget,
       SliderTheme(
-        data: SliderThemeData(
-          showValueIndicator: widget.showValueIndicator,
-        ),
+        data: SliderThemeData(showValueIndicator: widget.showValueIndicator),
         child: Slider(
           value: _value,
           min: widget.minValue,
@@ -140,7 +138,7 @@ class RangeSliderTile extends StatefulWidget {
   final Widget? endWidget;
   final EdgeInsetsGeometry? endPadding;
 
-  /// 小数位数
+  /// 需要显示的小数位数
   final int showValueDigits;
 
   //---RangeSlider---
@@ -153,10 +151,10 @@ class RangeSliderTile extends StatefulWidget {
   final double endValue;
 
   /// 滑块的最小值
-  final double minValue;
+  final double? minValue;
 
   /// 滑块的最大值
-  final double maxValue;
+  final double? maxValue;
 
   /// 滑块的分割线
   final int? divisions;
@@ -170,6 +168,18 @@ class RangeSliderTile extends StatefulWidget {
   /// 滑块值改变结束回调
   final ValueChanged<RangeValues>? onChangeEnd;
 
+  /// 限制2个拇指之间的最小距离像素
+  final double? minThumbSeparation;
+
+  /// 滑块轨道的高度
+  final double? trackHeight;
+
+  /// 激活时滑块的额外补偿高度
+  final double? additionalActiveTrackHeight;
+
+  final double? overlayRadius;
+  final double? thumbRadius;
+
   const RangeSliderTile({
     super.key,
     this.startWidget,
@@ -179,14 +189,20 @@ class RangeSliderTile extends StatefulWidget {
     this.endPadding = kLabelPaddingInline,
     //--
     this.divisions,
-    this.showValueIndicator = ShowValueIndicator.always,
+    this.showValueIndicator = ShowValueIndicator.onDrag,
     this.startValue = 0,
     this.endValue = 1,
-    this.minValue = 0,
-    this.maxValue = 1,
+    this.minValue,
+    this.maxValue,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
+    //--
+    this.thumbRadius,
+    this.overlayRadius,
+    this.trackHeight,
+    this.additionalActiveTrackHeight,
+    this.minThumbSeparation,
   });
 
   @override
@@ -221,29 +237,38 @@ class _RangeSliderTileState extends State<RangeSliderTile> with TileMixin {
     //
     final startValueStr = _startValue.toDigits(digits: widget.showValueDigits);
     final endValueStr = _endValue.toDigits(digits: widget.showValueDigits);
+    final minValue = widget.minValue ?? widget.startValue;
+    final maxValue = widget.maxValue ?? widget.endValue;
     //debugger();
     final bottom = buildRangeSliderWidget(
       context,
       _startValue,
       _endValue,
-      minValue: widget.minValue,
-      maxValue: widget.maxValue,
+      minValue: minValue,
+      maxValue: maxValue,
+      digits: widget.showValueDigits,
       divisions: widget.divisions,
       startLabel: startValueStr,
       endLabel: endValueStr,
       showValueIndicator: widget.showValueIndicator,
-      onChanged: (value) {
-        _startValue = value.start;
-        _endValue = value.end;
-        widget.onChanged?.call(value);
+      minThumbSeparation: widget.minThumbSeparation,
+      thumbRadius: widget.thumbRadius,
+      overlayRadius: widget.overlayRadius,
+      trackHeight: widget.trackHeight,
+      additionalActiveTrackHeight: widget.additionalActiveTrackHeight,
+      onChanged: (values) {
+        _startValue = values.start;
+        _endValue = values.end;
+        assert(() {
+          l.d('滑块[$minValue~$maxValue]:(${values.start}, ${values.end})');
+          return true;
+        }());
+        widget.onChanged?.call(values);
         updateState();
       },
       onChangeStart: widget.onChangeStart,
       onChangeEnd: widget.onChangeEnd,
     );
-    return [
-      top,
-      bottom,
-    ].column()!;
+    return [top, bottom].column()!;
   }
 }

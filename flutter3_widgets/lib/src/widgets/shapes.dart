@@ -5,6 +5,7 @@ part of '../../flutter3_widgets.dart';
 /// @date 2024/05/24
 ///
 
+/// 自定义滑块轨道Shape
 class CustomRoundedRectSliderTrackShape extends RoundedRectSliderTrackShape {
   /// 激活的滑块额外高度
   final double? additionalActiveTrackHeight;
@@ -36,6 +37,47 @@ class CustomRoundedRectSliderTrackShape extends RoundedRectSliderTrackShape {
       secondaryOffset: secondaryOffset,
       isDiscrete: isDiscrete,
       isEnabled: isEnabled,
+      additionalActiveTrackHeight:
+          this.additionalActiveTrackHeight ?? additionalActiveTrackHeight,
+    );
+  }
+}
+
+/// 自定义范围滑块轨道Shape
+class CustomRoundedRectRangeSliderTrackShape
+    extends RoundedRectRangeSliderTrackShape {
+  /// 激活的滑块额外高度
+  final double? additionalActiveTrackHeight;
+
+  const CustomRoundedRectRangeSliderTrackShape({
+    this.additionalActiveTrackHeight,
+  });
+
+  @override
+  void paint(
+    PaintingContext context,
+    ui.Offset offset, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required ui.Offset startThumbCenter,
+    required ui.Offset endThumbCenter,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+    required ui.TextDirection textDirection,
+    double additionalActiveTrackHeight = 2,
+  }) {
+    super.paint(
+      context,
+      offset,
+      parentBox: parentBox,
+      sliderTheme: sliderTheme,
+      enableAnimation: enableAnimation,
+      startThumbCenter: startThumbCenter,
+      endThumbCenter: endThumbCenter,
+      isEnabled: isEnabled,
+      isDiscrete: isDiscrete,
+      textDirection: textDirection,
       additionalActiveTrackHeight:
           this.additionalActiveTrackHeight ?? additionalActiveTrackHeight,
     );
