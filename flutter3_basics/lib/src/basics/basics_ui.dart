@@ -3043,6 +3043,7 @@ extension WidgetEx on Widget {
     GestureLongPressCallback? onLongPress,
     //--
     GestureContextTapCallback? onContextTap,
+    bool canRequestFocus = true,
   }) {
     if (onTap == null && enable == null) {
       return this;
@@ -3088,6 +3089,7 @@ extension WidgetEx on Widget {
         highlightColor: highlightColor,
         splashColor: splashColor,
         cursor: cursor,
+        canRequestFocus: canRequestFocus,
       ),
     );
   }
@@ -3126,6 +3128,7 @@ extension WidgetEx on Widget {
     MouseCursor? cursor,
     //--
     bool disableColor = false,
+    bool canRequestFocus = true,
     //--
     Duration? periodicDuration,
     GestureLongPressCallback? onLongPressPeriodic,
@@ -3205,6 +3208,7 @@ extension WidgetEx on Widget {
         //边框裁剪
         highlightShape: highlightShape,
         containedInkWell: true /*裁剪边界*/,
+        canRequestFocus: canRequestFocus,
         child: this,
       );
     }

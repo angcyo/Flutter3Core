@@ -951,6 +951,7 @@ mixin TileMixin {
           },
           backgroundColor: backgroundColor ?? globalTheme.whiteSubBgColor,
           radius: radius,
+          canRequestFocus: false,
         )
         .paddingInsets(margin);
   }

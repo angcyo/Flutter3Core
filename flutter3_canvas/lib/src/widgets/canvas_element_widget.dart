@@ -82,7 +82,7 @@ class CanvasElementRenderObject extends RenderBox {
       final bounds = painter.elementsBounds;
 
       assert(() {
-        if (debugLabel != null || isDebug) {
+        if (debugLabel != null /*|| isDebug*/ ) {
           l.d("[$debugLabel]elementsBounds:$bounds offset:$offset");
         }
         return true;
@@ -107,6 +107,14 @@ class CanvasElementRenderObject extends RenderBox {
           dstPadding: padding,
           /*debugLabel: bounds.isEmpty ? "isEmpty" : null,*/
         );
+        if (isDebug) {
+          canvas.drawText(
+            "${bounds.width.toDigits()}*${bounds.height.toDigits()}",
+            offset: offset,
+            fontSize: 9,
+            textColor: Colors.redAccent,
+          );
+        }
       }
       //context.canvas.drawRect(offset & size, Paint());
     }

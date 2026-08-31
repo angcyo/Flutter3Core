@@ -1419,12 +1419,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   void _onFocusChanged() {
     //debugger();
     _checkSuffixIcon();
+    final text = widget.config.value.text;
     final hasFocus = widget.config.hasFocus;
     assert(() {
-      l.d("[${classHash()}] 焦点变化：$hasFocus :${widget.config.selection}");
+      l.d("[${classHash()}][$text]焦点变化：$hasFocus :${widget.config.selection}");
       return true;
     }());
-    final text = widget.config.value.text;
     widget.onFocusAction?.call(hasFocus);
     widget.config.onFocusChanged();
     if (!hasFocus) {
