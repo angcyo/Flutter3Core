@@ -509,16 +509,24 @@ class CanvasKeyManager
   /// 复制选中的元素
   @api
   bool copySelectedElement() {
-    clearClipboard();
-    _copyElementList = canvasElementManager.copySelectedElement(
-      autoAddToCanvas: false,
-    );
-    return !isNil(_copyElementList);
+    if (isSelectedElement) {
+      clearClipboard();
+      () async {
+        _copyElementList = await canvasElementManager.copySelectedElement(
+          autoAddToCanvas: false,
+        );
+      }();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /// 复制元素列表
   @api
-  List<ElementPainter>? copyElementList(List<ElementPainter>? elementList) {
+  Future<List<ElementPainter>?> copyElementList(
+    List<ElementPainter>? elementList,
+  ) async {
     return canvasElementManager.copyElementList(
       elementList,
       autoAddToCanvas: false,
@@ -531,14 +539,16 @@ class CanvasKeyManager
     //debugger();
     if (!isNil(_copyElementList)) {
       //为了下一次继续粘贴, 这里需要重新复制一份
-      final elementList = _copyElementList!.copyElementList;
-      canvasElementManager.addElementList(
-        elementList,
-        selected: true,
-        followPainter: !isDesktopOrWeb,
-        offset: canvasStyle.canvasCopyOffset.toOffsetDp(),
-      );
-      _copyElementList = elementList;
+      () async {
+        final elementList = await _copyElementList!.copyElementList();
+        canvasElementManager.addElementList(
+          elementList,
+          selected: true,
+          followPainter: !isDesktopOrWeb,
+          offset: canvasStyle.canvasCopyOffset.toOffsetDp(),
+        );
+        _copyElementList = elementList;
+      }();
       return true;
     }
     return false;

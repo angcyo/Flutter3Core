@@ -562,7 +562,9 @@ extension ImageEx on UiImage {
   }
 
   /// 缩放图片到指定大小, 如果只指定了一个参数, 则等比缩
-  Future<UiImage> scaleTo({double? width, double? height}) async {
+  Future<UiImage> scaleTo({Size? size, double? width, double? height}) async {
+    width ??= size?.width;
+    height ??= size?.height;
     if (width == null && height == null) {
       return this;
     }

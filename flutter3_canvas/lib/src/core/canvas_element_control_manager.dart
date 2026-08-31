@@ -697,15 +697,15 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// [CanvasElementManager.copyElementList]
   @api
   @supportUndo
-  List<ElementPainter>? copySelectedElement({
+  Future<List<ElementPainter>?> copySelectedElement({
     bool autoAddToCanvas = true,
     @dp Offset? offset,
     bool selected = true,
     bool followPainter = true,
-  }) {
+  }) async {
     if (isSelectedElement) {
       final list = elementSelectComponent.children;
-      return canvasDelegate.canvasElementManager.copyElementList(
+      return await canvasDelegate.canvasElementManager.copyElementList(
         list,
         autoAddToCanvas: autoAddToCanvas,
         offset: offset,

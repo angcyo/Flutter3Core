@@ -10,12 +10,14 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
   final ElementPainter? elementPainter;
   final EdgeInsets? padding;
   final BoxFit? fit;
+  final String? debugLabel;
 
   const CanvasElementWidget(
     this.elementPainter, {
     super.key,
     this.padding = const EdgeInsets.all(kL),
     this.fit = BoxFit.contain,
+    this.debugLabel,
   });
 
   CanvasElementWidget.elementList(
@@ -23,6 +25,7 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
     super.key,
     this.padding = const EdgeInsets.all(kL),
     this.fit = BoxFit.contain,
+    this.debugLabel,
   }) : elementPainter = ElementGroupPainter.createGroupIfNeed(elements);
 
   CanvasElementWidget.canvasState(
@@ -30,13 +33,14 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
     super.key,
     this.padding = const EdgeInsets.all(kL),
     this.fit = BoxFit.contain,
+    this.debugLabel,
   }) : elementPainter = ElementGroupPainter.createGroupIfNeed(
          canvasStateData.elements,
        );
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      CanvasElementRenderObject(elementPainter, padding, fit);
+      CanvasElementRenderObject(elementPainter, padding, fit, debugLabel);
 
   @override
   void updateRenderObject(
@@ -47,6 +51,7 @@ class CanvasElementWidget extends LeafRenderObjectWidget {
       ..elementPainter = elementPainter
       ..padding = padding
       ..fit = fit
+      ..debugLabel = debugLabel
       ..markNeedsPaint();
   }
 }
@@ -56,8 +61,14 @@ class CanvasElementRenderObject extends RenderBox {
   ElementPainter? elementPainter;
   EdgeInsets? padding;
   BoxFit? fit;
+  String? debugLabel;
 
-  CanvasElementRenderObject(this.elementPainter, this.padding, this.fit);
+  CanvasElementRenderObject(
+    this.elementPainter,
+    this.padding,
+    this.fit,
+    this.debugLabel,
+  );
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -66,8 +77,16 @@ class CanvasElementRenderObject extends RenderBox {
     final painter = elementPainter;
     if (painter != null) {
       //debugger(when: painter is ElementGroupPainter);
+      //debugger(when: debugLabel != null);
       final canvas = context.canvas;
       final bounds = painter.elementsBounds;
+
+      assert(() {
+        if (debugLabel != null || isDebug) {
+          l.d("[$debugLabel]elementsBounds:$bounds offset:$offset");
+        }
+        return true;
+      }());
       if (bounds != null) {
         final dst = offset & size;
         final src = bounds.ensureValid();

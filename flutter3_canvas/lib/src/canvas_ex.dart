@@ -36,8 +36,14 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
       map((e) => e.parentGroupPainter).toList().filterNull();
 
   /// 复制元素集合
-  List<ElementPainter>? get copyElementList =>
-      map((e) => e.copyElement()).toList();
+  Future<List<ElementPainter>?> copyElementList() async {
+    final result = <ElementPainter>[];
+    for (final e in this) {
+      final copyElement = await e.copyElement();
+      result.add(copyElement);
+    }
+    return result;
+  }
 
   /// 过滤出所有可见的元素集合
   List<ElementPainter>? get filterVisibleList => filter((e) => e.isVisible);

@@ -2084,14 +2084,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   ///
   @api
   @supportUndo
-  List<ElementPainter>? copyElement(
+  Future<List<ElementPainter>?> copyElement(
     ElementPainter? element, {
     bool autoAddToCanvas = true,
     @dp Offset? offset,
     bool selected = true,
     bool followPainter = true,
     UndoType undoType = UndoType.normal,
-  }) {
+  }) async {
     if (element == null) {
       assert(() {
         l.d('无效的操作');
@@ -2131,7 +2131,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// @return 复制后的元素列表
   @api
   @supportUndo
-  List<ElementPainter>? copyElementList(
+  Future<List<ElementPainter>?> copyElementList(
     List<ElementPainter>? elementList, {
     //--
     bool autoAddToCanvas = true,
@@ -2139,7 +2139,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool selected = true,
     bool followPainter = true,
     UndoType undoType = UndoType.normal,
-  }) {
+  }) async {
     if (elementList == null) {
       assert(() {
         l.d('无效的操作');
@@ -2147,7 +2147,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       }());
       return null;
     }
-    final newElementList = elementList.copyElementList;
+    final newElementList = await elementList.copyElementList();
     if (autoAddToCanvas) {
       addElementList(
         newElementList,
@@ -2169,7 +2169,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [addElementList]
   @api
   @supportUndo
-  List<ElementPainter>? copySelectedElement({
+  Future<List<ElementPainter>?> copySelectedElement({
     bool autoAddToCanvas = true,
     @dp Offset? offset,
     bool selected = true,

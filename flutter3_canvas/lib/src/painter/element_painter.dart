@@ -534,6 +534,10 @@ class ElementPainter extends IElementPainter {
   }
 
   /// 获取元素[paintProperty]的边界
+  ///
+  /// - 紧贴着数据的边界
+  /// - 矩形旋转之后的边界
+  ///
   /// - [PaintProperty.paintBounds]
   /// - [PaintProperty.paintPath]
   @dp
@@ -1856,13 +1860,13 @@ class ElementPainter extends IElementPainter {
   /// [template] 模板元素, 用来创建新元素, 默认是[ElementPainter]
   /// [parent] 父元素, 如果有
   @api
-  ElementPainter copyElement({
+  Future<ElementPainter> copyElement({
     ElementPainter? template,
     ElementGroupPainter? parent,
     bool resetUuid = true,
     Object? fromObj,
     UndoType? fromUndoType,
-  }) {
+  }) async {
     final newPainter = template ?? ElementPainter();
 
     //--
@@ -2219,13 +2223,13 @@ class ElementGroupPainter extends ElementPainter {
   }
 
   @override
-  ElementPainter copyElement({
+  Future<ElementPainter> copyElement({
     ElementPainter? template,
     ElementGroupPainter? parent,
     bool resetUuid = true,
     Object? fromObj,
     UndoType? fromUndoType,
-  }) {
+  }) async {
     final newPainter = ElementGroupPainter();
     newPainter.updatePaintState(
       paintState.copyWith(),
@@ -2243,9 +2247,9 @@ class ElementGroupPainter extends ElementPainter {
     }
 
     final newChildren = <ElementPainter>[];
-    children?.forEach((element) {
+    children?.forEach((element) async {
       newChildren.add(
-        element.copyElement(
+        await element.copyElement(
           parent: newPainter,
           resetUuid: resetUuid,
           fromObj: fromObj ?? onlyElementGroupPainter,

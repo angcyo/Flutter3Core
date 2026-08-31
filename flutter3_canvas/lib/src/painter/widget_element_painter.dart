@@ -54,21 +54,25 @@ class WidgetElementPainter extends ElementPainter {
               final renderSize = render.renderSize;
               if (renderSize == null) {
                 assert(() {
-                  l.w("[WidgetElementPainter][${render.runtimeType}] renderSize == null");
+                  l.w(
+                    "[WidgetElementPainter][${render.runtimeType}] renderSize == null",
+                  );
                   return true;
                 }());
               }
               final size = renderSize ?? Size.zero;
               //debugger();
               initPaintProperty(
-                  rect: Rect.fromLTWH(0, 0, size.width, size.height));
+                rect: Rect.fromLTWH(0, 0, size.width, size.height),
+              );
             } else {
               render.layout(
-                  BoxConstraints.expand(
-                    width: paintProperty.width,
-                    height: paintProperty.height,
-                  ),
-                  parentUsesSize: false);
+                BoxConstraints.expand(
+                  width: paintProperty.width,
+                  height: paintProperty.height,
+                ),
+                parentUsesSize: false,
+              );
             }
           }
         }
@@ -116,15 +120,19 @@ class WidgetElementPainter extends ElementPainter {
     if (render is RenderBox) {
       if (hitTest(point: point, inflate: true)) {
         final hitResult = BoxHitTestResult();
-        if (render.hitTest(hitResult,
-            position: render.size.center(Offset.zero))) {
+        if (render.hitTest(
+          hitResult,
+          position: render.size.center(Offset.zero),
+        )) {
           for (final entry in hitResult.path) {
             if (entry.target is RenderBox) {
-              result.add(PainterHitTestEntry(
-                entry.target as RenderBox,
-                point - (paintProperty?.paintBounds.lt ?? Offset.zero),
-                paintProperty?.operateMatrix,
-              ));
+              result.add(
+                PainterHitTestEntry(
+                  entry.target as RenderBox,
+                  point - (paintProperty?.paintBounds.lt ?? Offset.zero),
+                  paintProperty?.operateMatrix,
+                ),
+              );
             }
           }
           return true;
@@ -151,38 +159,34 @@ class WidgetElementPainter extends ElementPainter {
       final paintContext = paintMeta.paintContext;
       if (paintContext != null) {
         //_renderImageCache = render.captureImageSync();
-        canvas.withMatrix(
-          paintProperty?.operateMatrix,
-          () {
-            render.paint(paintMeta.paintContext!, Offset.zero);
-          },
-        );
+        canvas.withMatrix(paintProperty?.operateMatrix, () {
+          render.paint(paintMeta.paintContext!, Offset.zero);
+        });
       } else if (_renderImageCache != null) {
-        canvas.withMatrix(
-          paintProperty?.operateMatrix,
-          () {
-            canvas.drawImage(_renderImageCache!, Offset.zero, paint);
-          },
-        );
+        canvas.withMatrix(paintProperty?.operateMatrix, () {
+          canvas.drawImage(_renderImageCache!, Offset.zero, paint);
+        });
       }
     });
   }
 
   @override
-  ElementPainter copyElement(
-      {ElementPainter? template,
-      ElementGroupPainter? parent,
-      bool resetUuid = true,
-      Object? fromObj,
-      UndoType? fromUndoType}) {
+  Future<ElementPainter> copyElement({
+    ElementPainter? template,
+    ElementGroupPainter? parent,
+    bool resetUuid = true,
+    Object? fromObj,
+    UndoType? fromUndoType,
+  }) {
     return super.copyElement(
-        template: template ??
-            (WidgetElementPainter(widget: widget)
-              ..mountWidget(canvasDelegate!)),
-        parent: parent,
-        resetUuid: resetUuid,
-        fromObj: fromObj,
-        fromUndoType: fromUndoType);
+      template:
+          template ??
+          (WidgetElementPainter(widget: widget)..mountWidget(canvasDelegate!)),
+      parent: parent,
+      resetUuid: resetUuid,
+      fromObj: fromObj,
+      fromUndoType: fromUndoType,
+    );
   }
 }
 
@@ -193,7 +197,8 @@ class PainterHitTestEntry extends BoxHitTestEntry {
 
   PainterHitTestEntry(
     super.target,
-    @sceneCoordinate super.localPosition /*命中时, 相对于元素左上角的距离位置*/,
+    @sceneCoordinate super.localPosition,
+    /*命中时, 相对于元素左上角的距离位置*/
     this.operateMatrix,
   );
 }
