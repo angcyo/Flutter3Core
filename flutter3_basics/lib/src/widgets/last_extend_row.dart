@@ -17,6 +17,9 @@ class LastExtendRow extends Row {
   /// 最后一个元素超过总宽度时, 是否撑满宽度重新计算
   final bool? lastExtend;
 
+  /// 调试标签
+  final String? debugLabel;
+
   const LastExtendRow({
     super.key,
     super.mainAxisAlignment,
@@ -30,6 +33,7 @@ class LastExtendRow extends Row {
     this.lastExtend,
     this.firstExtend,
     this.firstExcludeWidth,
+    this.debugLabel,
   });
 
   @override
@@ -47,6 +51,7 @@ class LastExtendRow extends Row {
       lastExtend: lastExtend,
       firstExtend: firstExtend,
       firstExcludeWidth: firstExcludeWidth,
+      debugLabel: debugLabel,
     );
   }
 
@@ -67,7 +72,8 @@ class LastExtendRow extends Row {
       ..clipBehavior = clipBehavior
       ..lastExtend = lastExtend
       ..firstExtend = firstExtend
-      ..firstExcludeWidth = firstExcludeWidth;
+      ..firstExcludeWidth = firstExcludeWidth
+      ..debugLabel = debugLabel;
   }
 }
 
@@ -81,20 +87,24 @@ class LastExtendRenderFlex extends RenderFlex {
   /// 需要排除的宽度
   double? firstExcludeWidth;
 
+  /// 调试标签
+  String? debugLabel;
+
   LastExtendRenderFlex({
     super.children,
-    super.direction = Axis.horizontal,
-    super.mainAxisSize = MainAxisSize.max,
-    super.mainAxisAlignment = MainAxisAlignment.start,
-    super.crossAxisAlignment = CrossAxisAlignment.center,
+    super.direction = .horizontal,
+    super.mainAxisSize = .max,
+    super.mainAxisAlignment = .start,
+    super.crossAxisAlignment = .center,
     super.textDirection,
-    super.verticalDirection = VerticalDirection.down,
+    super.verticalDirection = .down,
     super.textBaseline,
-    super.clipBehavior = Clip.none,
+    super.clipBehavior = .none,
     super.spacing = 0,
     this.lastExtend,
     this.firstExtend,
     this.firstExcludeWidth,
+    this.debugLabel,
   });
 
   /// 是否溢出了
@@ -121,28 +131,40 @@ class LastExtendRenderFlex extends RenderFlex {
     //是否重新测量过child
     bool isReLayoutChild = false;
 
-    //debugger();
+    debugger(when: debugLabel != null);
     for (final child in children) {
-      childMaxHeight = math.max(childMaxHeight, child.size.height);
+      final childWidth = child.size.width;
+      final childHeight = child.size.height;
+      childMaxHeight = math.max(childMaxHeight, childHeight);
       //debugger();
-      if ((firstExtend == true && child == children.first) ||
-          (lastExtend == true && child == children.last)) {
+      final isFirst = firstExtend == true && child == children.first;
+      final isLast = lastExtend == true && child == children.last;
+      if (isFirst || isLast) {
         //第一个或最后一个child
         final maxWidth = constraints.maxWidth - childUseWidth;
         //debugger();
-        if (child.size.width > maxWidth) {
+        if (childWidth > maxWidth) {
           _isOverflow = true;
-          //最后一个child的宽度大于剩余宽度, 则重新测量
-          final lastChildConstraints = BoxConstraints(
-            maxWidth:
-                maxWidth +
-                (child == children.first ? (firstExcludeWidth ?? 0) : 0),
-          );
-          final childSize = ChildLayoutHelper.layoutChild(
+          //第一个或最后一个child的宽度大于剩余宽度, 则重新测量
+          final overflowChildConstraints = isFirst
+              ? BoxConstraints(
+                  maxWidth:
+                      maxWidth -
+                      (children.fold(
+                            0.0,
+                            (width, e) =>
+                                width +
+                                (e == child ? 0 : e.size.width) +
+                                spacing,
+                          ) -
+                          spacing),
+                )
+              : BoxConstraints(maxWidth: maxWidth);
+          final newChildSize = ChildLayoutHelper.layoutChild(
             child,
-            lastChildConstraints,
+            overflowChildConstraints,
           );
-          childMaxHeight = math.max(childMaxHeight, childSize.height);
+          childMaxHeight = math.max(childMaxHeight, newChildSize.height);
           if (childMaxHeight != size.height) {
             size = constraints.constrain(Size(size.width, childMaxHeight));
           } else if (isReLayoutChild) {
@@ -154,6 +176,10 @@ class LastExtendRenderFlex extends RenderFlex {
               childParentData.offset.dy,
             );
           }
+          if (isFirst) {
+            //重新对齐主轴
+            _mainAxisAlignmentChildren(children, child);
+          }
           //重新对齐交叉轴
           for (final child in children) {
             _crossAxisAlignmentChild(child);
@@ -161,8 +187,8 @@ class LastExtendRenderFlex extends RenderFlex {
           //debugger();
         }
       } else {
-        if (child.size.width > 0) {
-          childUseWidth += child.size.width + spacing;
+        if (childWidth > 0) {
+          childUseWidth += childWidth + spacing;
         } else {
           //如果child的宽度为0, 则有可能被最后一个元素挤掉了
           final childParentData = child.parentData;
@@ -182,11 +208,66 @@ class LastExtendRenderFlex extends RenderFlex {
     }
   }
 
+  /// 重新对齐主轴
+  void _mainAxisAlignmentChildren(
+    List<RenderBox> children,
+    RenderBox excludeChild,
+  ) {
+    double left = 0;
+    switch (mainAxisAlignment) {
+      case MainAxisAlignment.start:
+        break;
+      case MainAxisAlignment.end:
+        left =
+            size.width -
+            (children.fold(0.0, (width, e) => width + e.size.width + spacing) -
+                spacing);
+        break;
+      case MainAxisAlignment.center:
+        left =
+            size.width -
+            (children.fold(0.0, (width, e) => width + e.size.width + spacing) -
+                    spacing) /
+                2;
+        break;
+      case MainAxisAlignment.spaceBetween:
+        //left = (constraints.maxWidth - childSize.width) / 2;
+        break;
+      case MainAxisAlignment.spaceAround:
+        break;
+      case MainAxisAlignment.spaceEvenly:
+        break;
+    }
+    for (final child in children) {
+      final childSize = child.size;
+      final childParentData = child.parentData! as FlexParentData;
+      if (child == excludeChild) {
+        left += childSize.width + spacing;
+        continue;
+      }
+      switch (mainAxisAlignment) {
+        case MainAxisAlignment.start:
+        case MainAxisAlignment.center:
+        case MainAxisAlignment.end:
+          childParentData.offset = Offset(left, childParentData.offset.dy);
+          left += childSize.width + spacing;
+          break;
+        case MainAxisAlignment.spaceBetween:
+          //left = (constraints.maxWidth - childSize.width) / 2;
+          break;
+        case MainAxisAlignment.spaceAround:
+          break;
+        case MainAxisAlignment.spaceEvenly:
+          break;
+      }
+    }
+  }
+
   /// 交叉轴对齐child
   void _crossAxisAlignmentChild(RenderBox child) {
     //重新计算[crossAxisAlignment]偏移量
     final childSize = child.size;
-    final FlexParentData childParentData = child.parentData! as FlexParentData;
+    final childParentData = child.parentData! as FlexParentData;
     switch (crossAxisAlignment) {
       case .start:
         break;
