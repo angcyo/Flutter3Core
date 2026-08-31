@@ -32,6 +32,10 @@ mixin LabelMixin {
   /// 标签
   String? get label => null;
 
+  /// [label].[labelWidget]标签 *(必填提示) [labelTrailingWidget]之间的间隙
+  @defInjectMark
+  double? get labelGap => null;
+
   Widget? get labelWidget => null;
 
   /// [labelWidget]尾随的小部件
@@ -53,33 +57,46 @@ mixin LabelMixin {
     bool themeStyle = true,
     EdgeInsets? padding,
     String? label,
+    double? labelGap,
     Widget? labelWidget,
     Widget? labelTrailingWidget,
+    BoxConstraints? labelConstraints,
     TextStyle? labelTextStyle,
     TextAlign? labelTextAlign,
     //--
     bool? isRequired,
   }) {
     label ??= this.label;
+    labelGap ??= this.labelGap;
     labelWidget ??= this.labelWidget;
-    labelTrailingWidget ??= this.labelTrailingWidget;
     labelTextStyle ??= this.labelTextStyle;
     labelTextAlign ??= this.labelTextAlign;
+    labelConstraints ??= this.labelConstraints;
+    labelTrailingWidget ??= this.labelTrailingWidget;
     final globalTheme = GlobalTheme.of(context);
-    final widget = [
-      labelWidget ??
-          label
-              ?.text(
-                style:
-                    labelTextStyle ??
-                    (themeStyle ? globalTheme.tileTextLabelStyle : null),
-                textAlign: labelTextAlign,
-              )
-              .constrainedBox(labelConstraints)
-              .paddingInsets(labelPadding),
-      isRequired == true ? " *".text(textColor: Colors.redAccent) : null,
-      labelTrailingWidget,
-    ].row(mainAxisAlignment: .start, mainAxisSize: .min);
+    final widget =
+        [
+              labelWidget ??
+                  label?.text(
+                    style:
+                        labelTextStyle ??
+                        (themeStyle ? globalTheme.tileTextLabelStyle : null),
+                    textAlign: labelTextAlign,
+                  ),
+              isRequired == true
+                  ? " *".text(textColor: Colors.redAccent)
+                  : null,
+              labelTrailingWidget,
+            ]
+            .row(
+              mainAxisAlignment: .start,
+              mainAxisSize: .min,
+              gap: labelGap ?? kL,
+              firstExtend: labelTrailingWidget != null,
+              /*debugLabel: "buildLabelWidgetMixin",*/
+            )
+            ?.constrainedBox(labelConstraints)
+            .paddingInsets(labelPadding);
     return widget?.paddingInsets(padding);
   }
 }

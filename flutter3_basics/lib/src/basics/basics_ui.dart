@@ -329,6 +329,7 @@ extension WidgetListEx on WidgetNullList {
     bool? firstExtend = false,
     double? firstExcludeWidth,
     bool? lastExtend = false,
+    String? debugLabel,
   }) {
     WidgetList children = filterAndFillGap(gapWidget: gapWidget);
     if (isNullOrEmpty(children)) {
@@ -347,6 +348,7 @@ extension WidgetListEx on WidgetNullList {
             firstExtend: firstExtend,
             firstExcludeWidth: firstExcludeWidth,
             lastExtend: lastExtend,
+            debugLabel: debugLabel,
             children: children,
           )
         : Row(
