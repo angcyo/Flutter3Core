@@ -249,7 +249,10 @@ mixin TabLayoutMixin<T extends StatefulWidget>
           body = body
               .mapIndex(
                 (child, index) => child.click(() {
-                  l.w("[${classHash()}] 点击了Tab索引: $index .");
+                  assert(() {
+                    l.w("[${classHash()}] 点击了Tab索引: $index .");
+                    return true;
+                  }());
                   if (this is PageViewMixin) {
                     tabLayoutController.selectedItem(
                       index,
