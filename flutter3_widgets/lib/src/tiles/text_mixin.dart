@@ -32,6 +32,9 @@ mixin LabelMixin {
   /// 标签
   String? get label => null;
 
+  /// [labelWidget]的提示
+  String? get labelTooltip => null;
+
   /// [label].[labelWidget]标签 *(必填提示) [labelTrailingWidget]之间的间隙
   @defInjectMark
   double? get labelGap => null;
@@ -57,6 +60,7 @@ mixin LabelMixin {
     bool themeStyle = true,
     EdgeInsets? padding,
     String? label,
+    String? labelTooltip,
     double? labelGap,
     Widget? labelWidget,
     Widget? labelTrailingWidget,
@@ -67,6 +71,7 @@ mixin LabelMixin {
     bool? isRequired,
   }) {
     label ??= this.label;
+    labelTooltip ??= this.labelTooltip;
     labelGap ??= this.labelGap;
     labelWidget ??= this.labelWidget;
     labelTextStyle ??= this.labelTextStyle;
@@ -76,13 +81,16 @@ mixin LabelMixin {
     final globalTheme = GlobalTheme.of(context);
     final widget =
         [
-              labelWidget ??
-                  label?.text(
-                    style:
-                        labelTextStyle ??
-                        (themeStyle ? globalTheme.tileTextLabelStyle : null),
-                    textAlign: labelTextAlign,
-                  ),
+              (labelWidget ??
+                      label?.text(
+                        style:
+                            labelTextStyle ??
+                            (themeStyle
+                                ? globalTheme.tileTextLabelStyle
+                                : null),
+                        textAlign: labelTextAlign,
+                      ))
+                  ?.tooltip(labelTooltip),
               isRequired == true
                   ? " *".text(textColor: Colors.redAccent)
                   : null,
