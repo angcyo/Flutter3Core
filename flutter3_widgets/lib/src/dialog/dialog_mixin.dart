@@ -485,6 +485,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool showDragHandle = true,
     //--pull back
     bool? enablePullBack,
+    PullBackController? pullBackController,
     bool useScrollConsume = true,
     bool maybePop = false /*使用[maybePop]还是[pop]*/,
     double? pullMaxBound /*可以下拉的最大比例, 或者底部需要预留的高度*/,
@@ -739,6 +740,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     } else {
       result = result.pullBack(
         enablePullBack: enablePullBack,
+        pullBackController: pullBackController,
         useScrollConsume: useScrollConsume,
         pullMaxBound: pullMaxBound,
         useMaybePop: maybePop,

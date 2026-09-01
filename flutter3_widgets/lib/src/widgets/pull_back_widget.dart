@@ -16,6 +16,47 @@ typedef ScrollUserOffsetAction =
 typedef ScrollDragEndAction =
     bool Function(ScrollMetrics position, double velocity);
 
+/// 下拉返回控制器
+class PullBackController {
+  /// 下拉返回动画控制器
+  @autoInjectMark
+  AnimationController? _pullBackController;
+
+  /// 下拉的最大边界
+  @autoInjectMark
+  double? _pullMaxBound;
+
+  /// 最大化, 全部显示
+  /// - 进度到0
+  @api
+  void maximize({bool animation = true}) {
+    final controller = _pullBackController;
+    if (controller != null) {
+      if (animation) {
+        controller.reverse();
+      } else {
+        controller.stop();
+        controller.value = controller.lowerBound;
+      }
+    }
+  }
+
+  /// 最小化, 部分显示, 或者直接关闭
+  /// - 进度到1
+  @api
+  void minimize({bool animation = true}) {
+    final controller = _pullBackController;
+    if (controller != null) {
+      if (animation) {
+        controller.forward();
+      } else {
+        controller.stop();
+        controller.value = _pullMaxBound ?? controller.upperBound;
+      }
+    }
+  }
+}
+
 /// 下拉返回的小部件
 /// 支持滚动和非滚动子组件
 /// [ScrollConfiguration]
@@ -28,7 +69,7 @@ class PullBackWidget extends StatefulWidget {
   final Widget child;
 
   /// 下拉返回控制器, 动画到1就是关闭界面
-  final AnimationController? pullBackController;
+  final PullBackController? pullBackController;
 
   /// 是否使用[maybePop]
   final bool useMaybePop;
@@ -154,6 +195,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   @override
   void dispose() {
     //debugger();
+    widget.pullBackController?._pullBackController = null;
     _pullBackController?.dispose();
     super.dispose();
   }
@@ -163,6 +205,7 @@ class _PullBackWidgetState extends State<PullBackWidget>
   void didUpdateWidget(covariant PullBackWidget oldWidget) {
     //debugger();
     super.didUpdateWidget(oldWidget);
+    oldWidget.pullBackController?._pullBackController = null;
     if (oldWidget.pullMaxBound != null || widget.pullMaxBound != null) {
       _handlePullMaxBound(widget.pullMaxBound == oldWidget.pullMaxBound);
     }
@@ -171,9 +214,11 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   void _handlePullMaxBound(bool restoreControllerValue) {
     final oldValue = _pullBackController?.value;
-    _pullBackController?.stop();
-    _pullBackController?.dispose();
-    _pullBackController = null;
+    if (!restoreControllerValue) {
+      _pullBackController?.stop();
+      _pullBackController?.dispose();
+      _pullBackController = null;
+    }
     final pullMaxBound = widget.pullMaxBound;
     if (pullMaxBound == null) {
       _initController(1.0);
@@ -223,32 +268,41 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   void _initController(double upperBound) {
     final controller =
-        widget.pullBackController ??
-        AnimationController(
-          duration: kDefaultAnimationDuration,
-          vsync: this,
-          upperBound: upperBound,
+        _pullBackController ??
+              AnimationController(
+                duration: kDefaultAnimationDuration,
+                vsync: this,
+                lowerBound: 0,
+                upperBound: upperBound,
+              )
+          ..addListener(() {
+            //动画进度回调
+            /*assert(() {
+        l.v(
+          "[${_pullBackController?.classHash()}]->${_pullBackController?.value}",
         );
-    controller.addListener(() {
-      if (widget.barrierColor != null) {
-        updateState();
-      }
-      _notifyProgressChanged();
-    });
-    //动画结束监听
-    controller.addStatusListener((status) {
-      //l.d('$status:$_pullBackValue');
-      if (_isDragEnd && status == AnimationStatus.completed) {
-        _pullBack();
-      } /*else if (status == AnimationStatus.dismissed) {
+        return true;
+      }());*/
+            if (widget.barrierColor != null) {
+              updateState();
+            }
+            _notifyProgressChanged();
+          })
+          ..addStatusListener((status) {
+            //动画结束监听
+            //l.d('$status:$_pullBackValue');
+            if (_isDragEnd && status == AnimationStatus.completed) {
+              _pullBack();
+            } /*else if (status == AnimationStatus.dismissed) {
         l.d('dismissed:${_pullBackValue}');
       } else if (status == AnimationStatus.forward) {
         l.d('forward:${_pullBackValue}');
       } else if (status == AnimationStatus.reverse) {
         l.d('reverse:${_pullBackValue}');
       }*/
-    });
-
+          });
+    widget.pullBackController?._pullMaxBound = upperBound;
+    widget.pullBackController?._pullBackController = controller;
     _pullBackAnimation = controller.drive(CurveTween(curve: _pullBackCurve));
     _pullBackController = controller;
   }
@@ -258,6 +312,12 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   @override
   Widget build(BuildContext context) {
+    assert(() {
+      l.d(
+        "[${classHash()}][${_pullBackController?.classHash()}]->${_pullBackController?.value}",
+      );
+      return true;
+    }());
     Widget body = GestureDetector(
       behavior: widget.behavior /*HitTestBehavior.opaque*/,
       onVerticalDragStart: (details) {
@@ -659,7 +719,7 @@ extension PullBackWidgetExtension on Widget {
     bool useMaybePop = false,
     bool enablePullBack = true,
     bool useScrollConsume = true,
-    AnimationController? pullBackController,
+    PullBackController? pullBackController,
     double? pullMaxBound,
     void Function(BuildContext context)? onPullBack,
     void Function(double progress)? onPullProgress,
