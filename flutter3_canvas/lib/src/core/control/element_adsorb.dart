@@ -259,14 +259,20 @@ class ElementAdsorbControl
     if (element == null || controlElementsBounds == null) {
       return null;
     }
-    if (isAdsorbXPosition(localPosition)) {
+    if (isAdsorbXPosition(
+      localPosition,
+      /*refValue: findXAdsorbRefValue(
+        controlElementsBounds.left + tx,
+        localPosition,
+        apply: false,
+      ),*/
+    )) {
       assert(() {
         //l.v('吸附x轴->$_xAdsorbRefValue');
         return true;
       }());
       return _xAdsorbRefValue;
     }
-
     //先使用left为参照值查找
     AdsorbRefValue? refValue = findXAdsorbRefValue(
       controlElementsBounds.left + tx,
@@ -316,14 +322,20 @@ class ElementAdsorbControl
     if (element == null || controlElementsBounds == null) {
       return null;
     }
-    if (isAdsorbYPosition(localPosition)) {
+    if (isAdsorbYPosition(
+      localPosition,
+      /*refValue: findYAdsorbRefValue(
+        controlElementsBounds.top + ty,
+        localPosition,
+        apply: false,
+      ),*/
+    )) {
       assert(() {
         //l.v('吸附y轴->$_yAdsorbRefValue');
         return true;
       }());
       return _yAdsorbRefValue;
     }
-
     //先使用top为参照值查找
     AdsorbRefValue? refValue = findYAdsorbRefValue(
       controlElementsBounds.top + ty,
@@ -358,22 +370,56 @@ class ElementAdsorbControl
   }
 
   /// 是否需要吸附x轴的位置
-  bool isAdsorbXPosition(@dp @viewCoordinate Offset localPosition) {
+  /// 当前吸附的位置, 是否还在范围内
+  /// - [refValue] 下一个吸附的参考值, 如果有
+  bool isAdsorbXPosition(
+    @dp @viewCoordinate Offset localPosition, {
+    @implementation AdsorbRefValue? refValue,
+  }) {
     final adsorbLocalPosition = _xAdsorbRefValue?.localPosition;
     if (adsorbLocalPosition != null) {
       //吸附
       final dx = (adsorbLocalPosition - localPosition).dx;
+
+      /*if (refValue?.localPosition != null) {
+        final dx2 = (refValue!.localPosition! - localPosition).dx.abs();
+        if (dx2 < dx.abs() && dx2 < canvasStyle.adsorbEscapeThreshold) {
+          return false;
+        }
+      }*/
+
       return dx.abs() < canvasStyle.adsorbEscapeThreshold;
     }
     return false;
   }
 
   /// 是否需要吸附y轴的位置
-  bool isAdsorbYPosition(@dp @viewCoordinate Offset localPosition) {
+  /// 当前吸附的位置, 是否还在范围内
+  /// - [refValue] 下一个吸附的参考值, 如果有
+  bool isAdsorbYPosition(
+    @dp @viewCoordinate Offset localPosition, {
+    @implementation AdsorbRefValue? refValue,
+  }) {
     final adsorbLocalPosition = _yAdsorbRefValue?.localPosition;
     if (adsorbLocalPosition != null) {
       //吸附
       final dy = (adsorbLocalPosition - localPosition).dy;
+
+      /*assert(() {
+        l.i("refValue:$refValue");
+        return true;
+      }());
+      if (refValue?.localPosition != null) {
+        final dy2 = (refValue!.localPosition! - localPosition).dy.abs();
+        assert(() {
+          l.w("adsorbValue:${refValue!.adsorbValue} dy:$dy dy2:$dy2");
+          return true;
+        }());
+        if (dy2 < dy.abs() && dy2 < canvasStyle.adsorbEscapeThreshold) {
+          return false;
+        }
+      }*/
+
       return dy.abs() < canvasStyle.adsorbEscapeThreshold;
     }
     return false;
@@ -384,8 +430,9 @@ class ElementAdsorbControl
   /// [localPosition] 当前手势的位置
   AdsorbRefValue? findXAdsorbRefValue(
     @dp @sceneCoordinate double x,
-    @dp @viewCoordinate Offset localPosition,
-  ) {
+    @dp @viewCoordinate Offset localPosition, {
+    bool apply = true,
+  }) {
     final xRefValue = _findMinRefValue(
       _xRefValueList,
       x,
@@ -394,10 +441,13 @@ class ElementAdsorbControl
       includeLess: true,
       includeGreater: true,
     );
+    xRefValue?.localPosition = localPosition;
+    if (!apply) {
+      return xRefValue;
+    }
     //l.v("吸附->$xRefValue");
     final lastRefValue = _xAdsorbRefValue?.refValue;
     _xAdsorbRefValue = xRefValue;
-    _xAdsorbRefValue?.localPosition = localPosition;
     if (xRefValue != null) {
       //震动
       assert(() {
@@ -416,8 +466,9 @@ class ElementAdsorbControl
   /// [localPosition] 当前手势的位置
   AdsorbRefValue? findYAdsorbRefValue(
     @dp @sceneCoordinate double y,
-    @dp @viewCoordinate Offset localPosition,
-  ) {
+    @dp @viewCoordinate Offset localPosition, {
+    bool apply = true,
+  }) {
     final yRefValue = _findMinRefValue(
       _yRefValueList,
       y,
@@ -426,10 +477,13 @@ class ElementAdsorbControl
       includeLess: true,
       includeGreater: true,
     );
+    yRefValue?.localPosition = localPosition;
+    if (!apply) {
+      return yRefValue;
+    }
     //l.v("吸附->$yRefValue");
     final lastRefValue = _yAdsorbRefValue?.refValue;
     _yAdsorbRefValue = yRefValue;
-    _yAdsorbRefValue?.localPosition = localPosition;
     if (yRefValue != null) {
       //震动
       assert(() {

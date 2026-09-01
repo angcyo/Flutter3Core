@@ -537,7 +537,7 @@ mixin IHandlePointerEventMixin {
   PointerEvent? firstMoveEvent;
   PointerEvent? _firstLastMoveEvent;
 
-  ///  第一个手指每次[PointerMoveEvent]事件的移动距离
+  /// 第一个手指每次[PointerMoveEvent]事件的移动距离
   Offset firstMoveOffset = Offset.zero;
 
   @flagProperty
