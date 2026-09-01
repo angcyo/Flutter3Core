@@ -26,9 +26,10 @@ class TextSpanBuilder {
   }
 
   /// 简单的添加一个文本样式的字符串
+  /// [addText]
+  /// [addTextStyle]
   /// [addTextSpan]
   /// [addTextSpans]
-  /// [addTextStyle]
   TextSpanBuilder addText(
     String? text, {
     TextStyle? style,
@@ -112,13 +113,17 @@ class TextSpanBuilder {
   }
 
   /// [addText]
-  TextSpanBuilder addTextSpan(TextSpan textSpan) {
+  /// [addTextSpan]
+  /// [addTextSpans]
+  TextSpanBuilder addTextSpan(InlineSpan textSpan) {
     _textSpans.add(textSpan);
     return this;
   }
 
   /// [addText]
-  TextSpanBuilder addTextSpans(List<TextSpan> textSpans) {
+  /// [addTextSpan]
+  /// [addTextSpans]
+  TextSpanBuilder addTextSpans(List<InlineSpan> textSpans) {
     _textSpans.addAll(textSpans);
     return this;
   }
