@@ -203,13 +203,14 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     if (measureKeyboardKey != null &&
         event.isKeyDown &&
         isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
-      //触发测量模式
+      //触发测量模式, 测距组件
       if (canvasDelegate._overlayComponent == null) {
         canvasDelegate.attachOverlay(
           CanvasMeasureComponent(
             autoCompleteKey: measureKeyboardKey,
             clickMeasure: false,
           ),
+          cancelSelectedElement: false,
         );
       }
     }
