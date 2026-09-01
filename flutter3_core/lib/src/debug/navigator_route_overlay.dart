@@ -240,13 +240,13 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
       result = _buildRouteState(context)
           .wrapTextStyle(
             style: TextStyle(
-              fontSize: 8,
+              fontSize: isDesktopOrWeb ? 10 : 8,
               fontWeight: FontWeight.bold,
               color: globalTheme.accentColor,
               shadows: const <Shadow>[
                 Shadow(
-                  offset: Offset(1, 1),
-                  color: Colors.black,
+                  offset: Offset(2, 2),
+                  color: Colors.black12,
                   blurRadius: 2,
                 ),
               ],
@@ -259,6 +259,7 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
       result = _buildNormalState(context);
     }
     return result
+        .animatedSize()
         .material()
         .doubleClick(
           () {
