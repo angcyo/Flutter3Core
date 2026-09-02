@@ -240,10 +240,10 @@ class CanvasStyle {
   double contentTemplateStrokeWidth = 1;
 
   /// 内容模版暗色默认的填充颜色
-  Color? contentTemplateFillColorDark = "#2c2c2c".toColorOrNull();
+  Color? contentTemplateFillColorDark = const Color(0xff2c2c2c);
 
   /// 内容模版暗色默认的描边颜色
-  Color? contentTemplateStrokeColorDark = "#2c2c2c".toColorOrNull();
+  Color? contentTemplateStrokeColorDark = const Color(0xff2c2c2c);
 
   //endregion config
 
@@ -258,16 +258,19 @@ class CanvasStyle {
   /// - [CanvasDelegate.dispatchCanvasUnitChanged]
   IUnit axisUnit = IUnit.mm;
 
-  /// dark #b0b0b0
-  Color axisPrimaryColor = const Color(0xffbcbcbc); //const Color(0xFFB2B2B2);
+  /// 主刻度
+  /// dark #b0b0b0 #bcbcbc #b3b3b6
+  Color axisPrimaryColor = const Color(0xffb3b3b6); //const Color(0xFFB2B2B2);
   Color? axisPrimaryColorDark = const Color(0xff737373);
 
-  /// dark #6f6f6f
-  Color axisSecondaryColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
+  /// 次刻度
+  /// dark #6f6f6f #d5d5d5 #ededed
+  Color axisSecondaryColor = const Color(0xffededed); //const Color(0xFFD7D7D7);
   Color? axisSecondaryColorDark = const Color(0xff6f6f6f);
 
-  /// dark #6f6f6f
-  Color axisNormalColor = const Color(0xffD5D5D5); //const Color(0xFFD7D7D7);
+  /// 正常刻度
+  /// dark #6f6f6f #d5d5d5 #ededed
+  Color axisNormalColor = const Color(0xffededed); //const Color(0xFFD7D7D7);
   Color? axisNormalColorDark = const Color(0xff6f6f6f);
 
   @dp
@@ -279,6 +282,7 @@ class CanvasStyle {
   double axisNormalWidth = 1.toDpFromPx();
 
   /// 标签刻度数值的颜色
+  /// 0xff888888 0xff959ba5
   Color axisLabelColor = const Color(0xff888888);
 
   /// 标签刻度数值的字体大小
