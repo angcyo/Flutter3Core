@@ -183,9 +183,9 @@ void main(List<String> arguments) async {
     );
     final from =
         "$currentPath${ps}build${ps}ios${ps}archive$ps$targetFileName.xcarchive";
-    if (File(from).existsSync()) {
+    if (Directory(from).existsSync()) {
       final key =
-          "$targetFileName.xcarchive$ps${File(from).lastModifiedSync()}";
+          "$targetFileName.xcarchive$ps${File("$from${ps}Info.plist").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
