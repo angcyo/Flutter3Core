@@ -169,7 +169,39 @@ void main(List<String> arguments) async {
     }
   }
 
-  //MARK: - iOS
+  //MARK: - iOS archive
+
+  final iosArchiveNameConfig = config["ios_archive_name"];
+  if (iosArchiveNameConfig is String) {
+    //收集 Runner.xcarchive
+    final targetFileName = "Runner";
+    final outputName = formatName(
+      iosArchiveNameConfig,
+      "ios",
+      defBuildType: argBuildType,
+      defBuildFlavor: argBuildFlavor,
+    );
+    final from =
+        "$currentPath${ps}build${ps}ios${ps}archive$ps$targetFileName.xcarchive";
+    if (File(from).existsSync()) {
+      final key =
+          "$targetFileName.xcarchive$ps${File(from).lastModifiedSync()}";
+      if (copiedLines.contains(key)) {
+        colorLog("🚨 已复制过: $from");
+        exitProductCount++;
+      } else {
+        final to = "$currentPath$ps$outputPath$ps.ipa$ps$outputName";
+        ensureFolder(to, parent: true);
+        if (await copyFolderByDitto(from, to)) {
+          collectProductCount++;
+          copiedLines.add(key);
+          copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+        }
+      }
+    }
+  }
+
+  //MARK: - iOS ipa
 
   final ipaNameConfig = config["ios_ipa_name"];
   if (ipaNameConfig is String) {
@@ -574,6 +606,10 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
 
 /// 压缩源文件夹到指定路径
 /// [excludeRoot] 是否排除根目录
+///
+/// - [zipFolder]
+/// - [zipFolderByPlatform]
+/// - [copyFolderByDitto]
 Future<bool> zipFolder(
   String srcPath,
   String dstPath, {
@@ -608,6 +644,10 @@ Future<bool> zipFolder(
 }
 
 /// 使用平台压缩命令进行文件夹压缩
+///
+/// - [zipFolder]
+/// - [zipFolderByPlatform]
+/// - [copyFolderByDitto]
 Future<bool> zipFolderByPlatform(
   String srcPath,
   String dstPath, {
@@ -635,13 +675,17 @@ Future<bool> zipFolderByPlatform(
     /*runInShell: true,*/
   );
   colorLog('🎉$_rSpace-> $dstPath ${dstPath.fileSizeStr}');
-  if (result.exitCode < 0) {
+  if (result.exitCode != 0) {
     colorErrorLog(result.stderr);
   }
-  return result.exitCode >= 0;
+  return result.exitCode == 0;
 }
 
 /// 使用平台cp命令, 复制文件夹
+/// - windows 使用 `cp`
+/// - macos 使用 `cp -R`
+/// - [srcPath] 源文件夹路径
+/// - [dstPath] 目标文件夹路径
 Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
   colorLog('💡准备复制文件夹: $srcPath');
   final result = await Process.run(Platform.isWindows ? "cp" : "cp", [
@@ -650,10 +694,52 @@ Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
     dstPath,
   ], runInShell: true);
   colorLog('🎉$_rSpace-> $dstPath');
-  if (result.exitCode < 0) {
+  if (result.exitCode != 0) {
     colorErrorLog(result.stderr);
   }
-  return result.exitCode >= 0;
+  return result.exitCode == 0;
+}
+
+/// 使用 `ditto` 命令, 复制文件夹/压缩文件夹
+/// 只适用于 macOS 平台
+/// - [srcPath] 源文件夹路径
+/// - [dstPath] 目标文件夹路径
+/// - [isCompress] 是否压缩
+///
+/// - [zipFolder]
+/// - [zipFolderByPlatform]
+/// - [copyFolderByDitto]
+Future<bool> copyFolderByDitto(
+  String srcPath,
+  String dstPath, {
+  bool isCompress = false,
+}) async {
+  if (isCompress) {
+    colorLog('💡准备压缩文件夹: $srcPath');
+    final result = await Process.run("ditto", [
+      "-c",
+      "-k",
+      "--sequesterRsrc",
+      '--keepParent',
+      srcPath,
+      dstPath,
+    ], runInShell: true);
+    colorLog('🎉$_rSpace-> $dstPath ${dstPath.fileSizeStr}');
+    if (result.exitCode != 0) {
+      colorErrorLog(result.stderr);
+    }
+    return result.exitCode == 0;
+  }
+  colorLog('💡准备复制文件夹: $srcPath');
+  final result = await Process.run("ditto", [
+    srcPath,
+    dstPath,
+  ], runInShell: true);
+  colorLog('🎉$_rSpace-> $dstPath');
+  if (result.exitCode != 0) {
+    colorErrorLog(result.stderr);
+  }
+  return result.exitCode == 0;
 }
 
 //--
