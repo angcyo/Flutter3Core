@@ -23,6 +23,27 @@ import 'build_config.dart';
 /// - #fn: 风味名, `build_config`中的`buildFlavor`对应的值
 /// - [formatName]
 ///
+/// ```
+/// # [collect_product.dart] 收集时的名称
+/// collect_product:
+///   output_path: ".output"
+///   android_apk_name: "#an-#vn_#fn_#bn.apk"
+///   android_appbundle_name: "#an-#vn_#fn_#bn.aab"
+///   ios_archive_name: "#an-#vn_#fn_#bn.xcarchive"
+///   ios_ipa_name: "#an-#vn_#fn_#bn.ipa"
+///   #macos_app_name: "#an-#vn_#fn_#bn.app"
+///   macos_app_name: "#an-macos-arm64-v#vn-#bn.zip"
+///   # `macos_sign_identity` 签名身份信息, 指定了就会进行签名
+///   macos_sign_identity: null
+///   # 指定`macOS_appdmg_config`使用appdmg打包安装程序
+///   macos_appdmg_config: "script_appdmg_config.json"
+///   # `macos_keychain_profile` 公证安全凭证信息, 指定了就会进行产物dmg的公证
+///   macos_keychain_profile: null
+///   windows_exe_name: "#an-windows-x64-v#vn-#bn.zip"
+///   # 指定`windows_inno_setup`使用Inno Setup打包安装程序
+///   windows_inno_setup: "script_inno_setup.iss"
+/// ```
+///
 /// # 收集Android apk/aab 产物
 ///
 /// ## `flutter build apk --release`
@@ -82,7 +103,7 @@ void main(List<String> arguments) async {
   //MARK: yaml config
 
   final time = DateTime.now();
-  final ps = Platform.pathSeparator;
+  final kPS = Platform.pathSeparator;
 
   final appName = _getAppName();
   final versionName = _getVersionName();
@@ -98,7 +119,7 @@ void main(List<String> arguments) async {
   //输出路径
   final outputPath = config["output_path"] ?? ".output";
   //记录复制过的文件
-  final copiedFile = ensureFile("$currentPath$ps$outputPath$ps.copy");
+  final copiedFile = ensureFile("$currentPath$kPS$outputPath$kPS.copy");
   final copiedLines = copiedFile?.readAsLinesSync() ?? [];
 
   //已经复制过的产物数量
@@ -119,14 +140,14 @@ void main(List<String> arguments) async {
     );
     final apkName = "app$buildFlavorTag$buildTypeTag.apk";
     final from =
-        "$currentPath${ps}build${ps}app${ps}outputs${ps}flutter-apk$ps$apkName";
+        "$currentPath${kPS}build${kPS}app${kPS}outputs${kPS}flutter-apk$kPS$apkName";
     if (File(from).existsSync()) {
-      final key = "$apkName$ps${File(from).lastModifiedSync()}";
+      final key = "$apkName$kPS${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath$ps$outputPath$ps.apk$ps$outputName";
+        final to = "$currentPath$kPS$outputPath$kPS.apk$kPS$outputName";
         ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
@@ -150,15 +171,15 @@ void main(List<String> arguments) async {
     );
     final aabName = "app$buildFlavorTag$buildTypeTag.aab";
     final from = argBuildFlavor == null
-        ? "$currentPath${ps}build${ps}app${ps}outputs${ps}bundle${ps}release$ps$aabName"
-        : "$currentPath${ps}build${ps}app${ps}outputs${ps}bundle$ps${argBuildFlavor}Release$ps$aabName";
+        ? "$currentPath${kPS}build${kPS}app${kPS}outputs${kPS}bundle${kPS}release$kPS$aabName"
+        : "$currentPath${kPS}build${kPS}app${kPS}outputs${kPS}bundle$kPS${argBuildFlavor}Release$kPS$aabName";
     if (File(from).existsSync()) {
-      final key = "$aabName$ps${File(from).lastModifiedSync()}";
+      final key = "$aabName$kPS${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath$ps$outputPath$ps.apk$ps$outputName";
+        final to = "$currentPath$kPS$outputPath$kPS.apk$kPS$outputName";
         ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
@@ -182,17 +203,17 @@ void main(List<String> arguments) async {
       defBuildFlavor: argBuildFlavor,
     );
     final from =
-        "$currentPath${ps}build${ps}ios${ps}archive$ps$targetFileName.xcarchive";
+        "$currentPath${kPS}build${kPS}ios${kPS}archive$kPS$targetFileName.xcarchive";
     if (Directory(from).existsSync()) {
       final key =
-          "$targetFileName.xcarchive$ps${File("$from${ps}Info.plist").lastModifiedSync()}";
+          "$targetFileName.xcarchive$kPS${File("$from${kPS}Info.plist").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath$ps$outputPath$ps.ipa$ps$outputName";
+        final to = "$currentPath$kPS$outputPath$kPS.ipa$kPS$outputName";
         ensureFolder(to, parent: true);
-        if (await copyFolderByDitto(from, to)) {
+        if (await macOSCopyFolderByDitto(from, to)) {
           collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
@@ -213,14 +234,15 @@ void main(List<String> arguments) async {
       defBuildType: argBuildType,
       defBuildFlavor: argBuildFlavor,
     );
-    final from = "$currentPath${ps}build${ps}ios${ps}ipa$ps$targetFileName.ipa";
+    final from =
+        "$currentPath${kPS}build${kPS}ios${kPS}ipa$kPS$targetFileName.ipa";
     if (File(from).existsSync()) {
-      final key = "$targetFileName.ipa$ps${File(from).lastModifiedSync()}";
+      final key = "$targetFileName.ipa$kPS${File(from).lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final to = "$currentPath$ps$outputPath$ps.ipa$ps$outputName";
+        final to = "$currentPath$kPS$outputPath$kPS.ipa$kPS$outputName";
         ensureFolder(to, parent: true);
         if (copyFile(from, to)) {
           collectProductCount++;
@@ -244,16 +266,16 @@ void main(List<String> arguments) async {
       defBuildFlavor: argBuildFlavor,
     );
     final from =
-        "$currentPath${ps}build${ps}macos${ps}Build${ps}Products${ps}Release$ps$productFileName.app";
+        "$currentPath${kPS}build${kPS}macos${kPS}Build${kPS}Products${kPS}Release$kPS$productFileName.app";
     if (Directory(from).existsSync()) {
       final key =
-          "$productFileName.app$ps${File("$from${ps}Contents${ps}MacOS$ps$productFileName").lastModifiedSync()}";
+          "$productFileName.app$kPS${File("$from${kPS}Contents${kPS}MacOS$kPS$productFileName").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
         colorLog("🚨 已复制过: $from");
         exitProductCount++;
       } else {
-        final toDir = "$currentPath$ps$outputPath$ps.app";
-        final to = "$toDir$ps$outputName";
+        final toDir = "$currentPath$kPS$outputPath$kPS.app";
+        final to = "$toDir$kPS$outputName";
         ensureFolder(to, parent: true);
         if (outputName.endsWith(".app")) {
           if (await copyFolderByPlatform(from, to)) {
@@ -271,7 +293,7 @@ void main(List<String> arguments) async {
         //使用appdmg打包安装程序
         final macosAppdmgConfig = config["macos_appdmg_config"];
         if (macosAppdmgConfig is String) {
-          final appdmgConfigFile = File("$currentPath$ps$macosAppdmgConfig");
+          final appdmgConfigFile = File("$currentPath$kPS$macosAppdmgConfig");
           if (appdmgConfigFile.existsSync()) {
             final result = await runCommand(
               "appdmg",
@@ -283,10 +305,10 @@ void main(List<String> arguments) async {
                 0,
                 outputName.lastIndexOf("."),
               );
-              final outputDmgPath = "$toDir$ps$dmgName.dmg";
+              final outputDmgPath = "$toDir$kPS$dmgName.dmg";
               outputDmgPath.safeDelete();
 
-              //修改appdmg配置文件
+              //修改appdmg配置文件中的值
               final appVersion = _getVersionName() ?? "0.0.1";
               final dmgTitle = "$appName v$appVersion";
               final json = jsonDecode(appdmgConfigFile.readAsStringSync());
@@ -296,7 +318,7 @@ void main(List<String> arguments) async {
                       .firstOrNull?["path"] =
                   from;
               final tempConfigFile = File(
-                "$currentPath$ps.appdmg.config.temp.json",
+                "$currentPath$kPS.appdmg.config.temp.json",
               );
               tempConfigFile.writeAsStringSync(jsonEncode(json));
 
@@ -337,16 +359,16 @@ void main(List<String> arguments) async {
       defBuildFlavor: argBuildFlavor,
     );
     final from =
-        "$currentPath${ps}build${ps}windows${ps}x64${ps}runner${ps}Release";
+        "$currentPath${kPS}build${kPS}windows${kPS}x64${kPS}runner${kPS}Release";
     if (Directory(from).existsSync()) {
       final key =
-          "$exeFileName$ps${File("$from${ps}data${ps}app.so").lastModifiedSync()}";
+          "$exeFileName$kPS${File("$from${kPS}data${kPS}app.so").lastModifiedSync()}";
       if (copiedLines.contains(key)) {
-        colorLog("🚨 已复制过: $from$ps$exeFileName");
+        colorLog("🚨 已复制过: $from$kPS$exeFileName");
         exitProductCount++;
       } else {
-        final toDir = "$currentPath$ps$outputPath$ps.exe";
-        final to = "$toDir$ps$outputName";
+        final toDir = "$currentPath$kPS$outputPath$kPS.exe";
+        final to = "$toDir$kPS$outputName";
         ensureFolder(to, parent: true);
         if (outputName.endsWith(".exe")) {
           if (copyFile(from, to)) {
@@ -364,7 +386,7 @@ void main(List<String> arguments) async {
         //使用Inno Setup打包安装程序
         final windowsInnoSetupConfig = config["windows_inno_setup"];
         if (windowsInnoSetupConfig is String) {
-          final issFile = File("$currentPath$ps$windowsInnoSetupConfig");
+          final issFile = File("$currentPath$kPS$windowsInnoSetupConfig");
           if (issFile.existsSync()) {
             final isccPath = await _findISCCPath();
             if (isccPath != null) {
@@ -373,8 +395,8 @@ void main(List<String> arguments) async {
                 outputName.lastIndexOf("."),
               );
               final appVersion = _getVersionName() ?? "0.0.1";
-              //print("$toDir${ps}$setupExeName:$appVersion");
-              colorLog('💡准备打包安装程序: $from$ps$exeFileName');
+              //print("$toDir${kPS}$setupExeName:$appVersion");
+              colorLog('💡准备打包安装程序: $from$kPS$exeFileName');
               final result = await runCommand(
                 isccPath,
                 args: [
@@ -391,7 +413,7 @@ void main(List<String> arguments) async {
               );
               if (result?.exitCode == 0) {
                 collectProductCount++;
-                final outputExePath = "$toDir$ps$setupExeName.exe";
+                final outputExePath = "$toDir$kPS$setupExeName.exe";
                 colorLog(
                   '🎉$_rSpace-> $outputExePath ${outputExePath.fileSizeStr}',
                 );
@@ -609,7 +631,7 @@ bool copyFile(String srcPath, String dstPath, {bool inner = false}) {
 ///
 /// - [zipFolder]
 /// - [zipFolderByPlatform]
-/// - [copyFolderByDitto]
+/// - [macOSCopyFolderByDitto]
 Future<bool> zipFolder(
   String srcPath,
   String dstPath, {
@@ -647,7 +669,7 @@ Future<bool> zipFolder(
 ///
 /// - [zipFolder]
 /// - [zipFolderByPlatform]
-/// - [copyFolderByDitto]
+/// - [macOSCopyFolderByDitto]
 Future<bool> zipFolderByPlatform(
   String srcPath,
   String dstPath, {
@@ -708,8 +730,8 @@ Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
 ///
 /// - [zipFolder]
 /// - [zipFolderByPlatform]
-/// - [copyFolderByDitto]
-Future<bool> copyFolderByDitto(
+/// - [macOSCopyFolderByDitto]
+Future<bool> macOSCopyFolderByDitto(
   String srcPath,
   String dstPath, {
   bool isCompress = false,
@@ -742,7 +764,102 @@ Future<bool> copyFolderByDitto(
   return result.exitCode == 0;
 }
 
-//--
+/// macOS 使用 `codesign` 命令进行签名 `xxx.app` 文件夹
+/// - [identity] 签名证书
+///
+/// - [macOSCodeSign] 签名
+/// - [macOSNotarytoolSubmit] 公证
+Future<bool> macOSCodeSign(String appPath, String? identity) async {
+  if (identity == null || identity.isEmpty) {
+    colorErrorLog("🔴无法进行签名,签名证书为空!");
+    return false;
+  }
+  colorLog('💡准备进行签名: $appPath');
+  final result = await Process.run("codesign", [
+    '--force', // 强制覆盖旧签名
+    "--options runtime", // 公证需要
+    '--deep', // 深度递归签名内部所有框架与二进制
+    /*'-v', // 输出详细日志*/
+    "--sign",
+    identity,
+    appPath,
+  ], runInShell: true);
+  if (result.exitCode != 0) {
+    colorErrorLog(result.stderr);
+  } else {
+    colorLog('🎉 签名成功 -> $appPath');
+  }
+  return result.exitCode == 0;
+}
+
+/// macOS 使用 `codesign` 命令进行签名验证
+Future<bool> macOSCodeSignVerify(String appPath) async {
+  colorLog('💡准备进行签名验证: $appPath');
+  final result = await Process.run("codesign", [
+    '--verify',
+    '--deep',
+    '--strict',
+    '-vvvv',
+    appPath,
+  ], runInShell: true);
+  if (result.exitCode != 0) {
+    colorErrorLog(result.stderr);
+  } else {
+    colorLog('🎉 签名验证成功 -> $appPath');
+  }
+  return result.exitCode == 0;
+}
+
+/// macOS 使用 `notarytool` 提交公证
+/// - [keychainProfile] 公证安全凭证名称
+///
+/// - [macOSCodeSign] 签名
+/// - [macOSNotarytoolSubmit] 公证
+Future<bool> macOSNotarytoolSubmit(
+  String dmgPath,
+  String? keychainProfile,
+) async {
+  if (keychainProfile == null || keychainProfile.isEmpty) {
+    colorErrorLog("🔴无法进行签名,公证凭证为空!");
+    return false;
+  }
+  colorLog('💡准备进行公证提交: $dmgPath');
+  final result = await Process.run("xcrun", [
+    'notarytool',
+    'submit',
+    dmgPath,
+    '--keychain-profile',
+    keychainProfile,
+    '--wait',
+  ], runInShell: true);
+  if (result.exitCode != 0) {
+    colorErrorLog(result.stderr);
+  } else {
+    // 检查 stdout / stderr 输出
+    final output = '${result.stdout}\n${result.stderr}';
+    colorLog('💡Notarytool 输出: $output');
+    if (!output.contains('status: Accepted')) {
+      colorErrorLog('❌ 公证失败！');
+      return false;
+    }
+    colorLog('🎉 公证成功 -> $dmgPath');
+    //钉入公证票据
+    final stapleResult = await Process.run("xcrun", [
+      'stapler',
+      'staple',
+      dmgPath,
+    ], runInShell: true);
+    final stapleOutput = '${stapleResult.stdout}\n${stapleResult.stderr}';
+    colorLog('💡Staple 输出: $stapleOutput');
+    if (stapleResult.exitCode == 0 && stapleOutput.contains('validate')) {
+      colorLog('🎉 Staple 公证票据钉入成功 -> $dmgPath');
+    }
+    return stapleResult.exitCode == 0;
+  }
+  return result.exitCode == 0;
+}
+
+//MARK: - extension
 
 extension ZipListEx on List<String> {
   /// 压缩所有文件/文件夹到指定文件
@@ -797,7 +914,7 @@ extension ZipListEx on List<String> {
   }
 }
 
-//MARK: - iscc
+//MARK: - iscc / Inno Setup
 
 /// 通过注册表查找本地安装的`ISCC.exe`的路径
 Future<String?> _findISCCPath() async {
