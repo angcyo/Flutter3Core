@@ -120,7 +120,7 @@ dependencies:
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/logging
   # https://pub.dev/packages/web_socket
-  openai_dart: ^8.0.0
+  openai_dart: ^8.1.0
   # https://pub.dev/packages/ollama_dart
   #ollama_dart: ^2.5.0
   # https://pub.dev/packages/googleai_dart
