@@ -799,7 +799,8 @@ Future<bool> macOSCodeSign(String appPath, String? identity) async {
   colorLog('💡准备进行签名: $appPath');
   final result = await Process.run("codesign", [
     '--force', // 强制覆盖旧签名
-    "--options runtime", // 公证需要
+    "--options", // 公证需要
+    "runtime",
     '--deep', // 深度递归签名内部所有框架与二进制
     /*'-v', // 输出详细日志*/
     "--sign",
