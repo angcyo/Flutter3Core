@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_android_package_installer/flutter_android_package_installer.dart';
 
 import '../../assets_generated/assets.gen.dart';
 import '../../flutter3_app.dart';
+import 'app_update_handler.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -43,160 +41,6 @@ import '../../flutter3_app.dart';
 /// - [AppUpdateDialog.checkUpdateAndShow] 检测更新并显示[LibAppVersionBean]
 ///
 class AppUpdateDialog extends StatefulWidget with DialogMixin {
-  /// 海外市场（Google Play）：使用 in_app_update 插件，
-  /// 调用 Google Play 官方的应用内更新 API，无需申请 `REQUEST_INSTALL_PACKAGES` 权限。
-  static bool Function() isInGooglePlayFn = () =>
-      isAndroid &&
-      $buildType == BuildTypeEnum.release.name &&
-      $buildFlavor != "mainland";
-
-  /// 检查更新并且显示
-  /// [forceShow] 是否强制显示更新, 不检查版本号
-  /// 在[AppVersionBean.fetchConfig]中触发
-  ///
-  /// @return 是否有新版本
-  @api
-  static Future<bool> checkUpdateAndShow(
-    BuildContext? context,
-    LibAppVersionBean bean, {
-    bool? forceShow,
-    bool? forceForbiddenShow,
-    String? debugLabel,
-  }) async {
-    debugger(when: !isIos && debugLabel != null);
-    NavigatorState? navigator;
-    LibRes? libRes;
-    if (context == null || context.isMounted != true) {
-    } else {
-      navigator = context.navigatorOf(true);
-      libRes = LibRes.of(context);
-    }
-
-    final deviceUuid = $coreKeys.deviceUuid;
-    final LibAppVersionBean versionBean = bean.it;
-    bool ignoreDeviceUpdate = false; //是否要忽略当前设备的更新
-
-    final allowVersionUuidList = versionBean.allowVersionUuidList;
-    if (allowVersionUuidList != null) {
-      if (allowVersionUuidList.size() > 0) {
-        if (!allowVersionUuidList.contains(deviceUuid)) {
-          //当前设备不在白名单中
-          ignoreDeviceUpdate = true;
-        }
-      }
-    }
-
-    if (!ignoreDeviceUpdate) {
-      final denyVersionUuidList = versionBean.denyVersionUuidList;
-      if (denyVersionUuidList != null) {
-        if (denyVersionUuidList.contains(deviceUuid)) {
-          //当前设备在黑名单中
-          ignoreDeviceUpdate = true;
-        }
-      }
-    }
-
-    //check
-    final localVersionCode = (await $appVersionCode).toIntOrNull() ?? 0;
-    //debugger();
-    if (forceForbiddenShow == true ||
-        versionBean.debug != true ||
-        (versionBean.debug == true && isDebugFlag)) {
-      //forbidden检查
-      final forbiddenVersionMap = versionBean.forbiddenVersionMap;
-      final forbiddenBean =
-          forbiddenVersionMap
-              ?.find((key, value) => key.matchVersion(localVersionCode))
-              ?.value ??
-          versionBean;
-      if (forceForbiddenShow == true || forbiddenBean.forbiddenReason != null) {
-        final forceForbidden = forbiddenBean.forceForbidden == true;
-        (GlobalConfig.def.findNavigatorState() ?? navigator)?.showWidgetDialog(
-          MessageDialog(
-            title: forbiddenBean.forbiddenTile,
-            message: forbiddenBean.forbiddenReason ?? "（o´ﾟ□ﾟ`o）",
-            confirm: libRes?.libKnown,
-            showConfirm: !forceForbidden,
-            interceptPop: forceForbidden,
-            dialogBarrierDismissible: !forceForbidden,
-          ).click(() {
-            exitApp();
-          }, enable: forceForbidden).ignoreKeyEvent(),
-        );
-      }
-
-      //更新检查
-      if (!ignoreDeviceUpdate) {
-        final versionCode = versionBean.versionCode ?? 0;
-        if (forceShow == true || versionCode > localVersionCode) {
-          //需要更新
-          assert(() {
-            l.i(
-              "需要更新->forceShow:${forceShow?.toDC()} versionCode:$versionCode localVersionCode:$localVersionCode",
-            );
-            return true;
-          }());
-          navigator?.showWidgetDialog(
-            AppUpdateDialog(versionBean, forceUpdate: null),
-          );
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /// 安装软件
-  /// iOS 平台无法安装ipa
-  /// Android 平台需要权限
-  /// ```
-  /// <!-- Android 11+ Permissions -->
-  /// <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-  /// ```
-  static void startInstallApp({String? path}) {
-    //debugger();
-    if (path == null || isNil(path)) {
-      return;
-    }
-    if (isAndroid) {
-      assert(() {
-        l.d("准备安装->$path");
-        return true;
-      }());
-      Permission.requestInstallPackages.request().get((value, error) {
-        assert(() {
-          l.d("安装权限返回->$value:$error");
-          return true;
-        }());
-        if (value == PermissionStatus.granted) {
-          AndroidPackageInstaller.installApk(apkFilePath: path).get((
-            value,
-            error,
-          ) {
-            assert(() {
-              l.d("安装结果->$value:$error");
-              return true;
-            }());
-          });
-        }
-      });
-    } else if (isMacOS) {
-      runCommand("open", [path], throwOnError: false, mode: .detached);
-    } else if (isIos) {
-      //no op
-    } else if (isWeb) {
-      //no op
-    } else if (isWindows) {
-      //runCommand("explorer", [path], throwOnError: false, mode: .detached);
-      runCommand(
-        path,
-        ["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART"],
-        throwOnError: false,
-        mode: .detached,
-      );
-    }
-  }
-
   @override
   TranslationType get translationType => TranslationType.scaleFade;
 
@@ -226,7 +70,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
     with DioDownloadMixin {
   @override
   void dispose() {
-    downloadTokenMixin?.cancel();
+    if (backgroundDownloadFlag != true) {
+      cancelDownloadMixin();
+    }
     super.dispose();
   }
 
@@ -236,7 +82,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
     final lRes = libRes(context);
     final bean = widget.versionBean;
     final forceUpdate = widget.forceUpdate == true || bean.forceUpdate == true;
-    final inGooglePlay = AppUpdateDialog.isInGooglePlayFn();
+    final inGooglePlay = AppUpdateHandler.isInGooglePlayFn();
     final jumpToMarket = inGooglePlay || bean.jumpToMarket == true;
     //控制按钮
     Widget control = [
@@ -244,7 +90,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
         //下次再说
         GradientButton(
           onTap: () async {
-            context.pop();
+            context.pop(rootNavigator: widget.dialogUseRootNavigator);
           },
           color: globalTheme.whiteSubBgColor,
           radius: kMaxBorderRadius,
@@ -273,12 +119,16 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
         //直接下载
         GradientButton(
           onTap: () {
+            if (downloadStateMixin == .downloading) {
+              //进入后台下载
+              backgroundDownloadFlag = true;
+              context.pop(rootNavigator: widget.dialogUseRootNavigator);
+              return;
+            }
             final _ = switch (downloadStateMixin) {
-              DownloadState.none => startDownloadMixin(bean.downloadUrl ?? ""),
-              DownloadState.downloaded => _startInstall(),
-              DownloadState.downloadFailed => startDownloadMixin(
-                bean.downloadUrl ?? "",
-              ),
+              .none => startDownloadMixin(bean.downloadUrl ?? ""),
+              .downloaded => _startInstall(),
+              .downloadFailed => startDownloadMixin(bean.downloadUrl ?? ""),
               _ => null,
             };
           },
@@ -287,7 +137,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
               (downloadStateMixin == .none
                       ? lRes?.libDownloadNow
                       : (downloadStateMixin == .downloading
-                            ? lRes?.libDownloading
+                            ? lRes?.libBackgroundDownload
                             : (downloadStateMixin == .downloaded
                                   ? lRes?.libInstallNow
                                   : (downloadStateMixin == .downloadFailed
@@ -383,7 +233,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
   /// ```
   void _startInstall({String? path}) {
     //debugger();
-    AppUpdateDialog.startInstallApp(path: path ?? downloadFilePathCacheMixin);
+    if (buildContext != null) {
+      AppUpdateHandler.startInstallApp(
+        path: path ?? downloadFilePathCacheMixin,
+      );
+    }
   }
 }
 

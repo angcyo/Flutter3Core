@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAdapterNoMoreData": MessageLookupByLibrary.simpleMessage("~已经到底啦~"),
     "libAdd": MessageLookupByLibrary.simpleMessage("添加"),
     "libBack": MessageLookupByLibrary.simpleMessage("返回"),
+    "libBackgroundDownload": MessageLookupByLibrary.simpleMessage("后台下载"),
     "libCancel": MessageLookupByLibrary.simpleMessage("取消"),
     "libCanvasAdaptive": MessageLookupByLibrary.simpleMessage("自适应"),
     "libCanvasOptions": MessageLookupByLibrary.simpleMessage("画布选项"),

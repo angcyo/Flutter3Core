@@ -19,6 +19,10 @@ mixin DioDownloadMixin {
   @tempFlag
   String downloadFilePathCacheMixin = "";
 
+  /// 后台下载标识
+  @tempFlag
+  bool? backgroundDownloadFlag;
+
   //MARK: - api
 
   /// 尝试更新状态, 如果可以
@@ -93,7 +97,12 @@ mixin DioDownloadMixin {
 
   /// 下载成功后的回调
   @overridePoint
-  void onDownloadSuccess(String filePath) {}
+  void onDownloadSuccess(String filePath) {
+    if (backgroundDownloadFlag == true) {
+      //后台下载完成, 自动安装
+      AppUpdateHandler.startInstallApp(path: filePath);
+    }
+  }
 
   //MARK: - build
 

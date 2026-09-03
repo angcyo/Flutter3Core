@@ -58,6 +58,7 @@
   "libExternalShare": "External Share",
   "libLoading": "Loading...",
   "libDownloading": "Downloading...",
+  "libBackgroundDownload": "Bg Download",
   "libNewReleases": "New version available",
   "libLatestVersion": "You are on the latest version",
   "libNextTime": "Remind me later",

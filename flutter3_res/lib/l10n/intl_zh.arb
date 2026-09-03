@@ -67,6 +67,7 @@
   "libExternalShare": "外部分享",
   "libLoading": "加载中...",
   "libDownloading": "下载中...",
+  "libBackgroundDownload": "后台下载",
   "libNewReleases": "发现新版本",
   "libLatestVersion": "已是最新版本",
   "libNextTime": "下次再说",

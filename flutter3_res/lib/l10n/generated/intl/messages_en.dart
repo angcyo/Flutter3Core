@@ -35,6 +35,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libAdd": MessageLookupByLibrary.simpleMessage("Add"),
     "libBack": MessageLookupByLibrary.simpleMessage("Back"),
+    "libBackgroundDownload": MessageLookupByLibrary.simpleMessage(
+      "Bg Download",
+    ),
     "libCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "libCanvasAdaptive": MessageLookupByLibrary.simpleMessage("Adaptive"),
     "libCanvasOptions": MessageLookupByLibrary.simpleMessage("Canvas Options"),

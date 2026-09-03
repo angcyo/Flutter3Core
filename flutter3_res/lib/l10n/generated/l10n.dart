@@ -315,6 +315,16 @@ class LibRes {
     return Intl.message('下载中...', name: 'libDownloading', desc: '', args: []);
   }
 
+  /// `后台下载`
+  String get libBackgroundDownload {
+    return Intl.message(
+      '后台下载',
+      name: 'libBackgroundDownload',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `发现新版本`
   String get libNewReleases {
     return Intl.message('发现新版本', name: 'libNewReleases', desc: '', args: []);

@@ -22,6 +22,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'src/pages/app_update_handler.dart';
+
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:flutter3_core/flutter3_core.dart';
 export 'package:flutter3_pub/flutter3_pub.dart';
