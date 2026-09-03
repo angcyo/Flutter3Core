@@ -277,6 +277,14 @@ void main(List<String> arguments) async {
         final toDir = "$currentPath$kPS$outputPath$kPS.app";
         final to = "$toDir$kPS$outputName";
         ensureFolder(to, parent: true);
+
+        //macOS代码签名 .app 文件夹
+        final macosSignIdentity = config["macos_sign_identity"];
+        if (macosSignIdentity is String) {
+          await macOSCodeSign(from, macosSignIdentity);
+        }
+
+        //简单的复制.app文件夹
         if (outputName.endsWith(".app")) {
           if (await copyFolderByPlatform(from, to)) {
             collectProductCount++;
@@ -334,6 +342,20 @@ void main(List<String> arguments) async {
                 colorLog(
                   '🎉$_rSpace-> $outputDmgPath ${outputDmgPath.fileSizeStr}',
                 );
+                if (macosSignIdentity is String) {
+                  //macOS代码签名 .dmg 文件
+                  if (await macOSCodeSign(outputDmgPath, macosSignIdentity)) {
+                    final macosKeychainProfile =
+                        config["macos_keychain_profile"];
+                    if (macosKeychainProfile is String) {
+                      //macOS公证
+                      await macOSNotarytoolSubmit(
+                        outputDmgPath,
+                        macosKeychainProfile,
+                      );
+                    }
+                  }
+                }
               }
             } else {
               colorErrorLog("请先安装`appdmg` -> npm install -g appdmg");
