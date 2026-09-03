@@ -335,9 +335,12 @@ String join(String separator, [
 
 //MARK: - assets
 
+/// Flutter3Basics包名
+const String libFlutter3BasicsPackage = Assets.package;
+
 /// Png图片资源
-$AssetsPngGen libPngAssets = Assets.png;
-$AssetsSvgGen libSvgAssets = Assets.svg;
+const $AssetsPngGen libPngAssets = Assets.png;
+const $AssetsSvgGen libSvgAssets = Assets.svg;
 
 /// 情感状态: 加载失败的图片资源key
 String libAssetsStateLoadErrorKey = Assets.png.stateLoadError.keyName;

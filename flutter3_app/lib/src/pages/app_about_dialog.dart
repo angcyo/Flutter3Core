@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter3_core/flutter3_core.dart';
 
-import '../../flutter3_app.dart' hide Action, ContextAction;
+import '../../flutter3_app.dart'
+    show
+        $platformDeviceInfoCache,
+        $platformPackageInfo,
+        $platformDeviceName,
+        PackageInfoEx;
+import 'app_update_handler.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -54,8 +61,8 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
                   .insets(vertical: kX)
                   .click(() {
                     showLoading();
-                    LibAppVersionBean.fetchConfig(
-                      LibAppVersionBean.appVersionUrl,
+                    AppUpdateHandler.fetchVersionConfig(
+                      AppUpdateHandler.appVersionUrl,
                       checkUpdate: true,
                       forceShow: null,
                       forceForbiddenShow: null,

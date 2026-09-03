@@ -261,3 +261,36 @@ Image? loadCoreAssetImageWidget(String? key, {
       color: color,
       colorBlendMode: colorBlendMode,
     );
+
+//MARK: ---
+
+/// [isDebug]
+/// [CoreKeys.isDebugFlag]
+bool get isDebugFlag =>
+    isDebugType ||
+        isDebugFlagDevice ||
+        (GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag);
+
+/// 友好的异常
+/// - 调试下: 详细的提示
+/// - 发布下: 简单的提示
+class RNiceException implements Exception {
+  /// 异常的原因
+  final dynamic cause;
+
+  /// 异常的消息
+  final String? message;
+
+  final StackTrace? stackTrace;
+
+  RNiceException({this.message, this.cause, StackTrace? stackTrace})
+      : stackTrace = stackTrace ?? StackTrace.current;
+
+  @override
+  String toString() {
+    if (!isDebugFlag) {
+      return message ?? "Exception!";
+    }
+    return message ?? cause ?? "[${classHash()}]${super.toString()}";
+  }
+}

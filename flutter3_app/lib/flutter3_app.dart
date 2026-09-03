@@ -34,6 +34,7 @@ export 'package:share_plus/share_plus.dart';
 
 export 'src/pages/app_about_dialog.dart';
 export 'src/pages/app_update_dialog.dart';
+export 'src/pages/app_update_handler.dart';
 
 part 'src/android_app.dart';
 part 'src/app_ex.dart';
@@ -500,10 +501,3 @@ Widget loadAppSvgWidget(
   height: height,
   fit: fit,
 );
-
-/// [isDebug]
-/// [CoreKeys.isDebugFlag]
-bool get isDebugFlag =>
-    isDebugType ||
-    isDebugFlagDevice ||
-    (GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag);
