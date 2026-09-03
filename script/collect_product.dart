@@ -828,6 +828,8 @@ Future<bool> macOSCodeSignVerify(String appPath) async {
   if (result.exitCode != 0) {
     colorErrorLog(result.stderr);
   } else {
+    final output = '${result.stdout}\n${result.stderr}';
+    colorLog('💡CodeSign 输出: $output');
     colorLog('🎉 签名验证成功 -> $appPath');
   }
   return result.exitCode == 0;
