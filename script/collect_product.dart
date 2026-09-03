@@ -810,7 +810,7 @@ Future<bool> macOSCodeSign(String appPath, String? identity) async {
   if (result.exitCode != 0) {
     colorErrorLog(result.stderr);
   } else {
-    colorLog('🎉 签名成功 -> $appPath');
+    colorLog('$_rSpace🎉 签名成功!');
   }
   return result.exitCode == 0;
 }
@@ -829,8 +829,8 @@ Future<bool> macOSCodeSignVerify(String appPath) async {
     colorErrorLog(result.stderr);
   } else {
     final output = '${result.stdout}\n${result.stderr}';
-    colorLog('💡CodeSign 输出: $output');
-    colorLog('🎉 签名验证成功 -> $appPath');
+    print('💡CodeSign 输出: $output');
+    colorLog('$_rSpace🎉 签名验证成功!');
   }
   return result.exitCode == 0;
 }
@@ -862,12 +862,12 @@ Future<bool> macOSNotarytoolSubmit(
   } else {
     // 检查 stdout / stderr 输出
     final output = '${result.stdout}\n${result.stderr}';
-    colorLog('💡Notarytool 输出: $output');
+    print('💡Notarytool 输出: $output');
     if (!output.contains('status: Accepted')) {
-      colorErrorLog('❌ 公证失败！');
+      colorErrorLog('$_rSpace❌ 公证失败！');
       return false;
     }
-    colorLog('🎉 公证成功 -> $dmgPath');
+    colorLog('$_rSpace🎉 公证成功!');
     //钉入公证票据
     final stapleResult = await Process.run("xcrun", [
       'stapler',
@@ -875,9 +875,9 @@ Future<bool> macOSNotarytoolSubmit(
       dmgPath,
     ], runInShell: true);
     final stapleOutput = '${stapleResult.stdout}\n${stapleResult.stderr}';
-    colorLog('💡Staple 输出: $stapleOutput');
+    print('💡Staple 输出: $stapleOutput');
     if (stapleResult.exitCode == 0 && stapleOutput.contains('validate')) {
-      colorLog('🎉 Staple 公证票据钉入成功 -> $dmgPath');
+      colorLog('$_rSpace🎉 Staple 公证票据钉入成功!');
     }
     return stapleResult.exitCode == 0;
   }
