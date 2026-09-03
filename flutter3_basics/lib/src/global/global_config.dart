@@ -1162,4 +1162,7 @@ extension ThemeModeEx on ThemeMode {
 T? $darkOr<T>([T? dark, T? light]) =>
     GlobalConfig.def.isThemeDark ? dark : light;
 
+/// 获取全局App上下文
+BuildContext? get $globalAppContext => GlobalConfig.def.globalAppContext;
+
 //endregion Mixin
