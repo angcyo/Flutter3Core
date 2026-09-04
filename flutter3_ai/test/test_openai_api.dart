@@ -23,6 +23,9 @@ void main() async {
   );*/
 
   //生成一张适用于激光灰度深度加工的图片. 优化上述提示词, 并翻译成英文.
+  //返回结构 completion_tokens prompt_tokens 兼容性不好
+  //- input_tokens
+  //- output_tokens
   /*await openAI.imageGenerate(
     "Generate a grayscale image for laser grayscale depth engraving, 8‑bit grayscale only, no color. Soft and continuous hierarchical transitions across the image with smooth grayscale gradients, no hard jagged edges and fine noise. Avoid large pure‑white and pure‑black areas. Moderate image contrast; grayscale variation corresponds to laser engraving depth variation, suitable for laser relief depth marking and positive‑negative engraving. Clean contours with smooth edges, no tiny broken textures. Optimized for laser machine image processing, ready‑to‑use for grayscale depth engraving.",
     model: "openai/gpt-image-2",
