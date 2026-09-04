@@ -43,6 +43,7 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog> {
             onTextChanged: (value) {},
           )
           .insets(h: kX),
+      "模型提示".text().insets(all: 30).backgroundDecoration(highlightDecoration()),
       //提示词
       SingleInputWidget(
         config: promptInputConfig,
@@ -53,7 +54,7 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog> {
         },
       ).insets(h: kX),
       //按钮
-      GlowingBorderButton(text: "发送",),
+      GlowingBorderButton(text: "发送"),
     ].column(gap: kX)!.material();
   }
 }

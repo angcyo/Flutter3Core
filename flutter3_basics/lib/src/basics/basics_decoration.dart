@@ -286,10 +286,14 @@ BoxBorder strokeBorder({
 /// 四条边都是线条的装饰器
 BoxDecoration lineDecoration({
   BuildContext? context,
+  Color? color,
+  BorderRadiusGeometry? borderRadius,
+  Color? lineColor,
   Color? topLineColor,
   Color? bottomLineColor,
   Color? leftLineColor,
   Color? rightLineColor,
+  double? lineWidth,
   double topLineWidth = 1,
   double bottomLineWidth = 1,
   double leftLineWidth = 1,
@@ -299,8 +303,16 @@ BoxDecoration lineDecoration({
   BorderSide? leftSide,
   BorderSide? rightSide,
 }) {
-  final lineColor = GlobalTheme.of(context).lineColor;
+  lineColor ??= GlobalTheme.of(context).lineColor;
+  if (lineWidth != null) {
+    topLineWidth = lineWidth;
+    bottomLineWidth = lineWidth;
+    leftLineWidth = lineWidth;
+    rightLineWidth = lineWidth;
+  }
   return BoxDecoration(
+    color: color,
+    borderRadius: borderRadius,
     border: Border(
       left:
           leftSide ??
@@ -351,6 +363,28 @@ BoxDecoration underlineDecoration({
   rightLineWidth: 0,
   topLineWidth: 0,
 );
+
+/// 提醒装饰 / 高亮块提示装饰
+/// - [color] 背景颜色
+/// - [strokeColor] 边框颜色
+BoxDecoration highlightDecoration({
+  BuildContext? context,
+  @defInjectMark Color? color,
+  @defInjectMark Color? strokeColor,
+  @defInjectMark double? strokeWidth,
+  double radius = kDefaultBorderRadiusX,
+}) {
+  final globalTheme = GlobalTheme.of(context ?? $globalAppContext);
+  color ??= globalTheme.warnColor;
+  final bgColor = color.withAlpha(60);
+  return lineDecoration(
+    context: context,
+    color: bgColor,
+    lineColor: strokeColor ?? color,
+    lineWidth: strokeWidth ?? 1,
+    borderRadius: radius.borderRadius,
+  );
+}
 
 /// 纯色填充装饰, 支持圆角
 /// [color] 填充颜色
