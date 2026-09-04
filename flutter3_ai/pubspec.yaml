@@ -145,6 +145,18 @@ dependencies:
   # https://pub.dev/packages/anthropic_sdk_dart
   #anthropic_sdk_dart: ^7.0.0
 
+  # https://pub.dev/packages/llm_dart
+  # https://pub.dev/packages/llm_dart_ai
+  # https://pub.dev/packages/llm_dart_chat
+  # https://pub.dev/packages/llm_dart_provider
+  # https://pub.dev/packages/llm_dart_transport
+  #llm_dart: ^0.11.0-alpha.1
+  #llm_dart_openai: ^0.11.0-alpha.1
+  #llm_dart_anthropic: ^0.11.0-alpha.1
+  #llm_dart_ollama: ^0.11.0-alpha.1
+  #llm_dart_google: ^0.11.0-alpha.1
+  #llm_dart_elevenlabs: ^0.11.0-alpha.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
