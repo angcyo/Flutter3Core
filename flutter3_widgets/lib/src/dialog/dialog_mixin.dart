@@ -19,6 +19,9 @@ part of './dialog.dart';
 /// - [dialogInPopup]
 /// - [dialogIsPopupStyle]
 mixin DialogMixin implements TranslationTypeImpl {
+
+  //MARK: - TranslationTypeImpl
+
   /// [Dialog]对话框外点击是否关闭
   @override
   bool get dialogBarrierDismissible => true;

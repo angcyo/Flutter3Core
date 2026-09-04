@@ -91,6 +91,10 @@ dependency_overrides:
   # Because flutter3_http depends on xml ^7.0.1 and flutter_gen_core 5.14.1 depends on xml ^6.0.0, flutter_gen_core 5.14.1 is forbidden.
   #And because flutter_gen 5.14.1 depends on flutter_gen_core 5.14.1, flutter_gen 5.14.1 is forbidden.
   #Because no versions of flutter_gen match >5.14.1 <6.0.0 and flutter3_basics depends on flutter_gen ^5.14.1, flutter_gen 5.14.1 is required.
+  # 2 --
+  # Because three_js_text 0.3.0 depends on xml ^6.5.0 and no versions of three_js_text match >0.3.0 <0.4.0, three_js_text ^0.3.0 requires xml ^6.5.0.
+  #And because flutter3_http depends on xml ^7.0.1 and three_js 0.3.0 depends on three_js_text ^0.3.0, three_js 0.3.0 is forbidden.
+  #Because no versions of three_js match >0.3.0 <0.4.0 and flutter3_three_js depends on three_js ^0.3.0, three_js 0.3.0 is required.
   xml: ^7.0.1
 
 dev_dependencies:

@@ -77,6 +77,7 @@ class OpenAI {
   ///   'Generate an image of a robot riding a bicycle.'
   ///   ```
   @api
+  @implementation
   Future<UiImage?> imageGenerate(String prompt, {String? model}) async {
     final response = await _client?.images.generate(
       ImageGenerationRequest(
@@ -107,6 +108,7 @@ class OpenAI {
   ///   'Remove the image background, isolate the foreground subject, and output with the original image size.'
   ///   ```
   @api
+  @implementation
   Future<UiImage?> imageEdit(
     String prompt,
     List<int>? imageBytes, {

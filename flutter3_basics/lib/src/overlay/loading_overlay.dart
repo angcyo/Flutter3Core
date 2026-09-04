@@ -32,6 +32,9 @@ bool $pauseLoadingTimeoutCheck = false;
 /// [postShow] 是否要延迟显示
 /// [wrapLoading]
 /// [wrapLoadingTimeout]
+///
+/// - [showLoading]
+/// - [hideLoading]
 @api
 OverlayEntry? showLoading({
   BuildContext? context,
@@ -128,6 +131,9 @@ OverlayEntry? showLoading({
 }
 
 /// 隐藏加载提示
+///
+/// - [showLoading]
+/// - [hideLoading]
 @api
 void hideLoading() {
   final currentLoadingEntry = _currentLoadingEntryRef?.target;
@@ -167,6 +173,7 @@ Future wrapLoading(
   bool showCountDown = false,
   bool autoHideLoading = true,
   //--
+  DataWidgetBuilder<LoadingInfo>? loadingWidgetBuilder,
   LoadingValueNotifier? loadingInfoNotifier,
   //--
   String? debugLabel,
@@ -193,6 +200,7 @@ Future wrapLoading(
             showLoading(
               postShow: false,
               loadingInfoNotifier: loadingInfoNotifier,
+              builder: loadingWidgetBuilder,
             );
           }
         }
@@ -205,11 +213,15 @@ Future wrapLoading(
           showLoading(
             postShow: false,
             loadingInfoNotifier: loadingInfoNotifier,
+            builder: loadingWidgetBuilder,
           );
         }
       }, delay);*/
     } else {
-      showLoading(loadingInfoNotifier: loadingInfoNotifier);
+      showLoading(
+        loadingInfoNotifier: loadingInfoNotifier,
+        builder: loadingWidgetBuilder,
+      );
     }
   } else {
     onStart.call();
