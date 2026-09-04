@@ -13,6 +13,8 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 //part 'src/gemma/gemma_input_field.dart';
 //part 'src/gemma/gemma_service.dart';
 
+export 'src/openai/open_ai.dart';
+
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2026/01/22
