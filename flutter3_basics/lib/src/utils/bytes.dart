@@ -383,7 +383,7 @@ class ByteReader {
     return bytes[_index++].toSigned(width);
   }
 
-  /// 读取一个32位的整数(不支持符号int), 4个字节
+  /// 读取一个32位的无符号整数(不支持符号int), 4个字节
   /// [length] 需要读取的字节长度
   ///
   /// - [readIntSigned] 有符号的 int

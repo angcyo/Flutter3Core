@@ -109,6 +109,101 @@ mixin LabelMixin {
   }
 }
 
+/// ```
+///   /// 标签/DesMixin
+///   @override
+///   final String? des;
+///   @override
+///   final Widget? desWidget;
+///   @override
+///   final TextStyle? desTextStyle;
+///   @override
+///   final TextAlign? desTextAlign;
+///   @override
+///   final EdgeInsets? desPadding;
+///   @override
+///   final BoxConstraints? desConstraints;
+/// ```
+mixin DesMixin {
+  //MARK: - des
+  /// 标签
+  String? get des => null;
+
+  /// [desWidget]的提示
+  String? get desTooltip => null;
+
+  /// [des].[desWidget]标签 *(必填提示) [desTrailingWidget]之间的间隙
+  @defInjectMark
+  double? get desGap => null;
+
+  Widget? get desWidget => null;
+
+  /// [desWidget]尾随的小部件
+  Widget? get desTrailingWidget => null;
+
+  TextStyle? get desTextStyle => null;
+
+  TextAlign? get desTextAlign => null;
+
+  EdgeInsets? get desPadding => null;
+
+  BoxConstraints? get desConstraints => null;
+
+  /// 构建对应的小部件
+  /// [buildLabelWidget]
+  @callPoint
+  Widget? buildDesWidgetMixin(
+    BuildContext context, {
+    bool themeStyle = true,
+    EdgeInsets? padding,
+    String? des,
+    String? desTooltip,
+    double? desGap,
+    Widget? desWidget,
+    Widget? desTrailingWidget,
+    BoxConstraints? desConstraints,
+    TextStyle? desTextStyle,
+    TextAlign? desTextAlign,
+    //--
+    bool? isRequired,
+  }) {
+    des ??= this.des;
+    desTooltip ??= this.desTooltip;
+    desGap ??= this.desGap;
+    desWidget ??= this.desWidget;
+    desTextStyle ??= this.desTextStyle;
+    desTextAlign ??= this.desTextAlign;
+    desConstraints ??= this.desConstraints;
+    desTrailingWidget ??= this.desTrailingWidget;
+    final globalTheme = GlobalTheme.of(context);
+    final widget =
+        [
+              (desWidget ??
+                      des?.text(
+                        style:
+                            desTextStyle ??
+                            (themeStyle ? globalTheme.textDesStyle : null),
+                        textAlign: desTextAlign,
+                      ))
+                  ?.tooltip(desTooltip),
+              isRequired == true
+                  ? " *".text(textColor: Colors.redAccent)
+                  : null,
+              desTrailingWidget,
+            ]
+            .row(
+              mainAxisAlignment: .start,
+              mainAxisSize: .min,
+              gap: desGap ?? kL,
+              firstExtend: desTrailingWidget != null,
+              /*debugLabel: "buildLabelWidgetMixin",*/
+            )
+            ?.constrainedBox(desConstraints)
+            .paddingInsets(desPadding);
+    return widget?.paddingInsets(padding);
+  }
+}
+
 /// 文本混入
 /// [LabelMixin]
 /// [TextMixin]

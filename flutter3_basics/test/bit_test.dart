@@ -18,10 +18,22 @@ void main() {
   print(n);
   print(n.bits(8, 2));*/
 
-  test("test set bits", () {
+  /*test("test set bits", () {
     //print("${0.setBits(0, 1, 1)}");
     //print("${0.setBits(0, 2, 1)}");
     print(15.toRadixString(2));
+    print(0.setBits(0, 4, 0xffffffff).toRadixString(2));
+    print("...");
+  });*/
+
+  test("test set bit", () {
+    //print("${0.setBits(0, 1, 1)}");
+    //print("${0.setBits(0, 2, 1)}");
+    print(15.toRadixString(2));
+    print(0.setBit(0, 1).toRadixString(2));
+    print(0.setBit(1, 1).toRadixString(2));
+    print(0.setBit(2, 1).toRadixString(2));
+    print(0.setBit(3, 1).toRadixString(2));
     print(0.setBits(0, 4, 0xffffffff).toRadixString(2));
     print("...");
   });

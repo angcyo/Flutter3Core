@@ -2346,16 +2346,19 @@ extension IntEx on int {
     return (this >> startBit) & ((1 << count) - 1);
   }
 
+  /// 从右到左, 从1开始数, 在[startBit]开始设置1个bit的数据为[value]
+  int setBit(int startBit, int value) => setBits(startBit - 1, 1, value);
+
   /// 从右到左, 从0开始数, 在[startBit]开始设置[count]个bit的数据为[value]
   ///
   /// https://pub.dev/packages/bit_array
   int setBits(int startBit, int count, int value) {
     startBit = math.min(startBit, 32);
     count = math.min(count, 32);
-    count = math.min(count, startBit + 1);
-    if (startBit < 0 || count < 1) {
+    /*count = math.min(count, startBit + 1);
+    if (startBit < count || count < 1) {
       return this;
-    }
+    }*/
     final leftShift = max(0, startBit + 1 - count);
     return this | ((value & ((1 << count) - 1)) << leftShift);
   }
