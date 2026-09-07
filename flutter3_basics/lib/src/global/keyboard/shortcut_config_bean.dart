@@ -23,7 +23,7 @@ part of '../../../flutter3_basics.dart';
 ///  )
 /// ```
 ///
-/// - [ShortcutManager]
+/// - [KeyboardShortcutManager]
 /// - [ShortcutDescription]
 /// - [ShortcutConfigBean]
 ///

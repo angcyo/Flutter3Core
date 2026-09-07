@@ -19,7 +19,6 @@ part of './dialog.dart';
 /// - [dialogInPopup]
 /// - [dialogIsPopupStyle]
 mixin DialogMixin implements TranslationTypeImpl {
-
   //MARK: - TranslationTypeImpl
 
   /// [Dialog]对话框外点击是否关闭
@@ -935,8 +934,9 @@ extension DialogExtension on BuildContext {
     Color? barrierColor,
     String? barrierLabel,
     bool useSafeArea = true,
+    bool useBarrierColorAnimate = true,
     bool maintainBottomViewPadding = false,
-    bool useRootNavigator = true,
+    bool? useRootNavigator,
     RouteSettings? routeSettings,
     TraversalEdgeBehavior? traversalEdgeBehavior,
     Offset? anchorPoint,
@@ -951,6 +951,7 @@ extension DialogExtension on BuildContext {
       }());
       return null;
     }
+    useRootNavigator ??= widget.getWidgetDialogUseRootNavigator() ?? true;
     final navigator = navigatorOf(useRootNavigator);
     if (popLast) {
       navigator.pop();
@@ -962,6 +963,7 @@ extension DialogExtension on BuildContext {
       barrierColor: barrierColor,
       barrierLabel: barrierLabel,
       useSafeArea: useSafeArea,
+      useBarrierColorAnimate: useBarrierColorAnimate,
       maintainBottomViewPadding: maintainBottomViewPadding,
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,

@@ -621,6 +621,10 @@ extension OverlayEx on BuildContext {
           overlayEntryControlState.hideOverlay();
         }
         if (hideOverlayOutsideTap == null) {
+          assert(() {
+            l.w("[${overlayEntry.classHash()}]存在相同的浮窗[$tag]");
+            return true;
+          }());
           return overlayEntry;
         }
       }

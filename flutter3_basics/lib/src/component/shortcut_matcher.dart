@@ -4,7 +4,7 @@ part of '../../flutter3_basics.dart';
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/12/22
 ///
-/// 模仿系统的[ShortcutManager], 实现的快捷键匹配处理
+/// 模仿系统的[KeyboardShortcutManager], 实现的快捷键匹配处理
 /// - [ShortcutActivator] 快捷键触发器
 /// - [ShortcutIntent] 快捷键意图
 ///

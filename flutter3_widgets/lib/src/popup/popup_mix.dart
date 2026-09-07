@@ -54,6 +54,9 @@ extension PopupEx on BuildContext {
     //--
     @defInjectMark Color? backgroundColor,
     double? radius,
+    bool showArrow = false /*是否显示箭头*/,
+    @defInjectMark Color? arrowColor /*箭头颜色*/,
+    @defInjectMark AxisDirection? arrowDirection /*箭头方向*/,
     bool animate = true,
     Color? barriersColor = Colors.transparent,
     EdgeInsets? contentPadding,
@@ -67,7 +70,6 @@ extension PopupEx on BuildContext {
     } else {
       edgeMargin ??= kX;
       contentPadding ??= const EdgeInsets.all(kS);
-      contentMargin ??= EdgeInsets.zero;
     }
     preferredFollowerAlignment ??= body.getWidgetPreferredFollowerAlignment();
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
@@ -82,7 +84,9 @@ extension PopupEx on BuildContext {
       rootNavigator: rootNavigator,
       backgroundColor: backgroundColor,
       animate: animate,
-      showArrow: false,
+      showArrow: showArrow,
+      arrowColor: arrowColor,
+      arrowDirection: arrowDirection,
       matchAnchorSize: matchAnchorSize,
       matchAnchorSizeOffset: matchAnchorSizeOffset,
       contentMargin: contentMargin,
@@ -177,11 +181,11 @@ extension PopupEx on BuildContext {
     //--
     @defInjectMark Color? backgroundColor,
     @defInjectMark double? radius,
-    Color? arrowColor,
-    bool showArrow = true,
+    bool showArrow = true /*是否显示箭头*/,
+    @defInjectMark Color? arrowColor /*箭头颜色*/,
+    @defInjectMark AxisDirection? arrowDirection /*箭头方向*/,
     bool animate = true,
     Color? barriersColor,
-    AxisDirection? arrowDirection,
     double arrowDirectionMinOffset = 15,
     EdgeInsets? contentPadding = const EdgeInsets.all(kH),
     EdgeInsets? contentMargin,
@@ -196,7 +200,17 @@ extension PopupEx on BuildContext {
       /*contentMargin ??= const EdgeInsets.all(kX); */
     } else {
       /*contentPadding ??= const EdgeInsets.all(kH);*/
-      contentMargin ??= const EdgeInsets.all(kX);
+      contentMargin ??= showArrow
+          ? arrowDirection == .left
+                ? const EdgeInsets.only(left: 8)
+                : arrowDirection == .right
+                ? const EdgeInsets.only(right: 8)
+                : arrowDirection == .up
+                ? const EdgeInsets.only(top: 16)
+                : arrowDirection == .down
+                ? const EdgeInsets.only(bottom: 16)
+                : const EdgeInsets.all(16)
+          : EdgeInsets.zero;
     }
 
     final that = this;
@@ -223,7 +237,7 @@ extension PopupEx on BuildContext {
         anchorRect: anchorRect,
         backgroundColor: backgroundColor ?? globalTheme.surfaceBgColor,
         radius: radius,
-        arrowColor: arrowColor ?? globalTheme.surfaceBgColor,
+        arrowColor: arrowColor ?? backgroundColor ?? globalTheme.surfaceBgColor,
         showArrow: showArrow,
         animate: animate,
         arrowDirection: arrowDirection,

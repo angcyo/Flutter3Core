@@ -2551,6 +2551,21 @@ extension DoubleEx on double {
   /// - [Picture.toImageSync]
   int get imageInt => round() /*toInt()*/ /*floor()*/;
 
+  /// 只有顶部具有圆角
+  /// [BorderRadius]
+  BorderRadius? toTopBorderRadius() => BorderRadius.only(
+    topLeft: Radius.circular(this),
+    topRight: Radius.circular(this),
+  );
+
+  /// 只有底部具有圆角
+  /// [BorderRadius]
+  BorderRadius? toBottomBorderRadius() => BorderRadius.only(
+    bottomLeft: Radius.circular(this),
+    bottomRight: Radius.circular(this),
+  );
+
+  /// 全部具有圆角
   /// [BorderRadius]
   BorderRadius? toBorderRadius() => BorderRadius.all(Radius.circular(this));
 }

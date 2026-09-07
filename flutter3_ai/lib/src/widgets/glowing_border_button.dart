@@ -10,18 +10,23 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 /// 发光边框按钮
 class GlowingBorderButton extends StatefulWidget {
   final String text;
-  final VoidCallback? onPressed;
+  final VoidCallback? onTap;
   final double width;
   final double height;
   final double borderRadius;
 
+  /// 背景填充颜色
+  @defInjectMark
+  final Color? fillColor;
+
   const GlowingBorderButton({
     super.key,
     required this.text,
-    this.onPressed,
+    this.onTap,
     this.width = 200,
-    this.height = 60,
+    this.height = 50,
     this.borderRadius = 30,
+    this.fillColor,
   });
 
   @override
@@ -77,7 +82,9 @@ class _GlowingBorderButtonState extends State<GlowingBorderButton>
             height: widget.height,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.black38 /*const Color(0xFF1E1E2C)*/,
+              color:
+                  widget.fillColor ??
+                  Colors.black38 /*const Color(0xFF1E1E2C)*/,
               borderRadius: BorderRadius.circular(widget.borderRadius),
             ),
             child: Text(
@@ -92,7 +99,7 @@ class _GlowingBorderButtonState extends State<GlowingBorderButton>
           ),
         );
       },
-    ).inkWell(widget.onPressed, borderRadiusNum: widget.borderRadius);
+    ).inkWell(widget.onTap, borderRadiusNum: widget.borderRadius);
   }
 }
 

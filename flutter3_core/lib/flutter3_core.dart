@@ -38,9 +38,9 @@ export 'src/view_model/jetpack/livedata.dart';
 export 'src/view_model/jetpack/viewmodel.dart';
 
 // @formatter:off
-
 part 'src/core/core_keys.dart';
 part 'src/core/hive_data_mix.dart';
+part 'src/core/screen_mixin.dart';
 part 'src/core/svg_core.dart';
 part 'src/debug/core_debug.dart';
 part 'src/debug/debug_file_mix.dart';

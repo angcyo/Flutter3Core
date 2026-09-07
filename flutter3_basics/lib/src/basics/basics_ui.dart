@@ -1916,13 +1916,15 @@ extension WidgetEx on Widget {
     double elevation = kDefaultElevation,
     Color? color,
     Color? shadowColor,
+    BorderRadius? borderRadius,
     bool enable = true,
   }) {
     return enable
         ? PhysicalModel(
             color: color ?? Colors.transparent,
-            shadowColor: shadowColor ?? Colors.black12,
+            shadowColor: shadowColor ?? Colors.black45 /*Colors.black12*/,
             elevation: elevation,
+            borderRadius: borderRadius,
             child: this,
           )
         : this;
@@ -2849,20 +2851,27 @@ extension WidgetEx on Widget {
     Key? key,
     ShapeBorder? shape,
     Color? color = Colors.transparent,
-    Color? shadowColor,
     Color? surfaceTintColor,
-    double elevation = 0,
     MaterialType type = MaterialType.canvas,
     Clip clipBehavior = Clip.none,
     BorderRadiusGeometry? borderRadius,
     double? radius,
     TextStyle? textStyle,
+    //--
+    bool? enableElevation,
+    double? elevation,
+    Color? shadowColor,
   }) => Material(
     key: key,
     borderOnForeground: true,
     color: color,
-    shadowColor: shadowColor,
-    elevation: elevation,
+    shadowColor:
+        shadowColor ?? (enableElevation == true ? Colors.black45 : null),
+    elevation: enableElevation == true
+        ? (elevation ?? kDefaultElevation)
+        : enableElevation == false
+        ? 0.0
+        : (elevation ?? 0.0),
     type: type,
     surfaceTintColor: surfaceTintColor,
     clipBehavior: clipBehavior,

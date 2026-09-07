@@ -8,10 +8,10 @@ part of '../../../flutter3_basics.dart';
 /// - [ShortcutMatcher]
 ///
 /// - [ShortcutConfigManager] √
-class ShortcutManager {
+class KeyboardShortcutManager {
   final List<ShortcutDescription> shortcutDescriptions;
 
-  ShortcutManager({List<ShortcutDescription>? shortcutDescriptions})
+  KeyboardShortcutManager({List<ShortcutDescription>? shortcutDescriptions})
     : shortcutDescriptions = shortcutDescriptions ?? [];
 
   @api
@@ -74,7 +74,7 @@ typedef ShortcutIntentAction =
     );
 
 /// 快捷方式描述
-/// - [ShortcutManager]
+/// - [KeyboardShortcutManager]
 /// - [ShortcutDescription]
 /// - [ShortcutConfigBean]
 class ShortcutDescription {
@@ -110,6 +110,6 @@ class ShortcutDescription {
   });
 }
 
-/// [ShortcutManager]的实例
+/// [KeyboardShortcutManager]的实例
 @globalInstance
-final $globalShortcutManager = ShortcutManager();
+final $globalShortcutManager = KeyboardShortcutManager();

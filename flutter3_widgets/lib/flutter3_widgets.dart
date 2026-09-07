@@ -55,7 +55,6 @@ export 'src/pub/swiper/swiper.dart';
 export 'src/pub/swiper/transformer_page_view/transformer_page_view.dart';
 
 // @formatter:off
-part 'src/screen_mixin.dart';
 part 'src/navigation/float_back_action_widget.dart';
 part 'src/navigation/navigate_ex.dart';
 part 'src/navigation/route_back_widget.dart';

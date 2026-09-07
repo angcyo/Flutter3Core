@@ -5,8 +5,8 @@ part of '../../flutter3_core.dart';
 /// @date 2025/12/23
 ///
 /// 用来显示全局快捷键的弹窗
-/// - [ShortcutManager]
-class ShortcutDialog extends StatefulWidget with DialogMixin {
+/// - [KeyboardShortcutManager]
+class KeyboardShortcutDialog extends StatefulWidget with DialogMixin {
   @override
   TranslationType get translationType => .scaleFade;
 
@@ -15,17 +15,17 @@ class ShortcutDialog extends StatefulWidget with DialogMixin {
   /// 通过此值, 用来关闭当前弹窗
   final ValueNotifier<bool>? closeDialogNotifier;
 
-  const ShortcutDialog({
+  const KeyboardShortcutDialog({
     super.key,
     required this.shortcutDescriptions,
     this.closeDialogNotifier,
   });
 
   @override
-  State<ShortcutDialog> createState() => _ShortcutDialogState();
+  State<KeyboardShortcutDialog> createState() => _KeyboardShortcutDialogState();
 }
 
-class _ShortcutDialogState extends State<ShortcutDialog> {
+class _KeyboardShortcutDialogState extends State<KeyboardShortcutDialog> {
   @override
   void initState() {
     widget.closeDialogNotifier?.addListener(_handleCloseDialog);
@@ -76,7 +76,7 @@ class _ShortcutDialogState extends State<ShortcutDialog> {
   }
 }
 
-/// 用来触发[ShortcutManager]对应的[ShortcutDialog]
+/// 用来触发[KeyboardShortcutManager]对应的[KeyboardShortcutDialog]
 class GlobalShortcutTriggerWidget extends StatefulWidget {
   final Widget child;
 
@@ -162,7 +162,7 @@ class _GlobalShortcutTriggerWidgetState
       _timer = timerDelay(widget.delay, () {
         if (_isShowing && $isAppResumed) {
           buildContext?.showWidgetDialog(
-            ShortcutDialog(
+            KeyboardShortcutDialog(
               shortcutDescriptions: $globalShortcutManager.shortcutDescriptions,
               closeDialogNotifier: _closeDialogNotifier,
             ),
@@ -179,8 +179,8 @@ class _GlobalShortcutTriggerWidgetState
   }
 }
 
-/// 自动显示[ShortcutDialog]全局快捷键列表对话框
-/// - [ShortcutManager]
+/// 自动显示[KeyboardShortcutDialog]全局快捷键列表对话框
+/// - [KeyboardShortcutManager]
 /// - [GlobalShortcutTriggerWidget]
 extension GlobalShortcutTriggerWidgetEx on Widget {
   /// 添加全局快捷键触发器

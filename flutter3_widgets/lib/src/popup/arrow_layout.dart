@@ -78,8 +78,7 @@ class ArrowLayout extends StatefulWidget {
     this.margin = const EdgeInsets.all(kX),
   }) : arrowSize =
            arrowSize ??
-           (arrowDirection == AxisDirection.up ||
-                   arrowDirection == AxisDirection.down
+           (arrowDirection == .up || arrowDirection == .down
                ? const Size(16, 8)
                : const Size(8, 16));
 
@@ -99,41 +98,42 @@ class _ArrowLayoutState extends State<ArrowLayout> {
     // 箭头相对于内容还需要的偏移
     double arrowOffsetContent = widget.arrowOffsetContent;
     if (widget.wrapChild) {
-      switch (widget.arrowDirection) {
-        case AxisDirection.up:
+      switch (arrowDirection) {
+        case .up:
           arrowOffsetContent +=
               (widget.margin?.top ?? widget.arrowSize.height) -
               widget.arrowSize.height;
           break;
-        case AxisDirection.down:
+        case .down:
           arrowOffsetContent +=
               (widget.margin?.bottom ?? widget.arrowSize.height) -
               widget.arrowSize.height;
           break;
-        case AxisDirection.left:
+        case .left:
           arrowOffsetContent +=
               (widget.margin?.left ?? widget.arrowSize.width) -
               widget.arrowSize.width;
           break;
-        case AxisDirection.right:
+        case .right:
           arrowOffsetContent +=
               (widget.margin?.right ?? widget.arrowSize.width) -
               widget.arrowSize.width;
           break;
       }
     }
-
-    final borderRadius = BorderRadius.circular(widget.radius ?? 8);
+    final borderRadius = BorderRadius.circular(
+      widget.radius ?? GlobalTheme.of(context).dialogRadius,
+    );
     return Stack(
       children: [
         (widget.wrapChild
                 ? Container(
                     padding: widget.padding,
                     margin: widget.margin?.copyWith(
-                      top: arrowDirection == AxisDirection.down ? 0 : null,
-                      bottom: arrowDirection == AxisDirection.up ? 0 : null,
-                      left: arrowDirection == AxisDirection.right ? 0 : null,
-                      right: arrowDirection == AxisDirection.left ? 0 : null,
+                      top: arrowDirection == .down ? 0 : null,
+                      bottom: arrowDirection == .up ? 0 : null,
+                      left: arrowDirection == .right ? 0 : null,
+                      right: arrowDirection == .left ? 0 : null,
                     ),
                     constraints: BoxConstraints(minWidth: widget.minWidth),
                     decoration: widget.backgroundColor != null
@@ -154,26 +154,18 @@ class _ArrowLayoutState extends State<ArrowLayout> {
             .childKeyed(widget.childKey),
         if (widget.showArrow)
           Positioned(
-            top:
-                widget.arrowDirection == AxisDirection.left ||
-                    widget.arrowDirection == AxisDirection.right
+            top: arrowDirection == .left || arrowDirection == .right
                 ? widget.arrowDirectionOffset
-                : widget.arrowDirection == AxisDirection.up
+                : arrowDirection == .up
                 ? arrowOffsetContent
                 : null,
-            bottom: widget.arrowDirection == AxisDirection.down
-                ? arrowOffsetContent
-                : null,
-            left:
-                widget.arrowDirection == AxisDirection.up ||
-                    widget.arrowDirection == AxisDirection.down
+            bottom: arrowDirection == .down ? arrowOffsetContent : null,
+            left: arrowDirection == .up || arrowDirection == .down
                 ? widget.arrowDirectionOffset
-                : widget.arrowDirection == AxisDirection.left
+                : arrowDirection == .left
                 ? arrowOffsetContent
                 : null,
-            right: widget.arrowDirection == AxisDirection.right
-                ? arrowOffsetContent
-                : null,
+            right: arrowDirection == .right ? arrowOffsetContent : null,
             child: CustomPaint(
               key: widget.arrowKey,
               size: widget.showArrow ? widget.arrowSize : Size.zero,
@@ -182,7 +174,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                     widget.arrowColor ??
                     widget.backgroundColor ??
                     Colors.transparent,
-                direction: widget.arrowDirection,
+                direction: arrowDirection,
               ),
             ),
           ),

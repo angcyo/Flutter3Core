@@ -90,28 +90,36 @@ class AlignmentAnchorLayout extends StatefulWidget {
 
     //MARK: - follower offset
     //偏移到自身的位置
-    offsetX += alignmentOffset?.dx ?? 0;
-    offsetY += alignmentOffset?.dy ?? 0;
-    if (followerAnchor == Alignment.topLeft) {
+    final alignmentOffsetX = alignmentOffset?.dx ?? 0;
+    final alignmentOffsetY = alignmentOffset?.dy ?? 0;
+    offsetX += alignmentOffsetX;
+    offsetY += alignmentOffsetY;
+    if (followerAnchor == .topLeft) {
       //def
-    } else if (followerAnchor == Alignment.topCenter) {
+    } else if (followerAnchor == .topCenter) {
       offsetX -= childSize.width / 2;
-    } else if (followerAnchor == Alignment.topRight) {
+    } else if (followerAnchor == .topRight) {
       offsetX -= childSize.width;
-    } else if (followerAnchor == Alignment.centerRight) {
+      if (targetAnchor == .topLeft || targetAnchor == .bottomLeft) {
+        offsetX = max(anchorRect.left + alignmentOffsetX, offsetX);
+      }
+    } else if (followerAnchor == .centerRight) {
       offsetX -= childSize.width;
       offsetY -= childSize.height / 2;
-    } else if (followerAnchor == Alignment.bottomRight) {
+      if (targetAnchor == .topRight || targetAnchor == .bottomRight) {
+        offsetX = min(anchorRect.right - alignmentOffsetX, offsetX);
+      }
+    } else if (followerAnchor == .bottomRight) {
       offsetX -= childSize.width;
       offsetY -= childSize.height;
-    } else if (followerAnchor == Alignment.bottomCenter) {
+    } else if (followerAnchor == .bottomCenter) {
       offsetX -= childSize.width / 2;
       offsetY -= childSize.height;
-    } else if (followerAnchor == Alignment.bottomLeft) {
+    } else if (followerAnchor == .bottomLeft) {
       offsetY -= childSize.height;
-    } else if (followerAnchor == Alignment.centerLeft) {
+    } else if (followerAnchor == .centerLeft) {
       offsetY -= childSize.height / 2;
-    } else if (followerAnchor == Alignment.center) {
+    } else if (followerAnchor == .center) {
       offsetX -= childSize.width / 2;
       offsetY -= childSize.height / 2;
     }
