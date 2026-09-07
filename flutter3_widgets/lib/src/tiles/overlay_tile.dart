@@ -234,6 +234,9 @@ class _OverlayTriggerWidgetState extends State<OverlayTriggerWidget> {
 /// - 支持共享拖拽位置的偏移量
 /// - 支持动画显示
 /// - 支持动画隐藏
+///
+/// - [OverlayEntryControlWidget] Overlay动画/控制
+///   - [AlignmentAnchorLayout] Overlay锚点对齐
 class OverlayEntryControlWidget extends StatefulWidget {
   /// 浮窗tag, 用于全局管理, 不指定, 不管理
   final String? tag;
@@ -261,7 +264,8 @@ class OverlayEntryControlWidget extends StatefulWidget {
   /// 获取缩放动画对齐的偏移
   /// - [Alignment]
   /// - [FractionalOffset]
-  final Alignment? Function()? onGetScaleAnimateAlign;
+  final Alignment? Function(Offset? dragOffset /*拖拽的偏移量*/)?
+  onGetScaleAnimateAlign;
 
   const OverlayEntryControlWidget({
     super.key,
@@ -331,7 +335,9 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     super.initState();
     _overlayEntry = widget.overlayEntry;
     if (widget.animate) {
-      _scaleAlignment = widget.onGetScaleAnimateAlign?.call();
+      _scaleAlignment = widget.onGetScaleAnimateAlign?.call(
+        dragOffsetLive.value,
+      );
       _waitScaleAlignment();
     }
     if (widget.tag != null) {
@@ -344,7 +350,9 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
   void _waitScaleAlignment() {
     if (_scaleAlignment == null && widget.onGetScaleAnimateAlign != null) {
       $nextFrame(() {
-        _scaleAlignment = widget.onGetScaleAnimateAlign?.call();
+        _scaleAlignment = widget.onGetScaleAnimateAlign?.call(
+          dragOffsetLive.value,
+        );
         _waitScaleAlignment();
       });
     } else {
@@ -368,7 +376,12 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
       child = FadeTransition(
         opacity: animateController,
         child: ScaleTransition(
-          alignment: _scaleAlignment ?? FractionalOffset(0, 0),
+          alignment:
+              _scaleAlignment ??
+              FractionalOffset(
+                dragOffsetLive.value?.dx ?? 0,
+                dragOffsetLive.value?.dy ?? 0,
+              ),
           scale: animateController,
           child: child,
         ),
@@ -625,7 +638,7 @@ extension OverlayEx on BuildContext {
           tag: tag ?? tag,
           overlayEntry: overlayEntry,
           onHide: onHide,
-          onGetScaleAnimateAlign: () => fractionalOffset,
+          onGetScaleAnimateAlign: (dragOffset) => fractionalOffset,
           child: AlignmentAnchorLayout(
             anchorChild: anchorChild ?? that,
             anchorAncestor: overlay.context.findRenderObject(),

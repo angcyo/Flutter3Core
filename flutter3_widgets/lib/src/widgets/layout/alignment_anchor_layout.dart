@@ -5,6 +5,9 @@ part of '../../../flutter3_widgets.dart';
 /// @date 2026/06/26
 ///
 /// 对齐锚点的布局, 在[Stack]中使用
+///
+/// - [OverlayEntryControlWidget] Overlay动画/控制
+///   - [AlignmentAnchorLayout] Overlay锚点对齐
 class AlignmentAnchorLayout extends StatefulWidget {
   /// 需要显示的内容
   final Widget? child;
@@ -117,15 +120,15 @@ class AlignmentAnchorLayout extends StatefulWidget {
     final parentHeight = parentSize.height;
     //MARK: - 溢出计算
     if (edgeOffset != null) {
-      if (offsetX < 0) {
-        offsetX = edgeOffset.dx ?? 0;
-      } else if (offsetX + childSize.width > parentWidth) {
-        offsetX = parentWidth - childSize.width - (edgeOffset.dx ?? 0);
+      if (offsetX < edgeOffset.dx) {
+        offsetX = edgeOffset.dx;
+      } else if (offsetX + childSize.width > parentWidth - edgeOffset.dx) {
+        offsetX = parentWidth - childSize.width - edgeOffset.dx;
       }
-      if (offsetY < 0) {
-        offsetY = edgeOffset.dy ?? 0;
-      } else if (offsetY + childSize.height > parentHeight) {
-        offsetY = parentHeight - childSize.height - (edgeOffset.dy ?? 0);
+      if (offsetY < edgeOffset.dy) {
+        offsetY = edgeOffset.dy;
+      } else if (offsetY + childSize.height > parentHeight - edgeOffset.dy) {
+        offsetY = parentHeight - childSize.height - edgeOffset.dy;
       }
     }
     return Offset(offsetX, offsetY);
@@ -165,6 +168,7 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
 
   @override
   Widget build(BuildContext context) {
+    // 监听Overlay拖拽偏移
     final dragOffsetLive = OverlayEntryControlStateScope.of(
       context,
     )?.dragOffsetLive;
