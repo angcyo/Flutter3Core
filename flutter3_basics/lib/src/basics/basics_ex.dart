@@ -1402,6 +1402,7 @@ extension StringEx on String {
   /// }
   /// ```
   String orI18n(String? i18nString, {String? lang}) {
+    //debugger();
     if (i18nString == null || i18nString.isEmpty) {
       return this;
     }
@@ -1409,8 +1410,12 @@ extension StringEx on String {
       final i18nMap = json.decode(i18nString);
       if (i18nMap is Map) {
         //globalConfig.locale
-        lang = lang ?? GlobalConfig.def.locale?.languageCode;
-        return i18nMap[lang] ?? this;
+        //GlobalConfig.def.locale?.languageCode;
+        final locale = GlobalConfig.def.locale ?? platformLocale;
+        return i18nMap[lang] ??
+            i18nMap[locale.toString()] ??
+            i18nMap[locale.languageCode] ??
+            this;
       }
     } catch (e) {
       assert(() {

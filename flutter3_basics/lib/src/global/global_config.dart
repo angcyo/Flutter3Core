@@ -309,10 +309,19 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// ```
   /// const locale = Locale.fromSubtags(languageCode: 'zh', countryCode: 'CN');
   /// ```
+  ///
+  /// # 中文简体 `zh_CN`
+  /// - [Locale.languageCode] : zh
+  /// - [Locale.countryCode] : CN
+  /// # 中文繁体 `zh_TW`
+  /// - [Locale.languageCode] : zh
+  /// - [Locale.countryCode] : TW
+  ///
   /// [L10nStringEx.toLocale]
   /// [Locale.fromSubtags]
   ///
   /// [platformLocale]
+  /// [platformLocales]
   @configProperty
   Locale? locale;
 
