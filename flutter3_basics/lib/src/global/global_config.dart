@@ -367,6 +367,10 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return themeMode == ThemeMode.light;
   }
 
+  /// 如果当前是暗色主题, 则返回[dark]否则返回[light]
+  @globalApi
+  T? darkOr<T>([T? dark, T? light]) => isThemeDark ? dark : light;
+
   /// 初始化主题
   /// - [locale] 指定当前语言, 不指定则跟随系统
   /// - [themeMode] 指定当前主题模式, 不指定则使用系统
