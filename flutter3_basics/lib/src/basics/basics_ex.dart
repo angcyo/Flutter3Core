@@ -2359,13 +2359,13 @@ extension IntEx on int {
     if (startBit < count || count < 1) {
       return this;
     }*/
+    final leftShift = max(0, startBit + 1 - count);
     //创建一个 mask
     int mask = 0;
     while (count > 0) {
       mask |= (1 << (count - 1));
       count--;
     }
-    final leftShift = max(0, startBit + 1 - count);
     if (value == 0) {
       // 用于清除指定位置的 bit
       return this & ~(mask << leftShift);
