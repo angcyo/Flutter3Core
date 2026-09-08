@@ -291,6 +291,6 @@ class RNiceException implements Exception {
     if (!isDebugFlag) {
       return message ?? "Exception!";
     }
-    return message ?? cause ?? "[${classHash()}]${super.toString()}";
+    return message ?? cause ?? "[${classHash()}]";
   }
 }
