@@ -219,6 +219,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
                   ),
             ]
             .row()!
+            .insets(bottom: kM)
             .constrainedMin(minHeight: minHeight ?? kDesktopTitleHeight)
             .paddingInsets(padding)
             .material();
