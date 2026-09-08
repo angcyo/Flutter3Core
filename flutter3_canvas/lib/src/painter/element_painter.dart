@@ -1247,8 +1247,8 @@ class ElementPainter extends IElementPainter {
   /// - [CanvasElementControlManager.onHandleElementPropertyChanged]
   ///
   void dispatchSelfPaintPropertyChanged(
-    dynamic old,
-    dynamic value,
+    Object? old,
+    Object? value,
     PainterPropertyType propertyType,
     Object? fromObj,
     UndoType? fromUndoType, {
@@ -1799,7 +1799,7 @@ class ElementPainter extends IElementPainter {
   @mustCallSuper
   void onSaveStateStackData(
     ElementStateStack stateStack,
-    Map<String, dynamic> dataMap,
+    Map<String, Object?> dataMap,
   ) {
     dataMap[keyPaintStyle] = paintStyle;
     dataMap[keyPaintColor] = paintColor;
@@ -1813,12 +1813,21 @@ class ElementPainter extends IElementPainter {
   @mustCallSuper
   void onRestoreStateStackData(
     ElementStateStack stateStack,
-    Map<String, dynamic>? dataMap,
+    Map<String, Object?>? dataMap,
   ) {
     if (dataMap != null) {
-      paintStyle = dataMap[keyPaintStyle];
-      paintColor = dataMap[keyPaintColor];
-      paintStrokeWidth = dataMap[keyPaintStrokeWidth];
+      final paintStyleValue = dataMap[keyPaintStyle];
+      if (paintStyleValue is PaintingStyle) {
+        paintStyle = paintStyleValue;
+      }
+      final paintColorValue = dataMap[keyPaintColor];
+      if (paintColorValue is Color) {
+        paintColor = paintColorValue;
+      }
+      final paintStrokeWidthValue = dataMap[keyPaintStrokeWidth];
+      if (paintStrokeWidthValue is double) {
+        paintStrokeWidth = paintStrokeWidthValue;
+      }
     }
   }
 
@@ -2265,8 +2274,8 @@ class ElementGroupPainter extends ElementPainter {
   /// [ElementPainter.dispatchSelfPaintPropertyChanged]
   void onChildPaintPropertyChanged(
     ElementPainter child,
-    dynamic old,
-    dynamic value,
+    Object? old,
+    Object? value,
     PainterPropertyType propertyType,
     Object? fromObj,
     UndoType? fromUndoType, {
@@ -3127,7 +3136,7 @@ class ElementStateStack {
   final Map<ElementPainter, PaintProperty?> elementPropertyMap = {};
 
   /// 元素的扩展信息保存
-  final Map<ElementPainter, Map<String, dynamic>> elementDataMap = {};
+  final Map<ElementPainter, Map<String, Object?>> elementDataMap = {};
 
   /// 元素的状态保存, 暂时不存储
   @implementation
@@ -3213,7 +3222,7 @@ class ElementStateStack {
     //stateMap[element] = element.paintState.copyWith();
 
     //data
-    final dataMap = <String, dynamic>{};
+    final dataMap = <String, Object?>{};
     element.onSaveStateStackData(this, dataMap);
     elementDataMap[element] = dataMap;
 

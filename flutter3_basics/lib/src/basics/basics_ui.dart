@@ -1177,7 +1177,7 @@ extension WidgetEx on Widget {
     KeyEventResult otherKeyEventResult = KeyEventResult.ignored,
     Key? key,
     //--
-    dynamic result,
+    Object? result,
     dynamic Function()? onResultAction,
     //--
     bool autofocus = true,
@@ -2450,7 +2450,7 @@ extension WidgetEx on Widget {
   Widget interceptPopResult(
     FutureOr Function() action, {
     BuildContext? context,
-    dynamic result,
+    Object? result,
     bool enable = true,
   }) {
     return enable

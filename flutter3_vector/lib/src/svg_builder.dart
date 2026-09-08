@@ -14,7 +14,7 @@ class SvgBuilder {
   static String? customSvgHeaderAnnotation;
 
   /// 格式化数字
-  static String? formatValue(dynamic value, {int digits = 6}) =>
+  static String? formatValue(Object? value, {int digits = 6}) =>
       value is num ? value.toDigits(digits: digits) : value.toString();
 
   /// svg xml头部
@@ -28,7 +28,7 @@ class SvgBuilder {
 
   /// 额外放在svg中根节点的属性
   @configProperty
-  Map<String, dynamic>? attributes;
+  Map<String, Object?>? attributes;
 
   /// 浮点小数点位数
   @configProperty
@@ -172,7 +172,7 @@ class SvgBuilder {
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     buffer.write('<line ');
     writeId(id: id, name: name);
@@ -220,7 +220,7 @@ class SvgBuilder {
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     buffer.write('<ellipse ');
     writeId(id: id, name: name);
@@ -254,12 +254,12 @@ class SvgBuilder {
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/rect
   ///
   void writeRect({
-    dynamic x,
-    dynamic y,
-    required dynamic width,
-    required dynamic height,
-    dynamic rx,
-    dynamic ry,
+    Object? x,
+    Object? y,
+    required Object? width,
+    required Object? height,
+    Object? rx,
+    Object? ry,
     Matrix4? transform,
     String fillRule = 'evenodd',
     bool? fill,
@@ -270,7 +270,7 @@ class SvgBuilder {
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     buffer.write('<rect ');
     writeId(id: id, name: name);
@@ -316,7 +316,7 @@ class SvgBuilder {
     @dp double? pathStep,
     @mm double? tolerance,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     if (path != null) {
       writeSvgPath(
@@ -359,9 +359,9 @@ class SvgBuilder {
     int? contourInterval /*轮廓枚举延迟*/,
     int? stepInterval /*步长枚举延迟*/,
     //--
-    dynamic debugLabel,
+    Object? debugLabel,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) async {
     if (path != null) {
       final svgPath = await path.toSvgPathStringAsync(
@@ -406,7 +406,7 @@ class SvgBuilder {
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     if (isNil(svgPath)) {
       return;
@@ -463,12 +463,12 @@ class SvgBuilder {
     double? scaleImageFactor,
     bool? invertScaleImageMatrix,
     //--
-    dynamic x,
-    dynamic y,
-    dynamic width,
-    dynamic height,
+    Object? x,
+    Object? y,
+    Object? width,
+    Object? height,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) async {
     if (image != null) {
       if (scaleImageFactor != null && scaleImageFactor != 1) {
@@ -518,16 +518,16 @@ class SvgBuilder {
   /// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
   void writeBase64Image(
     String? base64Image, {
-    dynamic x,
-    dynamic y,
-    dynamic width,
-    dynamic height,
+    Object? x,
+    Object? y,
+    Object? width,
+    Object? height,
     //--
     Matrix4? transform,
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) async {
     if (!isNil(base64Image)) {
       //SVG 2 之前的规范定义了xlink:href属性，现在该属性已被href属性废弃。如果您需要支持早期的浏览器版本，除了href属性之外，
@@ -565,16 +565,16 @@ class SvgBuilder {
   void writeText({
     String? text,
     void Function(SvgBuilder subBuilder)? textSpanAction,
-    dynamic x,
-    dynamic y,
-    dynamic fontSize,
+    Object? x,
+    Object? y,
+    Object? fontSize,
     Color? color,
     String? fontFamily,
     Matrix4? transform,
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     if (isNil(text) && textSpanAction == null) {
       return;
@@ -618,18 +618,18 @@ class SvgBuilder {
   /// https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/tspan
   void writeTSpan(
     String? text, {
-    dynamic x,
-    dynamic y,
-    dynamic dx,
-    dynamic dy,
-    dynamic fontSize,
+    Object? x,
+    Object? y,
+    Object? dx,
+    Object? dy,
+    Object? fontSize,
     Color? color,
     String? fontFamily,
     Matrix4? transform,
     String? id,
     String? name,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     if (!isNil(text)) {
       buffer.write('<tspan ');
@@ -682,7 +682,7 @@ class SvgBuilder {
     //--
     Matrix4? transform,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) {
     buffer.write('<g ');
     writeId(id: id, name: name);
@@ -719,7 +719,7 @@ class SvgBuilder {
     //--
     Matrix4? transform,
     //--
-    Map<String, dynamic>? attributes,
+    Map<String, Object?>? attributes,
   }) async {
     buffer.write('<g ');
     writeId(id: id, name: name);
@@ -898,7 +898,7 @@ class SvgBuilder {
   }
 
   /// 写入自定义的属性
-  void writeAttributes(Map<String, dynamic>? attributes) {
+  void writeAttributes(Map<String, Object?>? attributes) {
     attributes?.forEach((key, value) {
       if (key.contains("=")) {
         buffer.write('$key ');
@@ -911,7 +911,7 @@ class SvgBuilder {
   //endregion --属性--
 
   /// 格式化数字
-  String? formatSvgValue(dynamic value) => formatValue(value, digits: digits);
+  String? formatSvgValue(Object? value) => formatValue(value, digits: digits);
 
   @output
   String build() {
