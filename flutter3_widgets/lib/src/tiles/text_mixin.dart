@@ -184,6 +184,7 @@ mixin DesMixin {
                             desTextStyle ??
                             (themeStyle ? globalTheme.textDesStyle : null),
                         textAlign: desTextAlign,
+                        maxLines: null,
                       ))
                   ?.tooltip(desTooltip),
               isRequired == true
@@ -195,7 +196,7 @@ mixin DesMixin {
               mainAxisAlignment: .start,
               mainAxisSize: .min,
               gap: desGap ?? kL,
-              firstExtend: desTrailingWidget != null,
+              firstExtend: true,
               /*debugLabel: "buildLabelWidgetMixin",*/
             )
             ?.constrainedBox(desConstraints)
