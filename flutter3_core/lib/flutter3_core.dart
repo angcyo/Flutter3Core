@@ -275,8 +275,8 @@ bool get isDebugFlag =>
 /// - 调试下: 详细的提示
 /// - 发布下: 简单的提示
 class RNiceException implements Exception {
-  /// 异常的原因
-  final dynamic cause;
+  /// 异常的真正原因
+  final Object? cause;
 
   /// 异常的消息
   final String? message;
@@ -289,8 +289,8 @@ class RNiceException implements Exception {
   @override
   String toString() {
     if (!isDebugFlag) {
-      return message ?? "Exception!";
+      return message ?? cause?.runtimeType.toString() ?? "Exception!";
     }
-    return message ?? cause ?? "[${classHash()}]";
+    return message ?? cause?.toString() ?? "[${classHash()}]";
   }
 }
