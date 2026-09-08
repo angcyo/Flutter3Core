@@ -62,6 +62,12 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   @configProperty
   double? get screenBodyElevation => kDefaultElevation;
 
+  /// 屏幕是否显示在移动端
+  /// - [isScreenInMobile]
+  /// - [dialogFullScreen]
+  @configProperty
+  bool get isScreenInMobile => isMobile || isDebug;
+
   //--api
 
   /// 弹出当前页面
@@ -124,7 +130,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         if (showConfirmButton) buildConfirmButton(screenContext, globalTheme),
       ].row(gap: globalTheme.x)?.overlayDragTrigger();
     } else if (screenType.isDialogType) {
-      if (isMobile && screenType == .bottomDialog) {
+      if (isScreenInMobile && screenType == .bottomDialog) {
         return LeftCenterRightLayout(
           left: showCancelButton
               ? buildCancelButton(screenContext, globalTheme)
@@ -133,6 +139,10 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
           right: showConfirmButton
               ? buildConfirmButton(screenContext, globalTheme)
               : null,
+          priorityLeft: showCancelButton,
+          priorityRight: showConfirmButton,
+          /*leftMaxWidth: showCancelButton ? kInteractiveHeight : 0,
+          rightMaxWidth: showConfirmButton ? kInteractiveHeight : 0,*/
         );
       }
       return [
@@ -212,12 +222,28 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
 
   double? get dialogMinHeight => null;
 
-  double get dialogMinWidth => minOf($screenMinSize, kDialogMinWidth);
+  double? get dialogMinWidth =>
+      isScreenInMobile ? null : minOf($screenMinSize, kDialogMinWidth);
 
   /// - [screenWidth]
-  double get dialogMaxWidth => maxOf(dialogMinWidth, kDesktopDialogMinWidth);
+  double? get dialogMaxWidth => isScreenInMobile
+      ? double.infinity
+      : maxOf(dialogMinWidth ?? 0, kDesktopDialogMinWidth);
 
-  double? get dialogMaxHeight => maxOf(dialogMinWidth, $screenHeight * 5 / 6);
+  /// 包含标题的最大高度
+  /// - [screenHeight]
+  double? get dialogMaxHeight =>
+      maxOf(dialogMinWidth ?? 0, $screenHeight * 5 / 6);
+
+  /// 对话框是否全屏
+  ///
+  /// - [isScreenInMobile]
+  /// - [dialogFullScreen]
+  /// - [buildBottomDialogScaffold]
+  bool get dialogFullScreen => false /*isScreenInMobile*/;
+
+  /// 对话框模糊效果
+  double? get dialogBlurSigma => null /*isDebug ? kM : null*/;
 
   /// 构建[ScreenType.centerDialog]的脚手架
   /// 在桌面端, 按[LogicalKeyboardKey.escape]键, 会自动关闭对话框
@@ -229,12 +255,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
     final children = [
       titleWidget,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
     ];
@@ -269,13 +296,14 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
     final children = [
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
       titleWidget,
     ];
 
@@ -299,44 +327,161 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         .align(.topCenter);
   }
 
+  //MARK: - DialogPullBack
+
+  /// 是否允许对话框拖拽回退
+  bool get dialogPullBack => isScreenInMobile;
+
   /// 构建[ScreenType.bottomDialog]的脚手架
   /// 在桌面端, 按[LogicalKeyboardKey.escape]键, 会自动关闭对话框
   /// - [WidgetEx.interceptPopResult] 拦截对话框的返回
   @api
   Widget buildBottomDialogScaffold(
     ScreenStateContext screenContext,
-    ScreenBodyWidget body,
-  ) {
+    ScreenBodyWidget body, {
+    //MARK: - scroll
+    bool useScroll = true,
+    bool useRScroll = false,
+    @defInjectMark bool? shrinkWrap,
+    @defInjectMark bool? expandedScroll /*是否展开滚动内容*/,
+    Listenable? contentUpdateSignal /*内容更新信号, 需要[useRScroll]支持*/,
+    //MARK: - pullBack
+    bool showDragHandle = true,
+    PullBackController? pullBackController,
+    bool useScrollConsume = true,
+    bool maybePop = false /*使用[maybePop]还是[pop]*/,
+    double? pullMaxBound /*可以下拉的最大比例, 或者底部需要预留的高度*/,
+    void Function(BuildContext context)? onPullBack,
+    //--
+    bool? showTopShadow /*是否显示顶部阴影*/,
+  }) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
-    final children = [
+    // 顶部内容
+    final topChildren = [
+      if (dialogPullBack && showDragHandle) buildDragHandle(context),
       titleWidget,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
+    ];
+    // 滚动内容
+    final scrollChildren = [
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
+      //底部安全区
+      if (isScreenInMobile) empty.safeBottomArea(bottom: true),
     ];
 
-    final minWidth = dialogMinWidth;
+    final isFullScreen = dialogFullScreen;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
-    return children
-        .column(mainAxisSize: .min)!
-        .constrainedMin(
-          minWidth: minWidth,
-          maxWidth: dialogMaxWidth,
-          minHeight: dialogMinHeight,
-          maxHeight: dialogMaxHeight,
-        )
-        .material(
-          color: backgroundColor,
-          radius: screenBodyRadius ?? globalTheme.dialogRadius,
-          elevation: screenBodyElevation,
-          enableElevation: backgroundColor != Colors.transparent,
-        )
-        .align(.bottomCenter);
+    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
+    /*if (isMobile) {
+      return children
+          .column(mainAxisSize: .min)!
+          .constrainedMin(maxHeight: maxHeight)
+          .material(
+            color: backgroundColor,
+            radius: radius,
+          )
+          .align(.bottomCenter);
+    }*/
+    //最层内容
+    double? minWidth = dialogMinWidth;
+    if (minWidth != null && minWidth < 1) {
+      minWidth = screenWidth * minWidth;
+    }
+    double? maxWidth = dialogMaxWidth;
+    if (maxWidth != null && maxWidth < 1) {
+      maxWidth = screenWidth * maxWidth;
+    }
+    double? minHeight = dialogMinHeight;
+    if (minHeight != null && minHeight < 1) {
+      minHeight = screenHeight * minHeight;
+    }
+    double? maxHeight = dialogMaxHeight;
+    if (maxHeight != null && maxHeight < 1) {
+      maxHeight = screenHeight * maxHeight;
+    }
+    Widget child;
+    //滚动内容
+    if (useScroll || useRScroll) {
+      final scrollChild =
+          (useRScroll
+                  ? scrollChildren.rScroll(
+                      axis: .vertical,
+                      physics: dialogPullBack ? null : kScrollPhysics,
+                      /*childrenBuilder: scrollContentBuilder,
+                      updateSignal: contentUpdateSignal,*/
+                      shrinkWrap: shrinkWrap ?? !isFullScreen,
+                    )
+                  : scrollChildren.scroll(
+                      axis: .vertical,
+                      physics: dialogPullBack ? null : kScrollPhysics,
+                    ))
+              ?.expanded(enable: expandedScroll ?? isFullScreen);
+      child = [...topChildren, scrollChild].column(mainAxisSize: .min)!;
+    } else {
+      child = [...topChildren, ...scrollChildren].column(mainAxisSize: .min)!;
+    }
+    child = child.constrainedMin(
+      minWidth: minWidth,
+      maxWidth: maxWidth,
+      minHeight: dialogMinHeight,
+      maxHeight: maxHeight,
+      enable: !isFullScreen,
+    );
+    //带背景内容
+    child = child.material(
+      color: backgroundColor,
+      borderRadius: (radius).toTopBorderRadius(),
+      elevation: screenBodyElevation,
+      enableElevation:
+          backgroundColor != Colors.transparent && !isScreenInMobile,
+    );
+    //顶部阴影
+    showTopShadow ??= isScreenInMobile;
+    child = child.shadowDecorated(
+      shadowColor: showTopShadow ? kShadowColor : null,
+      radius: radius / 2,
+      decorationColor: Colors.transparent,
+      shadowOffset: const Offset(0, -4),
+    );
+    //下拉返回
+    child = child.pullBack(
+      enablePullBack: dialogPullBack,
+      pullBackController: pullBackController,
+      useScrollConsume: useScrollConsume,
+      pullMaxBound: pullMaxBound,
+      useMaybePop: maybePop,
+      onPullBack:
+          onPullBack ??
+          (context) {
+            //debugger();
+            if (pullMaxBound == null) {
+              final navigator = context.navigatorOf();
+              final route = context.modalRoute;
+              //debugger();
+              /*if (route?.isCurrent == true) {
+                    closeDialogIf(context, true, maybePop);
+                  } else {*/
+              /*}*/
+              if (maybePop) {
+                navigator.maybePop();
+              } else {
+                navigator.removeRouteIf(route);
+              }
+            }
+          },
+    );
+    //最外层, 全屏or半屏
+    child = child.align(.bottomCenter, enable: !isFullScreen);
+    //背景模糊效果
+    child = child.blur(sigma: dialogBlurSigma);
+    return child;
   }
 
   /// 构建[ScreenType.rightSlideDialog]的脚手架
@@ -349,12 +494,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
     final children = [
       titleWidget,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
     ];
@@ -362,6 +508,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     final minWidth = dialogMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
+    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
     return children
         .column(mainAxisSize: .max)!
         .constrainedMin(
@@ -371,7 +518,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         )
         .material(
           color: backgroundColor,
-          radius: screenBodyRadius ?? globalTheme.dialogRadius,
+          radius: radius,
           elevation: screenBodyElevation,
           enableElevation: backgroundColor != Colors.transparent,
         )
@@ -388,12 +535,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
     final children = [
       titleWidget,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
     ];
@@ -401,6 +549,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     final minWidth = dialogMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
+    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
     return children
         .column(mainAxisSize: .max)!
         .constrainedMin(
@@ -410,7 +559,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         )
         .material(
           color: backgroundColor,
-          radius: screenBodyRadius ?? globalTheme.dialogRadius,
+          radius: radius,
           elevation: screenBodyElevation,
           enableElevation: backgroundColor != Colors.transparent,
         )
@@ -436,12 +585,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
     final children = [
       titleWidget,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
     ];
@@ -449,6 +599,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     final minWidth = overlayMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
+    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
     return children
         .column(mainAxisSize: .min)!
         .constrainedMin(
@@ -459,7 +610,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         )
         .material(
           color: backgroundColor,
-          radius: screenBodyRadius ?? globalTheme.dialogRadius,
+          radius: radius,
           elevation: screenBodyElevation,
           enableElevation: backgroundColor != Colors.transparent,
         );
@@ -475,18 +626,20 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final globalTheme = GlobalTheme.of(screenContext.context);
+    final BuildContext context = screenContext.context;
+    final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
     final children = [
       titleWidget,
-      if (titleWidget != null) hLine(screenContext.context),
+      if (titleWidget != null) hLine(context),
       if (body is Widget) body,
       if (body is Iterable<Widget?>) ...body,
     ];
     final minWidth = overlayMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
+    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
     return children
         .column(mainAxisSize: .min)!
         .constrainedMin(
@@ -497,7 +650,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         )
         .material(
           color: backgroundColor,
-          radius: screenBodyRadius ?? globalTheme.dialogRadius,
+          radius: radius,
           elevation: screenBodyElevation,
           enableElevation: backgroundColor != Colors.transparent,
         );
@@ -718,7 +871,7 @@ extension ScreenWidgetEx on Widget {
     BuildContext? context, {
     bool? useRootNavigator,
     //MARK: - dialog
-    bool? barrierDismissible,
+    @defInjectMark bool? barrierDismissible,
     Color? barrierColor,
     bool useBarrierColorAnimate = true,
     //MARK: - popup

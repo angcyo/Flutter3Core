@@ -1318,7 +1318,7 @@ extension NavigatorStateDialogEx on NavigatorState {
   Future<T?> showWidgetDialog<T>(
     Widget widget, {
     BuildContext? context,
-    bool? barrierDismissible,
+    @defInjectMark bool? barrierDismissible,
     Color? barrierColor,
     String? barrierLabel,
     bool useSafeArea = true,

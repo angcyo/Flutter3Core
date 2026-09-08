@@ -214,15 +214,18 @@ List<Offset> centerOfCircleRadius(Offset p1, Offset p2, double dRadius) {
 
 /// 取2个数中的最大值
 T maxOf<T extends num>(T num1, T? num2) =>
-    num2 == null ? num1 : math.max(num1, num2);
+    num2 == null || num2.isFinite != true ? num1 : math.max(num1, num2);
 
 /// 取2个数中的最小值
 T minOf<T extends num>(T num1, T? num2) =>
-    num2 == null ? num1 : math.min(num1, num2);
+    num2 == null || num2.isFinite != true ? num1 : math.min(num1, num2);
 
 /// [value] 是否 <= [num]
 bool lessThan(num? value, num? num, {bool than = true, bool def = true}) {
   if (value == null || num == null) {
+    return def;
+  }
+  if (num.isFinite != true) {
     return def;
   }
   return than ? value <= num : value < num;
@@ -231,6 +234,9 @@ bool lessThan(num? value, num? num, {bool than = true, bool def = true}) {
 /// [value] 是否 >= [num]
 bool greaterThan(num? value, num? num, {bool than = true, bool def = true}) {
   if (value == null || num == null) {
+    return def;
+  }
+  if (num.isFinite != true) {
     return def;
   }
   return than ? value >= num : value > num;

@@ -1657,7 +1657,7 @@ extension WidgetEx on Widget {
     bool top = true,
     bool right = true,
     bool? bottom,
-    EdgeInsets minimum = EdgeInsets.zero,
+    EdgeInsets minimum = .zero,
     bool maintainBottomViewPadding = false,
   }) {
     return useSafeArea
@@ -1691,7 +1691,7 @@ extension WidgetEx on Widget {
     bool top = false,
     bool right = false,
     bool? bottom,
-    EdgeInsets minimum = EdgeInsets.zero,
+    EdgeInsets minimum = .zero,
     bool maintainBottomViewPadding = true,
   }) {
     return useSafeArea
@@ -2680,6 +2680,8 @@ extension WidgetEx on Widget {
     double? maxSize,
     double? maxWidth,
     double? maxHeight,
+    //
+    bool enable = true,
   }) {
     minWidth ??= width ?? minSize;
     minHeight ??= minSize;
@@ -4075,6 +4077,8 @@ extension RenderObjectEx on RenderObject {
       dx ??= offset?.dx ?? 0;
       dy ??= offset?.dy ?? 0;
       pd.offset = Offset(dx, dy);
+    } else {
+      debugger();
     }
   }
 
