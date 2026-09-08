@@ -2325,10 +2325,30 @@ extension IntEx on int {
 
   /// 从整型数中取第[bit]位的数
   /// [bit] 从右往左, 第几位, 1开始
-  int bit(int bit) => (this >> (math.max(bit, 1) - 1)) & 0x1;
+  int bit(int bit, [Endian endian = Endian.big, int bitCount = 32]) {
+    assert(bit >= 1 && bit <= bitCount, 'bit 必须在 1 到 $bitCount 之间');
+
+    int targetBit = bit;
+    if (endian == Endian.little) {
+      // 如果需要小端按字节翻转，或者简单的全位反转：
+      // 此处假设为从左往右/反向提取：
+      targetBit = bitCount - bit + 1;
+    }
+
+    return (this >> (targetBit - 1)) & 0x1;
+    /*=> endian == Endian.little
+        ? (this >> math.min(32 - math.max(bit - 1, 1), 31)) & 0x1
+        : (this >> (math.max(bit, 1) - 1)) & 0x1;*/
+  }
 
   /// [bit] 从右往左, 第几位, 0开始
-  int bitIndex(int bit) => (this >> math.max(bit, 1)) & 0x1;
+  /// ```
+  /// endian == Endian.little
+  ///       ? (this >> math.min(31 - math.max(bit, 0), 31)) & 0x1
+  ///       : (this >> math.max(bit, 1)) & 0x1;
+  /// ```
+  int bitIndex(int bit, [Endian endian = Endian.big, int bitCount = 32]) =>
+      this.bit(bit + 1, endian, bitCount);
 
   /// 获取从[startBit]开始的[count]个bit
   /// 从右到左, 从0开始, 获取[count]个bit对应的数值
@@ -2347,19 +2367,28 @@ extension IntEx on int {
   }
 
   /// 从右到左, 从1开始数, 在[startBit]开始设置1个bit的数据为[value]
-  int setBit(int startBit, int value) => setBits(startBit - 1, 1, value);
+  int setBit(int startBit, int value, [Endian endian = Endian.big]) =>
+      setBits(startBit - 1, 1, value, endian);
 
   /// 从右到左, 从0开始数, 在[startBit]开始设置[count]个bit的数据为[value]
   ///
   /// https://pub.dev/packages/bit_array
-  int setBits(int startBit, int count, int value) {
+  int setBits(
+    int startBit,
+    int count,
+    int value, [
+    Endian endian = Endian.big,
+  ]) {
     startBit = math.min(startBit, 32);
     count = math.min(count, 32);
     /*count = math.min(count, startBit + 1);
     if (startBit < count || count < 1) {
       return this;
     }*/
-    final leftShift = max(0, startBit + 1 - count);
+    int leftShift = max(0, startBit + 1 - count);
+    if (endian == Endian.little) {
+      leftShift = max(0, 32 - leftShift - count);
+    }
     //创建一个 mask
     int mask = 0;
     while (count > 0) {
