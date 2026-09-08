@@ -50,7 +50,7 @@ mixin AbsScrollPage {
     Color? backgroundColor,
     PreferredSizeWidget? appBar,
     Widget? body,
-    //--
+    //--SafeArea
     bool useSafeArea = true,
     bool safeAreaLeft = true,
     bool safeAreaTop = false,

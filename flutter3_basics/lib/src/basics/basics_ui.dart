@@ -1653,6 +1653,7 @@ extension WidgetEx on Widget {
   Widget safeArea({
     bool useSafeArea = true,
     bool useSliverSafeArea = false,
+    //--
     bool left = true,
     bool top = true,
     bool right = true,
@@ -1687,6 +1688,7 @@ extension WidgetEx on Widget {
   Widget safeBottomArea({
     bool useSafeArea = true,
     bool useSliverSafeArea = false,
+    //--
     bool left = false,
     bool top = false,
     bool right = false,
