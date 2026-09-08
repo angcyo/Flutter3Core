@@ -29,12 +29,19 @@ void main() {
   test("test set bit", () {
     //print("${0.setBits(0, 1, 1)}");
     //print("${0.setBits(0, 2, 1)}");
-    print(15.toRadixString(2));
-    print(0.setBit(0, 1).toRadixString(2));
-    print(0.setBit(1, 1).toRadixString(2));
-    print(0.setBit(2, 1).toRadixString(2));
-    print(0.setBit(3, 1).toRadixString(2));
-    print(0.setBits(0, 4, 0xffffffff).toRadixString(2));
+    //print(15.toRadixString(2));
+    print(0.setBit(0, 1).toRadixString(2));// 1
+    print(0.setBit(1, 1).toRadixString(2));// 1
+    print(0.setBit(2, 1).toRadixString(2));// 10
+    print(0.setBit(3, 1).toRadixString(2));// 100
+    print(0xffffffff.setBit(1, 0).toRadixString(2));// 11111111111111111111111111111110
+    print(0xffffffff.setBit(2, 0).toRadixString(2));// 11111111111111111111111111111101
+    print(0xffffffff.setBit(3, 0).toRadixString(2));// 11111111111111111111111111111011
+    print(0xffffffff.setBit(4, 0).toRadixString(2));// 11111111111111111111111111110111
+    print(0xffffffff.setBits(3, 4, 0).toRadixString(2));// 11111111111111111111111111110000
+    print(0.setBits(3, 4, 0xffffffff).toRadixString(2));// 1111
+    print(0.setBits(4, 4, 0xffffffff).toRadixString(2));// 11110
+    print(0.setBits(5, 4, 0xffffffff).toRadixString(2));// 111100
     print("...");
   });
 }

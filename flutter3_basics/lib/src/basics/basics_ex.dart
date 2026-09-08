@@ -2359,8 +2359,22 @@ extension IntEx on int {
     if (startBit < count || count < 1) {
       return this;
     }*/
+    //创建一个 mask
+    int mask = 0;
+    while (count > 0) {
+      mask |= (1 << (count - 1));
+      count--;
+    }
     final leftShift = max(0, startBit + 1 - count);
-    return this | ((value & ((1 << count) - 1)) << leftShift);
+    if (value == 0) {
+      // 用于清除指定位置的 bit
+      return this & ~(mask << leftShift);
+    } else {
+      // 设置指定位置的 bit
+      return this | (mask << leftShift);
+      //final leftShift = max(0, startBit + 1 - count);
+      //return this | ((value & ((1 << count) - 1)) << leftShift);
+    }
   }
 
   /// 当前字节数, 能表示的最大无符号整数
