@@ -268,13 +268,13 @@ class CanvasStyle {
   Color? axisPrimaryColorDark = const Color(0xff737373);
 
   /// 次刻度
-  /// dark #6f6f6f #d5d5d5 #ededed
-  Color axisSecondaryColor = const Color(0xffededed); //const Color(0xFFD7D7D7);
+  /// dark #6f6f6f #d5d5d5 #ededed 0xffd7d7d7
+  Color axisSecondaryColor = const Color(0xffe7e7e7); //const Color(0xFFD7D7D7);
   Color? axisSecondaryColorDark = const Color(0xff6f6f6f);
 
   /// 正常刻度
-  /// dark #6f6f6f #d5d5d5 #ededed
-  Color axisNormalColor = const Color(0xffededed); //const Color(0xFFD7D7D7);
+  /// dark #6f6f6f #d5d5d5 #ededed 0xffd7d7d7
+  Color axisNormalColor = const Color(0xffe7e7e7); //const Color(0xFFD7D7D7);
   /// 0xff6f6f6f 0xff3f3f3f
   Color? axisNormalColorDark = const Color(0xff3f3f3f);
 
