@@ -5,6 +5,12 @@ part of 'popup_mix.dart';
 /// @date 2024/05/15
 ///
 
+/// 箭头宽的大小
+const popupArrowWidth = 16.0;
+
+/// 箭头高的大小
+const popupArrowHeight = 8.0;
+
 /// 箭头布局
 /// [TrianglePainter]
 class ArrowLayout extends StatefulWidget {
@@ -79,8 +85,8 @@ class ArrowLayout extends StatefulWidget {
   }) : arrowSize =
            arrowSize ??
            (arrowDirection == .up || arrowDirection == .down
-               ? const Size(16, 8)
-               : const Size(8, 16));
+               ? const Size(popupArrowWidth, popupArrowHeight)
+               : const Size(popupArrowHeight, popupArrowWidth));
 
   @override
   State<ArrowLayout> createState() => _ArrowLayoutState();
@@ -129,12 +135,13 @@ class _ArrowLayoutState extends State<ArrowLayout> {
         (widget.wrapChild
                 ? Container(
                     padding: widget.padding,
-                    margin: widget.margin?.copyWith(
+                    margin: widget.margin /*?.copyWith(
+                      //预留出箭头的空间
                       top: arrowDirection == .down ? 0 : null,
                       bottom: arrowDirection == .up ? 0 : null,
                       left: arrowDirection == .right ? 0 : null,
                       right: arrowDirection == .left ? 0 : null,
-                    ),
+                    )*/,
                     constraints: BoxConstraints(minWidth: widget.minWidth),
                     decoration: widget.backgroundColor != null
                         ? BoxDecoration(
@@ -148,11 +155,16 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                             ],
                           )
                         : null,
+                    /*clipBehavior: .hardEdge,*/
                     child: widget.child,
-                  ).clipRadius(borderRadius: borderRadius)
+                  ).clipRadius(
+                    borderRadius: borderRadius,
+                    enable: widget.showArrow,
+                  ) /*.bounds()*/
                 : widget.child)
             .childKeyed(widget.childKey),
         if (widget.showArrow)
+          //箭头小部件
           Positioned(
             top: arrowDirection == .left || arrowDirection == .right
                 ? widget.arrowDirectionOffset

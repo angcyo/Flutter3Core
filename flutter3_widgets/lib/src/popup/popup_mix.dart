@@ -53,7 +53,7 @@ extension PopupEx on BuildContext {
     Offset? matchAnchorSizeOffset /*[matchAnchorSize]时的大小补偿*/,
     //--
     @defInjectMark Color? backgroundColor,
-    double? radius,
+    @defInjectMark double? radius,
     bool showArrow = false /*是否显示箭头*/,
     @defInjectMark Color? arrowColor /*箭头颜色*/,
     @defInjectMark AxisDirection? arrowDirection /*箭头方向*/,
@@ -187,21 +187,23 @@ extension PopupEx on BuildContext {
     bool animate = true,
     Color? barriersColor,
     double arrowDirectionMinOffset = 15,
-    EdgeInsets? contentPadding = const EdgeInsets.all(kH),
-    EdgeInsets? contentMargin,
+    @defInjectMark EdgeInsets? contentPadding,
+    @defInjectMark EdgeInsets? contentMargin /*不指定margin则无阴影效果*/,
     IgnorePointerType? barrierIgnorePointerType,
     TranslationType? translationType,
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
     //debugger();
+    contentPadding ??= const EdgeInsets.all(popupArrowHeight);
+    contentMargin ??= showArrow ? const EdgeInsets.all(popupArrowWidth) : null;
     if (matchAnchorSize) {
       /*contentPadding ??= const EdgeInsets.all(kH);*/
       /*contentMargin ??= const EdgeInsets.all(kX); */
     } else {
       /*contentPadding ??= const EdgeInsets.all(kH);*/
-      contentMargin ??= showArrow
-          ? arrowDirection == .left
+      /*contentMargin ??= showArrow
+          ? */ /*arrowDirection == .left
                 ? const EdgeInsets.only(left: 8)
                 : arrowDirection == .right
                 ? const EdgeInsets.only(right: 8)
@@ -209,16 +211,17 @@ extension PopupEx on BuildContext {
                 ? const EdgeInsets.only(top: 16)
                 : arrowDirection == .down
                 ? const EdgeInsets.only(bottom: 16)
-                : const EdgeInsets.all(16)
-          : EdgeInsets.zero;
+                : */ /* const EdgeInsets.all(16)
+          : EdgeInsets.zero;*/
     }
-
     final that = this;
     final navigator = Navigator.of(that, rootNavigator: rootNavigator);
     final ancestor = navigator.context.findRenderObject();
     anchorRect ??= anchorChild?.findRenderObject()?.getGlobalBounds(ancestor);
     anchorRect ??= findRenderObject()?.getGlobalBounds(ancestor) ?? Rect.zero;
     final globalTheme = GlobalTheme.of(that);
+    //过渡动画
+    translationType ??= child.getWidgetTranslationType();
     return navigator.push(
       ArrowPopupRoute(
         child: matchAnchorSize
