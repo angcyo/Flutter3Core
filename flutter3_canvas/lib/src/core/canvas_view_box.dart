@@ -120,14 +120,22 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
         final contentTemplate = contentManager.contentTemplate;
         final followRect = contentTemplate?.contentFollowRectInner;
         if (followRect != null) {
-          canvasDelegate.followRect(rect: followRect, animate: false);
+          canvasDelegate.followRect(
+            rect: followRect,
+            fit: contentManager.firstLayoutFollowFit,
+            animate: false,
+          );
         } else if (contentManager.firstLayoutFollowContent) {
           canvasDelegate.canvasFollowManager.followCanvasContent(
+            fit: contentManager.firstLayoutFollowFit,
             animate: false,
           );
         }
       } else if (contentManager.firstLayoutFollowContent) {
-        canvasDelegate.canvasFollowManager.followCanvasContent(animate: false);
+        canvasDelegate.canvasFollowManager.followCanvasContent(
+          animate: false,
+          fit: contentManager.firstLayoutFollowFit,
+        );
       }
     }
 

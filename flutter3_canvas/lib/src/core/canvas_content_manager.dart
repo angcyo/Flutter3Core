@@ -25,6 +25,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
 
   bool get firstLayoutFollowContent => canvasStyle.firstLayoutFollowTemplate;
 
+  BoxFit? get firstLayoutFollowFit => canvasStyle.firstLayoutFollowFit;
+
   //--
 
   /// 画布内容模版, 描述了内容大小, 最佳区域等信息
@@ -263,6 +265,8 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
     BoxFit? fit,
     VoidCallback? onUpdateAction,
     bool? restoreDefault,
+    //--
+    bool? isDebugDelayFlag,
   }) {
     rect ??= canvasContentFollowRectInner;
     if (restoreDefault != true && rect == null) {
@@ -283,6 +287,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
           animate: animate,
           fit: fit,
           onUpdateAction: onUpdateAction,
+          isDebugDelayFlag: true /*延迟调用*/,
         );
       });
       return true;
@@ -334,9 +339,12 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
   }
 
   /// 直接更新画布模板数据
+  /// - [template] 画布模板数据
+  /// - [followRect] 是否跟随画布模板数据
   @api
   void updateCanvasContentTemplate(
     CanvasContentTemplate? template, {
+    bool skipFollowUninitialized = true,
     bool followRect = true,
     bool? animate,
   }) {

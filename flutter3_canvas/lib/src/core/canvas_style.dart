@@ -35,6 +35,10 @@ class CanvasStyle {
   @configProperty
   bool firstLayoutFollowContent = true;
 
+  /// 首次布局时, 是否跟随内容的缩放方式
+  @configProperty
+  BoxFit? firstLayoutFollowFit = BoxFit.contain;
+
   //--CanvasAxisManager
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
