@@ -41,6 +41,8 @@ class InkButton extends StatelessWidget {
                   : null,
               customBorder: isCircleWell ? const CircleBorder() : null,
               splashColor: splashColor,
+              enable: enable,
+              useDisableCursorStyle: false,
             )
             .material() ??
         empty;

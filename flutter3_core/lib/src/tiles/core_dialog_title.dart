@@ -151,6 +151,7 @@ class CoreDialogTitle extends StatelessWidget {
                   }
                 },
               ).invisible(
+                // 全局效果: 是否启用 trailing 的隐藏效果
                 enable: globalTheme.enableTrailingInvisible,
                 invisible: !enableTrailing,
               );
