@@ -717,6 +717,9 @@ class ScrollContainerController extends ScrollController {
   }) {
     //debugger();
     final count = scrollContainerChildrenBounds.length;
+    if (count == 0) {
+      return;
+    }
     if (index < 0 || index >= count) {
       assert(() {
         debugger(when: count > 0);

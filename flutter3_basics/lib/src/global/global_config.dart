@@ -190,7 +190,7 @@ class GlobalConfigScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant GlobalConfigScope oldWidget) =>
-      isDebug ||
+      /*isDebug ||*/
       globalConfig != oldWidget.globalConfig ||
       globalConfigGet != oldWidget.globalConfigGet;
 }
