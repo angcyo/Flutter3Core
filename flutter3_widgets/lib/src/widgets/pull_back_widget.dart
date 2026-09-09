@@ -312,12 +312,12 @@ class _PullBackWidgetState extends State<PullBackWidget>
 
   @override
   Widget build(BuildContext context) {
-    assert(() {
+    /*assert(() {
       l.d(
         "[${classHash()}][${_pullBackController?.classHash()}]->${_pullBackController?.value}",
       );
       return true;
-    }());
+    }());*/
     Widget body = GestureDetector(
       behavior: widget.behavior /*HitTestBehavior.opaque*/,
       onVerticalDragStart: (details) {

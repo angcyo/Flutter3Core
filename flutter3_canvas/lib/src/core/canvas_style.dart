@@ -271,7 +271,8 @@ class CanvasStyle {
   /// 正常刻度
   /// dark #6f6f6f #d5d5d5 #ededed
   Color axisNormalColor = const Color(0xffededed); //const Color(0xFFD7D7D7);
-  Color? axisNormalColorDark = const Color(0xff6f6f6f);
+  /// 0xff6f6f6f 0xff3f3f3f
+  Color? axisNormalColorDark = const Color(0xff3f3f3f);
 
   @dp
   double axisPrimaryWidth = 1.toDpFromPx();

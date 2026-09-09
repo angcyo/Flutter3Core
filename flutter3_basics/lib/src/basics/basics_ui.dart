@@ -1721,24 +1721,32 @@ extension WidgetEx on Widget {
   /// 状态栏亮色模式
   /// 背景白色, 状态栏图标/文本为黑色
   /// - [SystemUiOverlayStyle.dark]
-  Widget lightStatusBar({Color? statusBarColor}) => systemUiOverlay(
-    style: SystemUiOverlayStyle(
-      statusBarColor: statusBarColor,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-    ),
-  );
+  Widget lightStatusBar(
+    BuildContext context, {
+    Color? statusBarColor,
+    bool? adaptiveDark = true,
+  }) => adaptiveDark == true && context.isThemeDark
+      ? darkStatusBar(context)
+      : systemUiOverlay(
+          statusBarColor: statusBarColor,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        );
 
   /// 状态栏暗色模式
   /// 背景黑色, 状态栏图标/文本为白色
   /// - [SystemUiOverlayStyle.light]
-  Widget darkStatusBar({Color? statusBarColor}) => systemUiOverlay(
-    style: SystemUiOverlayStyle(
-      statusBarColor: statusBarColor,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-    ),
-  );
+  Widget darkStatusBar(
+    BuildContext context, {
+    Color? statusBarColor,
+    bool? adaptiveLight = true,
+  }) => adaptiveLight == true && context.isThemeLight
+      ? lightStatusBar(context)
+      : systemUiOverlay(
+          statusBarColor: statusBarColor,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        );
 
   /// 系统ui覆盖
   /// 状态栏/导航栏样式覆盖, 支持自动恢复
@@ -1748,35 +1756,41 @@ extension WidgetEx on Widget {
   /// ```
   /// .systemUiOverlay(statusBarColor: Colors.redAccent) //设置状态栏的颜色
   /// ```
+  /// ```
+  /// statusBarColor: globalTheme.systemStatusBarColor,*/
+  /// systemNavigationBarColor: (($androidSdkIntCache ?? 28) >= 28)
+  ///             ? Colors.transparent
+  ///             : globalTheme.systemNavigationBarColor,*/
+  /// ```
   Widget systemUiOverlay({
     BuildContext? context,
+    //--
     SystemUiOverlayStyle? style,
+    //statusBar
     Color? statusBarColor,
     Brightness? statusBarBrightness,
     Brightness? statusBarIconBrightness,
     bool? systemStatusBarContrastEnforced,
+    //navigationBar
     Color? systemNavigationBarColor,
     Color? systemNavigationBarDividerColor,
     Brightness? systemNavigationBarIconBrightness,
     bool? systemNavigationBarContrastEnforced,
   }) {
-    final globalTheme = GlobalTheme.of(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value:
           style ??
-          SystemUiOverlayStyle(
-            systemNavigationBarColor:
-                systemNavigationBarColor ??
-                globalTheme.systemNavigationBarColor,
+          GlobalConfig.of(context).themeModeOverlayStyle.copyWith(
+            systemNavigationBarColor: systemNavigationBarColor,
             systemNavigationBarDividerColor: systemNavigationBarDividerColor,
-            systemNavigationBarIconBrightness:
-                systemNavigationBarIconBrightness,
             systemNavigationBarContrastEnforced:
                 systemNavigationBarContrastEnforced,
-            statusBarColor: statusBarColor ?? globalTheme.systemStatusBarColor,
+            statusBarColor: statusBarColor,
             statusBarBrightness: statusBarBrightness,
             statusBarIconBrightness: statusBarIconBrightness,
             systemStatusBarContrastEnforced: systemStatusBarContrastEnforced,
+            systemNavigationBarIconBrightness:
+                systemNavigationBarIconBrightness,
           ),
       child: this,
     );
@@ -3644,24 +3658,27 @@ extension ContextEx on BuildContext {
 
   /// 系统当前的亮度模式
   /// [Brightness]
-  bool get isSystemDark =>
-      platformMediaQueryData.platformBrightness == Brightness.dark;
+  ///
+  /// - [isSystemDark]
+  /// - [isThemeDark]
+  bool get isSystemDark => platformMediaQueryData.platformBrightness == .dark;
 
   /// 系统当前的亮度模式
   /// [Brightness]
-  bool get isSystemLight =>
-      platformMediaQueryData.platformBrightness == Brightness.light;
+  bool get isSystemLight => platformMediaQueryData.platformBrightness == .light;
 
   /// 当前主题是否是暗黑模式
+  /// - [isSystemDark]
+  /// - [isThemeDark]
   bool get isThemeDark {
-    final theme = GlobalConfig.def.themeData ?? Theme.of(this);
-    return theme.brightness == Brightness.dark;
+    final theme = GlobalConfig.of(this).themeData ?? Theme.of(this);
+    return theme.brightness == .dark;
   }
 
   /// 当前主题是否是亮色模式
   bool get isThemeLight {
-    final theme = GlobalConfig.def.themeData ?? Theme.of(this);
-    return theme.brightness == Brightness.light;
+    final theme = GlobalConfig.of(this).themeData ?? Theme.of(this);
+    return theme.brightness == .light;
   }
 
   /// 系统当前的语言环境

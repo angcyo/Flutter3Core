@@ -290,11 +290,39 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   //region ThemeData
 
   /// 主题模式
+  /// - null . [ThemeMode.system] : 跟随系统
   /// - [ThemeMode.system] 系统模式
-  /// - [ThemeMode.light] 亮色模式
+  /// - [ThemeMode.light] 亮色模式/浅色模式
   /// - [ThemeMode.dark] 暗色模式
   @configProperty
   ThemeMode themeMode = ThemeMode.system;
+
+  /// 根据主题模式获取当前的[Brightness]
+  Brightness get themeModeBrightness => themeMode == .system
+      ? platformBrightness
+      : themeMode == .light
+      ? .light
+      : .dark;
+
+  /// 导航栏图标的亮度模式
+  /// - 正好与主题模式亮度相反
+  Brightness get navigationBarBrightness =>
+      themeModeBrightness == .light ? .dark : .light;
+
+  /// [themeMode]主题模式对应的[SystemUiOverlayStyle]
+  SystemUiOverlayStyle get themeModeOverlayStyle => SystemUiOverlayStyle(
+    //statusBar
+    statusBarColor: globalTheme.systemStatusBarColor,
+    statusBarBrightness: themeModeBrightness,
+    statusBarIconBrightness: navigationBarBrightness,
+    systemStatusBarContrastEnforced: null /*false*/,
+    //navigationBar
+    systemNavigationBarColor: globalTheme.systemNavigationBarColor,
+    systemNavigationBarDividerColor:
+        globalTheme.systemNavigationBarDividerColor,
+    systemNavigationBarIconBrightness: navigationBarBrightness,
+    systemNavigationBarContrastEnforced: null /*false*/,
+  );
 
   /// 当前语言, 不指定则使用系统语言
   /// - [Locale.languageCode]
@@ -341,6 +369,8 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [ThemeData.textTheme]->[TextTheme]
   /// [TextTheme.displayLarge]->[TextStyle]
   /// [TextStyle.fontFamily]->[String] 字体
+  ///
+  /// - [themeMode]
   ThemeData? themeData;
 
   /// 当前的全局主题配置

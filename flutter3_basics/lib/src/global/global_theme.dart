@@ -58,10 +58,16 @@ class GlobalTheme {
   Color get primaryColorDark => const Color(0xff0cabea);
 
   /// 系统状态栏的颜色
+  /// 从 Android 15（API 35）开始，谷歌全面强制推行 全面屏（Edge-to-Edge） 绘制模式。
   Color get systemStatusBarColor => Colors.transparent;
 
   /// 系统导航栏的颜色
+  /// 从 Android 15（API 35）开始，谷歌全面强制推行 全面屏（Edge-to-Edge） 绘制模式。
+  /// 在 API 36 上，应用窗口强制延伸至导航栏和状态栏下方，导航栏背景始终为透明（或由系统进行动态混色控制），Window.setNavigationBarColor API 被废弃/停用。
   Color get systemNavigationBarColor => accentColor;
+
+  /// 系统导航栏的分割线颜色
+  Color? get systemNavigationBarDividerColor => null;
 
   /// 界面默认的背景颜色
   /// [themeWhiteColor]
@@ -372,6 +378,10 @@ class GlobalThemeDark extends GlobalTheme {
   @override
   Color get appBarForegroundColor =>
       textTitleStyle.color ?? const Color(0xfffcfbfc);
+
+  /// 系统导航栏的颜色
+  @override
+  Color get systemNavigationBarColor => primaryColorDark;
 
   @override
   Color get whiteBgColor => const Color(0xff2a2a2a);
