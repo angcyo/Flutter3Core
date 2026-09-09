@@ -125,10 +125,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     if (screenType == .overlay || screenType == .popup) {
       return [
-        buildTitle(screenContext, globalTheme).expanded(),
-        if (showCancelButton) buildCancelButton(screenContext, globalTheme),
-        if (showConfirmButton) buildConfirmButton(screenContext, globalTheme),
-      ].row(gap: globalTheme.x)?.overlayDragTrigger();
+            buildTitle(screenContext, globalTheme)?.expanded(),
+            if (showCancelButton) buildCancelButton(screenContext, globalTheme),
+            if (showConfirmButton)
+              buildConfirmButton(screenContext, globalTheme),
+          ]
+          .row(gap: globalTheme.x)
+          ?.overlayDragTrigger(enable: screenType == .overlay);
     } else if (screenType.isDialogType) {
       if (isScreenInMobile && screenType == .bottomDialog) {
         return LeftCenterRightLayout(
@@ -146,7 +149,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
         );
       }
       return [
-        buildTitle(screenContext, globalTheme).expanded(),
+        buildTitle(screenContext, globalTheme)?.expanded(),
         if (showCancelButton) buildCancelButton(screenContext, globalTheme),
         if (showConfirmButton) buildConfirmButton(screenContext, globalTheme),
       ].row(gap: globalTheme.x);
@@ -158,7 +161,10 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   /// - [buildTitleRow]
   ///   - [buildTitle]
   @overridePoint
-  Widget buildTitle(ScreenStateContext context, GlobalTheme globalTheme) {
+  Widget? buildTitle(
+    ScreenStateContext screenContext,
+    GlobalTheme globalTheme,
+  ) {
     return ("$runtimeType" * (isDebug ? 5 : 1))
         .text(style: globalTheme.textTitleStyle)
         .insets(all: globalTheme.x);
@@ -678,7 +684,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     if (screenType == .bottomDialog) {
       return .translationFade;
     }
-    if (screenType == .centerDialog) {
+    if (screenType == .centerDialog || screenType == .popup) {
       return .scaleFade;
     }
     if (screenType == .rightSlideDialog) {
@@ -728,14 +734,14 @@ typedef ScreenStateContext = Object;
 /// [ScreenStateMixin]
 mixin ScreenStateMixin<T extends StatefulWidget> on State<T> {
   /// 获取弹出结果
-  dynamic get screenPopResult => null;
+  Object? get screenPopResult => null;
 }
 
 extension ScreenStateContextEx on ScreenStateContext {
   //MARK: - ScreenStateMixin
 
   /// - [ScreenStateMixin.screenPopResult]
-  dynamic get screenPopResult => this is ScreenStateMixin
+  Object? get screenPopResult => this is ScreenStateMixin
       ? (this as ScreenStateMixin).screenPopResult
       : null;
 
@@ -882,6 +888,7 @@ extension ScreenWidgetEx on Widget {
     bool popupShowArrow = false /*是否显示箭头*/,
     @defInjectMark Color? popupArrowColor /*箭头颜色*/,
     @defInjectMark AxisDirection? popupArrowDirection /*箭头方向*/,
+    @defInjectMark double? popupRadius /*弹窗圆角大小*/,
     //MARK: - overlay
     bool? useRootOverlay,
     @defInjectMark Offset? edgeOffset,
@@ -897,6 +904,18 @@ extension ScreenWidgetEx on Widget {
     if (screenType == null) {
       return null;
     }
+    popupPreferredFollowerAlignment ??= .topRight;
+    if (popupShowArrow && popupArrowDirection == null) {
+      if (popupPreferredFollowerAlignment.isTop) {
+        popupArrowDirection = .up;
+      } else if (popupPreferredFollowerAlignment.isBottom) {
+        popupArrowDirection = .down;
+      } else if (popupPreferredFollowerAlignment.isLeft) {
+        popupArrowDirection = .left;
+      } else if (popupPreferredFollowerAlignment.isRight) {
+        popupArrowDirection = .right;
+      }
+    }
     final body = this;
     dynamic future;
     if (screenType == .popup) {
@@ -907,8 +926,7 @@ extension ScreenWidgetEx on Widget {
         anchorRect: popupAnchorRect,
         anchorChild: anchorChild ?? context,
         targetAnchor: targetAnchor ?? .bottomLeft,
-        preferredFollowerAlignment:
-            popupPreferredFollowerAlignment ?? .topRight,
+        preferredFollowerAlignment: popupPreferredFollowerAlignment,
         followerAnchor: followerAnchor,
         alignmentOffset: alignmentOffset ?? .zero,
         backgroundColor: popupBackgroundColor,
@@ -916,6 +934,7 @@ extension ScreenWidgetEx on Widget {
         arrowColor: popupArrowColor,
         arrowDirection: popupArrowDirection,
         contentPadding: .zero,
+        radius: popupRadius,
       );
     } else if (screenType == .overlay) {
       future = context?.showOverlay(
