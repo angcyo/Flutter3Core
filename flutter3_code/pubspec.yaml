@@ -53,7 +53,7 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/xml
-  image: ^4.9.1
+  image: ^4.9.2
 
   # https://pub.dev/packages/qr_flutter
   # QR.Flutter 是一个 Flutter 库，用于通过 Widget 或自定义 Painter 进行简单快速的 QR 代码渲染。

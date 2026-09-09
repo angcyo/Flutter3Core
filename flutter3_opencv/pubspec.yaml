@@ -18,14 +18,16 @@ dependencies:
   flutter:
     sdk: flutter
   # https://pub.dev/packages/opencv_dart
+  # bump opencv version to 4.13.0
   # https://pub.dev/packages/dartcv4
-  opencv_dart: ^2.2.1+4
+  opencv_dart: ^2.2.2
   # https://pub.dev/packages/dartcv4
   # https://pub.dev/packages/code_assets
   # https://pub.dev/packages/ffi
   # https://pub.dev/packages/hooks
   # https://pub.dev/packages/logging
   # https://pub.dev/packages/native_toolchain_cmake
+  # https://pub.dev/packages/record_use
   #dartcv4: ^2.2.1+4
 
   #opencv_dart: ^1.4.3
@@ -38,6 +40,12 @@ dependency_overrides:
   # https://pub.dev/packages/dartcv4
   # 系统需要安装 CMake
   #dartcv4: ^2.2.1 # 2.2.0 OpenCV 4.13.0
+
+  # https://pub.dev/packages/code_assets
+  # Because flutter3_opencv depends on opencv_dart ^2.2.2 which depends on dartcv4 ^2.2.2, dartcv4 ^2.2.2 is required.
+  #And because dartcv4 >=2.1.0+1 depends on code_assets ^1.0.0, code_assets ^1.0.0 is required.
+  #So, because flutter3_core depends on objective_c ^9.6.0 which depends on code_assets ^2.0.0, version solving failed.
+  #code_assets: ^2.0.0
 
 # 需要在主工程配置
 hooks:

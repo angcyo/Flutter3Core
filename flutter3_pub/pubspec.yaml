@@ -34,7 +34,7 @@ dependencies:
   flutter_html: ^3.0.0
   # https://pub.dev/packages/html
   # https://pub.dev/packages/csslib
-  html: ^0.15.6
+  html: 0.15.6
   # https://pub.dev/packages/csslib
   csslib: ^1.0.2
   # https://pub.dev/packages/list_counter
@@ -77,14 +77,17 @@ dependencies:
   #file_picker: ^12.0.0
   # Minimum OS Requirements / 最小支持系统版本
   # [iOS] minimum iOS version is now 14
-  file_picker: ^12.0.0
+  file_picker: ^12.2.0
 
   # https://pub.dev/packages/archive
+  # https://pub.dev/packages/path
+  # https://pub.dev/packages/posix
+  # archive: ^4.1.0
   # https://github.com/brendan-duncan/archive
   # https://pub.dev/packages/crypto
   # https://pub.dev/packages/path
   # https://pub.dev/packages/pointycastle
-  archive: ^4.1.0
+  archive: ^4.2.0
 
   # https://pub.dev/packages/photo_view
   # https://github.com/bluefireteam/photo_view

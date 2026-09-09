@@ -25,7 +25,7 @@ dependencies:
   # https://pub.dev/packages/http_parser
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/path
-  dio: ^5.11.0
+  dio: ^5.11.1
   # https://pub.dev/packages/dio_http2_adapter
   # https://pub.dev/packages/http2
   # https://pub.dev/packages/dio
@@ -125,7 +125,7 @@ dev_dependencies:
   # https://pub.dev/packages/googleapis
   # https://pub.dev/packages/_discoveryapis_commons
   # https://pub.dev/packages/http
-  googleapis: ^16.0.0
+  googleapis: ^17.0.0
   # https://pub.dev/packages/googleapis_auth
   # https://pub.dev/packages/crypto
   # https://pub.dev/packages/google_cloud
