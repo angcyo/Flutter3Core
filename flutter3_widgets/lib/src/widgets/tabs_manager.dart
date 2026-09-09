@@ -520,7 +520,7 @@ class TabsManagerWidget extends StatefulWidget {
 }
 
 class _TabsManagerWidgetState extends State<TabsManagerWidget>
-    with HookMixin, HookStateMixin {
+    with HookMixin, HookStateMixin, GlobalAppStateMixin {
   /// 是否有创建标签的按钮
   bool get haveAddNewTab => widget.controller.onCreateNewTabAction != null;
 
@@ -534,6 +534,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
   double? get tabItemHeight =>
       widget.axis == .vertical ? widget.tabHeight : null;
 
+  ///
   @override
   void initState() {
     super.initState();

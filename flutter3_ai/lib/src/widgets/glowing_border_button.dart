@@ -67,9 +67,9 @@ class _GlowingBorderButtonState extends State<GlowingBorderButton>
             glowBlurRadius: 8.0,
             gradientColors: [
               Colors.transparent,
-              globalTheme.accentColor,
-              globalTheme.primaryColor,
+              /*globalTheme.accentColor,*/
               globalTheme.primaryColorDark,
+              globalTheme.primaryColor,
               /*Colors.greenAccent,
               Colors.blueAccent,*/
               /*Color(0xFF00F2FE),
