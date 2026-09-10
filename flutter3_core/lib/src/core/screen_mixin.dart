@@ -889,6 +889,7 @@ extension ScreenWidgetEx on Widget {
     @defInjectMark Color? popupArrowColor /*箭头颜色*/,
     @defInjectMark AxisDirection? popupArrowDirection /*箭头方向*/,
     @defInjectMark double? popupRadius /*弹窗圆角大小*/,
+    @defInjectMark EdgeInsets? popupContentMargin /*弹窗内容边距, 影响阴影*/,
     //MARK: - overlay
     bool? useRootOverlay,
     @defInjectMark Offset? edgeOffset,
@@ -934,6 +935,7 @@ extension ScreenWidgetEx on Widget {
         arrowColor: popupArrowColor,
         arrowDirection: popupArrowDirection,
         contentPadding: .zero,
+        contentMargin: popupContentMargin,
         radius: popupRadius,
       );
     } else if (screenType == .overlay) {
