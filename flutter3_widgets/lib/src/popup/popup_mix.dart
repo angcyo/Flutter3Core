@@ -196,7 +196,10 @@ extension PopupEx on BuildContext {
   }) async {
     //debugger();
     contentPadding ??= const EdgeInsets.all(popupArrowHeight);
-    contentMargin ??= showArrow ? const EdgeInsets.all(popupArrowWidth) : null;
+    contentMargin ??= EdgeInsets.symmetric(
+      horizontal: maxOf(popupBlurRadiusHeight, popupArrowHeight),
+      vertical: maxOf(popupBlurRadiusHeight, popupArrowHeight),
+    );
     if (matchAnchorSize) {
       /*contentPadding ??= const EdgeInsets.all(kH);*/
       /*contentMargin ??= const EdgeInsets.all(kX); */

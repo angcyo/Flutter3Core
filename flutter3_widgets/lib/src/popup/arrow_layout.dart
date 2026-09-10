@@ -11,6 +11,9 @@ const popupArrowWidth = 16.0;
 /// 箭头高的大小
 const popupArrowHeight = 8.0;
 
+/// 模糊半径的高度
+const popupBlurRadiusHeight = 10.0;
+
 /// 箭头布局
 /// [TrianglePainter]
 class ArrowLayout extends StatefulWidget {
@@ -150,7 +153,7 @@ class _ArrowLayoutState extends State<ArrowLayout> {
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
+                                blurRadius: popupBlurRadiusHeight,
                               ),
                             ],
                           )
