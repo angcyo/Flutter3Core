@@ -6,6 +6,11 @@ part of './dialog.dart';
 /// @date 2024/04/05
 ///
 /// 消息提示对话框
+/// [title]
+/// [message]
+/// [action1]
+/// [action2]
+/// [action3]
 ///
 /// - [MessageDialog]
 /// - [DesktopMessageDialog]
