@@ -943,6 +943,11 @@ extension ScreenWidgetEx on Widget {
         radius: popupRadius,
       );
     } else if (screenType == .overlay) {
+      if (isMobile && anchorChild == null) {
+        //移动端, 在容器中显示, 则默认使用居中对齐方式
+        targetAnchor ??= .center;
+        followerAnchor ??= .center;
+      }
       future = context?.showOverlay(
         (ctx, entry) {
           return body;

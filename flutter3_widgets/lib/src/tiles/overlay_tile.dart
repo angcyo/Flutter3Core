@@ -346,6 +346,14 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     }
   }
 
+  @override
+  void dispose() {
+    if (widget.tag != null) {
+      _overlayEntryControlStateMap.remove(widget.tag);
+    }
+    super.dispose();
+  }
+
   /// 等待下一帧
   void _waitScaleAlignment() {
     if (_scaleAlignment == null && widget.onGetScaleAnimateAlign != null) {
@@ -622,7 +630,9 @@ extension OverlayEx on BuildContext {
         }
         if (hideOverlayOutsideTap == null) {
           assert(() {
-            l.w("[${overlayEntry.classHash()}]存在相同的浮窗[$tag]");
+            l.w(
+              "[${overlayEntry.classHash()}]存在相同的浮窗[$tag] mounted:${overlayEntry.mounted}",
+            );
             return true;
           }());
           return overlayEntry;
