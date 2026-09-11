@@ -255,7 +255,7 @@ Future wrapLoading(
         "[${debugLabel ?? "wrapLoading"}]耗时->${LTime.diffTime(startTime, endTime: endTime)}",
       );
       if (error != null) {
-        l.e('wrapLoading error->$error');
+        l.e('[${debugLabel ?? "wrapLoading"}]异常->$error');
       }
       return true;
     }());
