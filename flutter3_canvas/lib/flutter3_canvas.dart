@@ -12,6 +12,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_core/flutter3_core.dart' show ObjectLogEx;
 import 'package:flutter3_vector/flutter3_vector.dart';
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 

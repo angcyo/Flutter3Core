@@ -85,6 +85,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "libDownloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
     "libDragCanvas": MessageLookupByLibrary.simpleMessage("Drag Canvas"),
     "libEdit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "libExportAsImage": MessageLookupByLibrary.simpleMessage("Export as Image"),
+    "libExportOriginal": MessageLookupByLibrary.simpleMessage(
+      "Export Original",
+    ),
     "libExternalShare": MessageLookupByLibrary.simpleMessage("External Share"),
     "libFind": MessageLookupByLibrary.simpleMessage("Find"),
     "libFinish": MessageLookupByLibrary.simpleMessage("Finish"),

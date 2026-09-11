@@ -20,6 +20,8 @@ dependencies:
     path: ../flutter3_widgets
   flutter3_vector:
     path: ../flutter3_vector
+  flutter3_core:
+    path: ../flutter3_core
 
 dev_dependencies:
   flutter_test:

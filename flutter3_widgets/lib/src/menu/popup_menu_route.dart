@@ -145,6 +145,7 @@ const double _kMenuCloseIntervalEnd = 2.0 / 3.0;
 const double _kMenuScreenPadding = 8.0;
 
 // Positioning of the menu on the screen.
+@CallFrom("_PopupMenuRouteLayout")
 class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   _PopupMenuRouteLayout(
     this.position,
@@ -197,7 +198,10 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     // childSize: The size of the menu, when fully open, as determined by
     // getConstraintsForChild.
     double x;
-    if (position.left > position.right) {
+    if (position.right > childSize.width) {
+      //右边有空间, 则从右边弹出
+      x = size.width - position.right;
+    } else if (position.left > position.right) {
       // Menu button is closer to the right edge, so grow to the left, aligned to the right edge.
       x = size.width - position.right - childSize.width;
     } else if (position.left < position.right) {
@@ -210,22 +214,20 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
         TextDirection.ltr => position.left,
       };
     }
-    final Offset wantedPosition = Offset(x, y);
+    final wantedPosition = Offset(x, y);
     final Offset originCenter = position.toRect(Offset.zero & size).center;
-    final Iterable<Rect> subScreens =
-        DisplayFeatureSubScreen.subScreensInBounds(
-          Offset.zero & size,
-          avoidBounds,
-        );
+    final Iterable<Rect> subScreens = DisplayFeatureSubScreen.subScreensInBounds(
+      Offset.zero & size,
+      avoidBounds,
+    );
     final Rect subScreen = _closestScreen(subScreens, originCenter);
     return _fitInsideScreen(subScreen, childSize, wantedPosition);
   }
 
   Rect _closestScreen(Iterable<Rect> screens, Offset point) {
     Rect closest = screens.first;
-    for (final Rect screen in screens) {
-      if ((screen.center - point).distance <
-          (closest.center - point).distance) {
+    for (final screen in screens) {
+      if ((screen.center - point).distance < (closest.center - point).distance) {
         closest = screen;
       }
     }
@@ -239,19 +241,13 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     // edge of the screen in every direction.
     if (x < screen.left + _kMenuScreenPadding + padding.left) {
       x = screen.left + _kMenuScreenPadding + padding.left;
-    } else if (x + childSize.width >
-        screen.right - _kMenuScreenPadding - padding.right) {
+    } else if (x + childSize.width > screen.right - _kMenuScreenPadding - padding.right) {
       x = screen.right - childSize.width - _kMenuScreenPadding - padding.right;
     }
     if (y < screen.top + _kMenuScreenPadding + padding.top) {
       y = _kMenuScreenPadding + padding.top;
-    } else if (y + childSize.height >
-        screen.bottom - _kMenuScreenPadding - padding.bottom) {
-      y =
-          screen.bottom -
-          childSize.height -
-          _kMenuScreenPadding -
-          padding.bottom;
+    } else if (y + childSize.height > screen.bottom - _kMenuScreenPadding - padding.bottom) {
+      y = screen.bottom - childSize.height - _kMenuScreenPadding - padding.bottom;
     }
 
     return Offset(x, y);

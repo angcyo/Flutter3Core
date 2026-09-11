@@ -64,6 +64,8 @@
   "libTempSave": "暂存",
   "libRename": "重命名",
   "libCopy": "复制",
+  "libExportAsImage": "导出为图片",
+  "libExportOriginal": "导出原图",
   "libExternalShare": "外部分享",
   "libLoading": "加载中...",
   "libDownloading": "下载中...",

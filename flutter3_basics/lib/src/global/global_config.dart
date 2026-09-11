@@ -117,8 +117,8 @@ Future<bool> openFilePath(
 /// - 支持文件
 /// - 支持文件夹
 ///
-/// - save as
-/// - share
+/// - save as : 桌面端
+/// - share : 移动端
 /// 需要自定义[GlobalConfig.saveFileFn] 实现分享弹窗或save as弹窗
 @dsl
 @allPlatformFlag

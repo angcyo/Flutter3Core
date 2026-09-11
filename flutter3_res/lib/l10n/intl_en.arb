@@ -55,6 +55,8 @@
   "libTempSave": "Temp",
   "libRename": "Rename",
   "libCopy": "Copy",
+  "libExportAsImage": "Export as Image",
+  "libExportOriginal": "Export Original",
   "libExternalShare": "External Share",
   "libLoading": "Loading...",
   "libDownloading": "Downloading...",

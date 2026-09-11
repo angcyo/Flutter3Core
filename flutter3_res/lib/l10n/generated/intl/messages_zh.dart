@@ -71,6 +71,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "libDownloading": MessageLookupByLibrary.simpleMessage("下载中..."),
     "libDragCanvas": MessageLookupByLibrary.simpleMessage("拖拽画布"),
     "libEdit": MessageLookupByLibrary.simpleMessage("编辑"),
+    "libExportAsImage": MessageLookupByLibrary.simpleMessage("导出为图片"),
+    "libExportOriginal": MessageLookupByLibrary.simpleMessage("导出原图"),
     "libExternalShare": MessageLookupByLibrary.simpleMessage("外部分享"),
     "libFind": MessageLookupByLibrary.simpleMessage("查找"),
     "libFinish": MessageLookupByLibrary.simpleMessage("完成"),

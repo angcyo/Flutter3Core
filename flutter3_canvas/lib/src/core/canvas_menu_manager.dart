@@ -181,6 +181,9 @@ class CanvasMenuManager
 
     // 选中的元素
     final element = selectedElement;
+    //是否仅选中的1个图片元素
+    final isSingleImageElement = element is ImageElementPainter;
+
     //元素菜单
     final elementMenus = element?.buildPainterMenus(
       anchorPosition: anchorPosition,
@@ -194,7 +197,33 @@ class CanvasMenuManager
     final shortcutConfigManager =
         canvasDelegate.canvasKeyManager.shortcutConfigManager;
     return [
-      //--
+      //导出
+      if (isSingleImageElement)
+        buildMenuItem(globalTheme, libRes?.libExportOriginal, () {
+          final image =
+              element.originImage ??
+              element.painterImage ??
+              element.operateImage;
+          if (image != null) {
+            wrapLoading(() async {
+              _exportImage(
+                image,
+                "${element.elementName ?? nowTimestamp()}".connect(".png"),
+              );
+            }());
+          }
+        }),
+      buildMenuItem(globalTheme, libRes?.libExportAsImage, () {
+        final image = element?.elementOutputImage;
+        if (image != null) {
+          _exportImage(
+            image,
+            "${element?.elementName ?? nowTimestamp()}".connect(".png"),
+          );
+        }
+      }),
+
+      //--复制
       buildMenuItem(
         globalTheme,
         libRes?.libCopy,
@@ -205,6 +234,7 @@ class CanvasMenuManager
             .findShortcutConfig(id: CanvasKeyActions.copyElement.id)
             .firstOrNull,
       ),
+      //粘贴
       buildMenuItem(
         globalTheme,
         libRes?.libPaste,
@@ -216,6 +246,7 @@ class CanvasMenuManager
             .findShortcutConfig(id: CanvasKeyActions.pasteElement.id)
             .firstOrNull,
       ),
+      //删除
       buildMenuItem(
         globalTheme,
         libRes?.libDelete,
@@ -227,7 +258,7 @@ class CanvasMenuManager
             .findShortcutConfig(id: CanvasKeyActions.deleteSelectedElement.id)
             .firstOrNull,
       ),
-      //--
+      //--组合
       hLine(context).size(width: canvasDelegate.canvasStyle.menuItemWidth),
       buildMenuItem(
         globalTheme,
@@ -240,7 +271,7 @@ class CanvasMenuManager
             .findShortcutConfig(id: CanvasKeyActions.groupElement.id)
             .firstOrNull,
       ),
-
+      //--取消组合
       buildMenuItem(
         globalTheme,
         libRes?.libUngroup,
@@ -252,7 +283,7 @@ class CanvasMenuManager
             .findShortcutConfig(id: CanvasKeyActions.ungroupElement.id)
             .firstOrNull,
       ),
-      //--
+      //--隐藏元素
       hLine(context).size(width: canvasDelegate.canvasStyle.menuItemWidth),
       libRes?.libHideElement
           .text()
@@ -273,5 +304,18 @@ class CanvasMenuManager
         hLine(context).size(width: canvasDelegate.canvasStyle.menuItemWidth),
       ...otherMenus,
     ].scroll(axis: Axis.vertical)!;
+  }
+
+  /// 导出图片到本地
+  void _exportImage(UiImage image, String name) {
+    wrapLoading(() async {
+      final bytes = await image.toBytes();
+      await bytes?.writeToFile(fileName: name, useCacheFolder: true).getValue((
+        file,
+        error,
+      ) {
+        saveFilePath(file?.path, canvasDelegate.delegateContext, null);
+      });
+    }());
   }
 }

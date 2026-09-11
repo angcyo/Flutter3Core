@@ -1244,9 +1244,6 @@ extension DialogExtension on BuildContext {
               rootNavigator: useRootNavigator,
             ).overlay!.context.findRenderObject()!
             as RenderBox;
-
-    //位置信息
-    final RelativeRect relativePosition;
     if (position == null) {
       final popupMenuPosition = menuPosition ?? .over;
       switch (popupMenuPosition) {
@@ -1255,24 +1252,30 @@ extension DialogExtension on BuildContext {
         case .under:
           offset = Offset(0.0, anchor.size.height) + offset;
       }
+    }
+    final containerRect = Offset.zero & overlay.size;
+    final anchorLT = anchor.localToGlobal(offset, ancestor: overlay);
+    //位置信息, 左上右下各剩余多少空间
+    final RelativeRect relativePosition;
+    if (position == null) {
       relativePosition = RelativeRect.fromRect(
         Rect.fromPoints(
-          anchor.localToGlobal(offset, ancestor: overlay),
-          anchor.localToGlobal(
+          anchorLT,
+          anchor.size.bottomRight(anchorLT) + offset,
+          /*anchor.localToGlobal(
             anchor.size.bottomRight(Offset.zero) + offset,
             ancestor: overlay,
-          ),
+          ),*/
         ),
-        Offset.zero & overlay.size,
+        containerRect,
       );
     } else {
-      final anchorLT = anchor.localToGlobal(offset, ancestor: overlay);
       relativePosition = RelativeRect.fromRect(
         Rect.fromPoints(
           anchorLT + position + offset,
           anchorLT + position + offset,
         ),
-        Offset.zero & overlay.size,
+        containerRect,
       );
     }
 

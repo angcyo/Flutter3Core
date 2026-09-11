@@ -6,7 +6,13 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 图片元素绘制对象
 class ImageElementPainter extends ElementPainter {
+  /// 原图, 用于进行滤镜操作/调节操作等
+  /// - 当前仅用来标识
+  @configProperty
+  UiImage? originImage;
+
   /// 当前绘制的图片, 此图片有可能进行了滤镜处理
+  @configProperty
   UiImage? painterImage;
 
   /// 获取操作后的图片
