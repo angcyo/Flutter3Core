@@ -1571,6 +1571,7 @@ extension WidgetEx on Widget {
     BuildContext? context,
     Color? backgroundColor,
     bool resizeToAvoidBottomInset = true,
+    bool extendBody = false,
     //--
     PreferredSizeWidget? appBar,
     bool? useSliverAppBar,
@@ -1593,6 +1594,7 @@ extension WidgetEx on Widget {
         appBar: appBar,
         backgroundColor: backgroundColor ?? Colors.transparent,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        extendBody: extendBody,
         body: this,
       );
     }
@@ -1623,6 +1625,7 @@ extension WidgetEx on Widget {
           ),
       backgroundColor: backgroundColor ?? globalTheme.surfaceBgColor,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      extendBody: extendBody,
       body: this,
     );
   }
@@ -3670,16 +3673,10 @@ extension ContextEx on BuildContext {
   /// 当前主题是否是暗黑模式
   /// - [isSystemDark]
   /// - [isThemeDark]
-  bool get isThemeDark {
-    final theme = GlobalConfig.of(this).themeData ?? Theme.of(this);
-    return theme.brightness == .dark;
-  }
+  bool get isThemeDark => GlobalConfig.of(this).isThemeDark;
 
   /// 当前主题是否是亮色模式
-  bool get isThemeLight {
-    final theme = GlobalConfig.of(this).themeData ?? Theme.of(this);
-    return theme.brightness == .light;
-  }
+  bool get isThemeLight => !isThemeDark;
 
   /// 系统当前的语言环境
   /// [platformLocale]

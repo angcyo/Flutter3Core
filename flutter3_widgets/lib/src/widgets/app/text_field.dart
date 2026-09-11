@@ -1505,13 +1505,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     final normalBorder =
         widget.border ??
         switch (widget.inputBorderType) {
-          InputBorderType.outline ||
-          InputBorderType.fillOutline => OutlineInputBorder(
+          .outline || .fillOutline => OutlineInputBorder(
             gapPadding: widget.gapPadding,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             borderSide: normalBorderSide,
           ),
-          InputBorderType.underline => UnderlineInputBorder(
+          .underline => UnderlineInputBorder(
             borderSide: normalBorderSide,
             borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
           ),
@@ -1530,13 +1529,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     final focusedBorder =
         widget.focusedBorder ??
         switch (widget.inputBorderType) {
-          InputBorderType.outline ||
-          InputBorderType.fillOutline => OutlineInputBorder(
+          .outline || .fillOutline => OutlineInputBorder(
             gapPadding: widget.gapPadding,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             borderSide: focusedBorderSide,
           ),
-          InputBorderType.underline => UnderlineInputBorder(
+          .underline => UnderlineInputBorder(
             borderSide: focusedBorderSide,
             borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
           ),
@@ -1555,13 +1553,12 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     final disabledBorder =
         widget.disabledBorder ??
         switch (widget.inputBorderType) {
-          InputBorderType.outline ||
-          InputBorderType.fillOutline => OutlineInputBorder(
+          .outline || .fillOutline => OutlineInputBorder(
             gapPadding: widget.gapPadding,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             borderSide: disableBorderSide,
           ),
-          InputBorderType.underline => UnderlineInputBorder(
+          .underline => UnderlineInputBorder(
             borderSide: disableBorderSide,
             borderRadius: BorderRadius.circular(widget.underlineBorderRadius),
           ),
@@ -1571,7 +1568,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     // InputBorderType.fillOutline
     final fillColor =
         widget.fillColor ??
-        (widget.inputBorderType == InputBorderType.fillOutline
+        (widget.inputBorderType == .fillOutline
             ? globalTheme.itemWhiteSubBgColor
             : null);
     final floatingLabelStyle =
@@ -1594,8 +1591,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           contentPadding:
               widget.contentPadding ??
               switch (widget.inputBorderType) {
-                InputBorderType.outline || InputBorderType.fillOutline => null,
-                InputBorderType.underline => const EdgeInsets.all(12),
+                .outline || .fillOutline => null,
+                .underline => const EdgeInsets.all(12),
                 _ => const EdgeInsets.all(4),
               },
           //contentPadding: const EdgeInsets.only(top: 60),

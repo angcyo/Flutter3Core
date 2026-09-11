@@ -169,6 +169,8 @@ class AppLifecycleObserver extends AppLifecycleListener
   static LiveStream<EdgeInsets?> appViewInsetStream = $live();
 
   /// 底部键盘的高度监听
+  /// - [$isAppKeyboardShow]
+  ///
   /// - [MediaQueryData]
   /// - [MediaQueryData.viewInsets]
   /// - [platformMediaQueryData]
@@ -296,6 +298,35 @@ extension ViewInsetsCallbackWidgetEx on Widget {
   }
 }
 
+/// 监听底部插入的高度变化, 刷新界面
+mixin AppBottomInsetMixin<T extends StatefulWidget> on State<T> {
+  /// 订阅器
+  StreamSubscription<double?>? _subscription;
+
+  @override
+  void initState() {
+    _subscription = AppLifecycleObserver.appBottomInsetHeightStream.listen((
+      height,
+    ) {
+      onAppBottomInsetChanged(height);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  //MARK: - override
+
+  @overridePoint
+  void onAppBottomInsetChanged(double? height) {
+    updateState();
+  }
+}
+
 extension MediaQueryDataLogEx on MediaQueryData {
   String get log {
     return 'viewInsets:${viewInsets.log} viewPadding:${viewPadding.log} $platformBrightness';
@@ -316,17 +347,16 @@ extension SizeLogEx on Size {
 
 /// 判断App是否处于后台运行
 bool get $isAppPaused =>
-    AppLifecycleObserver.appLifecycleStateStream.value ==
-    AppLifecycleState.paused;
+    AppLifecycleObserver.appLifecycleStateStream.value == .paused;
 
 /// 判断App是否处于前台运行
 bool get $isAppResumed =>
-    AppLifecycleObserver.appLifecycleStateStream.value ==
-    AppLifecycleState.resumed;
+    AppLifecycleObserver.appLifecycleStateStream.value == .resumed;
 
-/// 底部插入的高度
+/// 底部插入的高度, 键盘的高度
 double get $appBottomInsetHeight =>
     AppLifecycleObserver.appBottomInsetHeightStream.value ?? 0;
 
 /// 判断App键盘是否显示
+/// - [AppLifecycleObserver.appBottomInsetHeightStream] 监听底部高度的变化
 bool get $isAppKeyboardShow => $appBottomInsetHeight > 0;

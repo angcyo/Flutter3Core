@@ -67,7 +67,14 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   /// - [isScreenInMobile]
   /// - [dialogFullScreen]
   @configProperty
-  bool get isScreenInMobile => isMobile || isDebug;
+  bool get isScreenInMobile => isMobile /*|| isDebug*/;
+
+  /// 屏幕中是否输入框小部件
+  /// - [Scaffold] 脚手架
+  /// - [AppBottomInsetMixin] 底部高度变化, 自动刷新界面
+  /// - [$isAppKeyboardShow] 是否显示了键盘
+  @configProperty
+  bool get screenHasTextField => false;
 
   //--api
 
@@ -97,14 +104,17 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   }
 
   /// 构建对应[screenType]的脚手架
+  ///
+  /// @return 统一返回内容的入口方法
   @api
+  @callPoint
   Widget buildScaffold(
     ScreenStateContext screenContext,
     ScreenBodyWidget body,
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    return switch (screenType) {
+    final screenWidget = switch (screenType) {
       .overlay => buildOverlayScaffold(screenContext, body),
       .page => throw UnimplementedError(),
       .topDialog => buildTopDialogScaffold(screenContext, body),
@@ -114,6 +124,15 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
       .leftSlideDialog => buildLeftSlideDialogScaffold(screenContext, body),
       .popup => buildPopupScaffold(screenContext, body),
     };
+    if (isDesktopOrWeb || !screenHasTextField) {
+      return screenWidget;
+    }
+    return screenWidget.scaffold(
+      extendBody: false,
+      /*backgroundColor: Colors.redAccent*/
+      /*bottom: true,
+      maintainBottomViewPadding: true,*/
+    );
   }
 
   /// 构建统一的标题整行小部件. 包含所有小部件
@@ -241,8 +260,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
 
   /// 包含标题的最大高度
   /// - [screenHeight]
-  double? get dialogMaxHeight =>
-      maxOf(dialogMinWidth ?? 0, $screenHeight * 5 / 6);
+  double? get dialogMaxHeight => 5 / 6;
 
   /// 对话框是否全屏
   ///
@@ -253,6 +271,38 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
 
   /// 对话框模糊效果
   double? get dialogBlurSigma => null /*isDebug ? kM : null*/;
+
+  /// 屏幕内容的约束
+  BoxConstraints? get screenBodyConstraints {
+    double? minWidth = dialogMinWidth;
+    if (minWidth != null && minWidth < 1) {
+      minWidth = screenWidth * minWidth;
+    }
+    double? maxWidth = dialogMaxWidth;
+    if (maxWidth != null && maxWidth < 1) {
+      maxWidth = screenWidth * maxWidth;
+    }
+    double? minHeight = dialogMinHeight;
+    if (minHeight != null && minHeight < 1) {
+      minHeight = screenHeight * minHeight;
+    }
+    double? maxHeight = dialogMaxHeight;
+    if (maxHeight != null && maxHeight < 1) {
+      maxHeight = screenHeight * maxHeight;
+    }
+    if (maxHeight != null) {
+      maxHeight = maxOf(minHeight ?? 0, maxHeight);
+    }
+    final isVerticalSlide = screenType.isVerticalSlide;
+    return BoxConstraints(
+      minWidth: minWidth ?? 0,
+      maxWidth: maxWidth ?? 0,
+      minHeight: isVerticalSlide ? 0 : (minHeight ?? 0),
+      maxHeight: isVerticalSlide
+          ? double.infinity
+          : (maxHeight ?? double.infinity),
+    );
+  }
 
   /// 构建[ScreenType.centerDialog]的脚手架
   /// 在桌面端, 按[LogicalKeyboardKey.escape]键, 会自动关闭对话框
@@ -275,17 +325,12 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
       if (body is Iterable<Widget?>) ...body,
     ];
 
-    final minWidth = dialogMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
+
     return children
         .column(mainAxisSize: .min)!
-        .constrainedMin(
-          minWidth: minWidth,
-          maxWidth: dialogMaxWidth,
-          minHeight: dialogMinHeight,
-          maxHeight: dialogMaxHeight, //最大是正方向
-        )
+        .constrainedMin(constraints: screenBodyConstraints)
         .material(
           color: backgroundColor,
           radius: screenBodyRadius ?? globalTheme.dialogRadius,
@@ -316,17 +361,11 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
       titleWidget,
     ];
 
-    final minWidth = dialogMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
     return children
         .column(mainAxisSize: .min)!
-        .constrainedMin(
-          minWidth: minWidth,
-          maxWidth: dialogMaxWidth,
-          minHeight: dialogMinHeight,
-          maxHeight: dialogMaxHeight,
-        )
+        .constrainedMin(constraints: screenBodyConstraints)
         .material(
           color: backgroundColor,
           radius: screenBodyRadius ?? globalTheme.dialogRadius,
@@ -399,25 +438,11 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
           .align(.bottomCenter);
     }*/
     //最层内容
-    double? minWidth = dialogMinWidth;
-    if (minWidth != null && minWidth < 1) {
-      minWidth = screenWidth * minWidth;
-    }
-    double? maxWidth = dialogMaxWidth;
-    if (maxWidth != null && maxWidth < 1) {
-      maxWidth = screenWidth * maxWidth;
-    }
-    double? minHeight = dialogMinHeight;
-    if (minHeight != null && minHeight < 1) {
-      minHeight = screenHeight * minHeight;
-    }
-    double? maxHeight = dialogMaxHeight;
-    if (maxHeight != null && maxHeight < 1) {
-      maxHeight = screenHeight * maxHeight;
-    }
     Widget child;
-    //滚动内容
     if (useScroll || useRScroll) {
+      //滚动内容
+      final expandedScrollWidget =
+          expandedScroll ?? (screenHasTextField || isFullScreen);
       final scrollChild =
           (useRScroll
                   ? scrollChildren.rScroll(
@@ -425,22 +450,23 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
                       physics: dialogPullBack ? null : kScrollPhysics,
                       /*childrenBuilder: scrollContentBuilder,
                       updateSignal: contentUpdateSignal,*/
-                      shrinkWrap: shrinkWrap ?? !isFullScreen,
+                      shrinkWrap: shrinkWrap ?? !expandedScrollWidget,
                     )
                   : scrollChildren.scroll(
                       axis: .vertical,
                       physics: dialogPullBack ? null : kScrollPhysics,
                     ))
-              ?.expanded(enable: expandedScroll ?? isFullScreen);
-      child = [...topChildren, scrollChild].column(mainAxisSize: .min)!;
+              ?.expanded(enable: expandedScrollWidget);
+      child = [
+        ...topChildren,
+        scrollChild,
+      ].column(mainAxisSize: .min)! /*.ih()*/;
     } else {
+      //不滚动内容
       child = [...topChildren, ...scrollChildren].column(mainAxisSize: .min)!;
     }
     child = child.constrainedMin(
-      minWidth: minWidth,
-      maxWidth: maxWidth,
-      minHeight: dialogMinHeight,
-      maxHeight: maxHeight,
+      constraints: screenBodyConstraints,
       enable: !isFullScreen,
     );
     //带背景内容
@@ -514,20 +540,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
       if (body is Iterable<Widget?>) ...body,
     ];
 
-    final minWidth = dialogMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
-    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
     return children
         .column(mainAxisSize: .max)!
-        .constrainedMin(
-          minWidth: minWidth,
-          maxWidth: dialogMaxWidth,
-          minHeight: double.infinity,
-        )
+        .constrainedMin(constraints: screenBodyConstraints)
         .material(
           color: backgroundColor,
-          radius: radius,
           elevation: screenBodyElevation,
           enableElevation: backgroundColor != Colors.transparent,
         )
@@ -555,20 +574,13 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
       if (body is Iterable<Widget?>) ...body,
     ];
 
-    final minWidth = dialogMinWidth;
     final backgroundColor =
         screenBackgroundColor ?? globalTheme.dialogSurfaceBgColor;
-    final radius = screenBodyRadius ?? globalTheme.dialogRadius;
     return children
         .column(mainAxisSize: .max)!
-        .constrainedMin(
-          minWidth: minWidth,
-          maxWidth: dialogMaxWidth,
-          minHeight: double.infinity,
-        )
+        .constrainedMin(constraints: screenBodyConstraints)
         .material(
           color: backgroundColor,
-          radius: radius,
           elevation: screenBodyElevation,
           enableElevation: backgroundColor != Colors.transparent,
         )
@@ -810,6 +822,10 @@ enum ScreenType {
       this == .centerDialog ||
       this == .rightSlideDialog ||
       this == .leftSlideDialog;
+
+  /// 是否是垂直Slide
+  bool get isVerticalSlide =>
+      this == .rightSlideDialog || this == .leftSlideDialog;
 }
 
 extension ScreenWidgetEx on Widget {

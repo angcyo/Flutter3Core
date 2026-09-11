@@ -48,6 +48,12 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
   @override
   final ScreenType screenType;
 
+  @override
+  bool get screenHasTextField => isMobile;
+
+  @override
+  double? get dialogMaxHeight => isMobile ? 2 / 3 : null;
+
   const AiPromptInputDialog({
     super.key,
     this.screenType = .centerDialog,
@@ -314,10 +320,10 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
             //toastInfo("send...${_providerConfigBean?.baseUrl}");
           },
         ).insets(bottom: kX),
-      ].column(gap: kX)!.material() /*.interceptPopResult(() {
+      ].column(gap: kX)!.material(),
+    ) /*.interceptPopResult(() {
         //debugger();
-      })*/,
-    );
+      })*/;
   }
 
   /// 选择的供应商是否是默认的

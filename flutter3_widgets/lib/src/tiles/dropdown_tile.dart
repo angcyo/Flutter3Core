@@ -55,7 +55,8 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
   final double iconSize;
 
   /// 文本样式
-  final TextStyle? style;
+  @defInjectMark
+  final TextStyle? textStyle;
 
   final AlignmentGeometry alignment;
 
@@ -90,7 +91,7 @@ class DropdownButtonTile extends StatefulWidget with TileMixin {
     this.onTextChanged,
     this.icon,
     this.iconSize = 24.0,
-    this.style,
+    this.textStyle,
     this.alignment = AlignmentDirectional.center,
     this.mainAxisSize,
     this.isDense = false,
@@ -111,6 +112,7 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = GlobalTheme.of(context);
     final labelWidget = widget
         .buildTextWidget(
           context,
@@ -120,10 +122,10 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
         )
         ?.expanded(enable: widget.mainAxisSize != MainAxisSize.min);
     final dropdown = DropdownButton(
-      items: _buildDropdownMenuItems(context),
+      items: _buildDropdownMenuItems(context, globalTheme),
       value: currentValueMixin,
       //文本样式
-      style: widget.style,
+      style: widget.textStyle ?? globalTheme.textGeneralStyle,
       icon: widget.icon,
       iconSize: widget.iconSize,
       itemHeight: kMinInteractiveDimension,
@@ -160,7 +162,10 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
   }
 
   /// [DropdownMenuItem]
-  List<DropdownMenuItem> _buildDropdownMenuItems(BuildContext context) {
+  List<DropdownMenuItem> _buildDropdownMenuItems(
+    BuildContext context,
+    GlobalTheme globalTheme,
+  ) {
     return [
       for (final (index, value) in (widget.dropdownValueList ?? []).indexed)
         DropdownMenuItem(
@@ -169,7 +174,13 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
           alignment: widget.itemAlignment,
           child: _transformItemWidget(
             context,
-            widgetOf(context, value, tryTextWidget: true) ?? empty,
+            widgetOf(
+                  context,
+                  value,
+                  tryTextWidget: true,
+                  textStyle: widget.textStyle ?? globalTheme.textGeneralStyle,
+                ) ??
+                empty,
             index,
             value,
             value == currentValueMixin,
@@ -300,6 +311,10 @@ class DropdownMenuTile extends StatefulWidget with TileMixin {
   /// 文本框是否只在有焦点时触发[onTextChanged]
   final bool textChangedOnFocus;
 
+  /// 文本样式
+  @defInjectMark
+  final TextStyle? textStyle;
+
   const DropdownMenuTile({
     super.key,
     this.label,
@@ -333,6 +348,7 @@ class DropdownMenuTile extends StatefulWidget with TileMixin {
     this.inputBorderType = InputBorderType.outline,
     this.inputLabel,
     this.inputLabelWidget,
+    this.textStyle,
     //--
     this.textChangedOnFocus = true,
   });
@@ -419,7 +435,7 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
         )
         ?.expanded(enable: widget.mainAxisSize != MainAxisSize.min);
     final dropdown = DropdownMenu(
-      dropdownMenuEntries: _buildDropdownMenuEntry(context),
+      dropdownMenuEntries: _buildDropdownMenuEntry(context, globalTheme),
       enabled: true,
       focusNode: focusNode,
       selectOnly: widget.selectOnly /*仅支持选择?*/,
@@ -474,6 +490,7 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
       showTrailingIcon: widget.showTrailingIcon,
       trailingIcon: widget.trailingIcon,
       leadingIcon: widget.leadingIcon,
+      textStyle: widget.textStyle ?? globalTheme.textGeneralStyle,
       decorationBuilder: widget.inputBorderType != null
           ? (ctx, controller) => buildInputDecoration(
               ctx,
@@ -524,12 +541,20 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
   }
 
   /// [DropdownMenuEntry]
-  List<DropdownMenuEntry> _buildDropdownMenuEntry(BuildContext context) {
+  List<DropdownMenuEntry> _buildDropdownMenuEntry(
+    BuildContext context,
+    GlobalTheme globalTheme,
+  ) {
     return [
       for (final value in widget.dropdownValueList ?? [])
         DropdownMenuEntry(
           label: "${textOf(value, context)}",
-          labelWidget: widgetOf(context, value, tryTextWidget: true),
+          labelWidget: widgetOf(
+            context,
+            value,
+            tryTextWidget: true,
+            textStyle: widget.textStyle ?? globalTheme.textGeneralStyle,
+          ),
           value: value,
           leadingIcon: null,
           trailingIcon: null,
