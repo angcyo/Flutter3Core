@@ -222,6 +222,7 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
               },
             )
             .insets(h: kX, top: highlightWidget == null ? kX : 0),
+        // 自定义API Base Url
         if (!_isDefaultProvider())
           SingleInputWidget(
             config: apiBaseInputConfig,
