@@ -680,6 +680,12 @@ extension StringEx on String {
 
   int charAt(int index) => codeUnitAt(index);
 
+  /// 从前开始取多少位字符串
+  /// - [substring]
+  String firstSubstring(int count) {
+    return substring(0, min(length, count));
+  }
+
   /// 从后开始取多少位字符串
   /// - [substring]
   String lastSubstring(int count) {
@@ -3375,6 +3381,10 @@ int arrayIndex(int row, int column, int width) {
 
 /// 用一维数组结构 存储二维数组数据
 extension ListIndexEx<T> on List<T> {
+  /// 转换成唯一数据列表
+  List<T> toUniqueList({bool growable = true}) =>
+      toSet().toList(growable: growable);
+
   /// 获取二维数组的指定某一行的所有数据
   /// [row] 二维数组的行, 从0开始
   /// [width] 二维数组的宽度

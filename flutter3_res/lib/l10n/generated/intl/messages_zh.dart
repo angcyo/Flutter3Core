@@ -32,6 +32,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAdapterNoData": MessageLookupByLibrary.simpleMessage("暂无数据"),
     "libAdapterNoMoreData": MessageLookupByLibrary.simpleMessage("~已经到底啦~"),
     "libAdd": MessageLookupByLibrary.simpleMessage("添加"),
+    "libAiApiKeyHint": MessageLookupByLibrary.simpleMessage("请输入API Key"),
+    "libAiBaseUrlHint": MessageLookupByLibrary.simpleMessage("请输入AI接口地址"),
+    "libAiGeneralTip": MessageLookupByLibrary.simpleMessage(
+      "当前操作需要模型具有<多模态>的能力",
+    ),
+    "libAiImageEditTip": MessageLookupByLibrary.simpleMessage(
+      "当前操作需要模型具有<图片编辑>的能力",
+    ),
+    "libAiImageGenerateTip": MessageLookupByLibrary.simpleMessage(
+      "当前操作需要模型具有<图片生成>的能力",
+    ),
+    "libAiModel": MessageLookupByLibrary.simpleMessage("模型"),
+    "libAiPrompt": MessageLookupByLibrary.simpleMessage("提示词"),
+    "libAiPromptHint": MessageLookupByLibrary.simpleMessage("请输入提示词"),
+    "libAiProvider": MessageLookupByLibrary.simpleMessage("提供商"),
+    "libAiSend": MessageLookupByLibrary.simpleMessage("发送"),
     "libBack": MessageLookupByLibrary.simpleMessage("返回"),
     "libBackgroundDownload": MessageLookupByLibrary.simpleMessage("后台下载"),
     "libCancel": MessageLookupByLibrary.simpleMessage("取消"),

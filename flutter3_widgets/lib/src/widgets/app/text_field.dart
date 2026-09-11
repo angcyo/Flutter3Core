@@ -154,6 +154,15 @@ class TextFieldConfig {
   /// [SingleInputWidget.maxLength]
   int? maxLength;
 
+  /// 已经显示了密码时图标的提示文字
+  /// - `隐藏密文`
+  @defInjectMark
+  String? showObscureTooltip;
+
+  /// - `显示密文`
+  @defInjectMark
+  String? hideObscureTooltip;
+
   //endregion 覆盖TextField的属性,优先级低
 
   //region 回调方法
@@ -321,6 +330,8 @@ class TextFieldConfig {
     this.minLines,
     this.maxLines,
     this.maxLength,
+    this.showObscureTooltip,
+    this.hideObscureTooltip,
     //MARK: auto complete
     this.autoOptionsBuilder,
     this.autoDisplayStringForOption = RawAutocomplete.defaultStringForOption,
@@ -757,13 +768,11 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
 
   ObscureNode(this.obscureText, {this.obscuringCharacter = '•'});
 
-  /// 是否要显示密码
   bool _showObscureText = false;
 
-  /// 是否隐藏密码
+  /// 是否处于显示密码状态
   bool get showObscureText => _showObscureText;
 
-  /// 显示密码
   set showObscureText(bool value) {
     if (_showObscureText != value) {
       _showObscureText = value;
@@ -1321,8 +1330,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             setState(() {});
           },
           tooltip: widget.config.obscureNode.showObscureText
-              ? libRes?.libShowPassword
-              : libRes?.libHidePassword,
+              ? widget.config.showObscureTooltip ?? libRes?.libHidePassword
+              : widget.config.hideObscureTooltip ?? libRes?.libShowPassword,
           icon: Icon(
             widget.config.obscureNode.showObscureText
                 ? Icons.visibility

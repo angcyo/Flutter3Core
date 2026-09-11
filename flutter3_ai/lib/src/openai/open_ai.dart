@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:http/http.dart' as http;
 import 'package:openai_dart/openai_dart.dart';
 
 ///
@@ -76,22 +77,71 @@ class OpenAI {
   ///   //生成一张图片，要求图片中包含一个机器人，机器人正在骑一辆自行车。优化上述提示词并翻译成英文.
   ///   'Generate an image of a robot riding a bicycle.'
   ///   ```
+  ///
+  /// - [ImagesResource._generateEndpoint]
+  /// - [ImagesResource.generate]
   @api
   @implementation
-  Future<UiImage?> imageGenerate(String prompt, {String? model}) async {
-    final response = await _client?.images.generate(
-      ImageGenerationRequest(
-        model: model ?? _model,
-        prompt: prompt,
-        size: ImageSize.auto,
-        quality: ImageQuality.auto,
-        /*background: ImageBackground.transparent*/
-        /*outputFormat: ImageOutputFormat.png*/
-      ),
+  Future<UiImage?> imageGenerate(
+    String prompt, {
+    String? model,
+    ImageSize? size,
+  }) async {
+    final images = _client?.images;
+    if (images == null) {
+      return null;
+    }
+    final request = ImageGenerationRequest(
+      model: model ?? _model,
+      prompt: prompt,
+      size: size ?? ImageSize.auto,
+      quality: ImageQuality.auto,
+      /*background: ImageBackground.transparent*/
+      /*outputFormat: ImageOutputFormat.png*/
     );
-    debugger();
+    images.ensureNotClosed?.call();
+    if (request.stream ?? false) {
+      throw ArgumentError(
+        'generate() does not support stream: true. The server returns SSE '
+        'for streaming generations, which this method cannot parse. Use '
+        'generateStream() instead.',
+      );
+    }
+    final generateEndpoint = "/images/generations";
+    final url = images.requestBuilder.buildUrl(generateEndpoint);
+    final headers = images.requestBuilder.buildHeaders();
+    final httpRequest = http.Request('POST', url)
+      ..headers.addAll(headers)
+      ..body = jsonEncode(request.toJson());
+    final httpResponse = await images.interceptorChain.execute(httpRequest);
+    final jsonMap = jsonDecode(httpResponse.body) as Map<String, dynamic>;
+    if (jsonMap['usage'] != null) {
+      //OpenRouter api 接口兼容
+      final usageMap = jsonMap['usage'] as Map<String, dynamic>;
+      usageMap.putIfAbsent(
+        'total_tokens',
+        () =>
+            (usageMap['prompt_tokens'] ?? 0) +
+            (usageMap['completion_tokens'] ?? 0),
+      );
+      usageMap.putIfAbsent(
+        'input_tokens',
+        () => usageMap['prompt_tokens'] ?? 0,
+      );
+      usageMap.putIfAbsent(
+        'output_tokens',
+        () => usageMap['completion_tokens'] ?? 0,
+      );
+      usageMap.putIfAbsent(
+        'input_tokens_details',
+        () => {"text_tokens": 0, "image_tokens": 0},
+      );
+    }
+    final response = ImageResponse.fromJson(jsonMap);
+    //final response = await images.generate(request);
+    //debugger();
     // GPT Image 2 always returns base64 — decode and save.
-    final b64Json = response?.data.first.b64Json;
+    final b64Json = response.data.first.b64Json;
     if (b64Json == null) {
       return null;
     }

@@ -82,7 +82,7 @@ typedef DoubleValueChanged<T1, T2> = void Function(T1 value1, T2 value2);
 typedef FutureValueCallback<T> = FutureOr Function(T value);
 
 /// 回调一个值和一个错误
-typedef ValueErrorCallback = dynamic Function(dynamic value, dynamic error);
+typedef ValueErrorCallback = dynamic Function(dynamic value, Object? error);
 
 /// 进度回调
 /// [count] 已发送的数据量

@@ -34,6 +34,24 @@ class MessageLookup extends MessageLookupByLibrary {
       "~It\'s the end~",
     ),
     "libAdd": MessageLookupByLibrary.simpleMessage("Add"),
+    "libAiApiKeyHint": MessageLookupByLibrary.simpleMessage("Input API Key"),
+    "libAiBaseUrlHint": MessageLookupByLibrary.simpleMessage(
+      "Enter AI API URL",
+    ),
+    "libAiGeneralTip": MessageLookupByLibrary.simpleMessage(
+      "Requires multimodal model",
+    ),
+    "libAiImageEditTip": MessageLookupByLibrary.simpleMessage(
+      "Requires image edit support",
+    ),
+    "libAiImageGenerateTip": MessageLookupByLibrary.simpleMessage(
+      "Requires image gen support",
+    ),
+    "libAiModel": MessageLookupByLibrary.simpleMessage("Model"),
+    "libAiPrompt": MessageLookupByLibrary.simpleMessage("Prompt"),
+    "libAiPromptHint": MessageLookupByLibrary.simpleMessage("Input prompt"),
+    "libAiProvider": MessageLookupByLibrary.simpleMessage("Provider"),
+    "libAiSend": MessageLookupByLibrary.simpleMessage("Send"),
     "libBack": MessageLookupByLibrary.simpleMessage("Back"),
     "libBackgroundDownload": MessageLookupByLibrary.simpleMessage(
       "Bg Download",

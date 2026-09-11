@@ -60,7 +60,7 @@ OverlayEntry? toast(
   // 背景模糊的伽马值
   double? bgBlurSigma,
   // 显示的位置
-  OverlayPosition position = OverlayPosition.bottom,
+  OverlayPosition position = .bottom,
   // 显示的动画
   OverlayAnimate? animate,
   // 动态toast数据监听

@@ -33,7 +33,8 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   /// - [GlobalTheme.dialogSurfaceBgColor]
   @defInjectMark
   @configProperty
-  Color? get screenBackgroundColor => null;
+  Color? get screenBackgroundColor =>
+      screenType == .popup ? Colors.transparent : null;
 
   /// 是否显示取消按钮
   ///  - [buildTitleRow]
@@ -171,6 +172,8 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   }
 
   /// 构建取消按钮小部件
+  /// - [Assets.svg.coreBack]
+  /// - [Assets.svg.coreClose]
   @overridePoint
   Widget buildCancelButton(
     ScreenStateContext screenContext,
@@ -734,6 +737,7 @@ typedef ScreenStateContext = Object;
 /// [ScreenStateMixin]
 mixin ScreenStateMixin<T extends StatefulWidget> on State<T> {
   /// 获取弹出结果
+  @output
   Object? get screenPopResult => null;
 }
 

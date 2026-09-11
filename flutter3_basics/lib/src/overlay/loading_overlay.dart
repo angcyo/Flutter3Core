@@ -170,6 +170,7 @@ Future wrapLoading(
   Duration? timeout,
   VoidCallback? onStart,
   ValueErrorCallback? onEnd /*超时异常回调*/,
+  bool? toastError /*出现异常时提示*/,
   bool showCountDown = false,
   bool autoHideLoading = true,
   //--
@@ -265,7 +266,7 @@ Future wrapLoading(
         l.w('忽略结果, 因为已经超时了.');
         return true;
       }());
-      return;
+      return null;
     }
     isEnd = true;
     timer?.cancel();
@@ -277,8 +278,13 @@ Future wrapLoading(
     } else {
       onEnd.call(value, error);
     }
-    if (onEnd == null && error != null) {
-      throw error;
+    //--
+    if (error != null) {
+      if (toastError == true) {
+        toast("$error".text(useDefStyle: false));
+      } else if (onEnd == null) {
+        throw error;
+      }
     }
     return value;
   });

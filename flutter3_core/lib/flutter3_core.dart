@@ -286,11 +286,24 @@ class RNiceException implements Exception {
   RNiceException({this.message, this.cause, StackTrace? stackTrace})
       : stackTrace = stackTrace ?? StackTrace.current;
 
+  String? get causeMessage {
+    final c = cause;
+    if (c != null) {
+      try {
+        return (c as dynamic).message;
+      } catch (e) {
+        //no op
+      }
+    }
+    return null;
+  }
+
   @override
   String toString() {
+    final msg = message ?? causeMessage;
     if (!isDebugFlag) {
-      return message ?? cause?.runtimeType.toString() ?? "Exception!";
+      return msg ?? cause?.runtimeType.toString() ?? "Exception!";
     }
-    return message ?? cause?.toString() ?? "[${classHash()}]";
+    return msg ?? cause?.toString() ?? "[${classHash()}]";
   }
 }

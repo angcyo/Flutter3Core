@@ -131,6 +131,7 @@ part 'src/widgets/gradient_button.dart';
 part 'src/widgets/icon_state_widget.dart';
 part 'src/widgets/layout/layout_ex.dart';
 part 'src/widgets/line.dart';
+part 'src/widgets/millisecond_stopwatch_widget.dart';
 part 'src/widgets/shapes.dart';
 part 'src/widgets/shape_text_widget.dart';
 part 'src/widgets/layout/match_parent_layout.dart';

@@ -114,6 +114,16 @@
   "libGroupElements": "Group Elements",
   "libUngroupElements": "Ungroup Elements",
   "libHotkeySettings": "Hotkeys",
+  "libAiSend": "Send",
+  "libAiProvider": "Provider",
+  "libAiModel": "Model",
+  "libAiPrompt": "Prompt",
+  "libAiBaseUrlHint": "Enter AI API URL",
+  "libAiPromptHint": "Input prompt",
+  "libAiApiKeyHint": "Input API Key",
+  "libAiGeneralTip": "Requires multimodal model",
+  "libAiImageEditTip": "Requires image edit support",
+  "libAiImageGenerateTip": "Requires image gen support",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

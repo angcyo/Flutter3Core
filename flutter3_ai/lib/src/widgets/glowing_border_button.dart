@@ -19,6 +19,9 @@ class GlowingBorderButton extends StatefulWidget {
   @defInjectMark
   final Color? fillColor;
 
+  /// 是否启用
+  final bool enable;
+
   const GlowingBorderButton({
     super.key,
     required this.text,
@@ -27,6 +30,7 @@ class GlowingBorderButton extends StatefulWidget {
     this.height = 50,
     this.borderRadius = 30,
     this.fillColor,
+    this.enable = true,
   });
 
   @override
@@ -60,31 +64,34 @@ class _GlowingBorderButtonState extends State<GlowingBorderButton>
       animation: _controller,
       builder: (context, child) {
         return CustomPaint(
-          painter: _GlowingBorderPainter(
-            progress: _controller.value,
-            borderRadius: widget.borderRadius,
-            borderWidth: 2.5,
-            glowBlurRadius: 8.0,
-            gradientColors: [
-              Colors.transparent,
-              /*globalTheme.accentColor,*/
-              globalTheme.primaryColorDark,
-              globalTheme.primaryColor,
-              /*Colors.greenAccent,
+          painter: widget.enable
+              ? _GlowingBorderPainter(
+                  progress: _controller.value,
+                  borderRadius: widget.borderRadius,
+                  borderWidth: 2.5,
+                  glowBlurRadius: 8.0,
+                  gradientColors: [
+                    Colors.transparent,
+                    /*globalTheme.accentColor,*/
+                    globalTheme.primaryColorDark,
+                    globalTheme.primaryColor,
+                    /*Colors.greenAccent,
               Colors.blueAccent,*/
-              /*Color(0xFF00F2FE),
+                    /*Color(0xFF00F2FE),
               Color(0xFF4FACFE),*/
-              Colors.white, // 头部高亮
-            ],
-          ),
+                    Colors.white, // 头部高亮
+                  ],
+                )
+              : null,
           child: Container(
             width: widget.width,
             height: widget.height,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color:
-                  widget.fillColor ??
-                  Colors.black38 /*const Color(0xFF1E1E2C)*/,
+              color: widget.enable
+                  ? (widget.fillColor ??
+                        Colors.black38 /*const Color(0xFF1E1E2C)*/ )
+                  : globalTheme.disableBgColor,
               borderRadius: BorderRadius.circular(widget.borderRadius),
             ),
             child: Text(
@@ -99,7 +106,11 @@ class _GlowingBorderButtonState extends State<GlowingBorderButton>
           ),
         );
       },
-    ).inkWell(widget.onTap, borderRadiusNum: widget.borderRadius);
+    ).inkWell(
+      widget.onTap,
+      borderRadiusNum: widget.borderRadius,
+      enable: widget.enable,
+    );
   }
 }
 

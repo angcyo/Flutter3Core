@@ -654,6 +654,81 @@ class LibRes {
   String get libHotkeySettings {
     return Intl.message('快捷键', name: 'libHotkeySettings', desc: '', args: []);
   }
+
+  /// `发送`
+  String get libAiSend {
+    return Intl.message('发送', name: 'libAiSend', desc: '', args: []);
+  }
+
+  /// `提供商`
+  String get libAiProvider {
+    return Intl.message('提供商', name: 'libAiProvider', desc: '', args: []);
+  }
+
+  /// `模型`
+  String get libAiModel {
+    return Intl.message('模型', name: 'libAiModel', desc: '', args: []);
+  }
+
+  /// `提示词`
+  String get libAiPrompt {
+    return Intl.message('提示词', name: 'libAiPrompt', desc: '', args: []);
+  }
+
+  /// `请输入AI接口地址`
+  String get libAiBaseUrlHint {
+    return Intl.message(
+      '请输入AI接口地址',
+      name: 'libAiBaseUrlHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请输入提示词`
+  String get libAiPromptHint {
+    return Intl.message('请输入提示词', name: 'libAiPromptHint', desc: '', args: []);
+  }
+
+  /// `请输入API Key`
+  String get libAiApiKeyHint {
+    return Intl.message(
+      '请输入API Key',
+      name: 'libAiApiKeyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `当前操作需要模型具有<多模态>的能力`
+  String get libAiGeneralTip {
+    return Intl.message(
+      '当前操作需要模型具有<多模态>的能力',
+      name: 'libAiGeneralTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `当前操作需要模型具有<图片编辑>的能力`
+  String get libAiImageEditTip {
+    return Intl.message(
+      '当前操作需要模型具有<图片编辑>的能力',
+      name: 'libAiImageEditTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `当前操作需要模型具有<图片生成>的能力`
+  String get libAiImageGenerateTip {
+    return Intl.message(
+      '当前操作需要模型具有<图片生成>的能力',
+      name: 'libAiImageGenerateTip',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

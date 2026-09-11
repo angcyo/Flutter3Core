@@ -297,6 +297,9 @@ class DropdownMenuTile extends StatefulWidget with TileMixin {
   final Widget? inputLabelWidget;
   final String? inputLabel;
 
+  /// 文本框是否只在有焦点时触发[onTextChanged]
+  final bool textChangedOnFocus;
+
   const DropdownMenuTile({
     super.key,
     this.label,
@@ -330,6 +333,8 @@ class DropdownMenuTile extends StatefulWidget with TileMixin {
     this.inputBorderType = InputBorderType.outline,
     this.inputLabel,
     this.inputLabelWidget,
+    //--
+    this.textChangedOnFocus = true,
   });
 
   @override
@@ -386,11 +391,13 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
     final text = _textEditingController?.text;
     assert(() {
       l.w(
-        "DropdownMenuTile.onTextChanged[${widget.dropdownValue.runtimeType}]: $text",
+        "DropdownMenuTile.onTextChanged[${widget.dropdownValue.runtimeType}]:${focusNode.hasFocus} $text",
       );
       return true;
     }());
-    if (text != null) {
+    if ((!widget.textChangedOnFocus ||
+            (widget.textChangedOnFocus && focusNode.hasFocus)) &&
+        text != null) {
       widget.onTextChanged?.call(text);
     }
   }
@@ -499,11 +506,13 @@ class _DropdownMenuTileState extends State<DropdownMenuTile>
       ),*/
       onSelected: (value) {
         assert(() {
-          l.w("DropdownMenuTile.onChanged[${value.runtimeType}]: $value");
+          l.w(
+            "DropdownMenuTile.onChanged[${value.runtimeType}]:${focusNode.hasFocus} $value",
+          );
           return true;
         }());
         widget.onChanged?.call(value);
-        if (widget.selectOnly) {
+        if (widget.selectOnly || widget.textChangedOnFocus) {
           widget.onTextChanged?.call(strOf(value)!);
         }
       },
