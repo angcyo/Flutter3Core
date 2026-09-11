@@ -55,6 +55,9 @@ class AiProviderConfigBean with Equatable, IProviderText {
   AiProviderConfigBean copyWithJson() =>
       AiProviderConfigBean.fromJson(toJson());
 
+  static AiProviderConfigBean? from(Map<String, dynamic>? json) =>
+      json == null ? null : AiProviderConfigBean.fromJson(json);
+
   factory AiProviderConfigBean.fromJson(Map<String, dynamic> json) =>
       _$AiProviderConfigBeanFromJson(json);
 

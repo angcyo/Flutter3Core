@@ -98,6 +98,12 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
     hideObscureTooltip: "",
   );
 
+  late final apiBaseInputConfig = TextFieldConfig(
+    labelText: "API Base Url",
+    hintText: context.libRes?.libAiBaseUrlHint,
+    text: _providerConfigBean?.baseUrl ??= providerBaseUrl,
+  );
+
   late final promptInputConfig = TextFieldConfig(
     labelText: context.libRes?.libAiPrompt,
     hintText: context.libRes?.libAiPromptHint,
@@ -113,6 +119,20 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
   Object? screenPopResult;
 
   //MARK: - hive
+
+  /// 获取持久化的api base url
+  @hiveFlag
+  String? get providerBaseUrl {
+    final key =
+        "_provider_${_providerConfigBean?.providerName ?? ""}_api_base_url";
+    return key.hiveGet();
+  }
+
+  set providerBaseUrl(String? value) {
+    final key =
+        "_provider_${_providerConfigBean?.providerName ?? ""}_api_base_url";
+    key.hiveSet(value);
+  }
 
   /// 获取持久化的api key
   @hiveFlag
@@ -202,6 +222,17 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
               },
             )
             .insets(h: kX, top: highlightWidget == null ? kX : 0),
+        if (!_isDefaultProvider())
+          SingleInputWidget(
+            config: apiBaseInputConfig,
+            showInputCounter: false,
+            maxLines: 1,
+            onChanged: (value) {
+              _providerConfigBean?.baseUrl = value;
+              providerBaseUrl = value;
+              _sendConfigChanged();
+            },
+          ).insets(h: kX),
         //模型
         modelNameList
             .dropdownMenu(
@@ -286,6 +317,17 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
         //debugger();
       })*/,
     );
+  }
+
+  /// 选择的供应商是否是默认的
+  bool _isDefaultProvider({String? providerName}) {
+    final providerConfigList = widget.providerConfigList;
+    return providerConfigList?.findFirst(
+          (e) =>
+              e.providerName ==
+              (providerName ?? _providerConfigBean?.providerName),
+        ) !=
+        null;
   }
 
   /// 发送配置改变通知

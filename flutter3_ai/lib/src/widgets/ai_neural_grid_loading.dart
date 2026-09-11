@@ -92,8 +92,10 @@ class _NeuralGridPainter extends CustomPainter {
       final nodeRadius = 3.0 + 2.0 * math.sin(nodePhase);
 
       nodePaint.color = Color.lerp(
-        const Color(0xFF818CF8),
-        const Color(0xFFC084FC),
+        const Color(0xFF4F46E5), // 科技蓝
+        const Color(0xFF9333EA), // 幻彩紫
+        /*const Color(0xFF818CF8),
+        const Color(0xFFC084FC),*/
         (math.sin(nodePhase) + 1) / 2,
       )!.withOpacity(nodeOpacity);
 
