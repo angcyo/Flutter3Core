@@ -532,12 +532,16 @@ class CanvasPathOverlayComponent extends CanvasOverlayComponent {
   @configProperty
   final Path? path;
 
+  /// 是否是线路径
+  final bool? isLinePath;
+
   /// 完成后的输出回调
   /// - 自动调用[CanvasDelegate.detachOverlay]
   @dp
   @configProperty
   @sceneCoordinate
-  ValueCallback<Rect?>? onOutputAction;
+  void Function(Offset downPoint, Offset movePoint, Rect? outputRect)?
+  onOutputAction;
 
   /// 绘制路径的颜色
   @defInjectMark
@@ -575,21 +579,30 @@ class CanvasPathOverlayComponent extends CanvasOverlayComponent {
     return rect;
   }
 
-  CanvasPathOverlayComponent({this.path, this.color, this.onOutputAction}) {
+  CanvasPathOverlayComponent({
+    this.path,
+    this.isLinePath,
+    this.color,
+    this.onOutputAction,
+  }) {
     cursorStyle = SystemMouseCursors.precise;
   }
 
   @override
   void onPaintingSelf(Canvas canvas, PaintMeta paintMeta) {
-    if (_isPointerDown && path != null) {
+    if (_isPointerDown) {
       //核心路径
       paint
         ..style = PaintingStyle.stroke
         ..color = color ?? Colors.black;
-      canvas.drawPath(
-        path!.moveToZero(offset: outputRect.lt, size: outputRect.size),
-        paint,
-      );
+      if (isLinePath == true) {
+        canvas.drawLine(_downPoint, _movePoint, paint);
+      } else if (path != null) {
+        canvas.drawPath(
+          path!.moveToZero(offset: outputRect.lt, size: outputRect.size),
+          paint,
+        );
+      }
     }
   }
 
@@ -652,9 +665,9 @@ class CanvasPathOverlayComponent extends CanvasOverlayComponent {
     if ((_movePoint.dx - _downPoint.dx).abs() >= touchSlop ||
         (_movePoint.dy - _downPoint.dy).abs() >= touchSlop) {
       //满足阈值
-      onOutputAction?.call(outputRect);
+      onOutputAction?.call(_downPoint, _movePoint, outputRect);
     } else {
-      onOutputAction?.call(null);
+      onOutputAction?.call(_downPoint, _movePoint, null);
     }
     canvasDelegate?.detachOverlay(overlay: this);
   }
