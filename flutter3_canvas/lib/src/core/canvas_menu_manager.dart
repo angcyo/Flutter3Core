@@ -309,8 +309,7 @@ class CanvasMenuManager
   /// 导出图片到本地
   void _exportImage(UiImage image, String name) {
     wrapLoading(() async {
-      final bytes = await image.toBytes();
-      await bytes?.writeToFile(fileName: name, useCacheFolder: true).getValue((
+      await image.writeToFile(fileName: name, useCacheFolder: true).getValue((
         file,
         error,
       ) {

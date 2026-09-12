@@ -57,6 +57,7 @@ class CanvasWidget extends LeafRenderObjectWidget {
   @override
   void didUnmountRenderObject(CanvasRenderBox renderObject) {
     super.didUnmountRenderObject(renderObject);
+    //debugger();
   }
 
   @override
