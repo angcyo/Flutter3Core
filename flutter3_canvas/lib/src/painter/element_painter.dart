@@ -559,7 +559,7 @@ class ElementPainter extends IElementPainter {
   bool updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
     if (bounds == null) {
       assert(() {
-        l.d('无效的操作[updateBoundsTo]');
+        l.d('无效的操作[updateBoundsTo]: null');
         return true;
       }());
       return false;
@@ -604,7 +604,7 @@ class ElementPainter extends IElementPainter {
     height ??= size?.height;
     if (width == null && height == null) {
       assert(() {
-        l.d('无效的操作[updateSizeTo]');
+        l.d('无效的操作[updateSizeTo]: null');
         return true;
       }());
       return;
@@ -657,7 +657,7 @@ class ElementPainter extends IElementPainter {
     y ??= location?.dy;
     if (x == null && y == null) {
       assert(() {
-        l.d('无效的操作[updateLocationTo]');
+        l.d('无效的操作[updateLocationTo]: null');
         return true;
       }());
       return;
@@ -685,7 +685,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (center == null) {
       assert(() {
-        l.d('无效的操作[updateCenterTo]');
+        l.d('无效的操作[updateCenterTo]: null');
         return true;
       }());
       return;
@@ -1442,7 +1442,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (radians == null || radians == 0) {
       assert(() {
-        l.d('无效的操作[rotateBy]');
+        l.d('无效的操作[rotateBy]: $radians');
         return true;
       }());
       return;
@@ -1539,7 +1539,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (sx == null && sy == null) {
       assert(() {
-        l.d('无效的操作[scaleElement]');
+        l.d('无效的操作[scaleElement]: null');
         return true;
       }());
       return;
@@ -1590,7 +1590,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (matrix == null && sx == null && sy == null) {
       assert(() {
-        l.d('无效的操作[scaleElementWithCenter]');
+        l.d('无效的操作[scaleElementWithCenter]: null');
         return true;
       }());
       return;
