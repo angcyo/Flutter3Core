@@ -559,7 +559,7 @@ class ElementPainter extends IElementPainter {
   bool updateBoundsTo(@sceneCoordinate @dp Rect? bounds) {
     if (bounds == null) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[updateBoundsTo]');
         return true;
       }());
       return false;
@@ -581,7 +581,7 @@ class ElementPainter extends IElementPainter {
       return true;
     } else {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[updateBoundsTo]');
         debugger();
         return true;
       }());
@@ -604,7 +604,7 @@ class ElementPainter extends IElementPainter {
     height ??= size?.height;
     if (width == null && height == null) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[updateSizeTo]');
         return true;
       }());
       return;
@@ -657,7 +657,7 @@ class ElementPainter extends IElementPainter {
     y ??= location?.dy;
     if (x == null && y == null) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[updateLocationTo]');
         return true;
       }());
       return;
@@ -685,7 +685,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (center == null) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[updateCenterTo]');
         return true;
       }());
       return;
@@ -1361,7 +1361,7 @@ class ElementPainter extends IElementPainter {
   void translateElementTo({double? x, double? y}) {
     if (x == null && y == 0) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[translateElementTo]');
         return true;
       }());
       return;
@@ -1434,12 +1434,19 @@ class ElementPainter extends IElementPainter {
   @api
   @indirectProperty
   void rotateBy(
-    double radians, {
+    double? radians, {
     Offset? anchor,
     double? refTargetRadians,
     Object? fromObj,
     UndoType? fromUndoType,
   }) {
+    if (radians == null || radians == 0) {
+      assert(() {
+        l.d('无效的操作[rotateBy]');
+        return true;
+      }());
+      return;
+    }
     paintProperty?.let((it) {
       //debugger();
       anchor ??= it.paintCenter;
@@ -1532,7 +1539,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (sx == null && sy == null) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[scaleElement]');
         return true;
       }());
       return;
@@ -1583,7 +1590,7 @@ class ElementPainter extends IElementPainter {
   }) {
     if (matrix == null && sx == null && sy == null) {
       assert(() {
-        l.d('无效的操作');
+        l.d('无效的操作[scaleElementWithCenter]');
         return true;
       }());
       return;
@@ -2532,7 +2539,7 @@ class ElementGroupPainter extends ElementPainter {
   /// 最终调用[rotateElement]
   @override
   void rotateBy(
-    double angle, {
+    double? angle, {
     Offset? anchor,
     double? refTargetRadians,
     Object? fromObj,
