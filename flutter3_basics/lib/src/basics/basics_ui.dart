@@ -398,7 +398,7 @@ extension WidgetListEx on WidgetNullList {
   Widget? scroll({
     Key? key,
     //--
-    Axis axis = Axis.horizontal,
+    Axis axis = .horizontal,
     ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
     EdgeInsetsGeometry? padding,
@@ -411,6 +411,8 @@ extension WidgetListEx on WidgetNullList {
     CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.start
     double? gap,
     Widget? gapWidget,
+    //--
+    @defInjectMark bool? alwaysScrollOnDesktop /*在桌面端是否总是可滚动*/,
   }) {
     WidgetList list = filterNull();
     if (isNullOrEmpty(list)) {
@@ -444,7 +446,8 @@ extension WidgetListEx on WidgetNullList {
       primary: primary,
       reverse: reverse,
     );
-    if (isDesktopOrWeb && axis == .horizontal) {
+    if (isDesktopOrWeb &&
+        (alwaysScrollOnDesktop == true || axis == .horizontal)) {
       return ScrollConfiguration(
         behavior:
             scrollBehavior ??
@@ -469,18 +472,22 @@ extension WidgetListEx on WidgetNullList {
   Widget? scrollVertical({
     Key? key,
     //--
-    Axis axis = Axis.vertical,
+    Axis axis = .vertical,
     EdgeInsetsGeometry? padding,
     ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
     bool? primary,
     bool reverse = false,
     //--
-    MainAxisSize? mainAxisSize = MainAxisSize.max,
-    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
-    CrossAxisAlignment? crossAxisAlignment, //CrossAxisAlignment.start 交叉轴
+    MainAxisSize? mainAxisSize = .max,
+    //MainAxisAlignment.start
+    MainAxisAlignment? mainAxisAlignment,
+    //CrossAxisAlignment.start 交叉轴
+    CrossAxisAlignment? crossAxisAlignment,
     double? gap,
     Widget? gapWidget,
+    //--
+    @defInjectMark bool? alwaysScrollOnDesktop /*在桌面端是否总是可滚动*/,
   }) => scroll(
     key: key,
     axis: axis,
@@ -494,6 +501,7 @@ extension WidgetListEx on WidgetNullList {
     crossAxisAlignment: crossAxisAlignment,
     gap: gap,
     gapWidget: gapWidget,
+    alwaysScrollOnDesktop: alwaysScrollOnDesktop,
   );
 
   /// 横向滚动
@@ -503,19 +511,22 @@ extension WidgetListEx on WidgetNullList {
   Widget? scrollHorizontal({
     Key? key,
     //--
-    Axis axis = Axis.horizontal,
+    Axis axis = .horizontal,
     EdgeInsetsGeometry? padding,
     ScrollPhysics? physics = kScrollPhysics,
     ScrollController? controller,
     bool? primary,
     bool reverse = false,
     //--
-    MainAxisSize? mainAxisSize = MainAxisSize.max,
-    MainAxisAlignment? mainAxisAlignment, //MainAxisAlignment.start
-    CrossAxisAlignment? crossAxisAlignment =
-        CrossAxisAlignment.center, //CrossAxisAlignment.center
+    MainAxisSize? mainAxisSize = .max,
+    //MainAxisAlignment.start
+    MainAxisAlignment? mainAxisAlignment,
+    //CrossAxisAlignment.center
+    CrossAxisAlignment? crossAxisAlignment = .center,
     double? gap,
     Widget? gapWidget,
+    //--
+    @defInjectMark bool? alwaysScrollOnDesktop /*在桌面端是否总是可滚动*/,
   }) => scroll(
     key: key,
     axis: axis,
@@ -529,6 +540,7 @@ extension WidgetListEx on WidgetNullList {
     crossAxisAlignment: crossAxisAlignment,
     gap: gap,
     gapWidget: gapWidget,
+    alwaysScrollOnDesktop: alwaysScrollOnDesktop,
   );
 
   /// [ListView]
@@ -2692,6 +2704,7 @@ extension WidgetEx on Widget {
     BoxConstraints? constraints,
     //
     double? width,
+    double? height,
     double? minSize,
     double? minWidth,
     double? minHeight,
@@ -2703,9 +2716,9 @@ extension WidgetEx on Widget {
     bool enable = true,
   }) {
     minWidth ??= width ?? minSize;
-    minHeight ??= minSize;
+    minHeight ??= height ?? minSize;
     maxWidth ??= width ?? maxSize;
-    maxHeight ??= maxSize;
+    maxHeight ??= height ?? maxSize;
     if (constraints == null &&
         maxWidth == null &&
         maxHeight == null &&
@@ -3275,6 +3288,7 @@ extension WidgetEx on Widget {
     Color? disableColor,
     Color? highlightColor,
     Color? hoverColor,
+    double? borderRadiusNum,
     double? radius,
     bool enable = true,
     //--
@@ -3295,7 +3309,8 @@ extension WidgetEx on Widget {
           splashColor: splashColor,
           hoverColor: hoverColor,
           highlightColor: highlightColor,
-          highlightShape: BoxShape.rectangle,
+          highlightShape: .rectangle,
+          borderRadiusNum: borderRadiusNum,
           radius: radius,
           onLongPress: onLongPress,
           periodicDuration: periodicDuration,
