@@ -37,6 +37,8 @@ class BirefnetManager {
     if (image == null) {
       return null;
     }
+    lTime.tick();
+    l.d("准备使用模型处理->$modelPath");
     final bytes = await image.toBytes();
     //执行算法
     final ort = _session ??= await OnnxRuntime().createSession(modelPath);
@@ -45,6 +47,7 @@ class BirefnetManager {
       binary: binary,
       inputImageBytes: bytes!,
     );
+    l.i('模型处理耗时:${lTime.time()}');
     return pngBytes.toImage();
   }
 
