@@ -710,30 +710,30 @@ class LibRes {
     );
   }
 
-  /// `当前操作需要模型具有<多模态>的能力`
+  /// `当前操作需要模型具有「多模态」的能力`
   String get libAiGeneralTip {
     return Intl.message(
-      '当前操作需要模型具有<多模态>的能力',
+      '当前操作需要模型具有「多模态」的能力',
       name: 'libAiGeneralTip',
       desc: '',
       args: [],
     );
   }
 
-  /// `当前操作需要模型具有<图片编辑>的能力`
+  /// `当前操作需要模型具有「图片编辑」的能力`
   String get libAiImageEditTip {
     return Intl.message(
-      '当前操作需要模型具有<图片编辑>的能力',
+      '当前操作需要模型具有「图片编辑」的能力',
       name: 'libAiImageEditTip',
       desc: '',
       args: [],
     );
   }
 
-  /// `当前操作需要模型具有<图片生成>的能力`
+  /// `当前操作需要模型具有「图片生成」的能力`
   String get libAiImageGenerateTip {
     return Intl.message(
-      '当前操作需要模型具有<图片生成>的能力',
+      '当前操作需要模型具有「图片生成」的能力',
       name: 'libAiImageGenerateTip',
       desc: '',
       args: [],

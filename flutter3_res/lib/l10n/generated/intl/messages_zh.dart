@@ -35,13 +35,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAiApiKeyHint": MessageLookupByLibrary.simpleMessage("请输入API Key"),
     "libAiBaseUrlHint": MessageLookupByLibrary.simpleMessage("请输入AI接口地址"),
     "libAiGeneralTip": MessageLookupByLibrary.simpleMessage(
-      "当前操作需要模型具有<多模态>的能力",
+      "当前操作需要模型具有「多模态」的能力",
     ),
     "libAiImageEditTip": MessageLookupByLibrary.simpleMessage(
-      "当前操作需要模型具有<图片编辑>的能力",
+      "当前操作需要模型具有「图片编辑」的能力",
     ),
     "libAiImageGenerateTip": MessageLookupByLibrary.simpleMessage(
-      "当前操作需要模型具有<图片生成>的能力",
+      "当前操作需要模型具有「图片生成」的能力",
     ),
     "libAiModel": MessageLookupByLibrary.simpleMessage("模型"),
     "libAiPrompt": MessageLookupByLibrary.simpleMessage("提示词"),

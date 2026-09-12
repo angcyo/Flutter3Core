@@ -39,13 +39,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter AI API URL",
     ),
     "libAiGeneralTip": MessageLookupByLibrary.simpleMessage(
-      "Requires multimodal model",
+      "This operation requires multimodal capability",
     ),
     "libAiImageEditTip": MessageLookupByLibrary.simpleMessage(
-      "Requires image edit support",
+      "This operation requires image editing capability",
     ),
     "libAiImageGenerateTip": MessageLookupByLibrary.simpleMessage(
-      "Requires image gen support",
+      "This operation requires image generation capability",
     ),
     "libAiModel": MessageLookupByLibrary.simpleMessage("Model"),
     "libAiPrompt": MessageLookupByLibrary.simpleMessage("Prompt"),

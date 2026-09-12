@@ -895,6 +895,15 @@ extension StringEx on String {
   /// 将字符串用[]方括号 (Square Brackets / Brackets)包裹起来
   String get wsb => "[$this]";
 
+  /// 使用「」左角/右角括号, 包裹起来
+  /// - 「」 单角引号 (Single Corner Brackets / Single Quotation Marks)
+  /// - 『』 双角引号 (Double Corner Brackets)
+  /// - ‹›
+  /// - «»
+  /// - ［］
+  /// - 〖〗
+  String get wqj => "「$this」";
+
   ///【】
   String get wsb2 => "【$this】";
 

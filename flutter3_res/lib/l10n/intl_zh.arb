@@ -132,9 +132,9 @@
   "libAiBaseUrlHint": "请输入AI接口地址",
   "libAiPromptHint": "请输入提示词",
   "libAiApiKeyHint": "请输入API Key",
-  "libAiGeneralTip": "当前操作需要模型具有<多模态>的能力",
-  "libAiImageEditTip": "当前操作需要模型具有<图片编辑>的能力",
-  "libAiImageGenerateTip": "当前操作需要模型具有<图片生成>的能力",
+  "libAiGeneralTip": "当前操作需要模型具有「多模态」的能力",
+  "libAiImageEditTip": "当前操作需要模型具有「图片编辑」的能力",
+  "libAiImageGenerateTip": "当前操作需要模型具有「图片生成」的能力",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

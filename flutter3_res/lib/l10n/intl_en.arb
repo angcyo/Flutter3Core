@@ -123,9 +123,9 @@
   "libAiBaseUrlHint": "Enter AI API URL",
   "libAiPromptHint": "Input prompt",
   "libAiApiKeyHint": "Input API Key",
-  "libAiGeneralTip": "Requires multimodal model",
-  "libAiImageEditTip": "Requires image edit support",
-  "libAiImageGenerateTip": "Requires image gen support",
+  "libAiGeneralTip": "This operation requires multimodal capability",
+  "libAiImageEditTip": "This operation requires image editing capability",
+  "libAiImageGenerateTip": "This operation requires image generation capability",
   "@libPlaceholder": {
     "placeholders": {
       "des": {
