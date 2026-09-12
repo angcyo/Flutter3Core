@@ -58,7 +58,11 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
   bool get screenHasTextField => isMobile;
 
   @override
-  double? get dialogMaxHeight => isMobile ? 2 / 3 : null;
+  double? get dialogMaxHeight => isMobile
+      ? showPromptWidget
+            ? 560
+            : 400
+      : null;
 
   const AiPromptInputDialog({
     super.key,

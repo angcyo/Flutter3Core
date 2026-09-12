@@ -38,6 +38,10 @@ class OpenAI {
   /// - [imageUrl] 图像在线地址 'https://raw.githubusercontent.com/angcyo/res/refs/heads/master/LaserPecker/contours.jpg'
   /// - [imageBytes] 图像字节数据
   ///
+  /// ```
+  /// PermissionDeniedException: {"error":{"message":"This model is not available in your region.","code":403,"metadata":{"routing_funnel":[{"step":"Initial Endpoints","endpoint_count":7},{"step":"Filter by Regional Surcharge","endpoint_count":5}],"failed_routing_step":"Gate Endpoints with Geo Restrictions"}}}
+  /// ```
+  ///
   /// @return String
   @api
   Future<String?> chatCompletion(
