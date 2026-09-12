@@ -466,6 +466,15 @@ class TabsManagerControllerScope extends InheritedWidget {
       controller != oldWidget.controller;
 }
 
+/// 标签项的默认宽度
+const kTabsItemWidth = 50.0;
+
+/// 标签项的默认高度
+const kTabsItemHeight = 50.0;
+
+/// 标签项图标大小
+const kTabsItemIconSize = 20.0;
+
 /// 使用[TabsManagerController]管理标签页面的小部件
 class TabsManagerWidget extends StatefulWidget {
   /// 管理器
@@ -480,6 +489,12 @@ class TabsManagerWidget extends StatefulWidget {
 
   /// [Axis.vertical]时的高度
   final double tabHeight;
+
+  /// 标签的最小宽度
+  final double? tabMinWidth;
+
+  /// 标签的最小高度
+  final double? tabMinHeight;
 
   /// 标签的背景装饰
   final Decoration? tabDecoration;
@@ -499,20 +514,27 @@ class TabsManagerWidget extends StatefulWidget {
   /// 焦点事件
   final ValueChanged<bool>? onFocusChange;
 
-  //MARK: -
+  //MARK: - actions
+
+  /// 标签操作按钮列表
+  final List<Widget?>? tabActions;
 
   const TabsManagerWidget({
     super.key,
     required this.controller,
     this.axis = .vertical,
     this.tabWidth = 200,
-    this.tabHeight = 36,
+    this.tabHeight = kTabsItemHeight,
+    this.tabMinWidth = kTabsItemWidth,
+    this.tabMinHeight = kTabsItemHeight,
     this.tabDecoration,
     this.tabSelectedDecoration,
     this.contentDecoration,
     //--
     this.onKeyEvent,
     this.onFocusChange,
+    //--
+    this.tabActions,
   });
 
   @override
@@ -547,15 +569,29 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
     final Widget child;
     if (widget.axis == .vertical) {
       child = [
+        //top布局 标签列表
         widget.controller.tabEntryListLive
             .buildFn(() {
-              return buildTabList(
-                context,
-                globalTheme,
-              ).scrollHorizontal(mainAxisSize: .max)!.matchParentWidth();
+              final scrollWidget =
+                  buildTabList(
+                    context,
+                    globalTheme,
+                  ).scrollHorizontal(mainAxisSize: .max) ??
+                  empty;
+              if (widget.tabActions == null) {
+                return scrollWidget.matchParentWidth();
+              }
+              return [
+                scrollWidget.expanded(),
+                ...?widget.tabActions,
+              ].row()!.matchParentWidth();
             })
-            .size(height: widget.tabHeight)
+            .constrainedMin(
+              height: widget.tabHeight,
+              minWidth: widget.tabMinWidth,
+            )
             .decoration(widget.tabDecoration),
+        //bottom布局 内容列表
         widget.controller.tabEntryListLive
             .buildFn(() {
               return buildContentList(
@@ -569,19 +605,36 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
       ].column(mainAxisSize: .max)!;
     } else {
       child = [
+        //left布局 标签列表
         widget.controller.tabEntryListLive
             .buildFn(() {
-              return buildTabList(
-                context,
-                globalTheme,
-              ).scrollVertical(mainAxisSize: .max)!;
+              final scrollWidget =
+                  buildTabList(
+                    context,
+                    globalTheme,
+                  ).scrollVertical(mainAxisSize: .max) ??
+                  empty;
+              if (widget.tabActions == null) {
+                return scrollWidget.matchParentWidth();
+              }
+              return [
+                scrollWidget.expanded(),
+                ...?widget.tabActions,
+              ].column()!.matchParentWidth();
             })
-            .size(width: widget.tabWidth)
+            .constrainedMin(
+              width: widget.tabWidth,
+              minHeight: widget.tabMinHeight,
+            )
             .decoration(widget.tabDecoration)
             .bounds(),
+        //right布局 内容列表
         widget.controller.tabEntryListLive
             .buildFn(() {
-              return buildContentList(context, globalTheme).stack()!;
+              return buildContentList(
+                context,
+                globalTheme,
+              ).stack(fit: .expand)!;
             })
             .matchParentHeight()
             .decoration(widget.contentDecoration)
@@ -620,17 +673,27 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
 
   //MARK: - build
 
-  Color getHoverColor(BuildContext context, GlobalTheme globalTheme) {
+  /// 获取悬浮颜色
+  Color _getHoverColor(BuildContext context, GlobalTheme globalTheme) {
     return globalTheme.itemWhiteSubBgColor.withAlpha(30);
   }
 
   /// 创建标签列表
+  /// - [buildTabList] 创建标签列表
+  /// - [buildContentList] 创建内容列表
+  @callPoint
   WidgetList buildTabList(BuildContext context, GlobalTheme globalTheme) {
     final tabList = widget.controller.buildTabList(
       context,
       transformWidgetBuilder: (context, child, index, entry, isSelected) {
         return child
-            .box(width: tabItemWidth, height: tabItemHeight)
+            /*.box(width: tabItemWidth, height: tabItemHeight)*/
+            .center()
+            .constrainedMin(
+              width: tabItemWidth,
+              height: tabItemHeight,
+              minWidth: widget.tabMinWidth,
+            )
             .rowOf(
               isSelected == true && !entry.isFixed
                   ? buildCloseTabButton(context, globalTheme, entry)
@@ -641,7 +704,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
                   ? widget.tabSelectedDecoration ??
                         fillDecoration(
                           radius: radius,
-                          color: getHoverColor(context, globalTheme),
+                          color: _getHoverColor(context, globalTheme),
                         )
                   : null,
             )
@@ -649,8 +712,8 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
               () {
                 widget.controller.switchTab(entry);
               },
-              radius: radius,
-              hoverColor: getHoverColor(context, globalTheme),
+              borderRadiusNum: radius,
+              hoverColor: _getHoverColor(context, globalTheme),
             )
             .material(key: ValueKey(entry.tabInfoLive.hashCode));
       },
@@ -660,12 +723,15 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
     }
     return tabList.filterAndFillGap(
       gapWidget: widget.axis == .vertical
-          ? vLine(context, color: getHoverColor(context, globalTheme))
-          : hLine(context, color: getHoverColor(context, globalTheme)),
+          ? vLine(context, color: _getHoverColor(context, globalTheme))
+          : hLine(context, color: _getHoverColor(context, globalTheme)),
     );
   }
 
   /// 创建内容列表
+  /// - [buildTabList] 创建标签列表
+  /// - [buildContentList] 创建内容列表
+  @callPoint
   WidgetList buildContentList(BuildContext context, GlobalTheme globalTheme) {
     final contentList = widget.controller.buildContentList(context);
     return contentList;
@@ -673,15 +739,21 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
 
   /// 创建添加标签按钮
   Widget buildAddNewTabButton(BuildContext context, GlobalTheme globalTheme) {
-    return Icon(Icons.add, color: Colors.white, size: 16)
-        .box(width: tabItemWidth, height: tabItemHeight)
-        .insets(h: kX)
+    return Icon(Icons.add, color: Colors.white, size: kTabsItemIconSize)
+        /*.box(width: tabItemWidth, height: tabItemHeight)*/
+        .center()
+        .constrainedMin(
+          width: tabItemWidth,
+          height: tabItemHeight,
+          minWidth: widget.tabMinWidth,
+        )
+        /*.insets(h: kX)*/
         .inkWell(
           () {
             widget.controller.addNewTab(context, data: this);
           },
-          radius: radius,
-          hoverColor: getHoverColor(context, globalTheme),
+          borderRadiusNum: radius,
+          hoverColor: _getHoverColor(context, globalTheme),
         )
         .material();
   }
@@ -698,8 +770,8 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
           () {
             widget.controller.removeTab(entry);
           },
-          radius: radius,
-          hoverColor: getHoverColor(context, globalTheme),
+          borderRadiusNum: radius,
+          hoverColor: _getHoverColor(context, globalTheme),
         )
         .material();
   }
