@@ -146,6 +146,30 @@ class _AppPackageAssetsWidgetState extends State<AppPackageAssetsWidget> {
   }
 }
 
+/// 包中的logo资源图标小部件
+class PackageLogoWidget extends StatelessWidget {
+  /// logo的key
+  final String logoKey;
+
+  /// logo的大小
+  final double size;
+
+  const PackageLogoWidget({
+    super.key,
+    this.logoKey = "assets/png/logo.png",
+    this.size = 64,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppPackageAssetsWidget(
+      appKey: logoKey,
+      size: size,
+      emptyWidget: FlutterLogo(size: size),
+    );
+  }
+}
+
 //region Asset
 
 /// [loadAssetImageWidget]

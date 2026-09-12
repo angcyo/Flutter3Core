@@ -48,13 +48,9 @@ class _AppAboutDialogState extends State<AppAboutDialog> {
             context,
             [
               //MARK: - main
-              (widget.logo ??
-                      AppPackageAssetsWidget(
-                        appKey: "assets/png/logo.png",
-                        size: 64,
-                        emptyWidget: FlutterLogo(size: 64),
-                      ))
-                  .tooltip($platformDeviceName),
+              (widget.logo ?? const PackageLogoWidget()).tooltip(
+                $platformDeviceName,
+              ),
               "${info?.appName}".text(style: globalTheme.tileTextTitleStyle),
               ("Version:".connect(info?.debugVersionString))
                   .text(style: globalTheme.textDesStyle)
