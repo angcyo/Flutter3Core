@@ -1759,6 +1759,7 @@ class ElementSelectComponent extends ElementGroupPainter
   }
 
   /// 重置选中的元素
+  /// - [dispatchElementSelectChanged] 是否派发元素选择变化事件
   /// [CanvasElementManager.addSelectElement]
   /// [CanvasElementManager.addSelectElementList]
   /// [CanvasElementManager.removeSelectElement]
@@ -1768,7 +1769,7 @@ class ElementSelectComponent extends ElementGroupPainter
   void resetSelectElement(
     List<ElementPainter>? elements,
     ElementSelectType selectType, {
-    bool? dispatchElementSelectChanged,
+    @defInjectMark bool? dispatchElementSelectChanged,
   }) {
     //debugger();
     dispatchElementSelectChanged ??= true;

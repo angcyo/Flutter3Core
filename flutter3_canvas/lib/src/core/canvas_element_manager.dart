@@ -1114,16 +1114,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void resetSelectedElementList(
     List<ElementPainter>? elements, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     selectComponent.resetSelectElement(elements, selectType);
   }
 
   /// 清空选中的元素/取消选中的元素
   @api
-  void clearSelectedElement({
-    ElementSelectType selectType = ElementSelectType.code,
-  }) {
+  void clearSelectedElement({ElementSelectType selectType = .code}) {
     resetSelectedElementList(null, selectType: selectType);
   }
 
@@ -1131,7 +1129,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void clearSelectedElementIf(
     ElementPainter? element, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     if (isElementSelected(element)) {
       clearSelectedElement(selectType: selectType);
@@ -1141,7 +1139,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void clearAnySelectedElementIf(
     List<ElementPainter>? elementList, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     if (isAnyElementSelected(elementList)) {
       clearSelectedElement(selectType: selectType);
@@ -1336,9 +1334,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     List<ElementPainter>? oldElementList,
     List<ElementPainter>? newElementList, {
     bool selected = true,
-    UndoType undoType = UndoType.normal,
+    UndoType undoType = .normal,
     bool keepIndex = false,
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     if (isNullOrEmpty(oldElementList) && isNullOrEmpty(newElementList)) {
       assert(() {
@@ -1372,26 +1370,27 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     canvasElementControlManager.onCanvasElementDeleted(
       removeList ?? [],
       selectType,
+      dispatchElementSelectChanged: !selected,
     );
     canvasDelegate.dispatchCanvasElementListChanged(
       old,
       elements,
       op,
-      ElementChangeType.replace,
+      .replace,
       undoType,
     );
     canvasDelegate.dispatchCanvasElementListRemoveChanged(
-      CanvasElementType.element,
+      .element,
       elements,
       removeList,
     );
     canvasDelegate.dispatchCanvasElementListAddChanged(
-      CanvasElementType.element,
+      .element,
       elements,
       newElementList,
     );
 
-    if (undoType == UndoType.normal) {
+    if (undoType == .normal) {
       final newList = elements.clone();
       canvasDelegate.canvasUndoManager.add(
         UndoActionItem(
@@ -1404,7 +1403,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
               newList,
               old,
               op,
-              ElementChangeType.update,
+              .update,
               UndoType.undo,
             );
           },
@@ -1417,7 +1416,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
               old,
               newList,
               op,
-              ElementChangeType.update,
+              .update,
               UndoType.redo,
             );
           },

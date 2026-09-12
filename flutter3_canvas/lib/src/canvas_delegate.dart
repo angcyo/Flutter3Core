@@ -1362,7 +1362,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     List<ElementPainter> op,
     ElementChangeType changeType,
     UndoType undoType, {
-    ElementSelectType selectType = ElementSelectType.user,
+    ElementSelectType selectType = .user,
   }) {
     //debugger();
     isElementChanged = true;
