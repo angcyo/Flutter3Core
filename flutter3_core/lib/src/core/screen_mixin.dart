@@ -88,7 +88,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     ScreenStateContext screenContext, {
     dynamic popResult,
   }) async {
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     if (screenType == .overlay) {
       OverlayEntryControlStateScope.hideOverlay(context);
     } else if (screenType.isDialogType) {
@@ -202,7 +202,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     ScreenStateContext screenContext,
     GlobalTheme globalTheme,
   ) {
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     return InkButton(
       loadCoreAssetSvgPicture(
         useBackIconCancelButton ? Assets.svg.coreBack : Assets.svg.coreClose,
@@ -228,7 +228,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     ScreenStateContext screenContext,
     GlobalTheme globalTheme,
   ) {
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     return InkButton(
       loadCoreAssetSvgPicture(
         Assets.svg.coreConfirm,
@@ -318,7 +318,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -354,7 +354,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -409,7 +409,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   }) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -533,7 +533,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -567,7 +567,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -610,7 +610,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -651,7 +651,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   ) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
-    final BuildContext context = screenContext.context;
+    final BuildContext context = screenContext.itContext;
     final globalTheme = GlobalTheme.of(context);
     final titleWidget = buildTitleRow(screenContext, globalTheme);
 
@@ -767,7 +767,7 @@ extension ScreenStateContextEx on ScreenStateContext {
 
   //MARK: - get
 
-  BuildContext get context =>
+  BuildContext get itContext =>
       this is State ? (this as State).context : this as BuildContext;
 
   /// 尝试更新界面

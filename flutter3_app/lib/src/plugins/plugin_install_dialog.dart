@@ -9,16 +9,42 @@ part of '../../flutter3_app.dart';
 /// - [PluginMixin] 安装插件的小部件
 /// 目前就是下载插件, 并解压到本地
 class PluginInstallDialog extends StatefulWidget with DialogMixin {
-  @override
-  TranslationType get translationType => .scaleFade;
-
   /// 需要安装的插件
   final PluginMixin plugin;
 
   /// 插件当前的状态
   final PluginState? pluginState;
 
-  const PluginInstallDialog(this.plugin, {super.key, this.pluginState});
+  //--
+
+  /// 安装状态时: 内容的文本
+  @defInjectMark
+  final String? installContentText;
+
+  /// 更新状态时: 内容的文本
+  @defInjectMark
+  final String? updateContentText;
+
+  /// 下载状态时: 内容的文本
+  @defInjectMark
+  final String? downloadContentText;
+
+  /// 安装中状态时: 内容的文本
+  @defInjectMark
+  final String? installingContentText;
+
+  @override
+  TranslationType get translationType => .scaleFade;
+
+  const PluginInstallDialog(
+    this.plugin, {
+    super.key,
+    this.pluginState,
+    this.installContentText,
+    this.updateContentText,
+    this.downloadContentText,
+    this.installingContentText,
+  });
 
   @override
   State<PluginInstallDialog> createState() => _PluginInstallDialogState();
@@ -73,26 +99,32 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
   /// 构建安装提示小部件
   @property
   Widget buildInstallContent(BuildContext context, GlobalTheme globalTheme) {
+    final libRes = context.libRes;
     return [
-      "插件未安装, 是否下载安装"
+      (widget.installContentText ?? "插件未安装, 是否下载安装")
           .text(textStyle: globalTheme.textTitleStyle)
           .insets(all: kX, bottom: kXx),
       [
         GradientButton.stroke(
-          child: "取消".text(),
+          child: (libRes?.libCancel ?? "Cancel").text(),
           onTap: () {
             widget.closeDialogIf(context);
           },
         ).expanded(),
         GradientButton(
-          child: "安装".text(),
+          child: (libRes?.libInstallNow ?? "Install").text(),
           onTap: () {
             final url = widget.plugin.downloadUrl;
             if (url != null) {
               pluginState = .downloading;
-              l.i("[${classHash()}]准备下载插件->$url");
+              l.i("[${widget.plugin.classHash}]准备下载插件->$url");
               startDownloadMixin(url);
               updateState();
+            } else {
+              assert(() {
+                l.w("[${widget.plugin.classHash()}]插件下载地址为空, 无法下载插件");
+                return true;
+              }());
             }
           },
         ).expanded(),
@@ -103,13 +135,14 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
   /// 构建更新提示小部件
   @property
   Widget buildUpdateContent(BuildContext context, GlobalTheme globalTheme) {
+    final libRes = context.libRes;
     return [
-      "发现新版本插件, 是否更新"
+      (widget.updateContentText ?? "发现新版本插件, 是否更新")
           .text(textStyle: globalTheme.textTitleStyle)
           .insets(all: kX, bottom: kXx),
       [
         GradientButton.stroke(
-          child: "取消".text(),
+          child: (libRes?.libCancel ?? "Cancel").text(),
           onTap: () {
             //取消更新, 则直接运行
             widget.closeDialogIf(context);
@@ -117,12 +150,12 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
           },
         ).expanded(),
         GradientButton(
-          child: "更新".text(),
+          child: (libRes?.libUpdate ?? "Update").text(),
           onTap: () {
             final url = widget.plugin.downloadUrl;
             if (url != null) {
               pluginState = .downloading;
-              l.i("[${classHash()}]准备更新下载插件->$url");
+              l.i("[${widget.plugin.classHash}]准备更新下载插件->$url");
               startDownloadMixin(url);
               updateState();
             }
@@ -138,14 +171,15 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
     BuildContext context,
     GlobalTheme globalTheme,
   ) {
+    final libRes = context.libRes;
     return [
-      "插件下载中...${(downloadProgressMixin * 100).round()}%"
+      "${widget.downloadContentText ?? "下载中, 请稍后"}...${(downloadProgressMixin * 100).round()}%"
           .text(textStyle: globalTheme.textTitleStyle)
           .insets(all: kX, bottom: kXx),
       buildProgressWidget(context),
       [
         GradientButton.stroke(
-          child: "取消".text(),
+          child: (libRes?.libCancel ?? "Cancel").text(),
           onTap: () {
             widget.closeDialogIf(context);
           },
@@ -158,7 +192,9 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
   @property
   Widget buildInstallingContent(BuildContext context, GlobalTheme globalTheme) {
     return [
-      "插件安载中...".text(textStyle: globalTheme.textTitleStyle).insets(all: kXx),
+      (widget.installingContentText ?? "正在安装中...")
+          .text(textStyle: globalTheme.textTitleStyle)
+          .insets(all: kXx),
     ].column()!.insets(all: kX);
   }
 
@@ -174,7 +210,7 @@ class _PluginInstallDialogState extends State<PluginInstallDialog>
     } else {
       debugger();
       widget.closeDialogIf(context);
-      toast("插件安装失败".text(useDefStyle: false));
+      toast("安装失败".text(useDefStyle: false));
     }
   }
 }

@@ -555,6 +555,14 @@ extension FileStringPubEx on String {
 ///
 /// - [fileDirectory]
 /// - [cacheDirectory]
+///
+/// # Windows
+/// ```
+/// Directory: 'C:\Users\Administrator\AppData\Roaming\com.laser.abc.beeb.desktop.app\Laserabc Beeb Desktop\models\biRefNetLite'
+/// ```
+///
+/// [Directory.path]
+/// @return 文件夹对象[Directory]
 Future<Directory> fileFolder([
   String? part1,
   String? part2,

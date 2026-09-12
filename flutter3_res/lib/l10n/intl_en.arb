@@ -68,6 +68,7 @@
   "libDownloadNow": "Download Now",
   "libClickRetry": "Click to Retry",
   "libInstallNow": "Install Now",
+  "libUpdate": "Update",
   "libUpgradeNow": "Start Upgrade",
   "libDowngradeNow": "Start Downgrade",
   "libUpgradeFailure": "Upgrade failed",

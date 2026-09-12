@@ -175,6 +175,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libUngroupElements": MessageLookupByLibrary.simpleMessage(
       "Ungroup Elements",
     ),
+    "libUpdate": MessageLookupByLibrary.simpleMessage("Update"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("Upgrade failed"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("Start Upgrade"),
     "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage(

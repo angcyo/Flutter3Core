@@ -6,7 +6,11 @@ part of '../../flutter3_app.dart';
 ///
 /// 用来启动第三方进行的插件
 /// - [ProcessShell]
-
+///
+/// - [PluginMixin.downloadUrl] 插件的下载地址
+/// - [PluginMixin.install] 下载成功后, 安装插件
+/// - [PluginMixin.uninstall] 卸载插件
+/// - [PluginMixin.start] 启动插件
 mixin PluginMixin {
   //MARK: - state
 

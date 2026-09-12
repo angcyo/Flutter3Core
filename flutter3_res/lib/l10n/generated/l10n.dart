@@ -370,6 +370,11 @@ class LibRes {
     return Intl.message('立即安装', name: 'libInstallNow', desc: '', args: []);
   }
 
+  /// `更新`
+  String get libUpdate {
+    return Intl.message('更新', name: 'libUpdate', desc: '', args: []);
+  }
+
   /// `开始升级`
   String get libUpgradeNow {
     return Intl.message('开始升级', name: 'libUpgradeNow', desc: '', args: []);

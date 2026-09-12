@@ -127,6 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libUndo": MessageLookupByLibrary.simpleMessage("撤销"),
     "libUngroup": MessageLookupByLibrary.simpleMessage("取消组合"),
     "libUngroupElements": MessageLookupByLibrary.simpleMessage("解组元素"),
+    "libUpdate": MessageLookupByLibrary.simpleMessage("更新"),
     "libUpgradeFailure": MessageLookupByLibrary.simpleMessage("更新失败"),
     "libUpgradeNow": MessageLookupByLibrary.simpleMessage("开始升级"),
     "libUpgradeSuccess": MessageLookupByLibrary.simpleMessage("升级成功"),

@@ -77,6 +77,7 @@
   "libDownloadNow": "立即下载",
   "libClickRetry": "点击重试",
   "libInstallNow": "立即安装",
+  "libUpdate": "更新",
   "libUpgradeNow": "开始升级",
   "libDowngradeNow": "开始降级",
   "libUpgradeFailure": "更新失败",
