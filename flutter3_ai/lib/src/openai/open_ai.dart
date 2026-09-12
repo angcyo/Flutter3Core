@@ -48,9 +48,10 @@ class OpenAI {
     String? imageUrl,
     List<int>? imageBytes,
   }) async {
+    model ??= _model ?? "";
     final response = await _client?.chat.completions.create(
       ChatCompletionCreateRequest(
-        model: model ?? _model ?? "",
+        model: model,
         messages: [
           ...?messages?.map((e) => ChatMessage.fromJson(e)),
           ChatMessage.user([
@@ -66,8 +67,11 @@ class OpenAI {
         ],
       ),
     );
-    debugger();
-    return response?.text;
+    final result = response?.text;
+    debugger(when: result == null);
+    //612,129,115,116,0.18,774,181,124,124,0.76,389,286,124,124,-0.08,606,302,123,123,-0.11,335,492,127,111,0.38,527,464,126,126,0.68,545,618,125,121,-0.05,707,547,120,120,0.68,839,490,118,119,-0.05,802,674,116,116,0.35
+    l.d("[$model]模型返回->$result");
+    return result;
   }
 
   /// 进行图片生成 `/images/generations`
@@ -91,8 +95,9 @@ class OpenAI {
     if (images == null) {
       return null;
     }
+    model ??= _model ?? "";
     final request = ImageGenerationRequest(
-      model: model ?? _model,
+      model: model,
       prompt: prompt,
       size: size ?? ImageSize.auto,
       quality: ImageQuality.auto,
@@ -169,9 +174,10 @@ class OpenAI {
     if (imageBytes == null) {
       return null;
     }
+    model ??= _model ?? "";
     final response = await _client?.images.edit(
       ImageEditRequest(
-        model: model ?? _model,
+        model: model,
         image: imageBytes.bytes,
         imageFilename: imageFilename ?? nowTimeFileName(),
         prompt: prompt,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter3_ai/flutter3_ai.dart';
 import 'package:flutter3_ai/src/widgets/glowing_border_button.dart';
@@ -15,8 +17,9 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
   /// - 决定对话框返回的数据类型
   final AiModelIntentType modelIntentType;
 
-  /// 图片编辑时, 图片的原始数据
-  final List<int>? imageEditBytes;
+  /// - 大模型时, 图片入参
+  /// - 图片编辑时, 图片的原始数据
+  final List<int>? inputImageBytes;
 
   //--
 
@@ -31,6 +34,9 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
   /// 默认的提示词
   final String? defaultPrompt;
 
+  /// 是否显示提示词小部件
+  final bool showPromptWidget;
+
   /// 当前选择的供应商配置
   final AiProviderConfigBean? providerConfig;
 
@@ -41,7 +47,7 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
   final void Function(AiProviderConfigBean config)? onConfigChanged;
 
   /// AI处理结果返回
-  final void Function(BuildContext? context, Object? result)? onResult;
+  final FutureOr Function(BuildContext? context, Object? result)? onResult;
 
   //MARK: - ScreenMixin
 
@@ -58,12 +64,13 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
     super.key,
     this.screenType = .centerDialog,
     this.modelIntentType = .general,
-    this.imageEditBytes,
+    this.inputImageBytes,
     this.title,
     this.titleWidget,
     this.highlight,
     this.highlightWidget,
     this.defaultPrompt,
+    this.showPromptWidget = true,
     this.providerConfig,
     this.onConfigChanged,
     this.providerConfigList,
@@ -262,15 +269,17 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
             providerApiKey = value;
             _sendConfigChanged();
           },
-        ).insets(h: kX), //提示词
-        SingleInputWidget(
-          config: promptInputConfig,
-          showInputCounter: false,
-          maxLines: 5,
-          onChanged: (value) {
-            modelIntentPrompt = value;
-          },
         ).insets(h: kX),
+        //提示词
+        if (widget.showPromptWidget)
+          SingleInputWidget(
+            config: promptInputConfig,
+            showInputCounter: false,
+            maxLines: 5,
+            onChanged: (value) {
+              modelIntentPrompt = value;
+            },
+          ).insets(h: kX),
         //按钮
         GlowingBorderButton(
           text: libRes?.libAiSend ?? "",
@@ -302,19 +311,22 @@ class _AiPromptInputDialogState extends State<AiPromptInputDialog>
                 );
               if (modelIntent == .general) {
                 // 通用大模型
-                final result = await openAI.chatCompletion(prompt);
-                widget.onResult?.call(buildContext, result);
+                final result = await openAI.chatCompletion(
+                  prompt,
+                  imageBytes: widget.inputImageBytes,
+                );
+                await widget.onResult?.call(buildContext, result);
               } else if (modelIntent == .imageGenerate) {
                 // 图像生成
                 final result = await openAI.imageGenerate(prompt);
-                widget.onResult?.call(buildContext, result);
+                await widget.onResult?.call(buildContext, result);
               } else if (modelIntent == .imageEdit) {
                 // 图像编辑
                 final result = await openAI.imageEdit(
                   prompt,
-                  widget.imageEditBytes,
+                  widget.inputImageBytes,
                 );
-                widget.onResult?.call(buildContext, result);
+                await widget.onResult?.call(buildContext, result);
               }
             }());
             //toastInfo("send...${_providerConfigBean?.baseUrl}");
