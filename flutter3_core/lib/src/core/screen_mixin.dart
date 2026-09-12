@@ -41,6 +41,10 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   @configProperty
   bool get showCancelButton => true;
 
+  /// 是否使用back图标的cancel button, 否则就是 x
+  @configProperty
+  bool get useBackIconCancelButton => false;
+
   /// 是否显示确认按钮
   ///  - [buildTitleRow]
   @configProperty
@@ -201,7 +205,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     final BuildContext context = screenContext.context;
     return InkButton(
       loadCoreAssetSvgPicture(
-        Assets.svg.coreClose,
+        useBackIconCancelButton ? Assets.svg.coreBack : Assets.svg.coreClose,
         tintColor: context.isThemeDark
             ? globalTheme.textTitleStyle.color
             : null,
