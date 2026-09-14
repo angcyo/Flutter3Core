@@ -195,7 +195,8 @@ extension PopupEx on BuildContext {
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
     //debugger();
-    contentPadding ??= const EdgeInsets.all(popupArrowHeight);
+    contentPadding ??=
+        EdgeInsets.zero /*const EdgeInsets.all(popupArrowHeight)*/;
     contentMargin ??= showArrow
         ? EdgeInsets.symmetric(
             horizontal: maxOf(popupBlurRadiusHeight, popupArrowHeight),
