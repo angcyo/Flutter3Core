@@ -264,12 +264,21 @@ Image? loadCoreAssetImageWidget(String? key, {
 
 //MARK: ---
 
+/// 临时调试标志
+@tempFlag
+bool? _libDebug;
+
 /// [isDebug]
 /// [CoreKeys.isDebugFlag]
 bool get isDebugFlag =>
-    isDebugType ||
+    _libDebug == true ||
+        isDebugType ||
         isDebugFlagDevice ||
         (GlobalConfig.def.isDebugFlagFn?.call() ?? $coreKeys.isDebugFlag);
+
+set isDebugFlag(bool? value) {
+  _libDebug = value;
+}
 
 /// 友好的异常
 /// - 调试下: 详细的提示
