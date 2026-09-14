@@ -29,7 +29,60 @@ mixin AbsScrollPage {
   @overridePoint
   @initialize
   Widget build(BuildContext context) {
-    return buildScaffold(context);
+    return wrapPageFocusNode(context, buildScaffold(context));
+  }
+
+  /// 页面焦点, 配置之后, 启用页面焦点
+  /// ```
+  /// final FocusNode _pageFocusNode = FocusNode();
+  ///
+  /// @override
+  /// FocusNode? get pageFocusNode => _pageFocusNode;
+  /// ```
+  @configProperty
+  FocusNode? get pageFocusNode => null;
+
+  /// 返回页面是否有焦点
+  bool get isPageFocused => pageFocusNode?.hasFocus == true;
+
+  /// 需要主动调用[FocusNode.dispose]释放焦点
+  /// - [FocusNode.dispose]
+  @overridePoint
+  Widget wrapPageFocusNode(BuildContext context, Widget body) {
+    final pageFocusNode = this.pageFocusNode;
+    if (pageFocusNode != null) {
+      return FocusScope(
+        autofocus: true,
+        onFocusChange: isDebug
+            ? (focused) {
+                l.i("[${classHash()}]页面焦点变化->$focused");
+              }
+            : null,
+        onKeyEvent: isDebug
+            ? (node, event) {
+                //debugger();
+                return .ignored;
+              }
+            : null,
+        child: Focus(
+          focusNode: pageFocusNode,
+          autofocus: true,
+          /*onFocusChange: isDebug
+              ? (focused) {
+                  debugger();
+                }
+              : null,*/
+          onKeyEvent: isDebug
+              ? (node, event) {
+                  //debugger();
+                  return .ignored;
+                }
+              : null,
+          child: body,
+        ),
+      );
+    }
+    return body;
   }
 
   //region Page
