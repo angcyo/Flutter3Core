@@ -570,6 +570,7 @@ class TextFieldConfig {
   //region KeyEvent
 
   /// 输入框处理键盘事件
+  /// @return [KeyEventResult.handled] 表示处理按键事件, 那么系统的输入将无效
   @callPoint
   KeyEventResult handleKeyEvent(FocusNode node, KeyEvent event) {
     /*assert(() {
@@ -610,7 +611,7 @@ class TextFieldConfig {
         }
       }
     }
-    return result ?? KeyEventResult.ignored;
+    return result ?? .ignored;
   }
 
   //endregion KeyEvent
