@@ -15,8 +15,10 @@ part of './dialog.dart';
 /// - [MessageDialog]
 /// - [DesktopMessageDialog]
 ///
-/// @return 是否点击了确认按钮
-///
+/// @return 是否点击了确认按钮 [bool] or null
+///   - 点击[confirm], 返回true
+///   - 点击[cancel], 返回false
+///   - 点击[neutral], 返回null
 class MessageDialog extends AndroidNormalDialog {
   const MessageDialog({
     super.key,
