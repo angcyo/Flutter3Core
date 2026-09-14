@@ -1043,9 +1043,10 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void selectElement(
     ElementPainter? element, {
-    bool followPainter = true,
+    @defInjectMark bool? followPainter,
     ElementSelectType selectType = ElementSelectType.code,
   }) {
+    followPainter ??= canvasStyle.followPainterWhenSelected;
     resetSelectedElementList(
       element == null ? [] : [element],
       selectType: selectType,
@@ -1059,10 +1060,11 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void selectAllElement({
     List<ElementPainter>? elements,
-    bool followPainter = true,
-    ElementSelectType selectType = ElementSelectType.code,
+    @defInjectMark bool? followPainter,
+    ElementSelectType selectType = .code,
   }) {
     elements ??= this.elements;
+    followPainter ??= canvasStyle.followPainterWhenSelected;
     resetSelectedElementList(elements, selectType: selectType);
     if (followPainter) {
       canvasDelegate.followRect(rect: elements.allElementBounds);
@@ -1073,7 +1075,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void addSelectElement(
     ElementPainter element, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     selectComponent.addSelectElement(element, selectType: selectType);
   }
@@ -1082,7 +1084,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void addSelectElementList(
     List<ElementPainter> elements, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     selectComponent.addSelectElementList(elements, selectType: selectType);
   }

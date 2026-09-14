@@ -771,7 +771,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @api
   void selectElement(
     ElementPainter? element, {
-    bool followPainter = true,
+        @defInjectMark bool? followPainter,
     ElementSelectType selectType = ElementSelectType.user,
   }) {
     canvasElementManager.selectElement(

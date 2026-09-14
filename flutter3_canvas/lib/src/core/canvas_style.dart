@@ -39,6 +39,10 @@ class CanvasStyle {
   @configProperty
   BoxFit? firstLayoutFollowFit = BoxFit.contain;
 
+  /// 选中元素时, 是否跟随元素
+  @configProperty
+  bool followPainterWhenSelected = isMobile;
+
   //--CanvasAxisManager
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制

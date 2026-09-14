@@ -1740,7 +1740,7 @@ class ElementSelectComponent extends ElementGroupPainter
   @api
   void addSelectElement(
     ElementPainter element, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     final list = children ?? [];
     list.add(element);
@@ -1751,7 +1751,7 @@ class ElementSelectComponent extends ElementGroupPainter
   @api
   void addSelectElementList(
     List<ElementPainter> elements, {
-    ElementSelectType selectType = ElementSelectType.code,
+    ElementSelectType selectType = .code,
   }) {
     final list = children ?? [];
     list.addAll(elements);
@@ -1780,9 +1780,9 @@ class ElementSelectComponent extends ElementGroupPainter
         assert(() {
           debugger(
             when:
-                selectType != ElementSelectType.pointer &&
-                selectType != ElementSelectType.code &&
-                selectType != ElementSelectType.user,
+                selectType != .pointer &&
+                selectType != .code &&
+                selectType != .user,
           );
           final count = children?.getAllSingleElement().size() ?? 0;
           if (count > 5) {
