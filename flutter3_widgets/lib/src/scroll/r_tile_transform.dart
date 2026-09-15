@@ -58,20 +58,18 @@ Widget _ensureSliver(Widget tile) {
   if (isSliverWidget(tile)) {
     return tile;
   } else if (tile is! NotSliverTile &&
-          tile.runtimeType.toString().toLowerCase().contains("sliver")
-      /*("$tile".toLowerCase().startsWith("sliver") ||
+      tile.runtimeType.toString().toLowerCase().contains("sliver")
+  /*("$tile".toLowerCase().startsWith("sliver") ||
               "$tile".toLowerCase().startsWith("instance of 'sliver")) ||
       "$tile".toLowerCase().contains("sliver")*/
-      ) {
+  ) {
     assert(() {
       l.d('未使用[SliverToBoxAdapter]包裹的[Sliver]小部件[${tile.runtimeType}]');
       return true;
     }());
     return tile;
   } else {
-    return SliverToBoxAdapter(
-      child: tile,
-    );
+    return SliverToBoxAdapter(child: tile);
   }
 }
 
@@ -297,14 +295,11 @@ mixin TileTransformMixin {
     WidgetIterable tileList, {
     bool ensureSliverTile = false,
   }) {
-    return tileList.map((e) => e is RItemTile
-        ? buildTileWidget(
-            context,
-            e,
-            e,
-            ensureSliverTile: ensureSliverTile,
-          )
-        : e);
+    return tileList.map(
+      (e) => e is RItemTile
+          ? buildTileWidget(context, e, e, ensureSliverTile: ensureSliverTile)
+          : e,
+    );
   }
 
   /// 悬浮头包裹, 如果需要的话
@@ -387,20 +382,18 @@ mixin TileTransformMixin {
     BuildContext context,
     RItemTile? tile,
     Widget sliverChild,
-  ) =>
-      tile?.fillRemaining == true
-          ? buildSliverFillRemaining(context, tile, sliverChild) ?? sliverChild
-          : sliverChild;
+  ) => tile?.fillRemaining == true
+      ? buildSliverFillRemaining(context, tile, sliverChild) ?? sliverChild
+      : sliverChild;
 
   /// [buildHeaderTile]
   Widget wrapHeaderTile(
     BuildContext context,
     RItemTile? tile,
     Widget sliverChild,
-  ) =>
-      tile?.isHeader == true
-          ? buildHeaderTile(context, tile, sliverChild) ?? sliverChild
-          : sliverChild;
+  ) => tile?.isHeader == true
+      ? buildHeaderTile(context, tile, sliverChild) ?? sliverChild
+      : sliverChild;
 
   //endregion ---tile处理---
 
@@ -412,20 +405,17 @@ mixin TileTransformMixin {
   /// [DecoratedSliver]
   /// [wrapSliverPadding]
   /// [wrapSliverDecoration]
-  Widget wrapSliverPaddingDecorationTile(
-    RItemTile? tile,
-    Widget sliverChild,
-  ) =>
+  Widget wrapSliverPaddingDecorationTile(RItemTile? tile, Widget sliverChild) =>
       tile == null
-          ? sliverChild
-          : wrapSliverPadding(
-              tile.sliverPadding,
-              wrapSliverDecoration(
-                tile.sliverDecoration,
-                tile.sliverDecorationPosition,
-                sliverChild,
-              ),
-            );
+      ? sliverChild
+      : wrapSliverPadding(
+          tile.sliverPadding,
+          wrapSliverDecoration(
+            tile.sliverDecoration,
+            tile.sliverDecorationPosition,
+            sliverChild,
+          ),
+        );
 
   /// 装饰当前的[sliverChild]
   /// [DecoratedSliver]
@@ -462,7 +452,7 @@ mixin TileTransformMixin {
     );
   }
 
-//endregion ---Sliver装饰---
+  //endregion ---Sliver装饰---
 }
 
 /// 将一组变换好的小部件, 转换成另外一个小部件, 如果需要的话
@@ -559,12 +549,14 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     bool fromPart,
   ) {
     if (tileList.isNotEmpty || headerWidget != null) {
-      result.add(_buildTransformSliverMainAxisGroupWrap(
-        context,
-        headerTile,
-        headerWidget,
-        tileList,
-      ));
+      result.add(
+        _buildTransformSliverMainAxisGroupWrap(
+          context,
+          headerTile,
+          headerWidget,
+          tileList,
+        ),
+      );
       reset(fromPart);
     }
   }
@@ -611,13 +603,15 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
           ignoreSliverDecoration: true,
         );
       } else {
-        tileList.add(buildTileWidget(
-          context,
-          tile,
-          tile,
-          ignoreSliverPadding: true,
-          ignoreSliverDecoration: true,
-        ));
+        tileList.add(
+          buildTileWidget(
+            context,
+            tile,
+            tile,
+            ignoreSliverPadding: true,
+            ignoreSliverDecoration: true,
+          ),
+        );
       }
       return true;
     } else if (parentTile != null) {
@@ -642,18 +636,20 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     List<Widget> newList = [];
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
-        newList.add(buildTileWidget(
-          context,
-          tile,
-          ensureSliverTile: true,
-          tile.buildListWrapChild(
+        newList.add(
+          buildTileWidget(
             context,
-            sliverChild,
             tile,
-            index,
-            firstAnchor: headerTile,
+            ensureSliverTile: true,
+            tile.buildListWrapChild(
+              context,
+              sliverChild,
+              tile,
+              index,
+              firstAnchor: headerTile,
+            ),
           ),
-        ));
+        );
       } else {
         newList.add(_ensureSliver(tile));
       }
@@ -661,10 +657,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
 
     return wrapSliverPaddingDecorationTile(
       headerTile ?? firstTile,
-      SliverMainAxisGroup(slivers: [
-        if (headerWidget != null) headerWidget,
-        ...newList,
-      ]),
+      SliverMainAxisGroup(slivers: [?headerWidget, ...newList]),
     );
   }
 }
@@ -728,50 +721,55 @@ class SliverListTransform extends BaseTileTransform {
     BuildContext context,
     WidgetIterable sliverChild,
   ) {
-    RItemTile first = firstTile ??
+    RItemTile first =
+        firstTile ??
         sliverChild.firstWhere(
-          (element) => element is RItemTile,
-          orElse: () => const RItemTile(),
-        ) as RItemTile;
+              (element) => element is RItemTile,
+              orElse: () => const RItemTile(),
+            )
+            as RItemTile;
     //debugger(when: first.tag == "debug");
 
     final List<Widget> newList = [];
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
-        newList.add(buildTileWidget(
-          context,
-          tile,
-          ignoreSliverDecoration: true,
-          ignoreSliverPadding: true,
-          tile.buildListWrapChild(
+        newList.add(
+          buildTileWidget(
             context,
-            sliverChild,
             tile,
-            index,
-            firstAnchor: firstTile ?? parentTile,
+            ignoreSliverDecoration: true,
+            ignoreSliverPadding: true,
+            tile.buildListWrapChild(
+              context,
+              sliverChild,
+              tile,
+              index,
+              firstAnchor: firstTile ?? parentTile,
+            ),
           ),
-        ));
+        );
       } else {
         newList.add(tile);
       }
     });
     return wrapSliverPaddingDecorationTile(
-        first,
-        /*SliverList.list(
+      first,
+      /*SliverList.list(
         addAutomaticKeepAlives: first.addAutomaticKeepAlives,
         addRepaintBoundaries: first.addRepaintBoundaries,
         addSemanticIndexes: first.addSemanticIndexes,
         children: newList,
       ),*/
-        SliverList.builder(
-          addAutomaticKeepAlives: first.addAutomaticKeepAlives,
-          addRepaintBoundaries: first.addRepaintBoundaries,
-          addSemanticIndexes: first.addSemanticIndexes,
-          itemCount: newList.length,
-          itemBuilder: (context, index) {
-            return newList.getOrNull(index);
-          },
-        ));
+      SliverList.builder(
+        addAutomaticKeepAlives: first.addAutomaticKeepAlives,
+        addRepaintBoundaries: first.addRepaintBoundaries,
+        addSemanticIndexes: first.addSemanticIndexes,
+        itemCount: newList.length,
+        itemBuilder: (context, index) {
+          return newList.getOrNull(index);
+        },
+      ),
+    );
   }
 }
 
@@ -850,55 +848,60 @@ class SliverGridTransform extends BaseTileTransform {
     BuildContext context,
     WidgetIterable sliverChild,
   ) {
-    RItemTile first = firstTile ??
+    RItemTile first =
+        firstTile ??
         sliverChild.firstWhere(
-          (element) => element is RItemTile,
-          orElse: () => const RItemTile(),
-        ) as RItemTile;
+              (element) => element is RItemTile,
+              orElse: () => const RItemTile(),
+            )
+            as RItemTile;
 
     WidgetList newList = [];
     sliverChild.forEachIndexed((index, tile) {
       //debugger();
       if (tile is RItemTile) {
-        newList.add(buildTileWidget(
-          context,
-          tile,
-          ignoreSliverDecoration: true,
-          ignoreSliverPadding: true,
-          tile.buildGridWrapChild(
+        newList.add(
+          buildTileWidget(
             context,
-            sliverChild,
             tile,
-            index,
-            firstAnchor: parentTile,
+            ignoreSliverDecoration: true,
+            ignoreSliverPadding: true,
+            tile.buildGridWrapChild(
+              context,
+              sliverChild,
+              tile,
+              index,
+              firstAnchor: parentTile,
+            ),
           ),
-        ));
+        );
       } else {
         newList.add(tile);
       }
     });
     //debugger();
     return wrapSliverPaddingDecorationTile(
-        first,
-        /*SliverGrid.count(
+      first,
+      /*SliverGrid.count(
         crossAxisCount: first.crossAxisCount,
         mainAxisSpacing: first.mainAxisSpacing,
         crossAxisSpacing: first.crossAxisSpacing,
         childAspectRatio: first.childAspectRatio,
         children: newList,
       ),*/
-        SliverGrid.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: first.crossAxisCount,
-            mainAxisSpacing: first.mainAxisSpacing,
-            crossAxisSpacing: first.crossAxisSpacing,
-            childAspectRatio: first.childAspectRatio,
-          ),
-          itemCount: newList.length,
-          itemBuilder: (context, index) {
-            return newList.getOrNull(index);
-          },
-        ));
+      SliverGrid.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: first.crossAxisCount,
+          mainAxisSpacing: first.mainAxisSpacing,
+          crossAxisSpacing: first.crossAxisSpacing,
+          childAspectRatio: first.childAspectRatio,
+        ),
+        itemCount: newList.length,
+        itemBuilder: (context, index) {
+          return newList.getOrNull(index);
+        },
+      ),
+    );
   }
 }
 
@@ -960,54 +963,60 @@ class SliverReorderableListTransform extends BaseTileTransform {
     BuildContext context,
     WidgetIterable sliverChild,
   ) {
-    RItemTile first = firstTile ??
+    RItemTile first =
+        firstTile ??
         sliverChild.firstWhere(
-          (element) => element is RItemTile,
-          orElse: () => const RItemTile(),
-        ) as RItemTile;
+              (element) => element is RItemTile,
+              orElse: () => const RItemTile(),
+            )
+            as RItemTile;
 
     List<Widget> newList = [];
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
-        newList.add(buildTileWidget(
-          context,
-          tile,
-          ignoreSliverDecoration: true,
-          ignoreSliverPadding: true,
-          tile.buildListWrapChild(
+        newList.add(
+          buildTileWidget(
             context,
-            sliverChild,
             tile,
-            index,
-            firstAnchor: firstTile ?? parentTile,
+            ignoreSliverDecoration: true,
+            ignoreSliverPadding: true,
+            tile.buildListWrapChild(
+              context,
+              sliverChild,
+              tile,
+              index,
+              firstAnchor: firstTile ?? parentTile,
+            ),
           ),
-        ));
+        );
       } else {
         newList.add(tile);
       }
     });
     return wrapSliverPaddingDecorationTile(
-        first,
-        SliverReorderableList(
-          onReorder: first.onTileReorder ??
-              (int oldIndex, int newIndex) {
-                assert(() {
-                  l.d("oldIndex:$oldIndex newIndex:$newIndex");
-                  /*if (oldIndex < newIndex) {
+      first,
+      SliverReorderableList(
+        onReorder:
+            first.onTileReorder ??
+            (int oldIndex, int newIndex) {
+              assert(() {
+                l.d("oldIndex:$oldIndex newIndex:$newIndex");
+                /*if (oldIndex < newIndex) {
                     newIndex -= 1;
                   }
                   final item = newList.removeAt(oldIndex);
                   newList.insert(newIndex, item);*/
-                  return true;
-                }());
-              },
-          onReorderStart: first.onTileReorderStart,
-          onReorderEnd: first.onTileReorderEnd,
-          proxyDecorator: first.onTileReorderProxyDecorator,
-          itemCount: newList.length,
-          itemBuilder: (context, index) {
-            return newList[index].childKeyed(ValueKey(index));
-          },
-        ));
+                return true;
+              }());
+            },
+        onReorderStart: first.onTileReorderStart,
+        onReorderEnd: first.onTileReorderEnd,
+        proxyDecorator: first.onTileReorderProxyDecorator,
+        itemCount: newList.length,
+        itemBuilder: (context, index) {
+          return newList[index].childKeyed(ValueKey(index));
+        },
+      ),
+    );
   }
 }
