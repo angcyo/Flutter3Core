@@ -310,6 +310,11 @@ class LibRes {
     return Intl.message('导出原图', name: 'libExportOriginal', desc: '', args: []);
   }
 
+  /// `复制为图片`
+  String get libCopyAsImage {
+    return Intl.message('复制为图片', name: 'libCopyAsImage', desc: '', args: []);
+  }
+
   /// `外部分享`
   String get libExternalShare {
     return Intl.message('外部分享', name: 'libExternalShare', desc: '', args: []);

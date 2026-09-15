@@ -21,6 +21,14 @@ typedef GlobalWriteFileFn =
 typedef GlobalShareDataFn =
     Future<bool> Function(BuildContext? context, dynamic data);
 
+/// 全局复制图片的回调方法, 返回成功or失败
+typedef GlobalCopyImageFn =
+    Future<bool> Function(BuildContext? context, UiImage? image);
+
+/// 全局复制文件的回调方法, 返回成功or失败
+typedef GlobalCopyFilesFn =
+    Future<bool> Function(BuildContext? context, List<String>? files);
+
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
 
@@ -685,6 +693,18 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// [shareAppLog]
   GlobalShareDataFn? shareAppLogFn = (context, data) {
     l.w("企图分享App日志:$data");
+    return Future.value(false);
+  };
+
+  /// 注册一个全局的复制图片的方法
+  GlobalCopyImageFn? copyImageFn = (context, image) {
+    l.w("企图复制图片:${image?.imageSize}");
+    return Future.value(false);
+  };
+
+  /// 注册一个全局的复制文件的方法
+  GlobalCopyFilesFn? copyFilesFn = (context, files) {
+    l.w("企图复制文件:${files?.length}");
     return Future.value(false);
   };
 

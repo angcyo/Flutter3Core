@@ -66,6 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "libContinue": MessageLookupByLibrary.simpleMessage("Continue"),
     "libCopy": MessageLookupByLibrary.simpleMessage("Copy"),
+    "libCopyAsImage": MessageLookupByLibrary.simpleMessage("Copy as Image"),
     "libCopySelectedElem": MessageLookupByLibrary.simpleMessage(
       "Copy Selected Elements",
     ),

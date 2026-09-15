@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libConfirm": MessageLookupByLibrary.simpleMessage("确定"),
     "libContinue": MessageLookupByLibrary.simpleMessage("继续"),
     "libCopy": MessageLookupByLibrary.simpleMessage("复制"),
+    "libCopyAsImage": MessageLookupByLibrary.simpleMessage("复制为图片"),
     "libCopySelectedElem": MessageLookupByLibrary.simpleMessage("复制选中元素"),
     "libDaysAgo": MessageLookupByLibrary.simpleMessage("天前"),
     "libDelete": MessageLookupByLibrary.simpleMessage("删除"),

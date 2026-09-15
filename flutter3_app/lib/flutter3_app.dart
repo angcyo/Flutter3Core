@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter3_app/assets_generated/assets.gen.dart';
 import 'package:flutter3_app/src/pages/app_about_dialog.dart';
+import 'package:flutter3_app/src/pasteboard_ex.dart';
 import 'package:flutter3_core/flutter3_core.dart';
 import 'package:flutter3_pub/flutter3_pub.dart';
 import 'package:flutter_move_task_back/flutter_move_task_back.dart';
@@ -153,6 +154,16 @@ Future runGlobalApp(
       reportError(e);
       return false;
     }
+  };
+
+  // 复制图片
+  GlobalConfig.def.copyImageFn = (context, image) async {
+    return await $setPasteboardImage(image);
+  };
+
+  // 复制文件
+  GlobalConfig.def.copyFilesFn = (context, files) async {
+    return await $setPasteboardFiles(files);
   };
 
   // FlutterError.onError

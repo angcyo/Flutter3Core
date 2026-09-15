@@ -168,7 +168,8 @@ class CanvasMenuManager
   /// 构建元素相关菜单, 选择了元素时的菜单
   /// - [buildMenuWidget]
   Widget? _buildElementMenuWidget({@viewCoordinate Offset? anchorPosition}) {
-    final globalTheme = GlobalTheme.of(context);
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = globalConfig.globalTheme;
     final libRes = context?.libRes;
 
     final enableSelect = !isEmptyElement;
@@ -197,6 +198,17 @@ class CanvasMenuManager
     final shortcutConfigManager =
         canvasDelegate.canvasKeyManager.shortcutConfigManager;
     return [
+      //复制图片
+      if (element != null && globalConfig.copyImageFn != null)
+        buildMenuItem(globalTheme, libRes?.libCopyAsImage, () {
+          final image = element.elementOutputImage;
+          /*element.originImage ??
+                  element.painterImage ??
+                  element.operateImage;*/
+          if (image != null) {
+            globalConfig.copyImageFn?.call(context, image);
+          }
+        }),
       //导出
       if (isSingleImageElement)
         buildMenuItem(globalTheme, libRes?.libExportOriginal, () {
