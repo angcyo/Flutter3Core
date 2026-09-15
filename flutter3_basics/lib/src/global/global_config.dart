@@ -697,16 +697,20 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   };
 
   /// 注册一个全局的复制图片的方法
-  GlobalCopyImageFn? copyImageFn = (context, image) {
+  GlobalCopyImageFn? copyImageFn;
+
+  /*(context, image) {
     l.w("企图复制图片:${image?.imageSize}");
     return Future.value(false);
-  };
+  };*/
 
   /// 注册一个全局的复制文件的方法
-  GlobalCopyFilesFn? copyFilesFn = (context, files) {
+  GlobalCopyFilesFn? copyFilesFn;
+
+  /*(context, files) {
     l.w("企图复制文件:${files?.length}");
     return Future.value(false);
-  };
+  };*/
 
   //region Widget
 
