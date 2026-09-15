@@ -974,7 +974,7 @@ extension DialogExtension on BuildContext {
     );
   }
 
-  /// 在指定位置弹出一个菜单, 内部使用[PopupRoute]实现
+  /// 在指定位置弹出一个菜单, 系统内部使用[PopupRoute]实现
   ///
   /// [showMenu]
   /// [PopupMenuButton]
@@ -1160,6 +1160,7 @@ extension DialogExtension on BuildContext {
     );
   }
 
+  /// 完全自定义的菜单路由
   /// - [menuPosition] 菜单显示在锚点的什么位置
   ///    - [PopupMenuPosition.over] 覆盖显示(默认)
   ///    - [PopupMenuPosition.under] 在锚点下方显示
