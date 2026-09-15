@@ -217,20 +217,20 @@ class CanvasMenuManager
               element.painterImage ??
               element.operateImage;
           if (image != null) {
-            wrapLoading(() async {
-              _exportImage(
-                image,
-                "${element.elementName ?? nowTimestamp()}".connect(".png"),
-              );
-            }());
+            $exportImage(
+              canvasDelegate.delegateContext,
+              image,
+              name: "${element.elementName ?? nowTimestamp()}".connect(".png"),
+            );
           }
         }),
       buildMenuItem(globalTheme, libRes?.libExportAsImage, () {
         final image = element?.elementOutputImage;
         if (image != null) {
-          _exportImage(
+          $exportImage(
+            canvasDelegate.delegateContext,
             image,
-            "${element?.elementName ?? nowTimestamp()}".connect(".png"),
+            name: "${element?.elementName ?? nowTimestamp()}".connect(".png"),
           );
         }
       }),
@@ -316,17 +316,5 @@ class CanvasMenuManager
         hLine(context).size(width: canvasDelegate.canvasStyle.menuItemWidth),
       ...otherMenus,
     ].scroll(axis: Axis.vertical)!;
-  }
-
-  /// 导出图片到本地
-  void _exportImage(UiImage image, String name) {
-    wrapLoading(() async {
-      await image.writeToFile(fileName: name, useCacheFolder: true).getValue((
-        file,
-        error,
-      ) {
-        saveFilePath(file?.path, canvasDelegate.delegateContext, null);
-      });
-    }());
   }
 }

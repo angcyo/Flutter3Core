@@ -316,3 +316,19 @@ class RNiceException implements Exception {
     return msg ?? cause?.toString() ?? "[${classHash()}]";
   }
 }
+
+//MARK: - export
+
+/// 导出图片到本地
+void $exportImage(BuildContext? context, UiImage? image, {
+  String? name
+}) {
+  if (image == null) return;
+  wrapLoading(() async {
+    await image.writeToFile(
+        fileName: name ?? nowTimeFileName().ensureSuffix(".png"),
+        useCacheFolder: true).getValue((file, error) {
+      saveFilePath(file?.path, context, null);
+    });
+  }());
+}

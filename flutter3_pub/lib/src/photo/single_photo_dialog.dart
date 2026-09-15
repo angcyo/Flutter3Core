@@ -85,18 +85,47 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    Widget result = PhotoView(
-      imageProvider: _imageProvider,
-      loadingBuilder: _buildLoading,
-      controller: photoStateController,
-      scaleStateController: photoScaleStateController,
-      backgroundDecoration: fillDecoration(color: Colors.transparent),
-      enableRotation: false,
-      heroAttributes:
-          widget.heroAttributes ??
-          widget.content?.toPhotoViewHeroAttributes() ??
-          widget.filePath?.toPhotoViewHeroAttributes(),
-    );
+    final libRes = context.libRes;
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = globalConfig.globalTheme;
+    Widget result =
+        PhotoView(
+          imageProvider: _imageProvider,
+          loadingBuilder: _buildLoading,
+          controller: photoStateController,
+          scaleStateController: photoScaleStateController,
+          backgroundDecoration: fillDecoration(color: Colors.transparent),
+          enableRotation: false,
+          heroAttributes:
+              widget.heroAttributes ??
+              widget.content?.toPhotoViewHeroAttributes() ??
+              widget.filePath?.toPhotoViewHeroAttributes(),
+        ).mouseRightMenu(
+          menus: [
+            if (globalConfig.copyImageFn != null)
+              LabelMenuTile(
+                label: libRes?.libCopyImage,
+                labelTextStyle: globalTheme.textBodyStyle,
+              ),
+            LabelMenuTile(
+              label: libRes?.libExportOriginal,
+              labelTextStyle: globalTheme.textBodyStyle,
+            ),
+          ],
+          onMenusTap: [
+            if (globalConfig.copyImageFn != null)
+              () {
+                _imageProvider?.toImage().then((image) {
+                  globalConfig.copyImageFn?.call(context, image);
+                });
+              },
+            () {
+              _imageProvider?.toImage().then((image) {
+                $exportImage(context, image);
+              });
+            },
+          ],
+        );
 
     if (isDebug) {
       final image = _debugImage ?? widget.content;
@@ -147,8 +176,8 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       result,
     ].stack()!.material();*/
     return result.material().systemUiOverlay(
-      statusBarBrightness: Brightness.light,
-      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: .light,
+      statusBarIconBrightness: .light,
     );
   }
 

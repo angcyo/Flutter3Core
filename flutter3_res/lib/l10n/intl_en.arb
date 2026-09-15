@@ -57,6 +57,7 @@
   "libCopy": "Copy",
   "libExportAsImage": "Export as Image",
   "libExportOriginal": "Export Original",
+  "libCopyImage": "Copy Image",
   "libCopyAsImage": "Copy as Image",
   "libExternalShare": "External Share",
   "libLoading": "Loading...",
