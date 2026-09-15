@@ -22,6 +22,7 @@ class RScrollView extends StatefulWidget {
     this.childrenBuilder,
     this.updateSignal,
     this.scrollConfig,
+    this.itemTileWrapBuilder,
     this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -69,6 +70,9 @@ class RScrollView extends StatefulWidget {
 
   /// 控件配置, 过滤器和转换链
   final RScrollConfig? scrollConfig;
+
+  /// 用来实现[RItemTile]包裹, 比如添加边距/添加分割线等
+  final RItemTileWrapBuilder? itemTileWrapBuilder;
 
   /// 滚动控制, 状态切换控制, 刷新/加载更多控制
   /// [ScrollController]
@@ -251,7 +255,11 @@ class _RScrollViewState extends State<RScrollView>
   /// [build]->[_buildTileList]->[_transformTileList]->[RScrollConfig.filterAndTransformTileList]
   WidgetList _transformTileList(BuildContext context, WidgetList children) {
     final scrollConfig = widget.scrollConfig ?? defaultScrollConfig;
-    return scrollConfig.filterAndTransformTileList(context, children);
+    return scrollConfig.filterAndTransformTileList(
+      context,
+      children,
+      itemTileWrapBuilder: widget.itemTileWrapBuilder,
+    );
   }
 
   void _rebuild() {

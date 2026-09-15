@@ -84,8 +84,17 @@ class RTileTransformChain with TileTransformMixin {
 
   /// 执行转换
   @entryPoint
-  WidgetList doTransform(BuildContext context, WidgetList children) {
-    return doTransformChildren(context, children, null);
+  WidgetList doTransform(
+    BuildContext context,
+    WidgetList children, {
+    RItemTileWrapBuilder? itemTileWrapBuilder,
+  }) {
+    return doTransformChildren(
+      context,
+      children,
+      null,
+      itemTileWrapBuilder: itemTileWrapBuilder,
+    );
   }
 
   /// 执行转换, 将输入的[children]转换成想要的[WidgetList]
@@ -93,8 +102,9 @@ class RTileTransformChain with TileTransformMixin {
   WidgetList doTransformChildren(
     BuildContext context,
     WidgetList children,
-    RItemTile? parentTile,
-  ) {
+    RItemTile? parentTile, {
+    RItemTileWrapBuilder? itemTileWrapBuilder,
+  }) {
     WidgetList result = [];
 
     BaseTileTransform? lastTransform;
@@ -120,6 +130,7 @@ class RTileTransformChain with TileTransformMixin {
             tile,
             i,
             parentTile,
+            itemTileWrapBuilder: itemTileWrapBuilder,
           );
         } else {
           //不支持当前的转换
@@ -139,6 +150,7 @@ class RTileTransformChain with TileTransformMixin {
           //debugger();
           if (support) {
             //debugger();
+            transform.itemTileWrapBuilder = itemTileWrapBuilder;
             lastTransform = transform;
             handle = _transformTile(
               transform,
@@ -148,6 +160,7 @@ class RTileTransformChain with TileTransformMixin {
               tile,
               i,
               parentTile,
+              itemTileWrapBuilder: itemTileWrapBuilder,
             );
             break;
           }
@@ -168,11 +181,23 @@ class RTileTransformChain with TileTransformMixin {
       // 未找到转换器时, 则进行默认的转换处理
       if (!handle) {
         //debugger();
+        final noTransform = lastTransform == null;
+        assert(() {
+          if (noTransform) {
+            l.w('[${tile.classHash()}]未找到对应的转换器, 将默认处理!');
+          }
+          return true;
+        }());
         lastTransform?.endTransformIfNeed(context, children, result, false);
         lastTransform = null;
         Widget child = tile;
+        if (noTransform) {
+          child =
+              itemTileWrapBuilder?.call(context, this, children, tile, i) ??
+              child;
+        }
         if (tile is RItemTile) {
-          child = buildTileWidget(context, tile, tile);
+          child = buildTileWidget(context, tile, child);
         }
         if (parentTile == null) {
           result.add(_ensureSliver(child));
@@ -196,8 +221,9 @@ class RTileTransformChain with TileTransformMixin {
     WidgetList result,
     Widget tile,
     int index,
-    RItemTile? parentTile,
-  ) {
+    RItemTile? parentTile, {
+    RItemTileWrapBuilder? itemTileWrapBuilder,
+  }) {
     final handle = transform.transformTile(
       context,
       origin,
@@ -211,7 +237,12 @@ class RTileTransformChain with TileTransformMixin {
       if (childTiles != null) {
         //处理[RItemTile.childTiles]
         //debugger();
-        final childResult = doTransformChildren(context, childTiles, tile);
+        final childResult = doTransformChildren(
+          context,
+          childTiles,
+          tile,
+          itemTileWrapBuilder: itemTileWrapBuilder,
+        );
         //debugger();
         for (var j = 0; j < childResult.length; j++) {
           final childTile = childResult[j];
@@ -240,6 +271,14 @@ class RTileTransformChain with TileTransformMixin {
   void reset() {
     for (final element in transformList) {
       element.reset(false);
+    }
+  }
+
+  /// 释放缓存
+  @entryPoint
+  void release() {
+    for (final element in transformList) {
+      element.release();
     }
   }
 }
@@ -302,6 +341,38 @@ mixin TileTransformMixin {
     );
   }
 
+  /// 铺平[RItemTile]
+  WidgetList mapFlatTileList(
+    BuildContext context,
+    WidgetIterable tileList, {
+    Widget? firstAnchor,
+  }) {
+    final WidgetList result = [];
+    int index = 0;
+    for (final tileItem in tileList) {
+      if (tileItem is RItemTile) {
+        final tileFlatBuilder = tileItem.tileFlatBuilder;
+        if (tileFlatBuilder != null) {
+          result.addAll(
+            tileFlatBuilder(
+              context,
+              this,
+              tileList,
+              tileItem,
+              index,
+              firstAnchor: firstAnchor,
+            ),
+          );
+        } else {
+          result.add(tileItem);
+        }
+      } else {
+        result.add(tileItem);
+      }
+    }
+    return result;
+  }
+
   /// 悬浮头包裹, 如果需要的话
   /// [SliverAppBar]内部也是使用[SliverPersistentHeader]实现的
   /// [SliverPersistentHeader]
@@ -309,7 +380,7 @@ mixin TileTransformMixin {
   Widget? buildHeaderTile(BuildContext context, Widget? tile, Widget child) {
     if (tile is RItemTile) {
       if (tile.useSliverAppBar) {
-        var height = tile.headerFixedHeight ?? tile.headerMinHeight;
+        final height = tile.headerFixedHeight ?? tile.headerMinHeight;
         return SliverAppBar(
           title: child,
           floating: tile.headerFloating,
@@ -468,6 +539,9 @@ abstract class BaseTileTransform with TileTransformMixin {
   /// 有可能是[RItemTile],也有可能是普通的[Widget]
   List<Widget> tileList = [];
 
+  /// 用来包装最后[RItemTile]生成的[Widget]的构造器
+  RItemTileWrapBuilder? itemTileWrapBuilder;
+
   /// 构造函数
   BaseTileTransform();
 
@@ -515,7 +589,12 @@ abstract class BaseTileTransform with TileTransformMixin {
     WidgetList origin,
     WidgetList result,
     bool fromPart,
-  );
+  ) {
+    assert(() {
+      l.i("[${classHash()}]包裹${origin.length}->${result.length}");
+      return true;
+    }());
+  }
 
   /// 重置
   /// [fromPart] 是否是下一段
@@ -526,6 +605,15 @@ abstract class BaseTileTransform with TileTransformMixin {
       firstTile = null;
       parentTile = null;
     }
+  }
+
+  /// 释放缓存
+  @api
+  void release() {
+    tileList = [];
+    parentTile = null;
+    firstTile = null;
+    itemTileWrapBuilder = null;
   }
 }
 
@@ -548,6 +636,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     WidgetList result,
     bool fromPart,
   ) {
+    super.endTransformIfNeed(context, origin, result, fromPart);
     if (tileList.isNotEmpty || headerWidget != null) {
       result.add(
         _buildTransformSliverMainAxisGroupWrap(
@@ -564,6 +653,13 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
   @override
   void reset(bool fromPart) {
     super.reset(fromPart);
+    headerTile = null;
+    headerWidget = null;
+  }
+
+  @override
+  void release() {
+    super.release();
     headerTile = null;
     headerWidget = null;
   }
@@ -632,22 +728,34 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
     WidgetList sliverChild,
   ) {
     //debugger();
-
     List<Widget> newList = [];
+    sliverChild = mapFlatTileList(
+      context,
+      sliverChild,
+      firstAnchor: headerTile,
+    );
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
+        final item = tile.buildListWrapChild(
+          context,
+          sliverChild,
+          tile,
+          index,
+          firstAnchor: headerTile,
+        );
         newList.add(
           buildTileWidget(
             context,
             tile,
             ensureSliverTile: true,
-            tile.buildListWrapChild(
-              context,
-              sliverChild,
-              tile,
-              index,
-              firstAnchor: headerTile,
-            ),
+            itemTileWrapBuilder?.call(
+                  context,
+                  this,
+                  sliverChild,
+                  item,
+                  index,
+                ) ??
+                item,
           ),
         );
       } else {
@@ -678,6 +786,7 @@ class SliverListTransform extends BaseTileTransform {
     WidgetList result,
     bool fromPart,
   ) {
+    super.endTransformIfNeed(context, origin, result, fromPart);
     if (tileList.isNotEmpty) {
       result.add(_buildTransformSliverListWrap(context, tileList));
       reset(fromPart);
@@ -729,23 +838,35 @@ class SliverListTransform extends BaseTileTransform {
             )
             as RItemTile;
     //debugger(when: first.tag == "debug");
-
     final List<Widget> newList = [];
+    sliverChild = mapFlatTileList(
+      context,
+      sliverChild,
+      firstAnchor: firstTile ?? parentTile,
+    );
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
+        final item = tile.buildListWrapChild(
+          context,
+          sliverChild,
+          tile,
+          index,
+          firstAnchor: firstTile ?? parentTile,
+        );
         newList.add(
           buildTileWidget(
             context,
             tile,
             ignoreSliverDecoration: true,
             ignoreSliverPadding: true,
-            tile.buildListWrapChild(
-              context,
-              sliverChild,
-              tile,
-              index,
-              firstAnchor: firstTile ?? parentTile,
-            ),
+            itemTileWrapBuilder?.call(
+                  context,
+                  this,
+                  sliverChild,
+                  item,
+                  index,
+                ) ??
+                item,
           ),
         );
       } else {
@@ -790,6 +911,7 @@ class SliverGridTransform extends BaseTileTransform {
     WidgetList result,
     bool fromPart,
   ) {
+    super.endTransformIfNeed(context, origin, result, fromPart);
     if (tileList.isNotEmpty) {
       result.add(_buildTransformSliverGridWrap(context, tileList));
       reset(fromPart);
@@ -857,22 +979,32 @@ class SliverGridTransform extends BaseTileTransform {
             as RItemTile;
 
     WidgetList newList = [];
+    sliverChild = mapFlatTileList(context, sliverChild, firstAnchor: first);
     sliverChild.forEachIndexed((index, tile) {
       //debugger();
       if (tile is RItemTile) {
+        final item = tile.buildGridWrapChild(
+          context,
+          sliverChild,
+          tile,
+          index,
+          firstAnchor: parentTile,
+        );
+        itemTileWrapBuilder?.call(context, this, sliverChild, item, index);
         newList.add(
           buildTileWidget(
             context,
             tile,
             ignoreSliverDecoration: true,
             ignoreSliverPadding: true,
-            tile.buildGridWrapChild(
-              context,
-              sliverChild,
-              tile,
-              index,
-              firstAnchor: parentTile,
-            ),
+            itemTileWrapBuilder?.call(
+                  context,
+                  this,
+                  sliverChild,
+                  item,
+                  index,
+                ) ??
+                item,
           ),
         );
       } else {
@@ -921,6 +1053,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
     WidgetList result,
     bool fromPart,
   ) {
+    super.endTransformIfNeed(context, origin, result, fromPart);
     if (tileList.isNotEmpty) {
       result.add(_buildTransformSliverReorderableListWrap(context, tileList));
       reset(fromPart);
@@ -970,23 +1103,35 @@ class SliverReorderableListTransform extends BaseTileTransform {
               orElse: () => const RItemTile(),
             )
             as RItemTile;
-
     List<Widget> newList = [];
+    sliverChild = mapFlatTileList(
+      context,
+      sliverChild,
+      firstAnchor: firstTile ?? parentTile,
+    );
     sliverChild.forEachIndexed((index, tile) {
       if (tile is RItemTile) {
+        final item = tile.buildListWrapChild(
+          context,
+          sliverChild,
+          tile,
+          index,
+          firstAnchor: firstTile ?? parentTile,
+        );
         newList.add(
           buildTileWidget(
             context,
             tile,
             ignoreSliverDecoration: true,
             ignoreSliverPadding: true,
-            tile.buildListWrapChild(
-              context,
-              sliverChild,
-              tile,
-              index,
-              firstAnchor: firstTile ?? parentTile,
-            ),
+            itemTileWrapBuilder?.call(
+                  context,
+                  this,
+                  sliverChild,
+                  item,
+                  index,
+                ) ??
+                item,
           ),
         );
       } else {

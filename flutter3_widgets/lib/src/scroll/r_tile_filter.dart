@@ -24,6 +24,14 @@ class RTileFilterChain {
     }
     return result;
   }
+
+  /// 释放缓存
+  @entryPoint
+  void release() {
+    for (final filter in filterList) {
+      filter.release();
+    }
+  }
 }
 
 /// 过滤的基类
@@ -35,6 +43,10 @@ abstract class BaseTileFilter {
   bool filterTile(WidgetList origin, WidgetList result) {
     return false;
   }
+
+  /// 释放缓存
+  @api
+  void release() {}
 }
 
 class ItemTileFilter extends BaseTileFilter {

@@ -306,7 +306,7 @@ class TabsManagerController {
       autofocus: false,
       onFocusChange: (focus) {
         assert(() {
-          l.d("[${entry.tabInfoLive.value}]标签内容焦点变化:$focus");
+          l.d("标签内容焦点变化:$focus ${entry.tabInfoLive.value}");
           return true;
         }());
       },

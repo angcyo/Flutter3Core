@@ -5,14 +5,41 @@ part of '../../flutter3_widgets.dart';
 /// @since 2023/11/03
 ///
 
-/// 用来实现[RItemTile]包裹, 比如添加边距等
-typedef ItemTileWrapBuilder =
+/// 用来实现[RItemTile]包裹, 比如添加边距/添加分割线等
+/// ```
+/// @override
+/// RItemTileWrapBuilder? get pageItemTileWrapBuilder =>
+///     (ctx, transform, list, child, index, {firstAnchor}) {
+///       return child;
+///     };
+/// ```
+typedef RItemTileWrapBuilder =
     Widget Function(
       BuildContext context,
-      List<Widget> list,
-      Widget child,
-      int index,
-    );
+      TileTransformMixin transform /*当前所处的转换器*/,
+      WidgetIterable list /*所有的子部件*/,
+      Widget child /*当前的子部件*/,
+      int index /*索引*/, {
+      Widget? firstAnchor /*第一个部件*/,
+    });
+
+/// 用来实现一个[RItemTile]变成多个[RItemTile]
+/// ```
+/// @override
+/// RItemTileFlatBuilder? get pageItemTileFlatBuilder =>
+///     (ctx, transform, list, child, index, {firstAnchor}) {
+///       return [child];
+///     };
+/// ```
+typedef RItemTileFlatBuilder =
+    WidgetIterable Function(
+      BuildContext context,
+      TileTransformMixin transform /*当前所处的转换器*/,
+      WidgetIterable list /*所有的子部件*/,
+      Widget child /*当前的子部件*/,
+      int index /*索引*/, {
+      Widget? firstAnchor /*第一个部件*/,
+    });
 
 /// 标识当前的元素, 不是[Sliver]布局
 /// [RScrollView.ensureSliver]
@@ -25,11 +52,12 @@ class RItemTile extends StatefulWidget {
   const RItemTile({
     super.key,
     this.sliverType,
+    this.tag,
     this.child,
     this.childBuilder,
+    this.tileFlatBuilder,
     this.isSliverItem = false,
     this.updateSignal,
-    this.tag,
     //--
     this.childTiles,
     //
@@ -143,6 +171,9 @@ class RItemTile extends StatefulWidget {
   /// [childTiles]
   bool get isNoChild =>
       child == null && childBuilder == null && childTiles != null;
+
+  /// 用来实现一个[RItemTile]变成多个[RItemTile]
+  final RItemTileFlatBuilder? tileFlatBuilder;
 
   //endregion 基础
 
@@ -798,6 +829,7 @@ extension RItemTileExtension on Widget {
     //--
     bool hide = false,
     bool part = false,
+    RItemTileFlatBuilder? tileFlatBuilder,
     UpdateValueNotifier? updateSignal,
     bool enablePadding = false,
     dynamic sliverType = SliverList,
@@ -859,6 +891,7 @@ extension RItemTileExtension on Widget {
       part: part,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       sliverType: sliverType,
+      tileFlatBuilder: tileFlatBuilder,
       child: this,
     );
   }
@@ -896,6 +929,7 @@ extension RItemTileExtension on Widget {
     //--
     bool hide = false,
     bool part = false,
+    RItemTileFlatBuilder? tileFlatBuilder,
     UpdateValueNotifier? updateSignal,
     bool enablePadding = false,
     dynamic sliverType = SliverGrid,
@@ -937,6 +971,7 @@ extension RItemTileExtension on Widget {
               : null),
       hide: hide,
       part: part,
+      tileFlatBuilder: tileFlatBuilder,
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       child: this,
     );
@@ -1361,6 +1396,7 @@ extension RItemTileListExtension on List<Widget> {
     EdgeInsets? bottomLineMargin,
     Widget? bottomLeading,
     //--
+    RItemTileFlatBuilder? tileFlatBuilder,
     UpdateValueNotifier? updateSignal,
     dynamic sliverType,
   }) {
@@ -1390,6 +1426,7 @@ extension RItemTileListExtension on List<Widget> {
       //--
       updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
       sliverType: sliverType,
+      tileFlatBuilder: tileFlatBuilder,
       childTiles: this,
       child: null,
     );

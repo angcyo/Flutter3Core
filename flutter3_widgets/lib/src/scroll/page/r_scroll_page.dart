@@ -617,6 +617,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     WidgetList? children,
     bool? enableRefresh,
     bool? enableLoadMore,
+    RItemTileWrapBuilder? itemTileWrapBuilder,
   }) {
     //debugger();
     _isPageBuild = true;
@@ -628,6 +629,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         tag: classHash(),
         enableRefresh: enableRefresh ?? enablePageRefresh,
         enableLoadMore: enableLoadMore ?? enablePageLoadMore,
+        itemTileWrapBuilder: itemTileWrapBuilder,
         children: wrapScrollChildren(children ?? pageWidgetList),
       );
     });
@@ -887,12 +889,14 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
     WidgetList? children,
     bool? enableRefresh,
     bool? enableLoadMore,
+    RItemTileWrapBuilder? itemTileWrapBuilder,
   }) {
     return super
         .pageRScrollView(
           children: children,
           enableRefresh: enableRefresh,
           enableLoadMore: enableLoadMore,
+          itemTileWrapBuilder: itemTileWrapBuilder,
         )
         .keyEvent(
           null,

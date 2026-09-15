@@ -167,6 +167,30 @@ mixin AbsScrollPage {
       ? (this as RebuildScrollChildrenMixin).scrollChildrenUpdateSignal
       : null;
 
+  /// 列表项包装器
+  ///
+  /// ```
+  /// @override
+  /// RItemTileWrapBuilder? get pageItemTileWrapBuilder =>
+  ///     (ctx, transform, list, child, index, {firstAnchor}) {
+  ///       final globalTheme = GlobalTheme.of(ctx);
+  ///       return Stack(
+  ///         alignment: .bottomCenter,
+  ///         children: [
+  ///           child,
+  ///           if (index < list.length - 1)
+  ///             Divider(
+  ///               height: ydLineMargin.bottom,
+  ///               indent: ydXh,
+  ///               endIndent: ydXh,
+  ///               color: globalTheme.lineColor,
+  ///             ),
+  ///         ],
+  ///       );
+  ///     };
+  /// ```
+  RItemTileWrapBuilder? get pageItemTileWrapBuilder => null;
+
   /// 构建滚动内容
   /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
   /// [RScrollPage.pageRScrollView]
@@ -208,13 +232,17 @@ mixin AbsScrollPage {
     //--
     final Widget body;
     if (this is RScrollPage) {
-      body = (this as RScrollPage).pageRScrollView(children: buildChildren());
+      body = (this as RScrollPage).pageRScrollView(
+        children: buildChildren(),
+        itemTileWrapBuilder: pageItemTileWrapBuilder,
+      );
     } else {
       body = RScrollView(
         /*physics: null,
           scrollBehavior: null,*/
         /*children: children,*/
         tag: classHash(),
+        itemTileWrapBuilder: pageItemTileWrapBuilder,
         updateSignal: pageScrollChildrenUpdateSignal,
         childrenBuilder: (context) {
           final children = buildChildren();

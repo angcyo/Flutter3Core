@@ -27,8 +27,9 @@ class RScrollConfig {
   @entryPoint
   WidgetList filterAndTransformTileList(
     BuildContext context,
-    WidgetList children,
-  ) {
+    WidgetList children, {
+    RItemTileWrapBuilder? itemTileWrapBuilder,
+  }) {
     //debugger();
     //过滤链
     children = filterChain?.doFilter(children) ?? children;
@@ -39,12 +40,26 @@ class RScrollConfig {
       transformChain.reset() /*重置转换器缓存*/;
       //转换
       //debugger();
-      result = transformChain.doTransform(context, children);
+      result = transformChain.doTransform(
+        context,
+        children,
+        itemTileWrapBuilder: itemTileWrapBuilder,
+      );
     } else {
       //这里的[children]应该全是sliver, 否则会报错.
       result = children;
     }
+    //释放缓存
+    release();
     return result;
+  }
+
+  /// 释放缓存
+  @api
+  @entryPoint
+  void release() {
+    filterChain?.release();
+    transformChain?.release();
   }
 }
 
