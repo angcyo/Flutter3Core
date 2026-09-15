@@ -416,10 +416,10 @@ mixin AbsScrollPage {
       null;
 
   /// 状态栏是否是暗色模式
-  /// # 暗色模式
-  /// - 背景黑色, 状态栏图标/文本为白色
-  /// # 亮色模式
-  /// - 背景白色, 状态栏图标/文本为黑色
+  /// # 暗色模式: true
+  ///   - 背景黑色, 状态栏图标/文本为白色
+  /// # 亮色模式: false
+  ///   - 背景白色, 状态栏图标/文本为黑色
   @property
   bool? isDarkStatusBar(BuildContext context) {
     //debugger();
