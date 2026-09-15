@@ -216,7 +216,18 @@ mixin AbsScrollPage {
         /*children: children,*/
         tag: classHash(),
         updateSignal: pageScrollChildrenUpdateSignal,
-        childrenBuilder: (context) => buildChildren(),
+        childrenBuilder: (context) {
+          final children = buildChildren();
+          if (isNil(children)) {
+            return [
+              RScrollController()
+                  .buildAdapterStateWidget(context, .empty, null)
+                  .rFill(),
+            ];
+          }
+          //debugger();
+          return children;
+        },
       );
     }
     final before = buildBodyBefore(context);
