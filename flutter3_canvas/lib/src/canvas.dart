@@ -856,6 +856,10 @@ class CanvasListener {
   )?
   onCanvasOpenProject;
 
+  /// [CanvasDelegate.dispatchCanvasProjectUpdate]
+  final Future<bool> Function(CanvasDelegate delegate, Object? project)?
+  onCanvasProjectUpdate;
+
   /// [CanvasDelegate.dispatchCanvasOverlayComponentChanged]
   final void Function(
     CanvasDelegate delegate,
@@ -910,6 +914,7 @@ class CanvasListener {
     this.onCanvasStyleModeChangedAction,
     this.onCanvasStyleChangedAction,
     this.onCanvasOpenProject,
+    this.onCanvasProjectUpdate,
     this.onCanvasOverlayComponentAction,
     this.onCanvasMaybePop,
     this.onCanvasFocusChanged,

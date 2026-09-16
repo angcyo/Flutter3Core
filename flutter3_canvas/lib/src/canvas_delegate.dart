@@ -415,6 +415,11 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @flagProperty
   Object? project;
 
+  /// 工程[project]数据是否更新过
+  /// - [dispatchCanvasProjectUpdate]
+  @flagProperty
+  bool? isProjectUpdated;
+
   /// 画布数据, 用来存储自定义的数据
   @flagProperty
   final Map<String, Object?> dataMap = {};
@@ -1689,6 +1694,32 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
           handle ||
           (await element.onCanvasOpenProject?.call(this, old, project) == true);
     });
+    if (old != project) {
+      dispatchCanvasProjectUpdate();
+    }
+    return handle;
+  }
+
+  /// 派发画布工程更新更新, 框架只做事件派发, 没有相关逻辑.
+  /// - [project]工程数据
+  ///
+  /// @return true: 表示处理成功
+  @api
+  Future<bool> dispatchCanvasProjectUpdate({Object? project}) async {
+    if (project != null) {
+      this.project = project;
+    }
+    isProjectUpdated = true;
+    bool handle = false;
+    _eachCanvasListener((element) async {
+      handle =
+          (await element.onCanvasProjectUpdate?.call(this, this.project) ==
+              true) ||
+          handle;
+    });
+    if (handle) {
+      isProjectUpdated = false;
+    }
     return handle;
   }
 
