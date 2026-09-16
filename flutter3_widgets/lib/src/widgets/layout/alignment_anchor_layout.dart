@@ -171,16 +171,15 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _updateChildPosition();
+      _updateChildPosition(null);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     // 监听Overlay拖拽偏移
-    final dragOffsetLive = OverlayEntryControlStateScope.of(
-      context,
-    )?.dragOffsetLive;
+    final overlayEntryControlState = OverlayEntryControlStateScope.of(context);
+    final dragOffsetLive = overlayEntryControlState?.dragOffsetLive;
     if (dragOffsetLive == null) {
       return buildBody(context);
     }
@@ -188,7 +187,7 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
     return dragOffsetLive.build((ctx, offset) {
       if (offset is Offset && _dragOffset != offset) {
         _dragOffset = offset;
-        _updateChildPosition();
+        _updateChildPosition(overlayEntryControlState);
         return buildBody(ctx);
       }
       return body ??= buildBody(ctx);
@@ -212,7 +211,7 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
                   if (_childSize != childSize) {
                     _childSize = childSize;
                     if (!_offstage) {
-                      _updateChildPosition();
+                      _updateChildPosition(null);
                     }
                   }
                 },
@@ -248,7 +247,10 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
   Offset? _childOffset;
 
   /// 更新内容位置
-  void _updateChildPosition() {
+  void _updateChildPosition(
+    OverlayEntryControlState? overlayEntryControlState,
+  ) {
+    final dragOffset = _dragOffset ?? Offset.zero;
     _anchorRect ??=
         widget.anchorRect ??
         widget.getAnchorBoundsAction?.call() ??
@@ -259,23 +261,41 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
         widget.anchorAncestor?.renderSize ??
         context.findRenderObject()?.renderSize;
     if (_anchorRect != null && _parentSize != null && _childSize != null) {
-      _childOffset = AlignmentAnchorLayout.getFollowerAlignmentOffset(
+      final alignmentOffset = (widget.alignmentOffset ?? Offset.zero);
+      final edgeOffset = widget.edgeOffset ?? Offset(kX, kX);
+      final childOffset = AlignmentAnchorLayout.getFollowerAlignmentOffset(
         targetAnchor: widget.targetAnchor,
         followerAnchor: widget.followerAnchor,
-        alignmentOffset:
-            (widget.alignmentOffset ?? Offset.zero) +
-            (_dragOffset ?? Offset.zero),
-        edgeOffset: widget.edgeOffset ?? Offset(kX, kX),
+        alignmentOffset: alignmentOffset + dragOffset,
+        edgeOffset: edgeOffset,
         anchorRect: _anchorRect!,
         parentSize: _parentSize!,
         childSize: _childSize!,
       );
+      final leftTopOffset = alignmentOffset + edgeOffset;
+      _childOffset = childOffset;
+      /*if (overlayEntryControlState != null && _dragOffset != null) {
+        if (dragOffset.dx < 0) {
+          //拖拽越界了, 则重置拖拽偏移
+          overlayEntryControlState.updateDragOffset(Offset(0, dragOffset.dy));
+        } */ /*else if (dragOffset.dy > childOffset.dy + _childSize!.height) {
+          overlayEntryControlState.updateDragOffset(
+            Offset(dragOffset.dx, childOffset.dy + _childSize!.height),
+          );
+        }*/ /*
+      }*/
+      /*assert(() {
+        l.d(
+          "updateChildPosition leftTopOffset:$leftTopOffset childOffset:$childOffset dragOffset:$dragOffset",
+        );
+        return true;
+      }());*/
       _offstage = false;
       widget.onChildUpdatePosition?.call(
         _anchorRect!,
         _parentSize!,
         _childSize!,
-        _childOffset!,
+        childOffset,
         _dragOffset,
       );
       updateState();

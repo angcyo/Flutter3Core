@@ -336,9 +336,14 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
   /// 更新拖拽偏移量
   @api
   void updateDragOffset(Offset? dragOffset) {
+    final oldOffset = dragOffsetLive.value;
     final newOffset =
         widget.onUpdateDragOffset?.call(buildContext, dragOffset) ?? dragOffset;
     dragOffsetLive <= newOffset;
+    /*assert(() {
+      l.v("更新拖拽偏移量:$oldOffset -> $newOffset");
+      return true;
+    }());*/
   }
 
   //MARK: animate
@@ -515,11 +520,7 @@ class OverlayDragTriggerWidget extends StatefulWidget {
   /// 小部件
   final Widget? child;
 
-  /// 默认的偏移量
-  /// - 初始时的偏移量
-  final Offset? offset;
-
-  const OverlayDragTriggerWidget({super.key, this.child, this.offset});
+  const OverlayDragTriggerWidget({super.key, this.child});
 
   @override
   State<OverlayDragTriggerWidget> createState() =>
@@ -527,63 +528,42 @@ class OverlayDragTriggerWidget extends StatefulWidget {
 }
 
 class _OverlayDragTriggerWidgetState extends State<OverlayDragTriggerWidget> {
-  /// 默认的偏移量
-  /// - 初始时的偏移量
-  Offset defOffset = Offset.zero;
-
-  /// 当前拖拽位置, 关键值
-  Offset dragOffset = Offset.zero;
-
-  /// 总共需要的偏移
-  @output
-  Offset get positionOffset => dragOffset + defOffset;
-
-  @override
-  void didUpdateWidget(covariant OverlayDragTriggerWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.offset != defOffset) {
-      defOffset = widget.offset ?? _getOverlayPositionOffset() ?? Offset.zero;
-      _onUpdateOverlayPosition();
-    }
-  }
-
-  @override
-  void initState() {
-    defOffset = widget.offset ?? _getOverlayPositionOffset() ?? Offset.zero;
-    if (widget.offset != null) {
-      _onUpdateOverlayPosition();
-    }
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final body = widget.child ?? empty;
     return body
         .gesture(
           onPanUpdate: (details) {
-            dragOffset += details.delta;
-            _onUpdateOverlayPosition();
+            final delta = details.delta;
+            final overlayEntryControlState = OverlayEntryControlStateScope.of(
+              context,
+            );
+            if (overlayEntryControlState != null) {
+              final dragOffsetLive = overlayEntryControlState.dragOffsetLive;
+              final oldOffset = dragOffsetLive.value ?? Offset.zero;
+              /*assert(() {
+                l.v("拖拽增量:$oldOffset + $delta");
+                return true;
+              }());*/
+              overlayEntryControlState.updateDragOffset(oldOffset + delta);
+            } else {
+              assert(() {
+                l.w("未找到上层的[OverlayEntryControlStateScope], 无法实现拖拽效果!");
+                return true;
+              }());
+              debugger();
+            }
           },
-          onPanStart: (details) {},
+          onPanStart: (details) {
+            //no op
+          },
           onPanEnd: (details) {
-            //
+            //no op
           },
           onTap: null,
           behavior: .translucent,
         )
         .mouse(cursor: SystemMouseCursors.move);
-  }
-
-  /// 获取上层已经存在的偏移量
-  Offset? _getOverlayPositionOffset() {
-    return OverlayEntryControlStateScope.of(context)?.dragOffsetLive.value;
-  }
-
-  /// 共享偏移数据
-  @overridePoint
-  void _onUpdateOverlayPosition() {
-    OverlayEntryControlStateScope.of(context)?.updateDragOffset(positionOffset);
   }
 }
 
@@ -626,11 +606,11 @@ extension OverlayWidgetEx on Widget {
   /// 触发浮窗拖拽, 将数据共享到[OverlayEntryControlWidget], 监听偏移量更新界面, 刷新位置
   ///
   /// [OverlayDragTriggerWidget]
-  Widget overlayDragTrigger({Key? key, Offset? defOffset, bool enable = true}) {
+  Widget overlayDragTrigger({Key? key, bool enable = true}) {
     if (!enable) {
       return this;
     }
-    return OverlayDragTriggerWidget(key: key, offset: defOffset, child: this);
+    return OverlayDragTriggerWidget(key: key, child: this);
   }
 }
 
@@ -682,12 +662,14 @@ extension OverlayEx on BuildContext {
           overlayEntryControlState.hideOverlay();
         }
         if (hideOverlayOutsideTap == null) {
-          assert(() {
-            l.w(
-              "[${overlayEntry.classHash()}]存在相同的浮窗[$tag] mounted:${overlayEntry.mounted}",
-            );
-            return true;
-          }());
+          if (!closeBefore) {
+            assert(() {
+              l.w(
+                "[${overlayEntry.classHash()}]存在相同的浮窗[$tag] mounted:${overlayEntry.mounted}",
+              );
+              return true;
+            }());
+          }
           return overlayEntry;
         }
       }

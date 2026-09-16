@@ -995,7 +995,14 @@ extension ScreenWidgetEx on Widget {
                 : null),
         defDragOffset: restoreOverlayPosition == true ? positonOffset : null,
         onUpdateDragOffset: (ctx, dragOffset) {
-          overlayPositionHiveKey.hiveSet(dragOffset?.offsetString);
+          if (dragOffset != null) {
+            overlayPositionHiveKey.hiveSet(
+              Offset(
+                clamp(dragOffset.dx, 0.0, $screenWidth),
+                clamp(dragOffset.dy, 0.0, $screenHeight),
+              ).offsetString,
+            );
+          }
           return dragOffset;
         },
         closeBefore: closeBeforeOverlay,
