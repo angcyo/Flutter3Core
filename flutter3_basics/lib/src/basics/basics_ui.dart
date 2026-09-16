@@ -367,10 +367,10 @@ extension WidgetListEx on WidgetNullList {
   /// [Stack]
   Widget? stack({
     Key? key,
-    AlignmentGeometry alignment = AlignmentDirectional.topStart,
+    AlignmentGeometry alignment = .topStart,
     TextDirection? textDirection,
-    StackFit fit = StackFit.loose,
-    Clip clipBehavior = Clip.hardEdge,
+    StackFit fit = .loose,
+    Clip clipBehavior = .hardEdge,
   }) {
     WidgetList list = filterNull();
     if (isNullOrEmpty(list)) {
@@ -1525,13 +1525,17 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 偏移元素的位置
+  Widget offset(Offset? offset) =>
+      offset == null ? this : Transform.translate(offset: offset, child: this);
+
   /// 旋转元素, 无动画
   /// [radians] 旋转角度, 顺时针为正, 弧度单位
   /// [RotateAnimation] 旋转动画
   /// [RotationTransition] 旋转变换
   Widget rotate(
     double? radians, {
-    AlignmentGeometry alignment = Alignment.center,
+    AlignmentGeometry alignment = .center,
     Offset? origin,
     bool transformHitTests = true,
   }) {
@@ -3385,7 +3389,7 @@ extension WidgetEx on Widget {
     Widget? before,
     //--
     Key? key,
-    AlignmentGeometry alignment = AlignmentDirectional.center,
+    AlignmentGeometry alignment = .center,
     TextDirection? textDirection,
     StackFit fit = StackFit.loose,
     Clip clipBehavior = Clip.hardEdge,
@@ -3398,6 +3402,33 @@ extension WidgetEx on Widget {
           fit: fit,
           clipBehavior: clipBehavior,
         )!;
+
+  /// 堆疊一个红点提示
+  /// - [dotWidget] 红点小部件
+  Widget stackDot({
+    @defInjectMark Widget? dotWidget,
+    bool? showDot = true,
+    bool? enable = true,
+    //--
+    @defInjectMark double? right,
+    @defInjectMark double? top,
+    //--
+    @defInjectMark double? dotSize,
+    @defInjectMark Color? dotColor,
+  }) {
+    if (enable == false) {
+      return this;
+    }
+    return [
+      this,
+      if (showDot == true)
+        (dotWidget ??
+                Empty.size(
+                  dotSize ?? 8,
+                ).decoration(dotDecoration(color: dotColor)))
+            .position(right: right ?? 0, top: top ?? 0),
+    ].stack()!;
+  }
 
   /// 简单的滚动小组件[SingleChildScrollView]
   /// [WidgetListEx.scroll]

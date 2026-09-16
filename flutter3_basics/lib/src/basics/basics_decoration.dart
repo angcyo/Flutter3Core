@@ -491,6 +491,11 @@ PaintDecoration paintDecoration(PaintFn? paint) => PaintDecoration(paint);
 
 /// 圆点装饰
 /// - 默认红点装饰
+///
+/// ```
+/// Empty.size(4).decoration(dotDecoration())
+/// Empty.size(8).decoration(dotDecoration()).position(right: 10, top: 10)
+/// ```
 BoxDecoration dotDecoration({BoxShape shape = .circle, Color? color}) {
   return BoxDecoration(shape: shape, color: color ?? Colors.redAccent);
 }
