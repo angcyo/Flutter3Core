@@ -917,6 +917,7 @@ extension ScreenWidgetEx on Widget {
     //MARK: - overlay
     bool? useRootOverlay,
     @defInjectMark Offset? edgeOffset,
+    @defInjectMark Alignment? overlayScaleAlignment /*浮窗缩放动画对齐方式, 相对于自身锚点*/,
     bool? closeBeforeOverlay = false,
     bool? restoreOverlayPosition = true /*是否恢复浮窗位置*/,
     //MARK: - popup / overlay 共用
@@ -987,9 +988,10 @@ extension ScreenWidgetEx on Widget {
         followerAnchor: followerAnchor,
         alignmentOffset: alignmentOffset,
         scaleAlignment:
-            (closeBeforeOverlay == true || restoreOverlayPosition == true)
-            ? .center
-            : null,
+            overlayScaleAlignment ??
+            ((closeBeforeOverlay == true || restoreOverlayPosition == true)
+                ? .center
+                : null),
         defDragOffset: restoreOverlayPosition == true ? positonOffset : null,
         onUpdateDragOffset: (ctx, dragOffset) {
           overlayPositionHiveKey.hiveSet(dragOffset?.offsetString);
