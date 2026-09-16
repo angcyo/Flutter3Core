@@ -332,11 +332,24 @@ extension MathStringEx on String {
   List<double> get doubleList =>
       split(',').map((e) => double.parse(e)).toList();
 
+  /// dx,dy
+  Offset? get tryParseOffset {
+    try {
+      final list = split(",");
+      if (list.length != 2) {
+        return null;
+      }
+      return Offset(double.parse(list[0]), double.parse(list[1]));
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// LTWH
   /// "l,t,w,h"
-  Rect? get rect => ltwhRect;
+  Rect? get tryParseRect => tryParseLTWHRect;
 
-  Rect? get ltwhRect {
+  Rect? get tryParseLTWHRect {
     try {
       final list = split(",");
       if (list.length != 4) {
@@ -353,7 +366,7 @@ extension MathStringEx on String {
     }
   }
 
-  Rect? get ltrbRect {
+  Rect? get tryParseLTRBRect {
     try {
       final list = split(",");
       if (list.length != 4) {
@@ -372,7 +385,7 @@ extension MathStringEx on String {
 
   /// LTRB
   /// "l,t,r,b"
-  EdgeInsets? get edgeInsets {
+  EdgeInsets? get tryParseEdgeInsets {
     try {
       final list = split(",");
       if (list.length != 4) {
@@ -394,6 +407,11 @@ extension MathStringEx on String {
 
   /// 判断当前字符串是小数
   bool get isDouble => double.tryParse(this) != null;
+}
+
+extension MathOffsetEx on Offset {
+  /// 2个数值
+  String get offsetString => "$dx,$dy";
 }
 
 /// 数学矩形扩展

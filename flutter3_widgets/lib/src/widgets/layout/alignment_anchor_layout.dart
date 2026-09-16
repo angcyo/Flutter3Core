@@ -33,6 +33,7 @@ class AlignmentAnchorLayout extends StatefulWidget {
     Size parentSize,
     Size childSize,
     Offset childOffset,
+    Offset? dragOffset,
   )?
   onChildUpdatePosition;
 
@@ -183,12 +184,14 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
     if (dragOffsetLive == null) {
       return buildBody(context);
     }
+    Widget? body;
     return dragOffsetLive.build((ctx, offset) {
-      if (offset is Offset) {
+      if (offset is Offset && _dragOffset != offset) {
         _dragOffset = offset;
         _updateChildPosition();
+        return buildBody(ctx);
       }
-      return buildBody(context);
+      return body ??= buildBody(ctx);
     });
   }
 
@@ -273,6 +276,7 @@ class _AlignmentAnchorLayoutState extends State<AlignmentAnchorLayout> {
         _parentSize!,
         _childSize!,
         _childOffset!,
+        _dragOffset,
       );
       updateState();
     } else if (!_offstage) {

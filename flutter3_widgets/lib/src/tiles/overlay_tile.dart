@@ -253,6 +253,9 @@ class OverlayEntryControlWidget extends StatefulWidget {
   /// 浮窗隐藏的回调
   final VoidAction? onHide;
 
+  /// 默认的拖拽偏移量
+  final Offset? defDragOffset;
+
   //MARK: animate
 
   /// 是否需要显示动画
@@ -261,10 +264,18 @@ class OverlayEntryControlWidget extends StatefulWidget {
   /// 动画时长
   final Duration animateDuration;
 
-  /// 获取缩放动画对齐的偏移
+  /// 拖拽偏移量发生改变时回调
+  /// @return 返回新的偏移量
+  final Offset? Function(BuildContext? context, Offset? dragOffset /*拖拽的偏移量*/)?
+  onUpdateDragOffset;
+
+  /// 获取缩放动画对齐的偏移, 相对于全屏的对齐点比例
   /// - [Alignment]
   /// - [FractionalOffset]
-  final Alignment? Function(Offset? dragOffset /*拖拽的偏移量*/)?
+  final Alignment? Function(
+    BuildContext? context,
+    Offset? dragOffset /*拖拽的偏移量*/,
+  )?
   onGetScaleAnimateAlign;
 
   const OverlayEntryControlWidget({
@@ -277,6 +288,8 @@ class OverlayEntryControlWidget extends StatefulWidget {
     //--
     this.animate = true,
     this.animateDuration = const Duration(milliseconds: 150),
+    this.defDragOffset,
+    this.onUpdateDragOffset,
     this.onGetScaleAnimateAlign,
   });
 
@@ -320,6 +333,14 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
   @tempFlag
   OverlayEntry? _overlayEntry;
 
+  /// 更新拖拽偏移量
+  @api
+  void updateDragOffset(Offset? dragOffset) {
+    final newOffset =
+        widget.onUpdateDragOffset?.call(buildContext, dragOffset) ?? dragOffset;
+    dragOffsetLive <= newOffset;
+  }
+
   //MARK: animate
 
   late final AnimationController animateController = AnimationController(
@@ -332,10 +353,14 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
 
   @override
   void initState() {
+    if (widget.defDragOffset != null) {
+      dragOffsetLive <= widget.defDragOffset!;
+    }
     super.initState();
     _overlayEntry = widget.overlayEntry;
     if (widget.animate) {
       _scaleAlignment = widget.onGetScaleAnimateAlign?.call(
+        buildContext,
         dragOffsetLive.value,
       );
       _waitScaleAlignment();
@@ -359,6 +384,7 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     if (_scaleAlignment == null && widget.onGetScaleAnimateAlign != null) {
       $nextFrame(() {
         _scaleAlignment = widget.onGetScaleAnimateAlign?.call(
+          buildContext,
           dragOffsetLive.value,
         );
         _waitScaleAlignment();
@@ -377,22 +403,30 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
     }
   }
 
+  /// - [ScaleTransition]
+  /// - [Transform]
+  /// - [Transform.translate]
   @override
   Widget build(BuildContext context) {
     Widget? child = widget.child;
     if (widget.animate) {
+      /*assert(() {
+        l.d("scaleAlignment:$_scaleAlignment");
+        return true;
+      }());*/
+      final dragOffset = dragOffsetLive.value ?? Offset.zero;
       child = FadeTransition(
         opacity: animateController,
         child: ScaleTransition(
           alignment:
-              _scaleAlignment ??
-              FractionalOffset(
-                dragOffsetLive.value?.dx ?? 0,
-                dragOffsetLive.value?.dy ?? 0,
-              ),
+              _scaleAlignment ?? FractionalOffset(dragOffset.dx, dragOffset.dy),
           scale: animateController,
           child: child,
         ),
+        /*Transform.translate(
+          offset: dragOffset,
+          child: ,
+        )*/
       ).offstage(_scaleAlignment == null, true);
     }
     return OverlayEntryControlStateScope(
@@ -412,10 +446,17 @@ class OverlayEntryControlState extends State<OverlayEntryControlWidget>
       _overlayEntryControlStateMap.remove(widget.tag);
     }
     if (widget.animate) {
-      animateController.reverse().then((value) {
-        _overlayEntry?.remove();
-        _overlayEntry = null;
-        widget.onHide?.call();
+      _scaleAlignment = widget.onGetScaleAnimateAlign?.call(
+        buildContext,
+        dragOffsetLive.value,
+      );
+      updateState();
+      postFrame(() {
+        animateController.reverse().then((value) {
+          _overlayEntry?.remove();
+          _overlayEntry = null;
+          widget.onHide?.call();
+        });
       });
       return true;
     } else {
@@ -475,6 +516,7 @@ class OverlayDragTriggerWidget extends StatefulWidget {
   final Widget? child;
 
   /// 默认的偏移量
+  /// - 初始时的偏移量
   final Offset? offset;
 
   const OverlayDragTriggerWidget({super.key, this.child, this.offset});
@@ -486,6 +528,7 @@ class OverlayDragTriggerWidget extends StatefulWidget {
 
 class _OverlayDragTriggerWidgetState extends State<OverlayDragTriggerWidget> {
   /// 默认的偏移量
+  /// - 初始时的偏移量
   Offset defOffset = Offset.zero;
 
   /// 当前拖拽位置, 关键值
@@ -499,14 +542,17 @@ class _OverlayDragTriggerWidgetState extends State<OverlayDragTriggerWidget> {
   void didUpdateWidget(covariant OverlayDragTriggerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.offset != defOffset) {
-      defOffset = widget.offset ?? Offset.zero;
+      defOffset = widget.offset ?? _getOverlayPositionOffset() ?? Offset.zero;
       _onUpdateOverlayPosition();
     }
   }
 
   @override
   void initState() {
-    defOffset = widget.offset ?? Offset.zero;
+    defOffset = widget.offset ?? _getOverlayPositionOffset() ?? Offset.zero;
+    if (widget.offset != null) {
+      _onUpdateOverlayPosition();
+    }
     super.initState();
   }
 
@@ -529,12 +575,15 @@ class _OverlayDragTriggerWidgetState extends State<OverlayDragTriggerWidget> {
         .mouse(cursor: SystemMouseCursors.move);
   }
 
+  /// 获取上层已经存在的偏移量
+  Offset? _getOverlayPositionOffset() {
+    return OverlayEntryControlStateScope.of(context)?.dragOffsetLive.value;
+  }
+
   /// 共享偏移数据
   @overridePoint
   void _onUpdateOverlayPosition() {
-    OverlayEntryControlStateScope.of(
-      context,
-    )?.dragOffsetLive.updateValue(positionOffset);
+    OverlayEntryControlStateScope.of(context)?.updateDragOffset(positionOffset);
   }
 }
 
@@ -613,12 +662,16 @@ extension OverlayEx on BuildContext {
     @defInjectMark Offset? edgeOffset,
     //--
     VoidAction? onHide /*隐藏浮窗时的回调*/,
-    @defInjectMark Alignment? scaleAlignment /*缩放动画对齐方式*/,
+    @defInjectMark Alignment? scaleAlignment /*缩放动画对齐方式, 相对于自身锚点*/,
     //--
     @defInjectMark String? tag /*唯一标识, 用于关闭指定浮窗*/,
     bool? closeBefore = false,
     bool? consumeOutsideTap,
     bool? hideOverlayOutsideTap,
+    //--
+    Offset? defDragOffset /*默认的拖拽偏移量*/,
+    Offset? Function(BuildContext? context, Offset? dragOffset /*拖拽的偏移量*/)?
+    onUpdateDragOffset /*拖拽偏移回调*/,
   }) {
     if (closeBefore != null) {
       final overlayEntryControlState =
@@ -652,7 +705,9 @@ extension OverlayEx on BuildContext {
           tag: tag ?? tag,
           overlayEntry: overlayEntry,
           onHide: onHide,
-          onGetScaleAnimateAlign: (dragOffset) => fractionalOffset,
+          defDragOffset: defDragOffset,
+          onUpdateDragOffset: onUpdateDragOffset,
+          onGetScaleAnimateAlign: (ctx, dragOffset) => fractionalOffset,
           child: AlignmentAnchorLayout(
             anchorChild: anchorChild ?? that,
             anchorAncestor: overlay.context.findRenderObject(),
@@ -660,14 +715,19 @@ extension OverlayEx on BuildContext {
             followerAnchor: followerAnchor,
             alignmentOffset: alignmentOffset,
             edgeOffset: edgeOffset,
-            onChildUpdatePosition: (_, parentSize, childSize, childOffset) {
-              final align = scaleAlignment ?? followerAnchor ?? .centerLeft;
-              final offset = childOffset + align.alongSize(childSize);
-              fractionalOffset = FractionalOffset(
-                offset.dx / parentSize.width,
-                offset.dy / parentSize.height,
-              );
-            },
+            onChildUpdatePosition:
+                (_, parentSize, childSize, childOffset, dragOffset) {
+                  final align = scaleAlignment ?? followerAnchor ?? .centerLeft;
+                  final offset = childOffset + align.alongSize(childSize);
+                  /*fractionalOffset = FractionalOffset(
+                    offset.dx / parentSize.width,
+                    offset.dy / parentSize.height,
+                  );*/
+                  fractionalOffset = FractionalOffset.fromOffsetAndSize(
+                    offset,
+                    parentSize,
+                  );
+                },
             child: TapRegion(
               consumeOutsideTaps: consumeOutsideTap == true,
               onTapOutside: (event) {

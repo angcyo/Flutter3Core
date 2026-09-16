@@ -917,7 +917,9 @@ extension ScreenWidgetEx on Widget {
     //MARK: - overlay
     bool? useRootOverlay,
     @defInjectMark Offset? edgeOffset,
-    //--
+    bool? closeBeforeOverlay = false,
+    bool? restoreOverlayPosition = true /*是否恢复浮窗位置*/,
+    //MARK: - popup / overlay 共用
     BuildContext? anchorChild,
     @defInjectMark Alignment? targetAnchor,
     @defInjectMark Alignment? followerAnchor,
@@ -963,6 +965,11 @@ extension ScreenWidgetEx on Widget {
         radius: popupRadius,
       );
     } else if (screenType == .overlay) {
+      final overlayPositionHiveKey =
+          "_position_${screenMixin.runtimeType.toString()}";
+      final positonOffset = overlayPositionHiveKey
+          .hiveGet<String>()
+          ?.tryParseOffset;
       if (isMobile && anchorChild == null) {
         //移动端, 在容器中显示, 则默认使用居中对齐方式
         targetAnchor ??= .center;
@@ -979,6 +986,16 @@ extension ScreenWidgetEx on Widget {
         targetAnchor: targetAnchor,
         followerAnchor: followerAnchor,
         alignmentOffset: alignmentOffset,
+        scaleAlignment:
+            (closeBeforeOverlay == true || restoreOverlayPosition == true)
+            ? .center
+            : null,
+        defDragOffset: restoreOverlayPosition == true ? positonOffset : null,
+        onUpdateDragOffset: (ctx, dragOffset) {
+          overlayPositionHiveKey.hiveSet(dragOffset?.offsetString);
+          return dragOffset;
+        },
+        closeBefore: closeBeforeOverlay,
       );
     } else if (screenType.isDialogType) {
       future = context?.showWidgetDialog(
