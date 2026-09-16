@@ -674,8 +674,8 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasElementPropertyChanged]
   final void Function(
     ElementPainter elementPainter,
-    dynamic from,
-    dynamic to,
+    Object? from,
+    Object? to,
     PainterPropertyType propertyType,
     Object? fromObj,
     UndoType? fromUndoType,
@@ -851,8 +851,8 @@ class CanvasListener {
   /// [CanvasDelegate.dispatchCanvasOpenProject]
   final Future<bool> Function(
     CanvasDelegate delegate,
-    dynamic from,
-    dynamic to,
+    Object? from,
+    Object? to,
   )?
   onCanvasOpenProject;
 

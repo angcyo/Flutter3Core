@@ -42,6 +42,14 @@ class ShortcutConfigManager {
       debugger(when: ignoreDebug != true && find != null);
       return true;
     }());
+    final existList = findShortcutConfig(config: shortcutConfigBean);
+    assert(() {
+      if (!isNil(existList)) {
+        l.w("找到已存在的快捷键[${existList.length}]->$existList");
+        debugger();
+      }
+      return true;
+    }());
     shortcutConfigList.add(shortcutConfigBean);
     if (action != null) {
       registerShortcutAction(shortcutConfigBean.id, action);
@@ -127,8 +135,8 @@ class ShortcutConfigManager {
     KeyEvent? event,
     //参数
     BuildContext? context,
-    dynamic host,
-    dynamic data,
+    Object? host,
+    Object? data,
   }) {
     final List<ShortcutConfigBean> list = [];
     if (config == null) {

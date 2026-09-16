@@ -410,14 +410,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   final Set<CanvasListener> canvasListeners = {};
 
   /// 用来存储自定义的工程信息使用
-  /// [projectBean]
-  /// [dispatchCanvasOpenProject]
+  /// - [projectBean] 使用此方法获取结构化的工程数据
+  /// - [dispatchCanvasOpenProject] 请使用此方法更新工程数据
   @flagProperty
-  dynamic project;
+  Object? project;
 
   /// 画布数据, 用来存储自定义的数据
   @flagProperty
-  final Map<String, dynamic> dataMap = {};
+  final Map<String, Object?> dataMap = {};
 
   //--
 
@@ -771,7 +771,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   @api
   void selectElement(
     ElementPainter? element, {
-        @defInjectMark bool? followPainter,
+    @defInjectMark bool? followPainter,
     ElementSelectType selectType = ElementSelectType.user,
   }) {
     canvasElementManager.selectElement(
@@ -1280,8 +1280,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [PainterPropertyType.mode]
   void dispatchCanvasElementPropertyChanged(
     ElementPainter elementPainter,
-    dynamic from,
-    dynamic to,
+    Object? from,
+    Object? to,
     PainterPropertyType propertyType,
     Object? fromObj,
     UndoType? fromUndoType, {
@@ -1675,7 +1675,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// - [isUpdate]是否仅是更新工程数据
   /// @return true: 表示处理成功, 否则返回false继续后续处理
   @api
-  Future<bool> dispatchCanvasOpenProject(dynamic project) async {
+  Future<bool> dispatchCanvasOpenProject(Object? project) async {
     //debugger();
     assert(() {
       l.d("[${classHash()}]打开工程->$project");

@@ -189,6 +189,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     ScreenStateContext screenContext,
     GlobalTheme globalTheme,
   ) {
+    //final BuildContext context = screenContext.itContext;
     return ("$runtimeType" * (isDebug ? 5 : 1))
         .text(style: globalTheme.textTitleStyle)
         .insets(all: globalTheme.x);

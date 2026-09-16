@@ -219,6 +219,9 @@ class SingleDesktopGridTile extends StatefulWidget {
   /// - 会拦截默认的弹出[popupBodyWidget]处理
   final GestureTapCallback? onTap;
 
+  /// 具有上下文对象的点击事件
+  final GestureContextTapCallback? onContextTap;
+
   /// 弹窗内容小部件
   /// - 设置之后才会显示[moreWidget]
   /// - 弹出弹窗之后, 会自动进入选中状态
@@ -243,6 +246,7 @@ class SingleDesktopGridTile extends StatefulWidget {
     this.popupBodyWidget,
     this.autoRemovePopup = true,
     this.onTap,
+    this.onContextTap,
     //--
     this.tooltip,
   });
@@ -268,8 +272,12 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile>
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final isEnableTap = widget.popupBodyWidget != null || widget.onTap != null;
-    final isShowMore = widget.popupBodyWidget != null;
+    final popupBodyWidget = widget.popupBodyWidget;
+    final isEnableTap =
+        popupBodyWidget != null ||
+        widget.onTap != null ||
+        widget.onContextTap != null;
+    final isShowMore = popupBodyWidget != null;
     final isSelected = widget.isSelected || isShowPopupMixin;
     //debugger();
     final radius = kDefaultBorderRadiusX;
@@ -289,11 +297,14 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile>
         )
         .inkWell(
           widget.onTap ??
-              () {
-                wrapShowPopupMixin(() async {
-                  await buildContext?.showPopupDialog(widget.popupBodyWidget!);
-                });
-              },
+              (popupBodyWidget != null
+                  ? () {
+                      wrapShowPopupMixin(() async {
+                        await buildContext?.showPopupDialog(popupBodyWidget);
+                      });
+                    }
+                  : null),
+          onContextTap: widget.onContextTap,
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )

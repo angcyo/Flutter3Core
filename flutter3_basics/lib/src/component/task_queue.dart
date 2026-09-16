@@ -148,6 +148,7 @@ class TaskQueue {
 /// 队列执行的任务
 typedef TaskQueueAction<R, D> = FutureOr<R?> Function(D? data);
 
-/// [GlobalQueue]的实例
+/// 全局任务队列, 一个一个处理, 直至队列为空
+/// [TaskQueue]的实例
 @globalInstance
 final $globalQueue = TaskQueue();

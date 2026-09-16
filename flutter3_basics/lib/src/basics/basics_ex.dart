@@ -881,8 +881,13 @@ extension StringEx on String {
   /// [bytes]
   ByteData get byteData => ByteData.view(Uint8List.fromList(bytes).buffer);
 
+  /// 重复当前字符串多少次
+  String repeat(int count) =>
+      count <= 0 ? this : List.filled(count, this).join();
+
   /// 重复字符串多少次[repeat]
-  String operator *(int repeat) => List.filled(repeat, this).join();
+  String operator *(int repeat) =>
+      repeat <= 0 ? this : List.filled(repeat, this).join();
 
   //MARK: - wrap
 

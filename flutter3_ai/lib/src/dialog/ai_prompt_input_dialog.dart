@@ -89,6 +89,7 @@ class AiPromptInputDialog extends StatefulWidget with ScreenMixin {
     ScreenStateContext screenContext,
     GlobalTheme globalTheme,
   ) {
+    //final BuildContext context = screenContext.itContext;
     return titleWidget ??
         [
               AiFeatureBadge(),
