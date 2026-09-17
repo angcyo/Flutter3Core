@@ -40,16 +40,16 @@ mixin AbsScrollPage {
   /// FocusNode? get pageFocusNode => _pageFocusNode;
   /// ```
   @configProperty
-  FocusNode? get pageFocusNode => null;
+  FocusNode? get absPageFocusNode => null;
 
   /// 返回页面是否有焦点
-  bool get isPageFocused => pageFocusNode?.hasFocus == true;
+  bool get isPageFocused => absPageFocusNode?.hasFocus == true;
 
   /// 需要主动调用[FocusNode.dispose]释放焦点
   /// - [FocusNode.dispose]
   @overridePoint
   Widget wrapPageFocusNode(BuildContext context, Widget body) {
-    final pageFocusNode = this.pageFocusNode;
+    final pageFocusNode = absPageFocusNode;
     if (pageFocusNode != null) {
       return FocusScope(
         autofocus: true,
