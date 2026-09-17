@@ -61,6 +61,7 @@
   "libSaveFailure": "保存失败",
   "libYes": "是",
   "libNo": "否",
+  "libCloseWindowTip": "确定要关闭程序?",
   "libTempSave": "暂存",
   "libRename": "重命名",
   "libCopy": "复制",

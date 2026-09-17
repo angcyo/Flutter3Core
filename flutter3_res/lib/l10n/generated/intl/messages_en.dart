@@ -63,6 +63,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "libClear": MessageLookupByLibrary.simpleMessage("Clear"),
     "libClickRetry": MessageLookupByLibrary.simpleMessage("Click to Retry"),
     "libClose": MessageLookupByLibrary.simpleMessage("Close"),
+    "libCloseWindowTip": MessageLookupByLibrary.simpleMessage(
+      "Confirm to close the program?",
+    ),
     "libConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "libContinue": MessageLookupByLibrary.simpleMessage("Continue"),
     "libCopy": MessageLookupByLibrary.simpleMessage("Copy"),

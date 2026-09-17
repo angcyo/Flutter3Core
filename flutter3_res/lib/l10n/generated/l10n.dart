@@ -285,6 +285,16 @@ class LibRes {
     return Intl.message('否', name: 'libNo', desc: '', args: []);
   }
 
+  /// `确定要关闭程序?`
+  String get libCloseWindowTip {
+    return Intl.message(
+      '确定要关闭程序?',
+      name: 'libCloseWindowTip',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `暂存`
   String get libTempSave {
     return Intl.message('暂存', name: 'libTempSave', desc: '', args: []);

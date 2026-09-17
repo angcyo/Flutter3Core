@@ -52,6 +52,7 @@
   "libSaveFailure": "Save failed",
   "libYes": "Yes",
   "libNo": "No",
+  "libCloseWindowTip": "Confirm to close the program?",
   "libTempSave": "Temp",
   "libRename": "Rename",
   "libCopy": "Copy",
