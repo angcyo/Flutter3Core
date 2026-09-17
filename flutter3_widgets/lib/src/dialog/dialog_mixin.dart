@@ -952,26 +952,34 @@ extension DialogExtension on BuildContext {
       return null;
     }
     useRootNavigator ??= widget.getWidgetDialogUseRootNavigator() ?? true;
-    final navigator = navigatorOf(useRootNavigator);
-    if (popLast) {
-      navigator.pop();
+    try {
+      final navigator = navigatorOf(useRootNavigator);
+      if (popLast) {
+        navigator.pop();
+      }
+      return navigator.showWidgetDialog<T>(
+        widget,
+        context: this,
+        barrierDismissible: barrierDismissible,
+        barrierColor: barrierColor,
+        barrierLabel: barrierLabel,
+        useSafeArea: useSafeArea,
+        useBarrierColorAnimate: useBarrierColorAnimate,
+        maintainBottomViewPadding: maintainBottomViewPadding,
+        useRootNavigator: useRootNavigator,
+        routeSettings: routeSettings,
+        traversalEdgeBehavior: traversalEdgeBehavior,
+        anchorPoint: anchorPoint,
+        type: type,
+        barrierIgnorePointerType: barrierIgnorePointerType,
+      );
+    } catch (e) {
+      assert(() {
+        l.w(e);
+        return true;
+      }());
+      return null;
     }
-    return navigator.showWidgetDialog<T>(
-      widget,
-      context: this,
-      barrierDismissible: barrierDismissible,
-      barrierColor: barrierColor,
-      barrierLabel: barrierLabel,
-      useSafeArea: useSafeArea,
-      useBarrierColorAnimate: useBarrierColorAnimate,
-      maintainBottomViewPadding: maintainBottomViewPadding,
-      useRootNavigator: useRootNavigator,
-      routeSettings: routeSettings,
-      traversalEdgeBehavior: traversalEdgeBehavior,
-      anchorPoint: anchorPoint,
-      type: type,
-      barrierIgnorePointerType: barrierIgnorePointerType,
-    );
   }
 
   /// 在指定位置弹出一个菜单, 系统内部使用[PopupRoute]实现
