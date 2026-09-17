@@ -8,6 +8,18 @@
 - Windows 10 (19H1/1903) (Mai 2019 Update)
 - iOS: 14.0 (iPhone 12)
 
+
+## 2026-09-16 `Xcode 27`
+
+### macOS: 12.0 (Monterey) (Apple Silicon)
+
+- `This will become an error in a future version of Flutter. Please contact the plugin maintainers to request Swift Package Manager adoption.`
+- `/Users/angcyo/project/Flutter/LaserabcTools/apps/LaserabcFactoryTools/macos/Pods/Pods.xcodeproj: error: The macOS deployment target 'MACOSX_DEPLOYMENT_TARGET' is set to 10.15, but the range of supported deployment target versions is 12.0 to 27.0.x. (in target 'wakelock_plus-wakelock_plus' from project 'Pods')`
+
+### iOS: 15.0 (iPhone 13)
+
+- `Target Integrity (Xcode): The iOS deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 13.0, but the range of supported deployment target versions is 15.0 to 27.0.x.`
+
 # 为下一波苹果更新做好准备
 
 https://flutter.dev/blog/whats-new-in-flutter-3-47
