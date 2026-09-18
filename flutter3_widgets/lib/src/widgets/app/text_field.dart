@@ -741,6 +741,7 @@ const kPrefixIconConstraints = BoxConstraints(
 //MARK: - TextInputFormatter
 
 /// 数字输入格式化器, 仅支持输入数字
+/// - 正整数
 /// [FilteringTextInputFormatter.digitsOnly]
 FilteringTextInputFormatter get integerTextInputFormatter =>
     FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
