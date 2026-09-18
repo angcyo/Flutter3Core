@@ -18,7 +18,7 @@ class MouseRightMenuWidget extends StatefulWidget {
 
   /// action
   final PointerEventListener? onMouseRightTap;
-  final PointerEventContentListener? onMouseRightContentTap;
+  final PointerEventContextListener? onMouseRightContentTap;
 
   //MARK: - menu
 
@@ -125,7 +125,7 @@ extension MouseRightMenuWidgetEx on Widget {
   Widget mouseRightTrigger({
     Key? key,
     PointerEventListener? onMouseRightTap,
-    PointerEventContentListener? onMouseRightContentTap,
+    PointerEventContextListener? onMouseRightContentTap,
     bool enable = true,
   }) {
     return enable
@@ -168,7 +168,7 @@ extension MouseRightMenuWidgetEx on Widget {
     //--菜单整体
     Widget? menu,
     //--鼠标右键回调
-    PointerEventContentListener? onMouseRightContentTap,
+    PointerEventContextListener? onMouseRightContextTap,
     //--
     bool useRootNavigator = false,
     bool enable = true,
@@ -182,7 +182,7 @@ extension MouseRightMenuWidgetEx on Widget {
       onMenusTap: onMenusTap,
       menu: menu,
       useRootNavigator: useRootNavigator,
-      onMouseRightContentTap: onMouseRightContentTap,
+      onMouseRightContentTap: onMouseRightContextTap,
       child: this,
     );
   }

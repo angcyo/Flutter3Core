@@ -261,9 +261,12 @@ Widget buildDialogTransitions(
   Animation<double> animation,
   Animation<double> secondaryAnimation,
   Widget child,
-  TranslationType? type,
-) {
-  if (type == TranslationType.none) {
+  TranslationType? type, {
+  //--
+  bool enableSecondaryAnimation = false,
+  @defInjectMark Alignment? enterScaleAlignment,
+}) {
+  if (type == .none) {
     return child;
   }
   if (type?.withTranslation == true) {
@@ -271,28 +274,29 @@ Widget buildDialogTransitions(
       builder: (content) => child,
       topToBottom: type?.withTopToBottom == true,
       fade: type?.withFade == true,
-      enableSecondaryAnimation: false,
+      enableSecondaryAnimation: enableSecondaryAnimation,
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
-  if (type == TranslationType.fade) {
+  if (type == .fade) {
     return FadePageRoute(
       builder: (content) => child,
-      enableSecondaryAnimation: false,
+      enableSecondaryAnimation: enableSecondaryAnimation,
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
-  if (type == TranslationType.slide || type == .slideLeftToRight) {
+  if (type == .slide || type == .slideLeftToRight) {
     return SlidePageRoute(
       builder: (content) => child,
-      enableSecondaryAnimation: false,
+      enableSecondaryAnimation: enableSecondaryAnimation,
       fade: type?.withFade == true,
       leftToRight: type?.withLeftToRight == true,
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
-  if (type == TranslationType.scale || type == TranslationType.scaleFade) {
+  if (type == .scale || type == .scaleFade) {
     return ScalePageRoute(
       builder: (content) => child,
       fade: type?.withFade == true,
-      enableSecondaryAnimation: false,
+      enableSecondaryAnimation: enableSecondaryAnimation,
+      enterScaleAlignment: enterScaleAlignment,
     ).buildSameTransitions(context, animation, secondaryAnimation, child);
   }
   return buildMaterialDialogTransitions(

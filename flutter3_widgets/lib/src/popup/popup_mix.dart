@@ -14,8 +14,11 @@ import '../../flutter3_widgets.dart';
 ///
 
 part 'arrow_layout.dart';
+
 part 'arrow_popup_overlay.dart';
+
 part 'arrow_popup_route.dart';
+
 part 'popup_container_dialog.dart';
 
 /// 弹窗路由扩展
@@ -94,6 +97,7 @@ extension PopupEx on BuildContext {
       radius: radius,
       barriersColor: barriersColor,
       translationType: translationType,
+      enterScaleAlignment: preferredFollowerAlignment ?? followerAnchor,
       barrierIgnorePointerType: barrierIgnorePointerType,
       childOffsetCallback:
           childOffsetCallback ??
@@ -191,6 +195,7 @@ extension PopupEx on BuildContext {
     @defInjectMark EdgeInsets? contentMargin /*不指定margin则无阴影效果*/,
     IgnorePointerType? barrierIgnorePointerType,
     TranslationType? translationType,
+    @defInjectMark Alignment? enterScaleAlignment,
     //--
     ArrowLayoutChildOffsetCallback? childOffsetCallback,
   }) async {
@@ -257,6 +262,7 @@ extension PopupEx on BuildContext {
         barrierIgnorePointerType: barrierIgnorePointerType,
         childOffsetCallback: childOffsetCallback,
         translationType: translationType,
+        enterScaleAlignment: enterScaleAlignment,
       ),
     );
   }

@@ -362,6 +362,10 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
   /// 通否同时激活透明渐隐动画
   final bool fade;
 
+  /// 缩放的对齐方向, 相对于自身锚点
+  @defInjectMark
+  final Alignment? enterScaleAlignment;
+
   ScalePageRoute({
     required super.builder,
     super.settings,
@@ -370,6 +374,7 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
     this.fade = false,
+    this.enterScaleAlignment,
     bool enableSecondaryAnimation = true,
   }) {
     _enableSecondaryAnimation = enableSecondaryAnimation;
@@ -398,18 +403,14 @@ class ScalePageRoute<T> extends MaterialPageRoute<T>
     if (!_enableSecondaryAnimation) {
       scale = ScaleTransition(
         scale: enter,
-        alignment: Alignment.center,
+        alignment: enterScaleAlignment ?? .center,
         child: child,
       );
     } else {
       scale = ScaleTransition(
         scale: enter,
-        alignment: Alignment.center,
-        child: ScaleTransition(
-          scale: exit,
-          alignment: Alignment.center,
-          child: child,
-        ),
+        alignment: enterScaleAlignment ?? .center,
+        child: ScaleTransition(scale: exit, alignment: .center, child: child),
       );
     }
 
