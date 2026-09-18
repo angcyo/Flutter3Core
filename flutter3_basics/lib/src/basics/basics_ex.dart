@@ -295,10 +295,10 @@ extension ObjectEx on Object {
         style ??
         (useDefStyle ? GlobalConfig.def.globalTheme.textNormalStyle : null);
     if (maxLines != null) {
-      overflow ??= TextOverflow.ellipsis;
+      overflow ??= .ellipsis;
     }
     if (bold == true) {
-      fontWeight ??= FontWeight.bold;
+      fontWeight ??= .bold;
     }
 
     //普通文本处理
