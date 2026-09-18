@@ -151,5 +151,6 @@ extension PubApisStringEx on String {
   }
 
   /// 获取ip对应信息
+  @httpMask
   Future<LibGeoIpBean?> get geoIpInfo async => PubApis.getGeoIpInfo(this);
 }
