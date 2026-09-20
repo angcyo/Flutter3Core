@@ -927,8 +927,18 @@ class SingleInputWidget extends StatefulWidget {
   @defInjectMark
   final EdgeInsetsGeometry? prefixIconPadding;
 
+  /// 是否激活自动构建后缀图标
+  /// - 文本框: 清除按钮
+  /// - 密码框: 隐藏/显示密码按钮
+  /// - [suffixIconBuilder]
+  @defInjectMark
+  final bool? enableAutoSuffixIcon;
+
   /// 后缀/前缀图标的构建器
+  /// - [alwaysShowSuffixIcon]
   final TransformChildWidgetBuilder? prefixIconBuilder;
+
+  /// - [alwaysShowSuffixIcon]
   final TransformChildWidgetBuilder? suffixIconBuilder;
 
   /// 是否折叠显示, true: 则输入框的高度和文本一致
@@ -1095,6 +1105,7 @@ class SingleInputWidget extends StatefulWidget {
     this.showInputCounter,
     this.keyboardType,
     this.inputFormatters,
+    this.enableAutoSuffixIcon,
     this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -1164,6 +1175,7 @@ class SingleInputWidget extends StatefulWidget {
     this.showInputCounter,
     this.keyboardType,
     this.inputFormatters,
+    this.enableAutoSuffixIcon,
     this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -1235,6 +1247,7 @@ class SingleInputWidget extends StatefulWidget {
     this.showInputCounter = false,
     this.keyboardType,
     this.inputFormatters,
+    this.enableAutoSuffixIcon,
     this.alwaysShowSuffixIcon,
     this.textStyle,
     this.textAlign = TextAlign.start,
@@ -1309,7 +1322,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   Widget? _buildSuffixIcon(BuildContext context) {
     final libRes = context.libRes;
     Widget? result;
-    if (_showSuffixIcon) {
+    if (_showSuffixIcon && widget.enableAutoSuffixIcon != false) {
+      final enableAutoSuffixIcon =
+          widget.enableAutoSuffixIcon ??
+          (isMobile || (widget.maxLines ?? widget.config.maxLines ?? 1) <= 1);
       final globalTheme = GlobalTheme.of(context);
       if (widget.config.obscureNode.obscureText) {
         //密码输入框
@@ -1341,7 +1357,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
             size: widget.suffixIconSize,
           ),
         );
-      } else {
+      } else if (enableAutoSuffixIcon) {
         //普通文本输入框
         result = IconButton(
           /*飞溅的颜色*/
