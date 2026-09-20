@@ -278,6 +278,7 @@ class DesktopTextMenuTile extends StatefulWidget {
 
   /// 中间的文本内容
   final String? text;
+  final Widget? textWidget;
 
   /// 文本显示最大的行数
   final int? textMaxLines;
@@ -334,6 +335,7 @@ class DesktopTextMenuTile extends StatefulWidget {
   const DesktopTextMenuTile({
     super.key,
     this.text,
+    this.textWidget,
     this.textMaxLines,
     this.leadingWidget,
     this.iconWidget,
@@ -405,8 +407,11 @@ class _DesktopTextMenuTileState extends State<DesktopTextMenuTile>
                 all: widget.iconPadding,
               ),
             ),
-          (widget.text ?? "")
-              .text(style: globalTheme.textBodyStyle, maxLines: textMaxLines)
+          (widget.textWidget ??
+                  (widget.text ?? "").text(
+                    style: globalTheme.textBodyStyle,
+                    maxLines: textMaxLines,
+                  ))
               .expanded(),
           if (shortcutConfig != null)
             ShortcutLabelWidget(configBean: shortcutConfig).insets(left: kH),
