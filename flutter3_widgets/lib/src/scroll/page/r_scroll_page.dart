@@ -325,6 +325,11 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
           debugger();
           return true;
         }());
+      } else if (loadData.isEmpty) {
+        if (requestPage.isFirstPage) {
+          pageWidgetList.clear();
+        }
+        pageWidgetCountLive <= pageWidgetList.size();
       }
     } else if (stateData is Exception || loadData == null || loadData.isEmpty) {
       //error
@@ -506,7 +511,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [loadDataEnd]
   @api
   @updateMark
-  void startRefresh({bool useWidgetState = false, bool atTop = true}) {
+  void startRefresh({@defInjectMark bool? useWidgetState, bool atTop = true}) {
     scrollController.startRefresh(useWidgetState: useWidgetState, atTop: atTop);
   }
 

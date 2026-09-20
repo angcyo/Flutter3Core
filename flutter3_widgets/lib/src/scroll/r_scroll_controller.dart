@@ -219,8 +219,10 @@ class RScrollController extends ScrollController {
   /// [state] 用来触发界面刷新
   @callPoint
   @updateMark
-  void startRefresh({bool useWidgetState = false, bool atTop = true}) {
+  void startRefresh({@defInjectMark bool? useWidgetState, bool atTop = true}) {
+    useWidgetState ??= !adapterStateValue.value.isNoneState;
     if (useWidgetState) {
+      //非内容状态下, 统一使用情感图状态刷新界面
       updateAdapterState(.loading, null);
     } else {
       final refreshState = scrollRefreshKey.currentState;
