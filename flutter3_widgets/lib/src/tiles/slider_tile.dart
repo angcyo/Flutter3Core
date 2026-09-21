@@ -94,6 +94,7 @@ class _SliderTileState extends State<SliderTile> with TileMixin {
     super.initState();
   }
 
+  /// [TileMixin.buildSliderWidget]
   @override
   Widget build(BuildContext context) {
     final valueStr = _value.toDigits(digits: widget.showValueDigits);
