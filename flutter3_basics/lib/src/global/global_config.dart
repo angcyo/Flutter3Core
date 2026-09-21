@@ -13,6 +13,17 @@ typedef WidgetArgumentBuilder =
 typedef GlobalOpenUrlFn =
     Future<bool> Function(BuildContext? context, String? url, Object? meta);
 
+/// 全局保存文件或分享文件的回调方法,
+/// - 桌面端 save as
+/// - 移动端 share
+/// @return 新的文件路径/或旧的文件路径, null:表示失败
+typedef GlobalSaveFileFn =
+    Future<String?> Function(
+      BuildContext? context,
+      String? filePath,
+      Object? meta,
+    );
+
 /// 全局写入文件的回调方法, 返回文件路径
 typedef GlobalWriteFileFn =
     Future<String?> Function(String fileName, String? folder, dynamic content);
@@ -130,7 +141,7 @@ Future<bool> openFilePath(
 /// 需要自定义[GlobalConfig.saveFileFn] 实现分享弹窗或save as弹窗
 @dsl
 @allPlatformFlag
-Future<bool> saveFilePath(
+Future<String?> saveFilePath(
   String? filePath, [
   BuildContext? context,
   Object? meta,
@@ -138,7 +149,7 @@ Future<bool> saveFilePath(
   if (context == null) {
     final fn = GlobalConfig.def.saveFileFn;
     if (fn == null) {
-      return false;
+      return null;
     }
     return await fn.call(GlobalConfig.def.globalContext, filePath, meta);
   } else {
@@ -170,10 +181,10 @@ extension GlobalConfigEx on BuildContext {
   }
 
   /// [GlobalConfig.saveFileFn]
-  Future<bool> saveFilePath(String? filePath, {Object? meta}) async {
+  Future<String?> saveFilePath(String? filePath, {Object? meta}) async {
     var fn = GlobalConfig.of(this).saveFileFn ?? GlobalConfig.def.saveFileFn;
     if (fn == null) {
-      return false;
+      return null;
     }
     return await fn.call(this, filePath, meta);
   }
@@ -581,7 +592,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - [openFileFn]
   /// - [saveFileFn]
   @allPlatformFlag
-  GlobalOpenUrlFn? openFileFn = (context, filePath, meta) {
+  GlobalOpenUrlFn? openFileFn = (context, filePath, meta) async {
     l.w("企图打开filePath:$filePath from:$context meta:$meta");
     if (filePath != null && isDesktopOrWeb) {
       if (Platform.isWindows) {
@@ -596,7 +607,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
       return Future.value(true);
     } else if (filePath != null) {
       //移动端, 降级到分享文件
-      return saveFilePath(filePath, context, meta);
+      return (await saveFilePath(filePath, context, meta)) != null;
     }
     return Future.value(false);
   };
@@ -630,9 +641,9 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - [openFileFn]
   /// - [saveFileFn]
   @allPlatformFlag
-  GlobalOpenUrlFn? saveFileFn = (context, filePath, meta) {
+  GlobalSaveFileFn? saveFileFn = (context, filePath, meta) {
     l.w("企图保存filePath:$filePath from:$context meta:$meta");
-    return Future.value(false);
+    return Future.value(null);
   };
 
   /// 注册一个全局的打开url方法, 一般是跳转到web页面/平台浏览器
@@ -1105,7 +1116,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     ThemeData? themeData,
     GlobalTheme? globalTheme,
     GlobalOpenUrlFn? openFileFn,
-    GlobalOpenUrlFn? saveFileFn,
+    GlobalSaveFileFn? saveFileFn,
     GlobalOpenUrlFn? openUrlFn,
     GlobalShareDataFn? shareDataFn,
     GlobalWriteFileFn? writeFileFn,

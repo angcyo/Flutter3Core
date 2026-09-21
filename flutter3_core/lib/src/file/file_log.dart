@@ -69,13 +69,21 @@ extension ObjectLogEx on Object {
   ///   - [GlobalConfig.saveFileFn]
   ///
   /// [writeToFile]
-  Future<File> saveToFile(dynamic file, {bool? share}) async {
+  Future<File> saveToFile(
+    Object? file, {
+    bool? share,
+    bool? reveal /*是否查看文件夹*/,
+  }) async {
     assert(file is File || file is String);
     final result = await writeToFile(
       file: file is File ? file : "$file".file(),
     );
+    String? newFilePath = result.path;
     if (share == true) {
-      await saveFilePath(result.path);
+      newFilePath = await saveFilePath(result.path);
+    }
+    if (reveal == true) {
+      openFilePath(newFilePath?.parentPath ?? result.parent.path);
     }
     return result;
   }

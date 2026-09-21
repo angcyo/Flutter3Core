@@ -102,16 +102,16 @@ Future runGlobalApp(
   // 保存文件
   GlobalConfig.def.saveFileFn = (context, filePath, meta) async {
     if (filePath == null || isNil(filePath)) {
-      return false;
+      return null;
     }
     if (isDesktopOrWeb) {
       final savePath = await saveFile(
         dialogTitle: meta?.toString(),
         fromPath: filePath,
       );
-      return savePath != null;
+      return savePath;
     }
-    return filePath.shareFile();
+    return (await filePath.shareFile()) ? filePath : null;
   };
 
   // 打开url链接
