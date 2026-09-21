@@ -30,6 +30,14 @@ https://pub.dev/packages/liquid_glass_ui_kit
 
 适用于 Flutter 的 iOS 26.4“液态玻璃” 主题和组件套件。只需导入一套磨砂半透明的设计系统（包括颜色、字体和现成的组件），即可在任何平台上获得原生般的玻璃质感外观。
 
+## liquid_glass_widgets: ^1.7.0
+
+液态玻璃小部件
+
+https://pub.dev/packages/liquid_glass_widgets
+
+将 Apple 的 iOS 26 Liquid Glass 引入您的 Flutter 应用——真正的基于着色器的模糊效果、物理驱动的果冻动画以及跨平台的动态光照。
+
 ## flare_ui: ^1.0.1
 
 https://pub.dev/packages/flare_ui
