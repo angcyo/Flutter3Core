@@ -182,12 +182,12 @@ class RTileTransformChain with TileTransformMixin {
       if (!handle) {
         //debugger();
         final noTransform = lastTransform == null;
-        assert(() {
+        /*assert(() {
           if (noTransform) {
             l.w('[${tile.classHash()}]未找到对应的转换器, 将默认处理!');
           }
           return true;
-        }());
+        }());*/
         lastTransform?.endTransformIfNeed(context, children, result, false);
         lastTransform = null;
         Widget child = tile;
