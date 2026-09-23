@@ -1188,6 +1188,23 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     return elements /*selectComponent.children*/;
   }
 
+  /// 获取所有画布范围内的元素
+  @api
+  List<ElementPainter>? getAllElementInCanvasContent({
+    bool exportSingleElement = false,
+  }) {
+    return getAllElement(exportSingleElement: exportSingleElement)
+        ?.where(
+          (element) =>
+              canvasDelegate.canvasContentManager.isElementInCanvasContent(
+                element,
+                /*debugLabel: "test",*/
+              ) ==
+              true,
+        )
+        .toList();
+  }
+
   /// 是否选中了指定元素
   /// 指定的元素是否在选中列表中,
   /// 也就是指定的元素是否有被选中

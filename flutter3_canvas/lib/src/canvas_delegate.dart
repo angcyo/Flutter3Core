@@ -328,6 +328,18 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   //--
 
+  /// 所有画布范围内的元素集合
+  /// - [allElementList]
+  /// - [allSelectedElementList]
+  /// - [allElementListInCanvasContent]
+  List<ElementPainter>? get allElementListInCanvasContent =>
+      canvasElementManager.getAllElementInCanvasContent();
+
+  List<ElementPainter>? get allSingleElementListInCanvasContent =>
+      canvasElementManager.getAllElementInCanvasContent(
+        exportSingleElement: true,
+      );
+
   /// 所有选中的元素集合
   List<ElementPainter>? get allSelectedElementList =>
       canvasElementManager.getAllSelectedElement();
