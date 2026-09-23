@@ -157,6 +157,10 @@ mixin AbsScrollPage {
 
   //region Body
 
+  /// 页面为空数据时的情感图状态
+  /// - [buildBody]中使用
+  WidgetBuildState get pageEmptyWidgetState => .empty;
+
   /// [buildBody]->[RScrollView]的[RScrollView.children]更新信号
   /// [createUpdateSignal]
   ///
@@ -249,7 +253,7 @@ mixin AbsScrollPage {
           if (isNil(children)) {
             return [
               RScrollController()
-                  .buildAdapterStateWidget(context, .empty, null)
+                  .buildAdapterStateWidget(context, pageEmptyWidgetState, null)
                   .rFill(),
             ];
           }

@@ -799,19 +799,34 @@ extension WidgetEx on Widget {
     HitTestBehavior? behavior = HitTestBehavior.translucent,
     GestureTapCallback? onTap,
     GestureContextLongPressCallback? onContentLongPress,
+    GestureContextTapDownCallback? onContentDownLongPress,
+    //--
+    GestureTapDownCallback? onTapDown /*按下回调*/,
   }) {
-    if ((onLongPress == null && onTap == null && onContentLongPress == null) ||
-        !enable) {
+    final needLongPress =
+        onLongPress != null ||
+        onContentLongPress != null ||
+        onContentDownLongPress != null;
+    if ((!needLongPress && onTap == null && onTapDown == null) || !enable) {
       return this;
     }
-
+    final needContext =
+        onContentLongPress != null || onContentDownLongPress != null;
+    TapDownDetails? downDetails;
     Widget buildBody(BuildContext? context) {
       return GestureDetector(
-        onLongPress: onLongPress != null || onContentLongPress != null
+        onTapDown: (details) {
+          downDetails = details;
+          onTapDown?.call(details);
+        },
+        onLongPress: needLongPress
             ? () {
                 onLongPress?.call();
                 if (context != null) {
                   onContentLongPress?.call(context);
+                  if (downDetails != null) {
+                    onContentDownLongPress?.call(context, downDetails!);
+                  }
                 }
               }
             : null,
@@ -821,10 +836,10 @@ extension WidgetEx on Widget {
       );
     }
 
-    if (onContentLongPress == null) {
-      return buildBody(null);
-    } else {
+    if (needContext) {
       return Builder(builder: buildBody);
+    } else {
+      return buildBody(null);
     }
   }
 

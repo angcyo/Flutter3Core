@@ -2337,10 +2337,16 @@ extension IntEx on int {
 
   /// [FileSizeEx.toSizeStr]
   String toSizeStr({int round = 2, String space = "", int divider = 1024}) {
+    final result = fileSize(
+      this.abs(),
+      round: round,
+      space: space,
+      divider: divider,
+    );
     if (this < 0) {
-      return "$this";
+      return "-$result";
     }
-    return fileSize(this, round: round, space: space, divider: divider);
+    return result;
   }
 
   /// 从整型数中取第[bit]位的数

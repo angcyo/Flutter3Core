@@ -1014,6 +1014,7 @@ extension DialogExtension on BuildContext {
   /// - [LabelMenuTile]
   Future<T?> showMenus<T>(
     List<Widget>? menus /*辅助生成items*/, {
+    bool? enableDisableStyle = true /*激活菜单的点击事件禁用样式*/,
     List<VoidCallback?>? onMenusTap /*菜单对应的点击事件*/,
     List<PopupMenuEntry<T>>? items /*菜单项*/,
     //--
@@ -1053,17 +1054,20 @@ extension DialogExtension on BuildContext {
 
     items ??= menus?.mapIndex((e, index) {
       final onTap = onMenusTap?.getOrNull(index);
+      final canClick = enableDisableStyle != true || onTap != null;
       return PopupMenuItem<T>(
         value: e as dynamic,
-        enabled: onTap != null,
+        enabled: canClick,
         onTap: onTap,
-        mouseCursor: onTap == null
+        mouseCursor: canClick == false
             ? SystemMouseCursors.forbidden
             : SystemMouseCursors.basic,
-        child: e.colorFiltered(
-          enable: onTap == null,
-          color: GlobalTheme.of(this).textDisableStyle.color,
-        ),
+        child: enableDisableStyle == true
+            ? e.colorFiltered(
+                enable: !canClick,
+                color: GlobalTheme.of(this).textDisableStyle.color,
+              )
+            : e,
       );
     }).toList();
 
