@@ -11,7 +11,7 @@ typedef ScrollUserOffsetAction =
     double Function(ScrollMetrics position, double offset);
 
 /// 手势结束速度回调
-/// [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
+/// - [velocity] 手势结束时的速度 >0:快速向下拉 <0:快速向上拉
 /// 返回true, 表示拦截默认处理
 typedef ScrollDragEndAction =
     bool Function(ScrollMetrics position, double velocity);
@@ -459,8 +459,17 @@ class _PullBackWidgetState extends State<PullBackWidget>
     //l.d('velocity:$velocity value:$_pullBackValue axis:${position?.axis} pixels:${position?.pixels} position:$position ');
     //position:ScrollPositionWithSingleContext#ce1ca(offset: -52.4, range: 0.0..285.5, viewport: 382.5, ScrollableState, AlwaysScrollableScrollPhysics -> PullBackScrollPhysics -> BouncingScrollPhysics -> RangeMaintainingScrollPhysics, BallisticScrollActivity#76b81(AnimationController#5ee79(▶ -52.446; for BallisticScrollActivity)), ScrollDirection.forward)
     if (widget.enablePullMaxBoundOverScroll) {
-      _overPullBackValue = 0;
-      updateState();
+      if (_overPullBackValue > 0) {
+        if (position == null && _pullBackController != null) {
+          _pullBackController?.forward(
+            from: _overPullBackValue + _pullBackController!.upperBound,
+          );
+        } else {
+          updateState();
+        }
+        _overPullBackValue = 0;
+        return true;
+      }
     }
 
     if (position != null && position.axis != widget.pullAxis) {
