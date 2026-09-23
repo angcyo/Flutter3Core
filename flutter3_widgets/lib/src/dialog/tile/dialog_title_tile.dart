@@ -72,7 +72,7 @@ class DialogTitleTile extends StatelessWidget with TileMixin {
       context,
       text: title ?? "",
       textSpan: titleSpan,
-      textAlign: TextAlign.center,
+      textAlign: .center,
       textWidget: this.titleWidget,
       textStyle:
           titleTextStyle ??
