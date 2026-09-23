@@ -1027,6 +1027,7 @@ class SliverGridTransform extends BaseTileTransform {
           mainAxisSpacing: first.mainAxisSpacing,
           crossAxisSpacing: first.crossAxisSpacing,
           childAspectRatio: first.childAspectRatio,
+          mainAxisExtent: first.mainAxisExtent,
         ),
         itemCount: newList.length,
         itemBuilder: (context, index) {

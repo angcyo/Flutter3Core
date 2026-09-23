@@ -103,6 +103,7 @@ class RItemTile extends StatefulWidget {
     this.mainAxisSpacing = 0,
     this.crossAxisSpacing = 0,
     this.childAspectRatio = 1.0,
+    this.mainAxisExtent,
     this.edgePaddingLeft,
     this.edgePaddingTop,
     this.edgePaddingRight,
@@ -383,6 +384,10 @@ class RItemTile extends StatefulWidget {
 
   /// [SliverGridDelegateWithFixedCrossAxisCount.childAspectRatio]
   final double childAspectRatio;
+
+  /// [SliverGridDelegateWithFixedCrossAxisCount.mainAxisExtent]
+  /// 只在[SliverGrid]中有效, 主轴方向的上占用的空间, 不指定则使用[childAspectRatio]
+  final double? mainAxisExtent;
 
   /// 当item在网格的边界时, 是否需要处理填充距离. 此方式的填充会占用tile的高度
   /// 只在[SliverGrid]中有效
@@ -741,6 +746,7 @@ class RItemTile extends StatefulWidget {
       ..add(DiagnosticsProperty<double>('mainAxisSpacing', mainAxisSpacing))
       ..add(DiagnosticsProperty<double>('crossAxisSpacing', crossAxisSpacing))
       ..add(DiagnosticsProperty<double>('childAspectRatio', childAspectRatio))
+      ..add(DiagnosticsProperty<double>('mainAxisExtent', mainAxisExtent))
       ..add(DiagnosticsProperty<double?>('edgePaddingLeft', edgePaddingLeft))
       ..add(DiagnosticsProperty<double?>('edgePaddingTop', edgePaddingTop))
       ..add(DiagnosticsProperty<double?>('edgePaddingRight', edgePaddingRight))
@@ -913,6 +919,7 @@ extension RItemTileExtension on Widget {
     double childAspectRatio = 1 /*宽:高*/,
     double? mainAxisSpacing,
     double? crossAxisSpacing,
+    double? mainAxisExtent,
     double? edgePadding,
     double? edgePaddingTop,
     double? edgePaddingBottom,
@@ -946,6 +953,7 @@ extension RItemTileExtension on Widget {
       childAspectRatio: childAspectRatio,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
+      mainAxisExtent: mainAxisExtent,
       edgePaddingLeft: edgePadding ?? edgePaddingLeft,
       edgePaddingTop: edgePadding ?? edgePaddingTop,
       edgePaddingRight: edgePadding ?? edgePaddingRight,
@@ -1002,6 +1010,7 @@ extension RItemTileExtension on Widget {
     double mainAxisSpacing = 0,
     double crossAxisSpacing = 0,
     double childAspectRatio = 1.0,
+    double? mainAxisExtent,
     SliverPersistentHeaderWidgetBuilder? headerChildBuilder,
     double? headerFixedHeight,
     double headerMaxHeight = kMinInteractiveDimension,
@@ -1058,6 +1067,7 @@ extension RItemTileExtension on Widget {
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
       childAspectRatio: childAspectRatio,
+      mainAxisExtent: mainAxisExtent,
       headerChildBuilder: headerChildBuilder,
       headerFixedHeight: headerFixedHeight,
       headerMaxHeight: headerMaxHeight,

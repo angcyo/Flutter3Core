@@ -45,6 +45,13 @@ class NavigatorRouteOverlay extends StatefulWidget {
       for (final part in routeList) {
         //debugger();
         if (isFirst) {
+          final md = platformMediaQueryData;
+          final size = md.size;
+          builder.addTextStyle(
+            "${size.width.toDigits()}, ${size.height.toDigits()}/${md.devicePixelRatio.toDigits(digits: 3)}",
+            style: globalTheme.textPlaceStyle,
+          );
+          builder.newLine();
           builder.addTextStyle("当前路由信息如下[$length]↓");
         }
         builder.newLine();
