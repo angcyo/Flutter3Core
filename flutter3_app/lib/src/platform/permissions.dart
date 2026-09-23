@@ -14,7 +14,8 @@ abstract class Permissions {
       : [
           // 如果 Android 版本低于 12，或者需要精确定位，请加上这一行
           Permission.location,
-          /*Permission.bluetooth,*/ // API: 36+ 不需要这个权限
+          /*Permission.bluetooth,*/
+          // API: 36+ 不需要这个权限
           Permission.bluetoothScan,
           Permission.bluetoothConnect,
           Permission.bluetoothAdvertise,
@@ -112,4 +113,38 @@ abstract class Permissions {
   }
 
   //endregion 平台权限
+
+  //region ACCESS_LOCAL_NETWORK
+
+  /// 是否有[Permission.accessLocalNetwork]权限
+  static Future<bool> hasAccessLocalNetworkPermissions() async {
+    if (!isAndroid) {
+      return true;
+    }
+    return Permission.accessLocalNetwork.status.isGranted;
+  }
+
+  /// # Android 17 / API 37
+  /// https://developer.android.google.cn/privacy-and-security/local-network-permission?hl=zh-cn#android-17-enforcement
+  /// ```
+  /// [NsdError] NsdError (message: "register: Missing local network permission", cause: internalError)
+  /// ```
+  ///
+  /// ```
+  /// <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+  /// ```
+  @PlatformFlag("Android")
+  static Future<PermissionStatus> requestAccessLocalNetwork() async {
+    if (!isAndroid) {
+      return PermissionStatus.granted;
+    }
+    final result = await Permission.accessLocalNetwork.request();
+    assert(() {
+      l.d('[AccessLocalNetwork]请求权限返回:$result');
+      return true;
+    }());
+    return result;
+  }
+
+  //region ACCESS_LOCAL_NETWORK
 }
