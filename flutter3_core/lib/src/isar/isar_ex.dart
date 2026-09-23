@@ -25,7 +25,7 @@ part of '../../flutter3_core.dart';
 /// $isar.collections.where().sortByModelDesc().findAllSync();
 /// ```
 ///
-/// # 增
+/// # 增/删/改
 /// ```
 /// final collection = Collection();
 /// $isar.writeTxnSync(() {
