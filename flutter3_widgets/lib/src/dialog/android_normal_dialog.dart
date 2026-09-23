@@ -211,7 +211,7 @@ class AndroidNormalDialog extends StatelessWidget with DialogMixin {
     BuildContext context, {
     double? padding,
     TextStyle? textStyle,
-    TextAlign textAlign = TextAlign.left,
+    TextAlign textAlign = .left,
   }) {
     final globalTheme = GlobalTheme.of(context);
     return messageWidget ??

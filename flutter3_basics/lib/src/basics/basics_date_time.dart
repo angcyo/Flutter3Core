@@ -111,6 +111,10 @@ extension TimeEx on int {
     if (diff < 3 * kDay) return beforeYesterday;
     //7天之内, 显示几天前
     if (diff < 7 * kDay) return "${diff ~/ kDay}$d";
+    if (timePattern == null) {
+      //没有提供时间模板, 则不进行格式化
+      return "";
+    }
     return format(timePattern);
   }
 

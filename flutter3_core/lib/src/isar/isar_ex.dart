@@ -9,6 +9,11 @@ part of '../../flutter3_core.dart';
 /// https://isar.dev/zh/
 /// 专门为 Flutter 打造的超高速跨平台数据库
 ///
+/// # 注册表
+/// ```
+/// registerIsarCollection(YDDeviceConnectInfoCollectionSchema)
+/// ```
+///
 /// # 查
 /// ```
 /// final laserOptionCollection = $isar.collections
