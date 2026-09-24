@@ -32,7 +32,20 @@ final class HiveValue<T> {
   /// 赋值
   T? set(T? value) => this << value;
 
+  /// 如果是[bool]类型, 则取反
+  bool? not() {
+    final value = this.value;
+    if (value is bool) {
+      set((!value) as T);
+      return this.value as bool;
+    }
+    return null;
+  }
+
   //MARK: - getter
+
+  /// 是否为true
+  bool get isTrue => value is bool ? value == true : false;
 
   /// 获取
   T? get value => key.hiveGet() ?? def;

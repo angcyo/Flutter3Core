@@ -591,7 +591,10 @@ abstract class BaseTileTransform with TileTransformMixin {
     bool fromPart,
   ) {
     assert(() {
-      l.i("[${classHash()}]包裹${origin.length}->${result.length}");
+      l.i(
+        "[${classHash()}]包裹${origin.length}[${origin.firstOrNull?.runtimeType}...]"
+        "->${result.length}[${result.firstOrNull?.runtimeType}...]",
+      );
       return true;
     }());
   }
