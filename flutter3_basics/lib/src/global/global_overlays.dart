@@ -111,7 +111,7 @@ OverlayEntry? toast(
 /// [toast] -> [showNotification]->[showOverlay]
 OverlayEntry? toastBlur({
   Widget? msg,
-  dynamic text,
+  Object? text,
   double? bgBlurSigma = kM,
   OverlayPosition position = OverlayPosition.center,
   LoadingValueNotifier? loadingInfoNotifier,
