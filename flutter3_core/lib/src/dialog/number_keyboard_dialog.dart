@@ -125,7 +125,8 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
   double? get dialogMaxWidth => isDesktopOrWeb ? kDesktopPopupWidth : null;
 
   @override
-  TranslationType get translationType => .translationFade;
+  TranslationType get translationType =>
+      dialogInPopup == true ? .scaleFade : .translationFade;
 
   const NumberKeyboardDialog({
     super.key,
@@ -226,6 +227,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     final keyboard = NumberKeyboardLayout(
       showDecimal: isSupportDecimal,
       showNegative: isSupportNegative,
+      enableKeyEvent: false,
       onKeyboardInput: (keyboard, type) {
         if (type == NumberKeyboardType.finish) {
           _onSelfFinishInput();
@@ -373,6 +375,9 @@ class NumberKeyboardLayout extends StatefulWidget {
   final void Function(String keyboard, NumberKeyboardType type)?
   onKeyboardInput;
 
+  /// 是否激活键盘输入
+  final bool enableKeyEvent;
+
   const NumberKeyboardLayout({
     super.key,
     this.showDecimal = true,
@@ -381,6 +386,7 @@ class NumberKeyboardLayout extends StatefulWidget {
     this.itemGap = 6,
     this.itemBorderRadius = 4,
     this.onKeyboardInput,
+    this.enableKeyEvent = true,
   });
 
   @override
@@ -521,7 +527,70 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
           }),
       ],
     );
+    if (widget.enableKeyEvent) {
+      return keyboard.focus(
+        onKeyEvent: (node, event) {
+          if (event.isKeyDownOrRepeat) {
+            if (event.isEnterKey) {
+              _onSelfInput("", .finish);
+              return .handled;
+            } else if (event.isEscKey) {
+              context.pop(result: null);
+              return .handled;
+            }
+          }
+          final result = _onKeyEventInput(context, event);
+          return result ? .handled : .ignored;
+        },
+      );
+    }
     return keyboard;
+  }
+
+  /// 处理桌面端按键事件
+  /// - [NumberKeyEventDetectorMixin]
+  ///
+  /// @return true 表示处理了, 否则返回false
+  @callPoint
+  @desktopLayout
+  bool _onKeyEventInput(
+    BuildContext? context,
+    KeyEvent event, {
+    Object? popResult,
+  }) {
+    assert(() {
+      l.d("[${classHash()}]onKeyEventInput[${event.character}]->$event");
+      return true;
+    }());
+    if (event.isKeyDownOrRepeat) {
+      final character = event.character;
+      if (event.isBackKey) {
+        _onSelfInput("", .backspace);
+        return true;
+      } else if (event.isEnterKey) {
+        //onKeyboardInput("", .finish);
+        //debugger();
+        _onSelfInput("", .finish);
+        return true;
+      } else if (character != null) {
+        //有效输入
+        if (character == ".") {
+          if (widget.showDecimal) {
+            _onSelfInput(character, .decimal);
+          }
+          return true;
+        } else if (character == "-" || character == "+") {
+          if (widget.showNegative) {
+            _onSelfInput(character, .positiveNegative);
+          }
+          return true;
+        } else if (character.isInt) {
+          _onSelfInput(character, .number);
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /// 创建数字按钮
