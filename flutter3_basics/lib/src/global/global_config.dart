@@ -115,6 +115,9 @@ Future<bool> openWebUrl(
 /// - 支持文件夹路径
 /// - 支持本机能力
 /// 需要自定义[GlobalConfig.openFileFn] 来实现调用本机程序打开文件
+///
+/// - [openFilePath]
+/// - [saveFilePath]
 @dsl
 Future<bool> openFilePath(
   String? filePath, [
@@ -139,6 +142,9 @@ Future<bool> openFilePath(
 /// - save as : 桌面端
 /// - share : 移动端
 /// 需要自定义[GlobalConfig.saveFileFn] 实现分享弹窗或save as弹窗
+///
+/// - [openFilePath]
+/// - [saveFilePath]
 @dsl
 @allPlatformFlag
 Future<String?> saveFilePath(

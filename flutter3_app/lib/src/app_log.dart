@@ -39,15 +39,17 @@ extension AppLogDirectoryEx on Directory {
   /// 分享文件夹对应的日志
   /// - 有个全局的[shareAppLog]方法
   Future shareAppLog([String? logName]) async {
-    final info = await $platformPackageInfo;
-    final output = await cacheFilePath(
-      (logName ??
-              "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}")
-          .ensureSuffix(".zip"),
-    );
-    final list = <String>[path];
-    await list.zipPathList(output);
-    output.shareFile().ignore();
+    await wrapLoading(() async {
+      final info = await $platformPackageInfo;
+      final output = await cacheFilePath(
+        (logName ??
+                "LOG_${info.appName}_${info.version}_${info.buildNumber}_${nowTimeString("yyyy-MM-dd_HH-mm-ss_SSS")}")
+            .ensureSuffix(".zip"),
+      );
+      final list = <String>[path];
+      await list.zipPathList(output);
+      await saveFilePath(output);
+    }());
   }
 }
 

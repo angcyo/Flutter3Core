@@ -74,7 +74,8 @@ extension PopupEx on BuildContext {
       edgeMargin ??= kX;
       contentPadding ??= const EdgeInsets.all(kS);
     }
-    preferredFollowerAlignment ??= body.getWidgetPreferredFollowerAlignment();
+    preferredFollowerAlignment ??=
+        followerAnchor ?? body.getWidgetPreferredFollowerAlignment();
     final navigator = Navigator.of(this, rootNavigator: rootNavigator);
     final parentSize = navigator.context.findRenderObject()?.renderSize;
     final parentWidth = parentSize?.width ?? $screenWidth;

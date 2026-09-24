@@ -933,7 +933,7 @@ extension ScreenWidgetEx on Widget {
     if (screenType == null) {
       return null;
     }
-    popupPreferredFollowerAlignment ??= .topRight;
+    popupPreferredFollowerAlignment ??= followerAnchor ?? .topRight;
     if (popupShowArrow && popupArrowDirection == null) {
       if (popupPreferredFollowerAlignment.isTop) {
         popupArrowDirection = .up;
