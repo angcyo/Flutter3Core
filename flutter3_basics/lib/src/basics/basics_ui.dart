@@ -1830,6 +1830,30 @@ extension WidgetEx on Widget {
     );
   }
 
+  /// 在当前的[Widget]上, 覆盖一层[Overlay]
+  Widget overlay({
+    Key? key,
+    List<OverlayEntry>? entries,
+    //--
+    bool opaque = false,
+    bool maintainState = false,
+    bool canSizeOverlay = false,
+  }) {
+    //return OverlayEntry(builder: (context) => this).insert();
+    return Overlay(
+      key: key,
+      initialEntries: [
+        OverlayEntry(
+          builder: (context) => this,
+          opaque: opaque,
+          maintainState: maintainState,
+          canSizeOverlay: canSizeOverlay,
+        ),
+        ...?entries,
+      ],
+    );
+  }
+
   //endregion ---SafeArea---
 
   //region ---Single Widget---
