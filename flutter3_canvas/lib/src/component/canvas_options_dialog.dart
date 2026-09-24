@@ -12,7 +12,7 @@ part of '../../flutter3_canvas.dart';
 /// - [CanvasListener.onCanvasStyleChangedAction] 通过监听此方法, 实现持久化
 class CanvasOptionsDialog extends StatefulWidget with DialogMixin {
   /// 画布代理, 核心组件
-  final CanvasDelegate canvasDelegate;
+  final CanvasDelegate? canvasDelegate;
 
   /// 是否显示画布的快捷键列表
   /// - [CanvasDelegate.canvasKeyManager.shortcutConfigManager]
@@ -36,7 +36,14 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog>
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = globalConfig.globalTheme;
     final canvasDelegate = widget.canvasDelegate;
+
     final showShortcuts = widget.showShortcuts ?? isDesktopOrWeb;
+    final List<ShortcutConfigBean>? shortcutConfigList = showShortcuts
+        ? canvasDelegate
+              ?.canvasKeyManager
+              .shortcutConfigManager
+              .shortcutConfigList
+        : null;
     final children = [
       ...buildCanvasOptions(
         context,
@@ -51,31 +58,33 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog>
             fontWeight: FontWeight.bold,
           ),
         ).align(.centerLeft),
-        for (final shortcut
-            in canvasDelegate
-                .canvasKeyManager
-                .shortcutConfigManager
-                .shortcutConfigList)
-          [
-                textOf(shortcut)?.text().expanded(),
-                ShortcutLabelWidget(configBean: shortcut),
-              ]
-              .row()
-              ?.insets(h: kX, v: kX)
-              .ink(() {}, splashColor: Colors.transparent),
+        if (shortcutConfigList != null)
+          for (final shortcut in shortcutConfigList)
+            [
+                  textOf(shortcut)?.text().expanded(),
+                  ShortcutLabelWidget(configBean: shortcut),
+                ]
+                .row()
+                ?.insets(h: kX, v: kX)
+                .ink(() {}, splashColor: Colors.transparent),
       ],
     ];
+
+    final title = libRes?.libCanvasOptions ?? "画布选项";
     if (globalConfig.isInTabletLandscapeModel) {
       return widget.buildDesktopCenterDialog(
         context,
         [
-          DesktopDialogTitleTile(title: libRes?.libCanvasOptions ?? "画布选项"),
+          DesktopDialogTitleTile(title: title),
           [...children].scrollVertical()?.expanded(),
         ].column()!,
       );
     }
-
-    return widget.buildBottomChildrenDialog(context, children, useScroll: true);
+    //--
+    return widget.buildBottomChildrenDialog(context, [
+      CoreDialogTitle(title: title, enableTrailing: false),
+      ...children,
+    ], useScroll: true);
   }
 }
 
