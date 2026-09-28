@@ -121,6 +121,11 @@ dependencies:
   # https://pub.dev/packages/flutter_infinite_marquee
   #flutter_infinite_marquee: ^2.0.1
 
+
+  # https://pub.dev/packages/hiblob
+  # 从任意字符串生成确定性的几何图形头像 ——hiblobs 。
+  hiblob: ^1.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -10,6 +10,7 @@ import 'package:flutter3_basics/flutter3_basics.dart';
 import 'package:flutter3_pub_core/src/marquee/marqueer.dart';
 import 'package:flutter3_widgets/flutter3_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hiblob/flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -90,3 +91,44 @@ void closeScreenOn() {
 
 @testPoint
 void _test() {}
+
+extension Flutter3PubCoreStringEx on String {
+  /// 从任意字符串生成确定性的几何图形头像
+  Widget hiblob({
+    bool isCircle = true,
+    double? size,
+    String? semanticLabel,
+    Backdrop? background,
+    HiblobExpressionType? expressionType,
+  }) {
+    return Hiblob(
+      name: this,
+      size: size,
+      semanticLabel: semanticLabel ?? this,
+      options: HiblobOptions(
+        background: background ?? (isCircle ? .circle : .squircle),
+        expression:
+            expressions.findFirst((e) => e.id == expressionType?.name) ?? love,
+      ),
+    );
+  }
+}
+
+enum HiblobExpressionType {
+  idle,
+  happy,
+  sad,
+  mad,
+  surprised,
+  wink,
+  sleepy,
+  smug,
+  unsure,
+  scared,
+  love,
+  shy,
+  sick,
+  thinking,
+  grin,
+  frown,
+}
