@@ -94,22 +94,36 @@ void _test() {}
 
 extension Flutter3PubCoreStringEx on String {
   /// 从任意字符串生成确定性的几何图形头像
+  /// - [animate] 是否动画
   Widget hiblob({
+    bool animate = false,
     bool isCircle = true,
     double? size,
     String? semanticLabel,
-    Backdrop? background,
     HiblobExpressionType? expressionType,
+    Backdrop? background,
+    //--
+    HiblobAnimation? animation
   }) {
+    final options = HiblobOptions(
+      background: background ?? (isCircle ? .circle : .squircle),
+      expression:
+      expressions.findFirst((e) => e.id == expressionType?.name) ?? happy,
+    );
+    if (animate) {
+      return AnimatedHiblob(
+        name: this,
+        size: size,
+        animation: animation ?? .always,
+        semanticLabel: semanticLabel ?? this,
+        options: options,
+      );
+    }
     return Hiblob(
       name: this,
       size: size,
       semanticLabel: semanticLabel ?? this,
-      options: HiblobOptions(
-        background: background ?? (isCircle ? .circle : .squircle),
-        expression:
-            expressions.findFirst((e) => e.id == expressionType?.name) ?? love,
-      ),
+      options: options,
     );
   }
 }
