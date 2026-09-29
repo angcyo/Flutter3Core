@@ -934,6 +934,9 @@ extension RItemTileExtension on Widget {
   /// [RItemTile.buildGridWrapChild]
   ///
   /// [SliverGrid.builder]
+  ///
+  /// - [rGridTile]
+  /// - [rMasonryGridTile]
   RItemTile rGridTile(
     int gridCount, {
     //--
@@ -956,7 +959,7 @@ extension RItemTileExtension on Widget {
     List<BoxShadow>? decorationShadow,
     //
     Decoration? sliverDecoration,
-    DecorationPosition sliverDecorationPosition = DecorationPosition.background,
+    DecorationPosition sliverDecorationPosition = .background,
     //--
     bool hide = false,
     bool part = false,
@@ -975,6 +978,96 @@ extension RItemTileExtension on Widget {
       crossAxisCount: gridCount,
       sliverType: sliverType,
       childAspectRatio: childAspectRatio,
+      mainAxisSpacing: mainAxisSpacing,
+      crossAxisSpacing: crossAxisSpacing,
+      mainAxisExtent: mainAxisExtent,
+      edgePaddingLeft: edgePadding ?? edgePaddingLeft,
+      edgePaddingTop: edgePadding ?? edgePaddingTop,
+      edgePaddingRight: edgePadding ?? edgePaddingRight,
+      edgePaddingBottom: edgePadding ?? edgePaddingBottom,
+      //--
+      sliverDecoration:
+          sliverDecoration ??
+          (decorationFillColor != null
+              ? fillDecoration(
+                  color: decorationFillColor,
+                  radius: decorationBorderRadius,
+                  boxShadow: decorationShadow,
+                )
+              : null),
+      sliverDecorationPosition: sliverDecorationPosition,
+      sliverPadding:
+          sliverPadding ??
+          (enablePadding
+              ? EdgeInsets.symmetric(
+                  vertical: mainAxisSpacing,
+                  horizontal: crossAxisSpacing,
+                )
+              : null),
+      hide: hide,
+      part: part,
+      tileFlatBuilder: tileFlatBuilder,
+      updateSignal: updateSignal ?? RScrollPage.consumeRebuildBeanSignal(),
+      child: this,
+    );
+  }
+
+  /// 瀑布流item
+  /// [gridCount] 瀑布流的列数
+  /// [childAspectRatio] child宽高比(w/h), <1时,高度高; >1时,宽度高;
+  /// [mainAxisSpacing] 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
+  /// [crossAxisSpacing] 交叉轴间隙
+  /// [RItemTile.buildGridWrapChild]
+  ///
+  /// [SliverGrid.builder]
+  ///
+  /// - [rGridTile]
+  /// - [rMasonryGridTile]
+  RItemTile rMasonryGridTile(
+    int gridCount, {
+    //--
+    Key? key,
+    Object? tag,
+    //--
+    EdgeInsetsGeometry? tileWrapPadding,
+    Axis? tileWrapScrollDirection,
+    //--
+    double? mainAxisSpacing,
+    double? crossAxisSpacing,
+    double? mainAxisExtent,
+    double? edgePadding,
+    double? edgePaddingTop,
+    double? edgePaddingBottom,
+    double? edgePaddingLeft,
+    double? edgePaddingRight,
+    //--
+    EdgeInsetsGeometry? sliverPadding,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = .background,
+    //--
+    bool hide = false,
+    bool part = false,
+    RItemTileFlatBuilder? tileFlatBuilder,
+    UpdateValueNotifier? updateSignal,
+    bool enablePadding = false,
+    dynamic sliverType = MasonryGridView,
+  }) {
+    mainAxisSpacing ??= 0;
+    crossAxisSpacing ??= mainAxisSpacing;
+    return RItemTile(
+      //--
+      key: key,
+      tag: tag,
+      //--
+      tileWrapPadding: tileWrapPadding,
+      tileWrapScrollDirection: tileWrapScrollDirection,
+      //--
+      crossAxisCount: gridCount,
+      sliverType: sliverType,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,
       mainAxisExtent: mainAxisExtent,
