@@ -418,6 +418,9 @@ class RScrollController extends ScrollController {
                 }
                 return false;
               },
+              onBuildStateClick: (state, data) {
+                return _onAdapterStateBuildStateClick(state, data);
+              },
             );
       };
 
@@ -448,11 +451,8 @@ class RScrollController extends ScrollController {
                 }
                 return false;
               },
-              onClick: () {
-                if (loadMoreStateValue.value == .empty) {
-                  //点击滚动到顶部
-                  scrollToTop(anim: false);
-                }
+              onBuildStateClick: (state, data) {
+                return _onLoadMoreBuildStateClick(state, data);
               },
             );
       };
@@ -493,6 +493,30 @@ class RScrollController extends ScrollController {
     requestPage.pageLoadMore();
     onLoadMoreCallback?.call();
     onLoadDataCallback?.call();
+  }
+
+  /// 情感图状态点击回调
+  @configProperty
+  BuildStateClickAction? onAdapterStateBuildStateClick;
+
+  /// 加载更多状态点击回调
+  @configProperty
+  BuildStateClickAction? onLoadMoreBuildStateClick;
+
+  /// 情感图的不同状态小部件点击事件
+  @property
+  dynamic _onAdapterStateBuildStateClick(WidgetBuildState state, Object? data) {
+    return onAdapterStateBuildStateClick?.call(state, data);
+  }
+
+  /// 加载更多的不同状态小部件点击事件
+  @property
+  dynamic _onLoadMoreBuildStateClick(WidgetBuildState state, Object? data) {
+    if (loadMoreStateValue.value == .empty) {
+      //点击滚动到顶部
+      scrollToTop(anim: false);
+    }
+    return onLoadMoreBuildStateClick?.call(state, data);
   }
 }
 

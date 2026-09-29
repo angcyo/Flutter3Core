@@ -126,12 +126,16 @@ extension WidgetStateEx on Widget {
   }
 }
 
+/// @return true: 拦截默认处理
+typedef BuildStateClickAction =
+    dynamic Function(WidgetBuildState state, Object? data);
+
 /// [WidgetBuildState]状态控制
 class WidgetStateBuildWidget extends StatefulWidget {
   //MARK: build
   /// 当前的状态数据
   /// 不同状态下,携带的数据
-  final dynamic stateData;
+  final Object? stateData;
 
   /// 当前的状态
   final WidgetBuildState widgetState;
@@ -148,7 +152,7 @@ class WidgetStateBuildWidget extends StatefulWidget {
   final RequestChangeStateFn? requestChangeStateFn;
 
   /// 点击事件 - 后代和自己都可以命中
-  final GestureTapCallback? onClick;
+  final BuildStateClickAction? onBuildStateClick;
 
   //MARK: build
 
@@ -181,7 +185,7 @@ class WidgetStateBuildWidget extends StatefulWidget {
     this.buildEmptyWidgetStateWidget,
     this.buildErrorWidgetStateWidget,
     this.buildManualWidgetStateWidget,
-    this.onClick,
+    this.onBuildStateClick,
   });
 
   @override
@@ -203,11 +207,11 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   //MARK: - data
 
   /// 更新后的状态数据
-  dynamic _stateData;
+  Object? _stateData;
 
-  dynamic get buildStateData => _stateData ?? widget.stateData;
+  Object? get buildStateData => _stateData ?? widget.stateData;
 
-  set buildStateData(dynamic data) {
+  set buildStateData(Object? data) {
     _stateData = data;
   }
 
@@ -215,7 +219,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   @override
   Widget defBuildLoadingWidget(
     BuildContext context, [
-    dynamic data,
+    Object? data,
     double? progressValue,
     Color? color,
   ]) {
@@ -231,7 +235,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
 
   /// [WidgetBuildState.empty]状态
   @override
-  Widget defBuildEmptyWidget(BuildContext context, [dynamic data]) {
+  Widget defBuildEmptyWidget(BuildContext context, [Object? data]) {
     return (widget.buildEmptyWidgetStateWidget ?? widget.buildWidgetStateWidget)
             ?.call(context, buildState, buildStateData) ??
         super.defBuildEmptyWidget(context, buildStateData);
@@ -239,7 +243,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
 
   /// [WidgetBuildState.error]状态
   @override
-  Widget defBuildErrorWidget(BuildContext context, [dynamic error]) {
+  Widget defBuildErrorWidget(BuildContext context, [Object? error]) {
     return (widget.buildErrorWidgetStateWidget ?? widget.buildWidgetStateWidget)
             ?.call(context, buildState, buildStateData) ??
         super.defBuildErrorWidget(context, error);
@@ -269,7 +273,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   Widget _buildDefaultWidget(
     BuildContext context,
     WidgetBuildState state,
-    dynamic stateData,
+    Object? stateData,
   ) {
     final result = widget.buildWidgetStateWidget?.call(
       context,
@@ -283,7 +287,7 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
   }
 
   @callPoint
-  void updateWidgetState(WidgetBuildState state, [dynamic stateData]) {
+  void updateWidgetState(WidgetBuildState state, [Object? stateData]) {
     _updateState = state;
     _stateData = stateData;
     updateState();
@@ -298,7 +302,13 @@ class WidgetStateBuildWidgetState extends State<WidgetStateBuildWidget>
     }());
     return (buildStateWidget(context, buildState, buildStateData) ??
             _buildDefaultWidget(context, buildState, buildStateData))
-        .click(widget.onClick);
+        .click(
+          widget.onBuildStateClick != null
+              ? () {
+                  widget.onBuildStateClick?.call(buildState, buildStateData);
+                }
+              : null,
+        );
   }
 
   @override
@@ -328,7 +338,7 @@ class AdapterStateWidget extends WidgetStateBuildWidget {
     super.noDataStringGenerate,
     super.loadErrorStringGenerate,
     super.requestChangeStateFn,
-    super.onClick,
+    super.onBuildStateClick,
   });
 
   @override
@@ -397,11 +407,19 @@ class AdapterStateWidgetState extends WidgetStateBuildWidgetState {
     if (stateData != null) {
       result = result.columnOf(
         "$stateData"
-            .text(textAlign: TextAlign.center, style: globalTheme.textBodyStyle)
+            .text(textAlign: .center, style: globalTheme.textBodyStyle)
             .padding(globalTheme.xh),
       );
     }
-    return result.align(Alignment.center).matchParent().click(() {
+    return result.align(.center).matchParent().click(() {
+      final clickResult = widget.onBuildStateClick?.call(
+        buildState,
+        buildStateData,
+      );
+      if (clickResult is bool && clickResult == true) {
+        //拦截默认处理
+        return;
+      }
       //点击重试
       if (widget.requestChangeStateFn?.call(
             context,
@@ -425,7 +443,7 @@ class LoadMoreStateWidget extends WidgetStateBuildWidget {
     super.noDataStringGenerate,
     super.loadErrorStringGenerate,
     super.requestChangeStateFn,
-    super.onClick,
+    super.onBuildStateClick,
   });
 
   @override
