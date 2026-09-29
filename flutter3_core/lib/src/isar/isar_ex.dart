@@ -28,6 +28,7 @@ part of '../../flutter3_core.dart';
 /// $isar.collections.where().findAllSync();
 /// $isar.collections.where().offset(20).limit(10).findAllSync();
 /// $isar.collections.where().sortByModelDesc().findAllSync();
+/// $isar.collections.filter().uuidEqualTo("value").offset(20).limit(20).findAllSync();
 /// ```
 ///
 /// # 增/删/改
@@ -95,6 +96,9 @@ void registerIsarCollection(CollectionSchema<dynamic> schema, {String? name}) {
 /// [schemas] 指定要打开的数据库表结构
 /// [name] 指定要打开的数据库名称, 默认是[kIsarName]
 /// [subDir] 指定数据库所在的子目录, 默认在[kIsarPath]子目录的根下
+///
+/// 所有数据库中使用的表结构都需要使用[registerIsarCollection]提前注册
+@CallInitFrom("initIsar")
 Future<void> openIsar([
   List<CollectionSchema<dynamic>>? schemas,
   String? name,
@@ -161,6 +165,7 @@ Future<void> defaultIsarMigrate<T>({Isar? isar, String? name}) async {
 const isarHandle = AnnotationMeta("数据库操作");
 
 /// [QueryExecute]
+/// [QueryBuilder]
 extension IsarQueryExecute<OBJ, R> on QueryBuilder<OBJ, R, QQueryOperations> {
   /// Offset the query results by a static number.
   QueryBuilder<OBJ, R, QAfterOffset> offsetQuery(int offset) {
@@ -203,3 +208,94 @@ extension IsarQueryExecute<OBJ, R> on QueryBuilder<OBJ, R, QQueryOperations> {
     return offsetQuery(allCount - count).limit(count).findAllSync();
   }
 }
+
+/// 数据库表结构的扩展
+/// - [CollectionSchema]
+/// - [IsarCollection]
+extension CollectionObjectEx on Object {
+  /// 新增/更新数据或集合
+  List<Id> putCollectionSync<OBJ>(IsarCollection<OBJ> collection) {
+    return $isar.writeTxnSync(() {
+      if (this is List<OBJ>) {
+        return collection.putAllSync(this as List<OBJ>);
+      }
+      return [collection.putSync(this as OBJ)];
+    });
+  }
+}
+
+typedef QueryCondition<OBJ, QueryR> =
+    QueryBuilder<OBJ, OBJ, QueryR> Function(
+      QueryBuilder<OBJ, OBJ, QFilterCondition> query,
+    );
+
+/// - [IsarCollection]
+extension IsarCollectionEx<OBJ> on IsarCollection<OBJ> {
+  /// 获取满足指定条件的数据数量
+  int countSync(
+    QueryCondition<OBJ, QQueryOperations> condition, {
+    bool distinct = false,
+    Sort sort = .asc,
+  }) {
+    final builder = where(distinct: distinct, sort: sort).filter();
+    return condition(builder).countSync();
+  }
+
+  /// 查找满足指定条件的数据
+  List<OBJ> findAllSync(
+    QueryCondition<OBJ, QQueryOperations> condition, {
+    bool distinct = false,
+    Sort sort = .asc,
+  }) {
+    final builder = where(distinct: distinct, sort: sort).filter();
+    return condition(builder).findAllSync();
+  }
+
+  /// 分页查询满足指定条件的数据
+  List<OBJ> pageAllSync(
+    RequestPage page,
+    QueryCondition<OBJ, QOffset> condition, {
+    bool distinct = false,
+    Sort sort = .asc,
+  }) {
+    final builder = where(distinct: distinct, sort: sort).filter();
+    return condition(builder)
+        .offset(maxOf(0, (page.requestPageIndex - 1)) * page.requestPageSize)
+        .limit(page.requestPageSize)
+        .findAllSync();
+  }
+
+  /// 查找第一条数据
+  OBJ? findFirstSync(
+    QueryCondition<OBJ, QQueryOperations> condition, {
+    bool distinct = false,
+    Sort sort = .asc,
+  }) {
+    final builder = where(distinct: distinct, sort: sort).filter();
+    return condition(builder).findFirstSync();
+  }
+
+  /// 查找第最后一条数据
+  OBJ? findLastSync(
+    QueryCondition<OBJ, QQueryOperations> condition, {
+    bool distinct = false,
+    Sort sort = .desc,
+  }) {
+    final builder = where(distinct: distinct, sort: sort).filter();
+    return condition(builder).findFirstSync();
+  }
+}
+
+class IsarFlag {
+  final String des;
+
+  const IsarFlag([this.des = '标识当前操作属于Isar数据库操作']);
+
+  @override
+  String toString() {
+    return 'IsarFlag{des: $des}';
+  }
+}
+
+/// 标识当前操作属于Isar数据库操作
+const isarFlag = IsarFlag();
