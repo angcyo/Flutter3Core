@@ -10,15 +10,38 @@ part of '../../../flutter3_widgets.dart';
 /// - [SliverFillRemaining]
 ///   - [RenderSliverFillRemaining]
 class SliverFillWidget extends SingleChildRenderObjectWidget {
-  const SliverFillWidget({super.key, super.child});
+  /// 最小范围
+  final double minExtent;
+
+  /// 排除范围
+  final double excludeExtent;
+
+  const SliverFillWidget({
+    super.key,
+    super.child,
+    this.minExtent = double.infinity,
+    this.excludeExtent = 0.0,
+  });
 
   @override
   RenderSliverFill createRenderObject(BuildContext context) =>
-      RenderSliverFill();
+      RenderSliverFill()
+        ..minExtent = minExtent
+        ..excludeExtent = excludeExtent;
+
+  @override
+  void updateRenderObject(BuildContext context, RenderSliverFill renderObject) {
+    renderObject
+      ..minExtent = minExtent
+      ..excludeExtent = excludeExtent;
+  }
 }
 
 /// - [RenderSliverFillRemaining]
 class RenderSliverFill extends RenderSliverSingleBoxAdapter {
+  double minExtent = double.infinity;
+  double excludeExtent = 0;
+
   RenderSliverFill({super.child});
 
   @override
@@ -26,8 +49,10 @@ class RenderSliverFill extends RenderSliverSingleBoxAdapter {
     final SliverConstraints constraints = this.constraints;
     // The remaining space in the viewportMainAxisExtent. Can be <= 0 if we have
     // scrolled beyond the extent of the screen.
-    double extent = constraints
-        .viewportMainAxisExtent /*- constraints.precedingScrollExtent*/;
+    double extent =
+        constraints
+            .viewportMainAxisExtent /*- constraints.precedingScrollExtent*/ -
+        excludeExtent;
 
     if (child != null) {
       /*final double childExtent = switch (constraints.axis) {
@@ -44,7 +69,10 @@ class RenderSliverFill extends RenderSliverSingleBoxAdapter {
       // safely specify a maxExtent.
       extent = max(extent, childExtent);*/
       child!.layout(
-        constraints.asBoxConstraints(minExtent: extent, maxExtent: extent),
+        constraints.asBoxConstraints(
+          minExtent: minExtent.isInfinite ? extent : minExtent,
+          maxExtent: extent,
+        ),
       );
     }
 
