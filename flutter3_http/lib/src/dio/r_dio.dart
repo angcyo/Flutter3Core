@@ -61,7 +61,7 @@ class RDio {
           ..badCertificateCallback =
               (X509Certificate cert, String host, int port) {
                 assert(() {
-                  l.w("证书验证->$host:$port");
+                  l.w("请求证书验证 subject:${cert.subject} issuer:${cert.issuer} -> $host:$port");
                   return true;
                 }());
                 return true;

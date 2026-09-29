@@ -76,6 +76,7 @@ final RTileTransformChain _defaultTileTransformChain = RTileTransformChain([
   SliverGridTransform(),
   SliverMainAxisGroupTransform(),
   SliverReorderableListTransform(),
+  MasonryGridViewTransform(),
 ]);
 
 /// 默认的滚动配置

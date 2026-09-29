@@ -29,6 +29,7 @@ import 'package:flutter_constraintlayout/flutter_constraintlayout.dart'
     as cl_layout;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lifecycle/lifecycle.dart';
 import 'package:rich_readmore/rich_readmore.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
@@ -148,6 +149,7 @@ part 'src/widgets/radar_scan_widget.dart';
 part 'src/widgets/size_animation_widget.dart';
 part 'src/widgets/sliver/sliver_ex.dart';
 part 'src/widgets/sliver/sliver_expand_widget.dart';
+part 'src/widgets/sliver/sliver_fill_widget.dart';
 part 'src/widgets/sliver/sliver_scroll_coordinate_layout_widget.dart';
 part 'src/widgets/state_decoration_widget.dart';
 part 'src/widgets/layout/tab_layout.dart';

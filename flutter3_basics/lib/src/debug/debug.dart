@@ -137,6 +137,7 @@ Color randomColor({int min = 120, int max = 200}) => Color.fromARGB(
 StateLogWidget randomLogWidget(
   String text, {
   double? height,
+  double? maxHeight,
   double fontSize = 12,
   Color? color = Colors.white,
 }) => StateLogWidget(
@@ -144,26 +145,33 @@ StateLogWidget randomLogWidget(
   child: randomWidget(
     text: text,
     height: height,
+    maxHeight: maxHeight,
     fontSize: fontSize,
     textColor: color,
   ),
+);
+
+/// 获取一个随机高度
+double randomHeight({double? min, double? max}) => nextDouble(
+  min ?? kMinInteractiveDimension,
+  max ?? platformMediaQueryData.size.shortestSide,
 );
 
 /// 获取一个随机的[Widget]
 Widget randomWidget({
   String? text,
   double? height,
+  double? maxHeight,
   double fontSize = 12,
   Color? textColor = Colors.white,
 }) {
-  final max = platformMediaQueryData.size.width;
-  final h = height ?? nextDouble(kMinInteractiveDimension, max);
+  final h = height ?? randomHeight(max: maxHeight);
   //保留2位小数点
   fontSize = double.parse(fontSize.toStringAsFixed(2));
   final bgColor = randomColor();
   return Container(
     color: bgColor,
-    alignment: Alignment.center,
+    alignment: .center,
     height: h,
     child: Text(
       "${text ?? ""}\nh:${h.toDigits()} c:${bgColor.toHexColor()}",

@@ -168,7 +168,7 @@ class RTileTransformChain with TileTransformMixin {
         //--
         if (lastTransform == null) {
           if (tile is RItemTile) {
-            if (tile.sliverType != null) {
+            if (parentTile == null && tile.sliverType != null) {
               assert(() {
                 l.w('未找到对应的转换器转换type:[${tile.sliverType}]');
                 return true;
@@ -551,6 +551,9 @@ abstract class BaseTileTransform with TileTransformMixin {
     if (tile.sliverType != null) {
       return false;
     }
+    if (tile.isHeader) {
+      return false;
+    }
     if (tile.fillRemaining) {
       return false;
     }
@@ -629,7 +632,7 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
   bool isSupportTransform(BuildContext context, Widget tile) =>
       tile is RItemTile &&
       (tile.sliverType == SliverMainAxisGroup ||
-          (tile.sliverType == null &&
+          (isSupportDefaultTile(tile) &&
               (tileList.isNotEmpty || headerWidget != null)));
 
   @override
@@ -687,6 +690,11 @@ class SliverMainAxisGroupTransform extends BaseTileTransform {
 
       if (tile.isNoChild) {
         //no op
+        assert(() {
+          l.w("头部小部件无子元素, 请使用[RItemTile.child]或[RItemTile.childBuilder]");
+          return true;
+        }());
+        debugger(when: tile.isHeader);
       } else if (tile.isHeader) {
         //分组的头
         if (headerTile != null) {
@@ -837,7 +845,8 @@ class SliverListTransform extends BaseTileTransform {
         firstTile ??
         sliverChild.firstWhere(
               (element) => element is RItemTile,
-              orElse: () => const RItemTile(),
+              orElse: () =>
+                  parentTile ?? RItemTile(tag: "$runtimeType:$nowTime()"),
             )
             as RItemTile;
     //debugger(when: first.tag == "debug");
@@ -898,6 +907,8 @@ class SliverListTransform extends BaseTileTransform {
 }
 
 /// 将[RItemTile]收集到成[SliverGrid]
+/// - [SliverGridTransform]
+/// - [MasonryGridViewTransform]
 class SliverGridTransform extends BaseTileTransform {
   SliverGridTransform();
 
@@ -977,7 +988,8 @@ class SliverGridTransform extends BaseTileTransform {
         firstTile ??
         sliverChild.firstWhere(
               (element) => element is RItemTile,
-              orElse: () => const RItemTile(),
+              orElse: () =>
+                  parentTile ?? RItemTile(tag: "$runtimeType:$nowTime()"),
             )
             as RItemTile;
 
@@ -991,7 +1003,7 @@ class SliverGridTransform extends BaseTileTransform {
           sliverChild,
           tile,
           index,
-          firstAnchor: parentTile,
+          firstAnchor: first,
         );
         itemTileWrapBuilder?.call(context, this, sliverChild, item, index);
         newList.add(
@@ -1014,7 +1026,7 @@ class SliverGridTransform extends BaseTileTransform {
         newList.add(tile);
       }
     });
-    //debugger();
+    debugger(when: first.crossAxisCount <= 0);
     return wrapSliverPaddingDecorationTile(
       first,
       /*SliverGrid.count(
@@ -1104,7 +1116,8 @@ class SliverReorderableListTransform extends BaseTileTransform {
         firstTile ??
         sliverChild.firstWhere(
               (element) => element is RItemTile,
-              orElse: () => const RItemTile(),
+              orElse: () =>
+                  parentTile ?? RItemTile(tag: "$runtimeType:$nowTime()"),
             )
             as RItemTile;
     List<Widget> newList = [];
@@ -1145,7 +1158,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
     return wrapSliverPaddingDecorationTile(
       first,
       SliverReorderableList(
-        onReorder:
+        onReorderItem:
             first.onTileReorder ??
             (int oldIndex, int newIndex) {
               assert(() {
@@ -1165,6 +1178,146 @@ class SliverReorderableListTransform extends BaseTileTransform {
         itemBuilder: (context, index) {
           return newList[index].childKeyed(ValueKey(index));
         },
+      ),
+    );
+  }
+}
+
+/// 将[RItemTile]收集到成[MasonryGridView]
+/// - [SliverGridTransform]
+/// - [MasonryGridViewTransform]
+class MasonryGridViewTransform extends BaseTileTransform {
+  MasonryGridViewTransform();
+
+  @override
+  bool isSupportTransform(BuildContext context, Widget tile) =>
+      tile is RItemTile &&
+      (tile.sliverType == MasonryGridView ||
+          tile.sliverType == "MasonryGridView") &&
+      tile.crossAxisCount > 0;
+
+  @override
+  void endTransformIfNeed(
+    BuildContext context,
+    WidgetList origin,
+    WidgetList result,
+    bool fromPart,
+  ) {
+    super.endTransformIfNeed(context, origin, result, fromPart);
+    if (tileList.isNotEmpty) {
+      result.add(_buildTransformMasonryGridViewWrap(context, tileList));
+      reset(fromPart);
+    }
+  }
+
+  /// 最后一个[RItemTile]的[MasonryGridView]的[crossAxisCount]
+  int? get lastCrossAxisCount {
+    final last = tileList.lastOrNull;
+    if (last is RItemTile) {
+      return last.crossAxisCount;
+    }
+    return null;
+  }
+
+  @override
+  bool transformTile(
+    BuildContext context,
+    List<Widget> origin,
+    List<Widget> result,
+    Widget tile,
+    int index,
+    RItemTile? parentTile,
+  ) {
+    this.parentTile = parentTile;
+    if (tile is RItemTile) {
+      if (tile.part || tile.childTiles != null) {
+        //强行使用分开标识/具有子元素
+        endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
+      }
+      if (lastCrossAxisCount != null &&
+          tile.crossAxisCount != lastCrossAxisCount) {
+        //crossAxisCount不相同
+        endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
+      }
+      //debugger();
+      if (tile.childTiles == null) {
+        tileList.add(tile);
+      } else {
+        //自身是一个容器, 此时自身不进行处理
+        firstTile = tile;
+      }
+      return true;
+    } else if (parentTile != null) {
+      tileList.add(tile);
+      return true;
+    }
+    return false;
+  }
+
+  /// 构建成[MasonryGridView]
+  Widget _buildTransformMasonryGridViewWrap(
+    BuildContext context,
+    WidgetIterable sliverChild,
+  ) {
+    RItemTile first =
+        firstTile ??
+        sliverChild.firstWhere(
+              (element) => element is RItemTile,
+              orElse: () =>
+                  parentTile ?? RItemTile(tag: "$runtimeType:$nowTime()"),
+            )
+            as RItemTile;
+
+    WidgetList newList = [];
+    sliverChild = mapFlatTileList(context, sliverChild, firstAnchor: first);
+    sliverChild.forEachIndexed((index, tile) {
+      //debugger();
+      if (tile is RItemTile) {
+        final item = tile.buildGridWrapChild(
+          context,
+          sliverChild,
+          tile,
+          index,
+          firstAnchor: first,
+        );
+        itemTileWrapBuilder?.call(context, this, sliverChild, item, index);
+        newList.add(
+          buildTileWidget(
+            context,
+            tile,
+            ignoreSliverDecoration: true,
+            ignoreSliverPadding: true,
+            /*ensureSliverTile: true,*/
+            itemTileWrapBuilder?.call(
+                  context,
+                  this,
+                  sliverChild,
+                  item,
+                  index,
+                ) ??
+                item,
+          ),
+        );
+      } else {
+        newList.add(tile);
+      }
+    });
+    return wrapSliverPaddingDecorationTile(
+      first,
+      SliverFillWidget(
+        child: MasonryGridView.count(
+          itemCount: newList.length,
+          crossAxisCount: first.crossAxisCount,
+          mainAxisSpacing: first.mainAxisSpacing,
+          crossAxisSpacing: first.crossAxisSpacing,
+          padding: first.tileWrapPadding,
+          scrollDirection: first.tileWrapScrollDirection ?? .vertical,
+          itemBuilder: (context, index) {
+            return newList.getOrNull(index) ?? empty;
+          },
+        ),
       ),
     );
   }

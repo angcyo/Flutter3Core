@@ -20,7 +20,7 @@ class SliverExpandWidget extends SingleChildRenderObjectWidget
   const SliverExpandWidget({
     super.key,
     super.child,
-    this.alignment = AlignmentDirectional.center,
+    this.alignment = .center,
     this.excludeWidth = 0,
     this.excludeHeight = 0,
   });
@@ -175,7 +175,7 @@ class SliverExpandBox extends RenderShiftedBox {
 extension SliverExpandWidgetEx on Widget {
   /// [SliverExpandWidget]扩展方法
   Widget sliverExpand({
-    AlignmentDirectional alignment = AlignmentDirectional.center,
+    AlignmentDirectional alignment = .center,
     double excludeWidth = 0,
     double excludeHeight = 0,
     bool enable = true,

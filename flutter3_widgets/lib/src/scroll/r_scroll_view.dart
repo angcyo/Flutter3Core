@@ -24,7 +24,7 @@ class RScrollView extends StatefulWidget {
     this.scrollConfig,
     this.itemTileWrapBuilder,
     this.controller,
-    this.scrollDirection = Axis.vertical,
+    this.scrollDirection = .vertical,
     this.reverse = false,
     this.showScrollbar = false,
     this.enableRefresh = false,
@@ -37,10 +37,10 @@ class RScrollView extends StatefulWidget {
     this.cacheExtent,
     this.scrollCacheExtent,
     this.semanticChildCount,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.dragStartBehavior = .start,
+    this.keyboardDismissBehavior = .manual,
     this.restorationId,
-    this.clipBehavior = Clip.hardEdge,
+    this.clipBehavior = .hardEdge,
     this.scrollBehavior = const MaterialScrollBehavior(),
     this.physics = kScrollPhysics,
     this.enableFrameLoad = false,
@@ -232,8 +232,10 @@ class _RScrollViewState extends State<RScrollView>
 
     assert(() {
       l.d(
-        "[${widget.tag ?? widget.debugLabel}][${classHash()}]tile转换:${children?.length}个[${children?.firstOrNull?.runtimeType}...]"
-        "->${result.size()}个[${result.firstOrNull?.runtimeType}...]",
+        "${(widget.tag ?? widget.debugLabel)?.wsb ?? ""}"
+        "[${classHash()}]tile转换[${children?.length}]->[${result.length}]↓"
+        "\n-> ${children?.map2ListIndex((e, index) => "[$index]${e.runtimeType}".connect(e is RItemTile ? e.shortLog.wph : null)).join(" ")}"
+        "\n-> ${result.map2ListIndex((e, index) => "[$index]${e.runtimeType}".connect(e is RItemTile ? e.shortLog.wph : null)).join(" ")}",
       );
       return true;
     }());

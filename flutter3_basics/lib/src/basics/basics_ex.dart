@@ -892,13 +892,16 @@ extension StringEx on String {
   //MARK: - wrap
 
   /// 将字符串用()圆括号 (Parentheses / Round Brackets)包裹起来
+  /// - [wph]
+  /// - [wsb]
+  /// - [wqj]
   String get wph => "($this)";
-
-  /// （）
-  String get wph2 => "（$this）";
 
   /// 将字符串用[]方括号 (Square Brackets / Brackets)包裹起来
   String get wsb => "[$this]";
+
+  /// （）
+  String get wph2 => "（$this）";
 
   /// 使用「」左角/右角括号, 包裹起来
   /// - 「」 单角引号 (Single Corner Brackets / Single Quotation Marks)

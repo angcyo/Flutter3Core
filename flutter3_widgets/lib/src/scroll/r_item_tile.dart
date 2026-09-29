@@ -63,6 +63,9 @@ class RItemTile extends StatefulWidget {
     //
     this.part = false,
     this.hide = false,
+    //wrap
+    this.tileWrapPadding,
+    this.tileWrapScrollDirection,
     //Divider
     this.bottomLineColor,
     this.bottomLineHeight,
@@ -73,7 +76,7 @@ class RItemTile extends StatefulWidget {
     this.sliverPadding,
     //DecoratedSliver
     this.sliverDecoration,
-    this.sliverDecorationPosition = DecorationPosition.background,
+    this.sliverDecorationPosition = .background,
     //SliverPersistentHeader / SliverAppBar
     this.headerPinned = false,
     this.headerFloating = false,
@@ -187,6 +190,18 @@ class RItemTile extends StatefulWidget {
   final bool isSliverItem;
 
   //endregion 普通布局
+
+  //region 容器部分属性
+
+  /// 包裹一组[RItemTile]容器部件的填充边距
+  /// - 部分容器才支持
+  final EdgeInsetsGeometry? tileWrapPadding;
+
+  /// 包裹一组[RItemTile]容器部件的滚动方向, 默认:[Axis.vertical]
+  /// - 部分容器才支持
+  final Axis? tileWrapScrollDirection;
+
+  //endregion 容器部分属性
 
   //region Divider style 下划线
 
@@ -554,16 +569,17 @@ class RItemTile extends StatefulWidget {
   }) {
     final first = firstAnchor ?? list.firstOrNull;
     if (first is RItemTile) {
-      final isEdgeLeft = index % first.crossAxisCount == 0;
-      final isEdgeRight =
-          index % first.crossAxisCount == first.crossAxisCount - 1;
-      final isEdgeTop = index < first.crossAxisCount;
+      final crossAxisCount = first.crossAxisCount;
+      debugger(when: crossAxisCount <= 0);
+      final isEdgeLeft = index % crossAxisCount == 0;
+      final isEdgeRight = index % crossAxisCount == crossAxisCount - 1;
+      final isEdgeTop = index < crossAxisCount;
       //总行数
-      final int totalRow = (list.length / first.crossAxisCount).ceil();
+      final int totalRow = (list.length / crossAxisCount).ceil();
       //最后一行索引
       final int lastRowIndex = totalRow - 1;
       //当前行数
-      final int currentRow = (index / first.crossAxisCount).floor();
+      final int currentRow = (index / crossAxisCount).floor();
       final isEdgeBottom = currentRow == lastRowIndex;
       final isEdge = isEdgeLeft || isEdgeRight || isEdgeTop || isEdgeBottom;
       if (isEdge) {
@@ -621,6 +637,14 @@ class RItemTile extends StatefulWidget {
 
   @override
   State<RItemTile> createState() => _RItemTileState();
+
+  /// 简短的日志
+  String get shortLog =>
+      "${child?.runtimeType.toString() ?? ""}"
+      "${childBuilder?.runtimeType.toString() ?? ""}"
+      "${sliverType?.toString() ?? ""}"
+      "${tag?.toString().connect(null, "|") ?? ""}"
+      "${childTiles?.length.toString().connect(null, "|") ?? ""}";
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
