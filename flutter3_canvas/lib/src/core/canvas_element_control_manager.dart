@@ -1561,7 +1561,10 @@ class ElementSelectComponent extends ElementGroupPainter
 
   ///
   @override
-  void resetChildren(List<ElementPainter>? children, {bool? resetGroupAngle}) {
+  void resetChildren(
+    Iterable<ElementPainter>? children, {
+    bool? resetGroupAngle,
+  }) {
     super.resetChildren(children, resetGroupAngle: resetGroupAngle);
   }
 

@@ -469,6 +469,18 @@ extension KeyEventEx on KeyEvent {
   /// 是否是修饰键
   bool get isModifierKey => isCtrlKey || isAltKey || isShiftKey || isMetaKey;
 
+  /// 是否是左箭头
+  bool get isLeftArrowKey => isKeyboardKey(LogicalKeyboardKey.arrowLeft);
+
+  /// 是否是右箭头
+  bool get isRightArrowKey => isKeyboardKey(LogicalKeyboardKey.arrowRight);
+
+  /// 是否是上箭头
+  bool get isUpArrowKey => isKeyboardKey(LogicalKeyboardKey.arrowUp);
+
+  /// 是否是下箭头
+  bool get isDownArrowKey => isKeyboardKey(LogicalKeyboardKey.arrowDown);
+
   /// 数字按键对应的数字
   int? get number => character?.toIntOrNull();
 

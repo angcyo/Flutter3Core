@@ -2109,7 +2109,7 @@ class ElementGroupPainter extends ElementPainter {
   /// [CanvasElementManager.ungroupElement]
   @api
   void resetChildren(
-    List<ElementPainter>? children, {
+    Iterable<ElementPainter>? children, {
     @autoInjectMark bool? resetGroupAngle,
   }) {
     //可能需要先解父元素

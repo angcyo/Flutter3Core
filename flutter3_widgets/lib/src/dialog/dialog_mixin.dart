@@ -261,6 +261,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     //--
     bool? autoCloseDialog,
     VoidCallback? onEnterAction,
+    Object? Function()? onResultAction,
   }) {
     return Center(
           child: buildDialogContainer(
@@ -280,6 +281,7 @@ mixin DialogMixin implements TranslationTypeImpl {
           rootNavigator: dialogUseRootNavigator,
           enableAutoClose: autoCloseDialog ?? dialogBarrierDismissible,
           onEnterAction: onEnterAction,
+          onResultAction: onResultAction,
           tag: classHash(),
         );
   }

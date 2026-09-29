@@ -153,6 +153,9 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
   @defInjectMark
   final double? minHeight;
 
+  /// 获取弹出结果
+  final Object? Function()? onPopResult;
+
   const DesktopDialogTitleTile({
     super.key,
     this.title,
@@ -172,6 +175,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
     this.subTitleTextStyle,
     this.padding,
     this.minHeight,
+    this.onPopResult,
   });
 
   @override
@@ -212,7 +216,7 @@ class DesktopDialogTitleTile extends StatelessWidget with TileMixin {
                         color: globalTheme.icoNormalColor,
                         size: 20,
                       ).paddingOnly(all: kX).inkWellCircle(() {
-                        context.popDialog();
+                        context.popDialog(result: onPopResult?.call());
                       }))
                   .colorFiltered(
                     color: enableTrailing ? null : globalTheme.disableColor,

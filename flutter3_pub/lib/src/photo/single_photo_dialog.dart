@@ -73,6 +73,15 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
         _imageProvider = FileImage(File(filePath));
       }
     }
+    if (_imageProvider == null) {
+      assert(() {
+        l.w("imageProvider is null");
+        return true;
+      }());
+      postFrame(() {
+        context.pop();
+      });
+    }
     if (isDebug) {
       _imageProvider?.toImage().then((image) {
         _debugImage = image;
@@ -85,6 +94,9 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
 
   @override
   Widget build(BuildContext context) {
+    if (_imageProvider == null) {
+      return empty;
+    }
     final libRes = context.libRes;
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = globalConfig.globalTheme;

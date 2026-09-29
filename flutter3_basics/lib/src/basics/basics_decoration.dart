@@ -403,13 +403,18 @@ BoxDecoration fillDecoration({
   double? onlyBottomRadius,
   BoxBorder? border,
   //--
+  bool? useShadow /*是否使用阴影*/,
   List<BoxShadow>? boxShadow,
   Color? shadowColor,
   Offset shadowOffset = kShadowOffset,
   double shadowBlurRadius = kDefaultBlurRadius,
   double shadowSpreadRadius = kS,
 }) {
-  final fillColor = color ?? GlobalTheme.of(context).accentColor;
+  final fillColor =
+      color ??
+      (useShadow == true
+          ? GlobalTheme.of(context).themeWhiteColor
+          : GlobalTheme.of(context).accentColor);
 
   if (borderRadius == null) {
     if (onlyTopRadius != null || onlyBottomRadius != null) {
@@ -438,11 +443,11 @@ BoxDecoration fillDecoration({
     border: border,
     boxShadow:
         boxShadow ??
-        (shadowColor == null
+        (useShadow == false || (useShadow == null && shadowColor == null)
             ? null
             : [
                 BoxShadow(
-                  color: shadowColor,
+                  color: shadowColor ?? kShadowColor, //阴影的颜色
                   offset: shadowOffset, //阴影y轴偏移量
                   blurRadius: shadowBlurRadius, //阴影模糊程度
                   spreadRadius: shadowSpreadRadius, //阴影扩散程度

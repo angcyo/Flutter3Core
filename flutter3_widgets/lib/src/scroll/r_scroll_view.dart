@@ -231,12 +231,14 @@ class _RScrollViewState extends State<RScrollView>
     }
 
     assert(() {
-      l.d(
-        "${(widget.tag ?? widget.debugLabel)?.wsb ?? ""}"
-        "[${classHash()}]tile转换[${children?.length}]->[${result.length}]↓"
-        "\n-> ${children?.map2ListIndex((e, index) => "[$index]${e.runtimeType}".connect(e is RItemTile ? e.shortLog.wph : null)).join(" ")}"
-        "\n-> ${result.map2ListIndex((e, index) => "[$index]${e.runtimeType}".connect(e is RItemTile ? e.shortLog.wph : null)).join(" ")}",
-      );
+      if (widget.debugLabel != null) {
+        l.d(
+          "${(widget.tag ?? widget.debugLabel)?.wsb ?? ""}"
+          "[${classHash()}]tile转换[${children?.length}]->[${result.length}]↓"
+          "\n-> ${children?.map2ListIndex((e, index) => "[$index]${e.runtimeType}".connect(e is RItemTile ? e.shortLog.wph : null)).join(" ")}"
+          "\n-> ${result.map2ListIndex((e, index) => "[$index]${e.runtimeType}".connect(e is RItemTile ? e.shortLog.wph : null)).join(" ")}",
+        );
+      }
       return true;
     }());
 

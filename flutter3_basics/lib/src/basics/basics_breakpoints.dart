@@ -37,12 +37,27 @@ double $bpECW() => switch ($screenWidth) {
 };
 
 /// 断点网格列数
+/// - 显示更多的列数, 适用于内容较少的情况
 /// - 根据不同的屏幕宽度, 返回不同的列数
+///
+/// 在需要动态改变列数的页面中使用[MediaQueryDataChangeMixin]即可动态调整布局
+/// - [WidgetsBindingObserver]
+/// - [MediaQueryDataChangeMixin]
 int $bpGrid() => switch ($screenWidth) {
   >= 1600 => 6,
   >= 1400 => 5,
   >= 1100 => 4,
   >= 700 => 3,
+  >= 300 => 2,
+  _ => 1,
+};
+
+/// 断点网格列数
+/// - 显示更少的列数, 适用于内容较多的情况
+int $bpGridXl() => switch ($screenWidth) {
+  >= 1200 => 5,
+  >= 992 => 4,
+  >= 500 => 3,
   >= 300 => 2,
   _ => 1,
 };

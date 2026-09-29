@@ -800,15 +800,16 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   ///
   /// [WidgetStateBuildWidgetState]
   WidgetArgumentBuilder errorPlaceholderBuilder = <T>(context, error) {
+    final size = error is double ? error : null;
     final icon =
         loadAssetImageWidget(
           libAssetsStateLoadErrorKey,
           package: 'flutter3_basics',
         )?.constrainedMax(
-          maxWidth: kStateImageSize,
-          maxHeight: kStateImageSize,
+          maxWidth: size ?? kStateImageSize,
+          maxHeight: size ?? kStateImageSize,
         ) ??
-        const Icon(Icons.error);
+        Icon(Icons.error, size: size);
 
     if (error == null) {
       return icon;
@@ -817,7 +818,7 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return [
       icon,
       if (error is Widget) error,
-      "$error".text(textAlign: TextAlign.center).paddingAll(kX),
+      if (size == null) "$error".text(textAlign: .center).paddingAll(kX),
     ].column()!;
   };
 

@@ -134,9 +134,10 @@ extension ImagePubEx on String {
             width: size ?? width,
             height: size ?? height,
             color: tintColor,
-            errorBuilder: (context, error, stackTrace) => GlobalConfig.of(
-              context,
-            ).errorPlaceholderBuilder(context, error),
+            errorBuilder: (context, error, stackTrace) =>
+                GlobalConfig.of(context)
+                    .errorPlaceholderBuilder(context, size ?? error)
+                    .size(width: size ?? width, height: size ?? height),
           );
         } else if (!isNil(this)) {
           return Image.asset(
@@ -147,9 +148,10 @@ extension ImagePubEx on String {
             width: size ?? width,
             height: size ?? height,
             color: tintColor,
-            errorBuilder: (context, error, stackTrace) => GlobalConfig.of(
-              context,
-            ).errorPlaceholderBuilder(context, error),
+            errorBuilder: (context, error, stackTrace) =>
+                GlobalConfig.of(context)
+                    .errorPlaceholderBuilder(context, size ?? error)
+                    .size(width: size ?? width, height: size ?? height),
           );
         }
       }

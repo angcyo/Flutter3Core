@@ -1205,7 +1205,7 @@ extension WidgetEx on Widget {
     Key? key,
     //--
     Object? result,
-    dynamic Function()? onResultAction,
+    Object? Function()? onResultAction,
     //--
     bool autofocus = true,
     //--
@@ -3135,15 +3135,8 @@ extension WidgetEx on Widget {
       return this;
     }
     enable ??= true;
-    if (!enable) {
-      //禁用组件
-      if (useDisableCursorStyle == true ||
-          (useDisableCursorStyle == null &&
-              (isDesktopOrWeb || mouseIsConnected))) {
-        return mouse(cursor: SystemMouseCursors.forbidden);
-      }
-      return this;
-    }
+
+    //--
     final isCircle = shape == .circle;
     if (isCircle) {
       radius = Material.defaultSplashRadius;
@@ -3158,6 +3151,22 @@ extension WidgetEx on Widget {
             color: backgroundColor,
             borderRadius: bRadius,
           );
+
+    if (!enable) {
+      //禁用组件
+      Widget result = this;
+      if (useDisableCursorStyle == true ||
+          (useDisableCursorStyle == null &&
+              (isDesktopOrWeb || mouseIsConnected))) {
+        result = mouse(cursor: SystemMouseCursors.forbidden);
+      }
+      if (decoration != null) {
+        //补上装饰
+        result = result.decoration(decoration);
+      }
+      return result;
+    }
+
     return Ink(
       padding: padding,
       decoration: decoration,

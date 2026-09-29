@@ -1689,10 +1689,13 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// 此方法需要主动触发, 框架不触发.
   /// 使用者可以在[CanvasListener.onCanvasOpenProject]会调用,根据项目结构信息,恢复画布状态信息.
   /// - [project]工程数据
-  /// - [isUpdate]是否仅是更新工程数据
+  /// - [notifyUpdate]是否同时调用更新工程数据[dispatchCanvasProjectUpdate]
   /// @return true: 表示处理成功, 否则返回false继续后续处理
   @api
-  Future<bool> dispatchCanvasOpenProject(Object? project) async {
+  Future<bool> dispatchCanvasOpenProject(
+    Object? project, {
+    bool? notifyUpdate,
+  }) async {
     //debugger();
     assert(() {
       l.d("[${classHash()}]打开工程->$project");
@@ -1706,7 +1709,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
           handle ||
           (await element.onCanvasOpenProject?.call(this, old, project) == true);
     });
-    if (old != project) {
+    if (notifyUpdate == true || old != project) {
       dispatchCanvasProjectUpdate();
     }
     return handle;
