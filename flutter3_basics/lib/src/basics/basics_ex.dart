@@ -3301,6 +3301,18 @@ extension ListEx<T> on List<T> {
     return result;
   }
 
+  /// 填充当前列表元素到指定的数量
+  void fillToCount(int count, T Function(int index) create) {
+    //超过的元素先清除
+    while (length > count) {
+      removeLast();
+    }
+    //不足的元素再添加
+    while (length < count) {
+      add(create.call(length));
+    }
+  }
+
   /// 切片, 保证索引不越界. [start~end)
   /// [sublist] 系统的切片方法
   List<T> subList(int start, [int? end]) {

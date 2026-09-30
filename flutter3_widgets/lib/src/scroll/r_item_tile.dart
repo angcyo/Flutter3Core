@@ -640,9 +640,9 @@ class RItemTile extends StatefulWidget {
 
   /// 简短的日志
   String get shortLog =>
-      "${child?.runtimeType.toString() ?? ""}"
-      "${childBuilder?.runtimeType.toString() ?? ""}"
-      "${sliverType?.toString() ?? ""}"
+      "${sliverType?.toString().connect(":") ?? ""}"
+      "${child?.runtimeType.toString().connect("|") ?? ""}"
+      "${childBuilder?.runtimeType.toString().connect("|") ?? ""}"
       "${tag?.toString().connect(null, "|") ?? ""}"
       "${childTiles?.length.toString().connect(null, "|") ?? ""}";
 

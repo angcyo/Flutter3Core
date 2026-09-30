@@ -20,6 +20,7 @@ part of '../../../flutter3_widgets.dart';
 /// [AbsScrollPage] 基础[RScrollView]页面
 /// [RScrollPage]   全功能[RScrollView]页面
 /// [RStatusScrollPage] 支持切换不同状态的页面
+/// [RScrollPageRefreshMixin] 支持按键刷新页面
 ///
 /// ## 分页信息
 ///
@@ -154,6 +155,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   @override
   void dispose() {
+    pageFocusNode.dispose();
     cancelAllFuture();
     super.dispose();
   }
@@ -233,7 +235,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     try {
       await onLoadData();
     } catch (e, s) {
-      l.e(e);
+      l.e("[onLoadData]异常:$e");
       assert(() {
         printError(e, s);
         //debugger();
@@ -908,6 +910,7 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
           null,
           tag: classHash(),
           focusNode: pageFocusNode,
+          enable: enableRefresh ?? enablePageRefresh,
           keyEventRegisterList: [
             refreshKeyEventRegister,
             if (enableInputFilterMixin) inputFilterKeyEventRegister,

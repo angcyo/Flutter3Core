@@ -455,7 +455,7 @@ class _KeyEventWidgetState extends State<KeyEventWidget> with KeyEventMixin {
           widget.onFocusChange ??
           (isDebug
               ? (value) {
-                  l.i('${widget.tag?.wsb}[${classHash()}]focus change $value');
+                  l.d('${widget.tag?.wsb}[${classHash()}]焦点变化为:$value');
                 }
               : null),
       onKeyEvent: (node, event) {

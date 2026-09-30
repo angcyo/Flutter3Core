@@ -162,7 +162,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   /// [status] 支持[StatusInfo]类型, 和自定义类型
   /// [statusInfoList]
   @updateMark
-  void startLoadStatusData([dynamic status]) {
+  void startLoadStatusData([Object? status]) {
     StatusInfo? statusInfo = getStatusInfo(status);
     if (statusInfo != null) {
       onLoadStatusData(statusInfo.status);
@@ -174,7 +174,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
   /// [loadDataEnd]
   @callPoint
   @updateMark
-  void loadStatusEnd([dynamic statusList, dynamic stateData]) {
+  void loadStatusEnd([dynamic statusList, Object? stateData]) {
     // 错误处理
     if (stateData is Exception) {
       updateAdapterState(WidgetBuildState.error, stateData);
@@ -202,7 +202,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
 /// 当前页面的请求状态信息
 class StatusInfo {
   /// 当前的状态, 自定义的状态, 比如分类的数据结构
-  dynamic status;
+  Object? status;
 
   /// 当前状态的分页请求信息
   RequestPage requestPage = RequestPage();
