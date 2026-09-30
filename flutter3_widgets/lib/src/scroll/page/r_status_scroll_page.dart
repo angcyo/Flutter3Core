@@ -202,7 +202,7 @@ mixin RStatusScrollPage<T extends StatefulWidget> on RScrollPage<T> {
 /// 当前页面的请求状态信息
 class StatusInfo {
   /// 当前的状态, 自定义的状态, 比如分类的数据结构
-  Object? status;
+  dynamic status;
 
   /// 当前状态的分页请求信息
   RequestPage requestPage = RequestPage();
