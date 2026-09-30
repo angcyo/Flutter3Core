@@ -42,11 +42,18 @@ mixin PageViewMixin<T extends StatefulWidget>
   }
 
   /// page切换之后的更新信号
-  final pageChangedUpdateSignal = UpdateSignalNotifier<Object?>(null);
+  /// - [onSelfPageViewChanged] 中调用
+  final pageChangedUpdateSignal = UpdateSignalNotifier<int?>(null);
+
+  /// 每个页面对应的焦点域, 用来切换界面后恢复, 恢复对应页面的焦点
+  final List<FocusScopeNode> pageFocusScopeNodeList = [];
 
   @override
   void initState() {
     super.initState();
+    postFrame(() {
+      requestPageFocusMixin(context, currentPageIndex);
+    });
   }
 
   @override
@@ -56,6 +63,10 @@ mixin PageViewMixin<T extends StatefulWidget>
       pageViewController?.dispose();
     }
     pageChangedUpdateSignal.dispose();
+    // 记得释放 FocusScopeNode，避免内存泄漏
+    for (final node in pageFocusScopeNodeList) {
+      node.dispose();
+    }
     super.dispose();
   }
 
@@ -123,6 +134,21 @@ mixin PageViewMixin<T extends StatefulWidget>
         return e.keepAlive(keepAlive: keepAlive!);
       }).toList();
     }
+
+    //焦点
+    pageFocusScopeNodeList.fillToCount(body.length, (_) => FocusScopeNode());
+    body = body.mapIndex((e, index) {
+      return e.focusScope(
+        node: pageFocusScopeNodeList[index],
+        onFocusChange: (focused) {
+          assert(() {
+            l.v('[${classHash()}]页面[$index]焦点变化为:$focused');
+            return true;
+          }());
+        },
+      );
+    }).toList();
+
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
         //l.d(_pageController.page);
@@ -196,7 +222,7 @@ mixin PageViewMixin<T extends StatefulWidget>
   /// 页面改变回调
   @overridePoint
   void onSelfPageViewChanged(BuildContext context, int index) {
-    hideKeyboard(); //隐藏键盘, 但是不获取焦点, 之前的输入框依旧具有焦点
+    //hideKeyboard(); //隐藏键盘, 但是不获取焦点, 之前的输入框依旧具有焦点
     pageChangedUpdateSignal.updateValue(index);
     assert(() {
       l.v('onSelfPageViewChanged:$index');
@@ -206,6 +232,8 @@ mixin PageViewMixin<T extends StatefulWidget>
       (this as NavigationBarMixin).currentNavigateIndexMixin = index;
       context.tryUpdateState();
     }
+    //恢复焦点
+    requestPageFocusMixin(context, index);
   }
 
   /// 切换页面
@@ -239,6 +267,15 @@ mixin PageViewMixin<T extends StatefulWidget>
           curve: curve,
         );
       }
+    }
+  }
+
+  /// 请求对应页面的焦点
+  @api
+  void requestPageFocusMixin(BuildContext context, int? index) {
+    final pageScopeNode = pageFocusScopeNodeList.getOrNull(index);
+    if (pageScopeNode != null) {
+      FocusScope.of(context).requestFocus(pageScopeNode);
     }
   }
 
