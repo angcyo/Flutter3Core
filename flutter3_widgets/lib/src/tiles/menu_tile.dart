@@ -14,7 +14,8 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 默认的菜单样式
 const MenuStyle kMenuStyle = MenuStyle(
-  backgroundColor: WidgetStatePropertyAll(Colors.white),
+  //指定了之后, 无法适配暗色模式
+  /*backgroundColor: WidgetStatePropertyAll(Colors.white),*/
   elevation: WidgetStatePropertyAll<double?>(3.0),
   shape: WidgetStatePropertyAll<OutlinedBorder>(
     RoundedRectangleBorder(
