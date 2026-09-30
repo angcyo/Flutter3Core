@@ -222,6 +222,51 @@ extension CollectionObjectEx on Object {
       return [collection.putSync(this as OBJ)];
     });
   }
+
+  /// 删除数据或集合
+  bool deleteCollectionSync<OBJ>(IsarCollection<OBJ> collection) {
+    return $isar.writeTxnSync(() {
+      try {
+        if (this is List<OBJ>) {
+          final length = collection.deleteAllSync(
+            (this as List<OBJ>).map2List((e) => (e as dynamic).id),
+          );
+          return (this as List<OBJ>).length == length;
+        }
+        return collection.deleteSync((this as dynamic).id);
+      } catch (e) {
+        l.e(e);
+        return false;
+      }
+    });
+  }
+
+  /// 复制数据或集合
+  /// - 在原始数据上复制, 未复制数据
+  List<OBJ> copyCollectionSync<OBJ>(IsarCollection<OBJ> collection) {
+    final result = <OBJ>[];
+    if (this is List<OBJ>) {
+      result.addAll(this as List<OBJ>);
+    } else {
+      result.add(this as OBJ);
+    }
+
+    // 设置id为自增
+    for (final e in result) {
+      (e as dynamic).id = Isar.autoIncrement;
+    }
+
+    final idList = $isar.writeTxnSync(() {
+      return collection.putAllSync(result);
+    });
+
+    // 更新对应的id
+    for (var i = 0; i < result.length; i++) {
+      (result[i] as dynamic).id = idList[i];
+    }
+
+    return result;
+  }
 }
 
 typedef QueryCondition<OBJ, QueryR> =

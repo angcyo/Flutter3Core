@@ -260,6 +260,7 @@ extension LogicalKeyboardKeyEx on KeyboardKey {
   bool get isModifier => isControlKey || isAltKey || isMetaKey || isShiftKey;
 }
 
+/// - [PointerEvent.buttons]
 extension EventIntEx on int {
   /// 是否是鼠标左键
   bool get isMouseLeft => (this & kPrimaryMouseButton) == kPrimaryMouseButton;
@@ -349,7 +350,7 @@ extension PointerEventEx on PointerEvent {
   /// [isMouseEventKind]
   /// [isTouchEventKind]
   /// [isTrackpadEventKind]
-  bool get isMouseEventKind => kind == PointerDeviceKind.mouse;
+  bool get isMouseEventKind => kind == .mouse;
 
   /// 是否是鼠标左键按下, 只有在[PointerDownEvent]时才能确定
   bool get isMouseLeftDown =>
@@ -934,7 +935,12 @@ mixin TouchDetectorMixin {
   double touchDetectorSlop = kTouchSlop;
 
   /// 第一个按下的手指id
+  @tempFlag
   int? _firstDownPointer;
+
+  /// 第一个手指按下的时间, 超过长按检测时间则取消点击事件回调
+  @tempFlag
+  int? _firstDownTime;
 
   /// N个手指对应的按下事件
   @output
@@ -953,11 +959,14 @@ mixin TouchDetectorMixin {
   bool addTouchDetectorPointerEvent(PointerEvent event) {
     bool handle = false;
     final pointer = event.pointer;
-    if (_firstDownPointer == null && event.isPointerDown) {
+    if (_firstDownPointer == null &&
+        event.isPointerDown &&
+        event.buttons.isMouseLeft /*鼠标左键*/ ) {
       _firstDownPointer = pointer;
+      _firstDownTime = nowTime();
     }
     isMouseRightDownDetector = event.isMouseRightDown;
-    if (event.isPointerDown) {
+    if (event.isPointerDown && event.buttons.isMouseLeft) {
       _loopLongPressTimer?.cancel();
       _loopLongPressTimer = null;
       _pointerDownMap[pointer] = event;
@@ -987,7 +996,11 @@ mixin TouchDetectorMixin {
     } else if (event.isPointerUp) {
       //debugger();
       _clearLongPress(pointer);
-      handle = _checkClick(event);
+      if (nowTime() - (_firstDownTime ?? 0) <
+          touchLongPressTimeout.inMilliseconds) {
+        // 检查点击事件
+        handle = _checkClick(event);
+      }
     }
     if (event.isPointerFinish) {
       if (isFirstPointer(event)) {
@@ -1044,20 +1057,17 @@ mixin TouchDetectorMixin {
 
       if (_touchDetectorClickCount >= touchDoubleClickCount) {
         //触发双击事件
-        handle = onTouchDetectorPointerEvent(
-          event,
-          TouchDetectorType.doubleClick,
-        );
+        handle = onTouchDetectorPointerEvent(event, .doubleClick);
         _clearDoubleClickCount();
       } else {
         handle = true;
         _clickDetectorTimer = Timer(touchDoubleTimeout, () {
-          onTouchDetectorPointerEvent(event, TouchDetectorType.click);
+          onTouchDetectorPointerEvent(event, .click);
           _clearDoubleClickCount();
         });
       }
     } else {
-      handle = onTouchDetectorPointerEvent(event, TouchDetectorType.click);
+      handle = onTouchDetectorPointerEvent(event, .click);
     }
     return handle;
   }

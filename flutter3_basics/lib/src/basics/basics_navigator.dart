@@ -82,47 +82,53 @@ enum TranslationType {
     bool fullscreenDialog = false,
     bool allowSnapshotting = true,
     bool barrierDismissible = false,
+    //--
+    bool opaque = true /*不透明*/,
   }) {
     final type = this;
     dynamic targetRoute;
     switch (type) {
-      case TranslationType.none:
+      case .none:
         targetRoute = PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
               builder(context),
           settings: settings,
-          transitionDuration: Duration.zero,
+          opaque: opaque,
+          /*transitionDuration: Duration.zero,
           reverseTransitionDuration: Duration.zero,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return child;
-          },
+          },*/
         );
         break;
-      case TranslationType.cupertino:
+      case .cupertino:
         targetRoute = CupertinoPageRoute(
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
           barrierDismissible: barrierDismissible,
         );
         break;
-      case TranslationType.fade:
+      case .fade:
         targetRoute = FadePageRoute(
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
           barrierDismissible: barrierDismissible,
         );
         break;
-      case TranslationType.slide:
-      case TranslationType.slideLeftToRight:
+      case .slide:
+      case .slideLeftToRight:
         targetRoute = SlidePageRoute(
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
@@ -131,36 +137,39 @@ enum TranslationType {
           leftToRight: type.withLeftToRight == true,
         );
         break;
-      case TranslationType.scale:
-      case TranslationType.scaleFade:
+      case .scale:
+      case .scaleFade:
         targetRoute = ScalePageRoute(
           fade: type.withFade == true,
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
           barrierDismissible: barrierDismissible,
         );
         break;
-      case TranslationType.zoom:
+      case .zoom:
         targetRoute = ZoomPageRoute(
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
           barrierDismissible: barrierDismissible,
         );
         break;
-      case TranslationType.translation:
-      case TranslationType.translationTopToBottom:
-      case TranslationType.translationFade:
+      case .translation:
+      case .translationTopToBottom:
+      case .translationFade:
         targetRoute = TranslationPageRoute(
           fade: type.withFade == true,
           topToBottom: type.withTopToBottom == true,
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
@@ -171,6 +180,7 @@ enum TranslationType {
         targetRoute = MaterialPageRoute(
           builder: builder,
           settings: settings,
+          /*opaque: opaque,*/
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           allowSnapshotting: allowSnapshotting,
@@ -311,12 +321,15 @@ extension RouteWidgetEx on Widget {
     bool fullscreenDialog = false,
     bool allowSnapshotting = true,
     bool barrierDismissible = false,
+    //--
+    bool opaque = true /*不透明*/,
   }) {
-    type ??= getWidgetTranslationType() ?? TranslationType.def;
+    type ??= getWidgetTranslationType() ?? .def;
     return type.toRoute(
       (ctx) => this,
       settings: settings,
       type: type,
+      opaque: opaque,
       maintainState: maintainState,
       fullscreenDialog: fullscreenDialog,
       allowSnapshotting: allowSnapshotting,
@@ -533,14 +546,18 @@ extension NavigatorEx on BuildContext {
     String? routeName,
     RouteSettings? settings,
     TranslationType? type,
+    bool opaque = true /*不透明*/,
+    //--
     bool rootNavigator = false,
     bool popTop = false,
     bool toRoot = false,
     bool removeAll = false,
+    //--
   }) {
     return push(
       page.toRoute(
         type: type,
+        opaque: opaque,
         settings:
             settings ??
             (routeName != null ? RouteSettings(name: routeName) : null),

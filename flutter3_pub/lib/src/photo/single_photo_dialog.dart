@@ -28,12 +28,16 @@ class SinglePhotoDialog extends StatefulWidget {
   /// 点击后, 自动销毁
   final bool tapDismiss;
 
+  /// [Hero] 动画标签
+  final Object? heroTag;
+
   const SinglePhotoDialog({
     super.key,
     this.imageProvider,
     this.filePath,
     this.content,
     //--
+    this.heroTag,
     this.heroAttributes,
     this.blur = true,
     this.tapDismiss = true,
@@ -110,9 +114,12 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
           enableRotation: false,
           heroAttributes:
               widget.heroAttributes ??
+              widget.heroTag?.toPhotoViewHeroAttributes() ??
               widget.content?.toPhotoViewHeroAttributes() ??
               widget.filePath?.toPhotoViewHeroAttributes(),
-        ).mouseRightMenu(
+        )
+        /*.hero(widget.heroTag)*/
+        .mouseRightMenu(
           menus: [
             if (globalConfig.copyImageFn != null)
               LabelMenuTile(
@@ -187,10 +194,13 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
       ),
       result,
     ].stack()!.material();*/
-    return result.material().systemUiOverlay(
-      statusBarBrightness: .light,
-      statusBarIconBrightness: .light,
-    );
+    return result
+        .material()
+        .systemUiOverlay(
+          statusBarBrightness: .light,
+          statusBarIconBrightness: .light,
+        )
+        .autoCloseDialog(context);
   }
 
   Widget _buildLoading(BuildContext context, ImageChunkEvent? event) {

@@ -57,6 +57,7 @@ class RenderTouchDetector extends RenderProxyBox
   /// 手势事件, 未处理
   BoxPointerAction? onPointerEvent;
 
+  /// 是否激活长按循环事件通知
   @override
   bool enableLoopLongPress = false;
 
@@ -100,9 +101,9 @@ class RenderTouchDetector extends RenderProxyBox
     TouchDetectorType touchType,
   ) {
     //debugger();
-    if (touchType == TouchDetectorType.click) {
+    if (touchType == .click) {
       onClick?.call(this, event);
-    } else if (touchType == TouchDetectorType.longPress) {
+    } else if (touchType == .longPress) {
       onLongPress?.call(this, event);
     }
     return super.onTouchDetectorPointerEvent(event, touchType);

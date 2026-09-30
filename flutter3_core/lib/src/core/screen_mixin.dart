@@ -24,8 +24,8 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   /// final ScreenType screenTyp;
   /// ```
   ///
-  /// - [buildScaffold]
-  /// - [ScreenWidgetEx.showScreenWidget]
+  /// - [buildScaffold]构建对应内容的脚手架
+  /// - [ScreenWidgetEx.showScreenWidget]显示对应的屏幕
   @configProperty
   ScreenType get screenType => isDesktopOrWeb ? .centerDialog : .bottomDialog;
 
@@ -181,17 +181,24 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     return null;
   }
 
+  /// - [buildTitle]
+  ///   - [getTitle]
+  String? getTitle(BuildContext? context) => "$runtimeType";
+
   /// 构建统一的标题小部件, 不包含标题控制按钮
   /// - [buildTitleRow]
   ///   - [buildTitle]
+  ///     - [getTitle]
   @overridePoint
   Widget? buildTitle(
     ScreenStateContext screenContext,
     GlobalTheme globalTheme,
   ) {
     //final BuildContext context = screenContext.itContext;
-    return ("$runtimeType" * (isDebug ? 5 : 1))
-        .text(style: globalTheme.textTitleStyle)
+    //(title * (isDebug ? 5 : 1))
+    final title = getTitle(screenContext.itContext);
+    return title
+        ?.text(style: globalTheme.textTitleStyle)
         .insets(all: globalTheme.x);
   }
 

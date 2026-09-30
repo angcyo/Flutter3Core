@@ -146,8 +146,16 @@ mixin TabLayoutMixin<T extends StatefulWidget>
         gradient: linearGradient(
           colors ??
               context.darkOr(
-                [globalTheme.lineLightColor, globalTheme.lineColor],
-                [globalTheme.primaryColor, globalTheme.primaryColorDark],
+                [
+                  globalTheme.lineColor,
+                  globalTheme.lineLightColor,
+                  globalTheme.lineColor,
+                ],
+                [
+                  globalTheme.primaryColorDark,
+                  globalTheme.primaryColor,
+                  globalTheme.primaryColorDark,
+                ],
               )!,
         ),
       ),

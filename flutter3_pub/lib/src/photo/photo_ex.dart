@@ -207,6 +207,8 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
 }
 
 extension PhotoViewOptionsEx on ImageProvider {
+  /// 创建一个图片显示选项信息
+  /// - 包含hero相关显示属性, 显示端需要使用[PhotoObjectEx.toPhotoViewHeroAttributes]
   /// [PhotoViewGalleryPageOptions]
   PhotoViewGalleryPageOptions toPhotoPageOptions() =>
       PhotoViewGalleryPageOptions(

@@ -638,7 +638,9 @@ extension WidgetEx on Widget {
         );
 
   /// [Hero]
-  /// hero动画不能在Dialog中使用
+  /// hero动画不能在Dialog中使用, 否则没有效果
+  /// - hero 不能在[PopupRoute]中使用
+  /// - hero 必须在[PageRoute]中使用
   Widget hero(Object? tag) => tag == null ? this : Hero(tag: tag, child: this);
 
   /// 将[BoxConstraints]约束转换成[SliverConstraints]约束
@@ -734,42 +736,62 @@ extension WidgetEx on Widget {
   Widget click(
     GestureTapCallback? onTap, {
     bool enable = true,
-    GestureLongPressCallback? onLongPress,
     HitTestBehavior? behavior = .translucent /*后代和自己都可以命中*/,
     //--
     MouseCursor? cursor,
     GestureContextTapCallback? onContextTap /*具有上下文的点击事件回调*/,
+    GestureContextTapDownCallback? onContentDownTap,
+    GestureTapDownCallback? onTapDown /*按下回调*/,
+    GestureTapUpCallback? onTapUp /*抬起回调*/,
+    //--
+    GestureLongPressCallback? onLongPress,
+    GestureContextLongPressCallback? onContentLongPress,
+    GestureContextTapDownCallback? onContentDownLongPress,
   }) {
-    if ((onTap == null && onContextTap == null) || !enable) {
+    final needTap =
+        onTap != null || onContextTap != null || onContentDownTap != null;
+    final needLongPress =
+        onLongPress != null ||
+        onContentLongPress != null ||
+        onContentDownLongPress != null;
+    if ((needTap == false && needLongPress == false) || !enable) {
       return this;
     }
-    if (onContextTap != null) {
-      return Builder(
-        builder: (ctx) {
-          return GestureDetector(
-            onTap: () {
-              onContextTap(ctx);
-            },
-            behavior: behavior,
-            onLongPress: onLongPress,
-            child: this,
-          ).mouse(
-            cursor: cursor ?? WidgetStateMouseCursor.clickable,
-            enable: enable && cursor != null,
-          );
-        },
-      );
-    } else {
-      return GestureDetector(
-        onTap: onTap,
-        behavior: behavior,
-        onLongPress: onLongPress,
-        child: this,
-      ).mouse(
-        cursor: cursor ?? WidgetStateMouseCursor.clickable,
-        enable: enable && cursor != null,
-      );
-    }
+    TapDownDetails? downDetails;
+    return Builder(
+      builder: (ctx) {
+        return GestureDetector(
+          onTapDown: (details) {
+            downDetails = details;
+            onTapDown?.call(details);
+          },
+          onTapUp: (details) {
+            onTapUp?.call(details);
+          },
+          onTap: () {
+            onTap?.call();
+            onContextTap?.call(ctx);
+            if (downDetails != null) {
+              onContentDownTap?.call(ctx, downDetails!);
+            }
+          },
+          behavior: behavior,
+          onLongPress: needLongPress
+              ? () {
+                  onLongPress?.call();
+                  onContentLongPress?.call(ctx);
+                  if (downDetails != null) {
+                    onContentDownLongPress?.call(ctx, downDetails!);
+                  }
+                }
+              : null,
+          child: this,
+        ).mouse(
+          cursor: cursor ?? WidgetStateMouseCursor.clickable,
+          enable: enable && cursor != null,
+        );
+      },
+    );
   }
 
   /// 双击事件
@@ -3192,6 +3214,11 @@ extension WidgetEx on Widget {
   /// 默认块状波纹效果
   /// 使用涟漪动画包裹, 无法控制背景颜色, 波纹会超出范围. [ink]
   /// https://api.flutter.dev/flutter/material/InkWell-class.html
+  ///
+  /// ```
+  /// xxx.inkWell().material().decoration();
+  /// ```
+  ///
   /// - [splashColor] 涟漪颜色, 手势按住时的涟漪颜色, 不指定此颜色可能无效果[Colors.black12]
   /// - [highlightColor] 高亮颜色, 手势按下时的高亮颜色
   /// - [hoverColor] 鼠标悬停时的颜色
@@ -4383,9 +4410,9 @@ UiGradient? sweepGradientShader(
 /// [UiGradient]
 LinearGradient linearGradient(
   List<Color> colors, {
-  AlignmentGeometry begin = Alignment.centerLeft,
-  AlignmentGeometry end = Alignment.centerRight,
-  TileMode tileMode = TileMode.clamp,
+  AlignmentGeometry begin = .centerLeft,
+  AlignmentGeometry end = .centerRight,
+  TileMode tileMode = .clamp,
   GradientTransform? transform,
   List<double>? stops,
 }) => LinearGradient(
@@ -4400,10 +4427,10 @@ LinearGradient linearGradient(
 /// 径向渐变
 RadialGradient radialGradient(
   List<Color> colors, {
-  AlignmentGeometry center = Alignment.center,
+  AlignmentGeometry center = .center,
   double radius = 0.5,
   List<double>? stops,
-  TileMode tileMode = TileMode.clamp,
+  TileMode tileMode = .clamp,
   AlignmentGeometry? focal,
   double focalRadius = 0.0,
   GradientTransform? transform,

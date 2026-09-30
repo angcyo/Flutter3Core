@@ -300,6 +300,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// - [RScrollPage.consumeRebuildBeanSignal] 消耗更新信号
   /// - [RItemTile.updateSignal] 存储对应的信号
   ///
+  /// - [loadBeanEnd]
+  ///   - [loadDataEnd]
   @callPoint
   @updateMark
   @api
@@ -371,6 +373,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   /// 处理[onLoadData]加载了的数据
   /// - [loadDataEnd]
+  ///
   /// - [enableRebuild] 是否支持通过[beanList]中的数据动态更新[Widget]
   ///   - [deleteTile] 删除满足条件的[RItemTile]
   ///   - [removeTile] 通过数据删除[RItemTile]
@@ -449,6 +452,21 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
       pageWidgetCountLive <= pageWidgetList.size();
     }
     _scrollViewUpdateSignal.update();
+  }
+
+  /// 调用此方法, 直接更新[pageWidgetList]页面数据
+  /// - [update] 更新回调函数, 返回[bool]表示是否拦截默认处理
+  @api
+  void updatePageWidgetsAction(dynamic Function(WidgetList widgets) update) {
+    final result = update(pageWidgetList);
+    if (result is bool && result) {
+      //拦截掉了默认处理
+    } else {
+      updateLoadDataWidget();
+      if (this is AbsScrollPage) {
+        (this as AbsScrollPage).updatePageTitle();
+      }
+    }
   }
 
   //endregion 数据加载
@@ -668,15 +686,24 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
   //region 页面更新
 
+  /// 创建一个带[bean]的更新信号
+  /// [RScrollPage.consumeRebuildBeanSignal]
+  UpdateValueNotifier createBeanUpdateSignal<Bean>(Bean bean) {
+    final updateSignal = UpdateSignalNotifier(bean);
+    RScrollPage._lastRebuildBeanSignal = WeakReference(updateSignal);
+    return updateSignal;
+  }
+
   /// 使用[bean]自动创建一个带[RItemTile.updateSignal]更新信号的[Widget]
   /// 将生成的信号存储在[RScrollPage._lastRebuildBeanSignal]中,
   /// 然后在[RItemTileExtension]中消耗此信号对象
   /// 之后可以通过[updateTile]更新指定的小部件
   @api
   Widget rebuildByBean<Bean>(Bean bean, DataWidgetBuilder<Bean> builder) {
-    final updateSignal = UpdateSignalNotifier(bean);
-    RScrollPage._lastRebuildBeanSignal = WeakReference(updateSignal);
-    return rebuild(updateSignal, (context, value) => builder(context, value));
+    return rebuild(
+      createBeanUpdateSignal(bean),
+      (context, value) => builder(context, value),
+    );
   }
 
   /// 更新指定[value]对应的tile

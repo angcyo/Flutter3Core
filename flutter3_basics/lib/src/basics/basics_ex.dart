@@ -3158,6 +3158,18 @@ extension ListEx<T> on List<T> {
     }).toList(growable: growable);
   }
 
+  List<Type> mapToListIndex<Type>(
+    Type Function(T e, int index) toElement, {
+    bool growable = false,
+  }) {
+    int index = 0;
+    return map<Type>((e) {
+      //debugger();
+      final r = toElement(e, index++);
+      return r;
+    }).toList(growable: growable);
+  }
+
   /// 在列表中查找一组连续的数据
   /// [List]
   /// [indexOf]

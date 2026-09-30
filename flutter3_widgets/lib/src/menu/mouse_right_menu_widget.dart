@@ -160,6 +160,9 @@ extension MouseRightMenuWidgetEx on Widget {
   ///    ],
   /// )
   /// ```
+  ///
+  /// - [DialogExtension.showMenus]
+  /// - [DialogExtension.showWidgetMenu]
   Widget mouseRightMenu({
     Key? key,
     //--菜单项列表
