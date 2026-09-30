@@ -652,7 +652,7 @@ class TextFieldConfig {
       /*initialValue: value //不能和[textEditingController]同时指定,*/
       optionsViewOpenDirection /*弹出方向*/ : autoOptionsViewOpenDirection,
       optionsBuilder: (TextEditingValue textEditingValue) async {
-        /*自动提示选项*/
+        /*返回自动提示选项列表*/
         return autoOptionsBuilder!(this, textEditingValue);
       },
       optionsViewBuilder: /*构建下拉选项内容小部件*/
@@ -692,7 +692,7 @@ class TextFieldConfig {
               anchorBounds: anchorBounds,
               elevation: autoOverlayElevation,
               color:
-                  autoOverlayColor ?? kMenuStyle.backgroundColor?.resolve({}),
+                  autoOverlayColor /*?? kMenuStyle.backgroundColor?.resolve({})*/,
               shadowColor: autoOverlayShadowColor,
               shape: autoOverlayShape,
               borderRadius: autoOverlayBorderRadius,
