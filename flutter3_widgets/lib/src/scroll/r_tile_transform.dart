@@ -1305,9 +1305,12 @@ class MasonryGridViewTransform extends BaseTileTransform {
         newList.add(tile);
       }
     });
+    final shrinkWrap = first.tileWrapShrinkWrap ?? false;
     return wrapSliverPaddingDecorationTile(
       first,
       SliverFillWidget(
+        /*excludeExtent: 200,*/
+        shrinkWrap: shrinkWrap,
         child: MasonryGridView.count(
           itemCount: newList.length,
           crossAxisCount: first.crossAxisCount,
@@ -1315,6 +1318,8 @@ class MasonryGridViewTransform extends BaseTileTransform {
           crossAxisSpacing: first.crossAxisSpacing,
           padding: first.tileWrapPadding,
           scrollDirection: first.tileWrapScrollDirection ?? .vertical,
+          physics: first.tileWrapPhysics ?? ClampingScrollPhysics(),
+          shrinkWrap: shrinkWrap,
           itemBuilder: (context, index) {
             return newList.getOrNull(index) ?? empty;
           },

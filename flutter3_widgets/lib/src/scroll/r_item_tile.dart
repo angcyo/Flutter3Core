@@ -66,6 +66,8 @@ class RItemTile extends StatefulWidget {
     //wrap
     this.tileWrapPadding,
     this.tileWrapScrollDirection,
+    this.tileWrapPhysics,
+    this.tileWrapShrinkWrap,
     //Divider
     this.bottomLineColor,
     this.bottomLineHeight,
@@ -200,6 +202,14 @@ class RItemTile extends StatefulWidget {
   /// 包裹一组[RItemTile]容器部件的滚动方向, 默认:[Axis.vertical]
   /// - 部分容器才支持
   final Axis? tileWrapScrollDirection;
+
+  /// 包裹一组[RItemTile]容器部件的滚动物理效果
+  /// - 部分容器才支持
+  final ScrollPhysics? tileWrapPhysics;
+
+  /// 包裹一组[RItemTile]容器部件
+  /// - 部分容器才支持
+  final bool? tileWrapShrinkWrap;
 
   //endregion 容器部分属性
 
@@ -641,10 +651,11 @@ class RItemTile extends StatefulWidget {
   /// 简短的日志
   String get shortLog =>
       "${sliverType?.toString().connect(":") ?? ""}"
-      "${child?.runtimeType.toString().connect("|") ?? ""}"
-      "${childBuilder?.runtimeType.toString().connect("|") ?? ""}"
-      "${tag?.toString().connect(null, "|") ?? ""}"
-      "${childTiles?.length.toString().connect(null, "|") ?? ""}";
+              "${child?.runtimeType.toString().connect("|") ?? ""}"
+              "${childBuilder?.runtimeType.toString().connect("|") ?? ""}"
+              "${tag?.toString().connect("|") ?? ""}"
+              "${childTiles?.length.toString().connect("|") ?? ""}"
+          .trimEnd("|");
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -1031,6 +1042,8 @@ extension RItemTileExtension on Widget {
     //--
     EdgeInsetsGeometry? tileWrapPadding,
     Axis? tileWrapScrollDirection,
+    bool? tileWrapShrinkWrap,
+    ScrollPhysics? tileWrapPhysics,
     //--
     double? mainAxisSpacing,
     double? crossAxisSpacing,
@@ -1065,6 +1078,8 @@ extension RItemTileExtension on Widget {
       //--
       tileWrapPadding: tileWrapPadding,
       tileWrapScrollDirection: tileWrapScrollDirection,
+      tileWrapShrinkWrap: tileWrapShrinkWrap,
+      tileWrapPhysics: tileWrapPhysics,
       //--
       crossAxisCount: gridCount,
       sliverType: sliverType,

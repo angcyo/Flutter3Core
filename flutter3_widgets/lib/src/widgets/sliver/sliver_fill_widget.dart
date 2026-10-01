@@ -16,22 +16,28 @@ class SliverFillWidget extends SingleChildRenderObjectWidget {
   /// 排除范围
   final double excludeExtent;
 
+  /// 是否包裹内容
+  final bool? shrinkWrap;
+
   const SliverFillWidget({
     super.key,
     super.child,
-    this.minExtent = double.infinity,
+    this.minExtent = 0.0,
     this.excludeExtent = 0.0,
+    this.shrinkWrap,
   });
 
   @override
   RenderSliverFill createRenderObject(BuildContext context) =>
       RenderSliverFill()
         ..minExtent = minExtent
+        ..shrinkWrap = shrinkWrap
         ..excludeExtent = excludeExtent;
 
   @override
   void updateRenderObject(BuildContext context, RenderSliverFill renderObject) {
     renderObject
+      ..shrinkWrap = shrinkWrap
       ..minExtent = minExtent
       ..excludeExtent = excludeExtent;
   }
@@ -39,8 +45,14 @@ class SliverFillWidget extends SingleChildRenderObjectWidget {
 
 /// - [RenderSliverFillRemaining]
 class RenderSliverFill extends RenderSliverSingleBoxAdapter {
-  double minExtent = double.infinity;
+  /// 最小范围
+  double minExtent = 0;
+
+  /// 排除范围
   double excludeExtent = 0;
+
+  /// 是否包裹内容
+  bool? shrinkWrap;
 
   RenderSliverFill({super.child});
 
@@ -49,10 +61,12 @@ class RenderSliverFill extends RenderSliverSingleBoxAdapter {
     final SliverConstraints constraints = this.constraints;
     // The remaining space in the viewportMainAxisExtent. Can be <= 0 if we have
     // scrolled beyond the extent of the screen.
-    double extent =
-        constraints
-            .viewportMainAxisExtent /*- constraints.precedingScrollExtent*/ -
-        excludeExtent;
+    final shrinkWrap = this.shrinkWrap ?? false;
+    double extent = shrinkWrap
+        ? double.infinity
+        : constraints
+                  .viewportMainAxisExtent /*- constraints.precedingScrollExtent*/ -
+              excludeExtent;
 
     if (child != null) {
       /*final double childExtent = switch (constraints.axis) {
@@ -73,7 +87,14 @@ class RenderSliverFill extends RenderSliverSingleBoxAdapter {
           minExtent: minExtent.isInfinite ? extent : minExtent,
           maxExtent: extent,
         ),
+        parentUsesSize: shrinkWrap,
       );
+      if (shrinkWrap) {
+        extent = switch (constraints.axis) {
+          .horizontal => child!.size.width,
+          .vertical => child!.size.height,
+        };
+      }
     }
 
     assert(
