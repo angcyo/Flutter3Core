@@ -1034,6 +1034,7 @@ extension RItemTileExtension on Widget {
   ///
   /// - [rGridTile]
   /// - [rMasonryGridTile]
+  /// - [rWaterfallFlowTile]
   RItemTile rMasonryGridTile(
     int gridCount, {
     //--
@@ -1116,6 +1117,74 @@ extension RItemTileExtension on Widget {
       child: this,
     );
   }
+
+  /// 瀑布流item
+  /// - [rGridTile]
+  /// - [rMasonryGridTile]
+  /// - [rWaterfallFlowTile]
+  RItemTile rWaterfallFlowTile(
+    int gridCount, {
+    //--
+    Key? key,
+    Object? tag,
+    //--
+    EdgeInsetsGeometry? tileWrapPadding,
+    Axis? tileWrapScrollDirection,
+    bool? tileWrapShrinkWrap,
+    ScrollPhysics? tileWrapPhysics,
+    //--
+    double? mainAxisSpacing,
+    double? crossAxisSpacing,
+    double? mainAxisExtent,
+    double? edgePadding,
+    double? edgePaddingTop,
+    double? edgePaddingBottom,
+    double? edgePaddingLeft,
+    double? edgePaddingRight,
+    //--
+    EdgeInsetsGeometry? sliverPadding,
+    Color? decorationFillColor,
+    double decorationBorderRadius = kDefaultBorderRadiusXX,
+    List<BoxShadow>? decorationShadow,
+    //
+    Decoration? sliverDecoration,
+    DecorationPosition sliverDecorationPosition = .background,
+    //--
+    bool hide = false,
+    bool part = false,
+    RItemTileFlatBuilder? tileFlatBuilder,
+    UpdateValueNotifier? updateSignal,
+    bool enablePadding = false,
+    dynamic sliverType = waterfall.WaterfallFlow,
+  }) => rMasonryGridTile(
+    gridCount,
+    key: key,
+    tag: tag,
+    tileWrapPadding: tileWrapPadding,
+    tileWrapScrollDirection: tileWrapScrollDirection,
+    tileWrapShrinkWrap: tileWrapShrinkWrap,
+    tileWrapPhysics: tileWrapPhysics,
+    mainAxisSpacing: mainAxisSpacing,
+    crossAxisSpacing: crossAxisSpacing,
+    mainAxisExtent: mainAxisExtent,
+    edgePadding: edgePadding,
+    edgePaddingTop: edgePaddingTop,
+    edgePaddingBottom: edgePaddingBottom,
+    edgePaddingLeft: edgePaddingLeft,
+    edgePaddingRight: edgePaddingRight,
+    sliverPadding: sliverPadding,
+    decorationFillColor: decorationFillColor,
+    decorationBorderRadius: decorationBorderRadius,
+    decorationShadow: decorationShadow,
+    sliverDecoration: sliverDecoration,
+    sliverDecorationPosition: sliverDecorationPosition,
+    hide: hide,
+    part: part,
+    tileFlatBuilder: tileFlatBuilder,
+    updateSignal: updateSignal,
+    enablePadding: enablePadding,
+    sliverType: sliverType,
+  );
 
   /// [RItemTile]的快捷构造方法
   /// 默认情况下没有任务约束的[RItemTile]会被[SliverToBoxAdapter]包裹, 这样就没有懒加载

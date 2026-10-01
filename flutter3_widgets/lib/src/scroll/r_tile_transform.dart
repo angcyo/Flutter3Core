@@ -910,6 +910,7 @@ class SliverListTransform extends BaseTileTransform {
 /// 将[RItemTile]收集到成[SliverGrid]
 /// - [SliverGridTransform]
 /// - [MasonryGridViewTransform]
+/// - [WaterfallFlowTransform]
 class SliverGridTransform extends BaseTileTransform {
   SliverGridTransform();
 
@@ -1187,6 +1188,7 @@ class SliverReorderableListTransform extends BaseTileTransform {
 /// 将[RItemTile]收集到成[MasonryGridView]
 /// - [SliverGridTransform]
 /// - [MasonryGridViewTransform]
+/// - [WaterfallFlowTransform]
 class MasonryGridViewTransform extends BaseTileTransform {
   MasonryGridViewTransform();
 
@@ -1320,6 +1322,159 @@ class MasonryGridViewTransform extends BaseTileTransform {
           scrollDirection: first.tileWrapScrollDirection ?? .vertical,
           physics: first.tileWrapPhysics ?? ClampingScrollPhysics(),
           shrinkWrap: shrinkWrap,
+          itemBuilder: (context, index) {
+            return newList.getOrNull(index) ?? empty;
+          },
+        ),
+      ),
+    );
+  }
+}
+
+/// 将[RItemTile]收集到成[WaterfallFlow]
+/// - [SliverGridTransform]
+/// - [MasonryGridViewTransform]
+/// - [WaterfallFlowTransform]
+class WaterfallFlowTransform extends BaseTileTransform {
+  WaterfallFlowTransform();
+
+  @override
+  bool isSupportTransform(BuildContext context, Widget tile) =>
+      tile is RItemTile &&
+      (tile.sliverType == waterfall.WaterfallFlow ||
+          tile.sliverType == "WaterfallFlow") &&
+      tile.crossAxisCount > 0;
+
+  @override
+  void endTransformIfNeed(
+    BuildContext context,
+    WidgetList origin,
+    WidgetList result,
+    bool fromPart,
+  ) {
+    super.endTransformIfNeed(context, origin, result, fromPart);
+    if (tileList.isNotEmpty) {
+      result.add(_buildTransformWaterfallFlowWrap(context, tileList));
+      reset(fromPart);
+    }
+  }
+
+  /// 最后一个[RItemTile]的[WaterfallFlow]的[crossAxisCount]
+  int? get lastCrossAxisCount {
+    final last = tileList.lastOrNull;
+    if (last is RItemTile) {
+      return last.crossAxisCount;
+    }
+    return null;
+  }
+
+  @override
+  bool transformTile(
+    BuildContext context,
+    List<Widget> origin,
+    List<Widget> result,
+    Widget tile,
+    int index,
+    RItemTile? parentTile,
+  ) {
+    this.parentTile = parentTile;
+    if (tile is RItemTile) {
+      if (tile.part || tile.childTiles != null) {
+        //强行使用分开标识/具有子元素
+        endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
+      }
+      if (lastCrossAxisCount != null &&
+          tile.crossAxisCount != lastCrossAxisCount) {
+        //crossAxisCount不相同
+        endTransformIfNeed(context, origin, result, true);
+        firstTile = null;
+      }
+      //debugger();
+      if (tile.childTiles == null) {
+        tileList.add(tile);
+      } else {
+        //自身是一个容器, 此时自身不进行处理
+        firstTile = tile;
+      }
+      return true;
+    } else if (parentTile != null) {
+      tileList.add(tile);
+      return true;
+    }
+    return false;
+  }
+
+  /// 构建成[WaterfallFlow]
+  Widget _buildTransformWaterfallFlowWrap(
+    BuildContext context,
+    WidgetIterable sliverChild,
+  ) {
+    RItemTile first =
+        firstTile ??
+        sliverChild.firstWhere(
+              (element) => element is RItemTile,
+              orElse: () =>
+                  parentTile ?? RItemTile(tag: "$runtimeType:$nowTime()"),
+            )
+            as RItemTile;
+
+    WidgetList newList = [];
+    sliverChild = mapFlatTileList(context, sliverChild, firstAnchor: first);
+    sliverChild.forEachIndexed((index, tile) {
+      //debugger();
+      if (tile is RItemTile) {
+        final item = tile.buildGridWrapChild(
+          context,
+          sliverChild,
+          tile,
+          index,
+          firstAnchor: first,
+        );
+        itemTileWrapBuilder?.call(context, this, sliverChild, item, index);
+        newList.add(
+          buildTileWidget(
+            context,
+            tile,
+            ignoreSliverDecoration: true,
+            ignoreSliverPadding: true,
+            /*ensureSliverTile: true,*/
+            itemTileWrapBuilder?.call(
+                  context,
+                  this,
+                  sliverChild,
+                  item,
+                  index,
+                ) ??
+                item,
+          ),
+        );
+      } else {
+        newList.add(tile);
+      }
+    });
+    final shrinkWrap = first.tileWrapShrinkWrap ?? false;
+    return wrapSliverPaddingDecorationTile(
+      first,
+      SliverFillWidget(
+        /*excludeExtent: 200,*/
+        shrinkWrap: shrinkWrap,
+        child: waterfall.WaterfallFlow.builder(
+          itemCount: newList.length,
+          padding: first.tileWrapPadding,
+          scrollDirection: first.tileWrapScrollDirection ?? .vertical,
+          physics: first.tileWrapPhysics ?? ClampingScrollPhysics(),
+          shrinkWrap: shrinkWrap,
+          gridDelegate:
+              waterfall.SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                crossAxisCount: first.crossAxisCount,
+                mainAxisSpacing: first.mainAxisSpacing,
+                crossAxisSpacing: first.crossAxisSpacing,
+                /*lastChildLayoutTypeBuilder: lastChildLayoutTypeBuilder,
+            collectGarbage: collectGarbage,
+            viewportBuilder: viewportBuilder,
+            closeToTrailing: closeToTrailing,*/
+              ),
           itemBuilder: (context, index) {
             return newList.getOrNull(index) ?? empty;
           },

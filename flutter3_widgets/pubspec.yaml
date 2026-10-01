@@ -48,10 +48,6 @@ dependencies:
 
   # https://pub.dev/packages/flutter_staggered_grid_view
   flutter_staggered_grid_view: ^0.7.0
-  # https://pub.dev/packages/waterfall_flow
-  # https://pub.dev/packages/collection
-  # https://pub.dev/packages/extended_list_library
-  #waterfall_flow: ^3.1.1
   # https://pub.dev/packages/staggered_flow_grid
   #staggered_flow_grid: ^1.0.1
   # https://pub.dev/packages/staggered_grid_view
@@ -64,6 +60,11 @@ dependencies:
   # https://pub.dev/packages/reorderable_staggered_scroll_view
   # https://pub.dev/packages/flutter_staggered_grid_view
   #reorderable_staggered_scroll_view: ^0.0.2
+
+  # https://pub.dev/packages/waterfall_flow
+  # https://pub.dev/packages/collection
+  # https://pub.dev/packages/extended_list_library
+  waterfall_flow: ^3.1.1
 
   # https://pub.dev/packages/flutter_verification_code
   # https://github.com/awaik/flutter_verification_code
