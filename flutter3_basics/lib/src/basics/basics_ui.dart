@@ -3114,8 +3114,17 @@ extension WidgetEx on Widget {
     }
   }
 
+  /// Ink 实际上是对 Material 节点绘制能力的一种代理。当你使用 Ink(decoration: ...) 时，
+  /// 它不会自己画一个覆盖层，而是直接加入到 Material 的绘制队列中。
+  /// 解决“为波纹按钮设置背景色/图片时，水波纹被遮挡”的问题。
+  ///
+  /// 使用 Ink 替代 Container + Material 可以减少不必要的 RenderObject 节点重绘，
+  /// 因为 Ink 仅仅是在现有的 Material 画布上增加了一项 InkDecoration 绘制指令，而不需要额外创建独立的 Layer 组合。
+  ///
   /// 默认块状波纹效果, 支持带背景装饰[decoration]设置的[inkWell]
+  /// - [Ink] -> [inkWell]
   /// 支持圆角波纹效果, 有的时候可能需要包裹在[Material]部件中才有预期效果
+  ///
   /// [radius] 背景/波纹圆角大小, 圆角足够大时, 可以实现圆形效果. [kDefaultBorderRadiusXXX]
   /// [shape] 形状, [BoxShape.circle]并不能实现圆形效果, 需要设置圆角[radius].
   /// [backgroundColor] 背景颜色, 此时波纹依旧有效. 用[container]的背景颜色则波纹效果无效.
@@ -3345,6 +3354,7 @@ extension WidgetEx on Widget {
     return body;
   }
 
+  /// [inkWellCircle] -> [inkWell]
   /// - [enable] 是否启用
   /// - [disableColor] 禁用时的颜色, 不指定不处理
   /// - [splashColor] 涟漪颜色 不指定此颜色可能无效果[Colors.black12]
