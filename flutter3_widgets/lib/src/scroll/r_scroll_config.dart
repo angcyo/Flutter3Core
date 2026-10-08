@@ -23,12 +23,14 @@ class RScrollConfig {
   const RScrollConfig({this.filterChain, this.transformChain});
 
   /// 向过滤一遍[children], 然后转换一遍[children]得到新的[children]
+  /// - [ensureSliverItem] 是否确保[children]全是sliver
   @api
   @entryPoint
   WidgetList filterAndTransformTileList(
     BuildContext context,
     WidgetList children, {
     RItemTileWrapBuilder? itemTileWrapBuilder,
+    bool ensureSliverItem = true,
   }) {
     //debugger();
     //过滤链
@@ -44,6 +46,7 @@ class RScrollConfig {
         context,
         children,
         itemTileWrapBuilder: itemTileWrapBuilder,
+          ensureSliverItem:ensureSliverItem,
       );
     } else {
       //这里的[children]应该全是sliver, 否则会报错.

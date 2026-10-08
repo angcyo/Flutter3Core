@@ -88,12 +88,14 @@ class RTileTransformChain with TileTransformMixin {
     BuildContext context,
     WidgetList children, {
     RItemTileWrapBuilder? itemTileWrapBuilder,
+    bool ensureSliverItem = true,
   }) {
     return doTransformChildren(
       context,
       children,
       null,
       itemTileWrapBuilder: itemTileWrapBuilder,
+      ensureSliverItem: ensureSliverItem,
     );
   }
 
@@ -104,6 +106,7 @@ class RTileTransformChain with TileTransformMixin {
     WidgetList children,
     RItemTile? parentTile, {
     RItemTileWrapBuilder? itemTileWrapBuilder,
+    bool ensureSliverItem = true,
   }) {
     WidgetList result = [];
 
@@ -131,6 +134,7 @@ class RTileTransformChain with TileTransformMixin {
             i,
             parentTile,
             itemTileWrapBuilder: itemTileWrapBuilder,
+            ensureSliverItem: ensureSliverItem,
           );
         } else {
           //不支持当前的转换
@@ -161,6 +165,7 @@ class RTileTransformChain with TileTransformMixin {
               i,
               parentTile,
               itemTileWrapBuilder: itemTileWrapBuilder,
+              ensureSliverItem: ensureSliverItem,
             );
             break;
           }
@@ -200,7 +205,7 @@ class RTileTransformChain with TileTransformMixin {
           child = buildTileWidget(context, tile, child);
         }
         if (parentTile == null) {
-          result.add(_ensureSliver(child));
+          result.add(ensureSliverItem ? _ensureSliver(child) : child);
         } else {
           //如果具有parent, 则不进行[SliverToBoxAdapter]包裹
           //如果需要ensureSliver, 请在transform内部处理
@@ -223,6 +228,7 @@ class RTileTransformChain with TileTransformMixin {
     int index,
     RItemTile? parentTile, {
     RItemTileWrapBuilder? itemTileWrapBuilder,
+    bool ensureSliverItem = true,
   }) {
     final handle = transform.transformTile(
       context,
@@ -242,6 +248,7 @@ class RTileTransformChain with TileTransformMixin {
           childTiles,
           tile,
           itemTileWrapBuilder: itemTileWrapBuilder,
+          ensureSliverItem: ensureSliverItem,
         );
         //debugger();
         for (var j = 0; j < childResult.length; j++) {
@@ -1041,8 +1048,8 @@ class SliverGridTransform extends BaseTileTransform {
       SliverGrid.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: first.crossAxisCount,
-          mainAxisSpacing: first.mainAxisSpacing,
-          crossAxisSpacing: first.crossAxisSpacing,
+          mainAxisSpacing: first.mainAxisSpacing ?? 0,
+          crossAxisSpacing: first.crossAxisSpacing ?? 0,
           childAspectRatio: first.childAspectRatio,
           mainAxisExtent: first.mainAxisExtent,
         ),
@@ -1316,8 +1323,8 @@ class MasonryGridViewTransform extends BaseTileTransform {
         child: MasonryGridView.count(
           itemCount: newList.length,
           crossAxisCount: first.crossAxisCount,
-          mainAxisSpacing: first.mainAxisSpacing,
-          crossAxisSpacing: first.crossAxisSpacing,
+          mainAxisSpacing: first.mainAxisSpacing ?? 0,
+          crossAxisSpacing: first.crossAxisSpacing ?? 0,
           padding: first.tileWrapPadding,
           scrollDirection: first.tileWrapScrollDirection ?? .vertical,
           physics: first.tileWrapPhysics ?? ClampingScrollPhysics(),
@@ -1468,8 +1475,8 @@ class WaterfallFlowTransform extends BaseTileTransform {
           gridDelegate:
               waterfall.SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                 crossAxisCount: first.crossAxisCount,
-                mainAxisSpacing: first.mainAxisSpacing,
-                crossAxisSpacing: first.crossAxisSpacing,
+                mainAxisSpacing: first.mainAxisSpacing ?? 0,
+                crossAxisSpacing: first.crossAxisSpacing ?? 0,
                 /*lastChildLayoutTypeBuilder: lastChildLayoutTypeBuilder,
             collectGarbage: collectGarbage,
             viewportBuilder: viewportBuilder,

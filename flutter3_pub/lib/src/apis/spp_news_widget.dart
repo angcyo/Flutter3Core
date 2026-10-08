@@ -32,8 +32,8 @@ class _SppNewsWidgetState extends State<SppNewsWidget> {
     return [
       bean?.title?.text(bold: true, selectable: true).expanded(),
       bean?.time?.text(style: globalTheme.textDesStyle, selectable: true),
-    ].row(crossAxisAlignment: .center)!.click(() {
+    ].row(crossAxisAlignment: .center)!.insets(h: kX, v: kH).click(() {
       openWebUrl(bean?.url);
-    });
+    }, cursor: SystemMouseCursors.click);
   }
 }

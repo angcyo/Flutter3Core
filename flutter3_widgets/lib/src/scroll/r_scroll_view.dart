@@ -18,6 +18,7 @@ typedef ShowLoadMoreCallback = bool Function();
 class RScrollView extends StatefulWidget {
   const RScrollView({
     super.key,
+    this.scrollType = .customScrollView,
     this.children,
     this.childrenBuilder,
     this.updateSignal,
@@ -34,7 +35,7 @@ class RScrollView extends StatefulWidget {
     this.shrinkWrap = false,
     this.center,
     this.anchor = 0.0,
-    this.cacheExtent,
+    @Deprecated('Use scrollCacheExtent instead.') this.cacheExtent,
     this.scrollCacheExtent,
     this.semanticChildCount,
     this.dragStartBehavior = .start,
@@ -43,14 +44,23 @@ class RScrollView extends StatefulWidget {
     this.clipBehavior = .hardEdge,
     this.scrollBehavior = const MaterialScrollBehavior(),
     this.physics = kScrollPhysics,
+    //--
     this.enableFrameLoad = false,
     this.frameSplitCount = 1,
     this.frameSplitDuration = const Duration(milliseconds: 16),
+    //--
     this.tag,
     this.debugLabel,
+    //--
+    this.crossAxisCount,
+    this.mainAxisSpacing,
+    this.crossAxisSpacing,
   });
 
   //--
+
+  /// 列表类型
+  final RScrollType? scrollType;
 
   /// 监听此值的变化, 用来重建[children]
   final Listenable? updateSignal;
@@ -153,6 +163,17 @@ class RScrollView extends StatefulWidget {
 
   //endregion 分帧加载属性
 
+  //MARK: - WaterfallFlow
+
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.crossAxisCount]
+  final int? crossAxisCount;
+
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.mainAxisSpacing]
+  final double? mainAxisSpacing;
+
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.crossAxisSpacing]
+  final double? crossAxisSpacing;
+
   //MARK: - tag
 
   final String? tag;
@@ -194,12 +215,17 @@ class _RScrollViewState extends State<RScrollView>
     BuildContext context, {
     WidgetList? children,
     bool? useFrameLoad,
+    bool ensureSliverItem = true,
   }) {
     //debugger();
     children ??= widget.childrenBuilder?.call(context) ?? widget.children ?? [];
 
     //debugger();
-    final result = _transformTileList(context, children);
+    final result = _transformTileList(
+      context,
+      children,
+      ensureSliverItem: ensureSliverItem,
+    );
 
     //加载更多显示处理
     if (widget.enableLoadMore) {
@@ -226,7 +252,11 @@ class _RScrollViewState extends State<RScrollView>
         }
       }
       if (loadMoreWidget != null) {
-        result.addAll(_transformTileList(context, [loadMoreWidget]));
+        result.addAll(
+          _transformTileList(context, [
+            loadMoreWidget,
+          ], ensureSliverItem: ensureSliverItem),
+        );
       }
     }
 
@@ -257,12 +287,17 @@ class _RScrollViewState extends State<RScrollView>
   /// [RScrollConfig]
   ///
   /// [build]->[_buildTileList]->[_transformTileList]->[RScrollConfig.filterAndTransformTileList]
-  WidgetList _transformTileList(BuildContext context, WidgetList children) {
+  WidgetList _transformTileList(
+    BuildContext context,
+    WidgetList children, {
+    bool ensureSliverItem = true,
+  }) {
     final scrollConfig = widget.scrollConfig ?? defaultScrollConfig;
     return scrollConfig.filterAndTransformTileList(
       context,
       children,
       itemTileWrapBuilder: widget.itemTileWrapBuilder,
+      ensureSliverItem: ensureSliverItem,
     );
   }
 
@@ -299,43 +334,103 @@ class _RScrollViewState extends State<RScrollView>
     //debugger();
     //SliverGrid.builder(gridDelegate: gridDelegate, itemBuilder: itemBuilder);
     //SliverList.builder(itemBuilder: itemBuilder);
+    WidgetList? children;
     WidgetList slivers;
     final controller = widget.controller;
-    if (controller == null ||
-        controller.adapterStateValue.value == WidgetBuildState.none) {
+    final scrollType = controller?.scrollType ?? widget.scrollType;
+    final ensureSliverItem = scrollType == .customScrollView;
+    if (controller == null || controller.adapterStateValue.value == .none) {
       //需要显示内容
-      slivers = _buildTileList(context);
+      children = widget.childrenBuilder?.call(context) ?? widget.children;
+      slivers = _buildTileList(
+        context,
+        children: children,
+        /*useFrameLoad: widget.enableFrameLoad,*/
+        ensureSliverItem: ensureSliverItem,
+      );
     } else {
+      //需要显示情感图状态
       //debugger();
+      final adapterStateWidget = controller.buildAdapterStateWidget(
+        context,
+        controller.adapterStateValue.value,
+        controller._widgetStateData,
+      );
       slivers = _transformTileList(context, [
-        controller
-            .buildAdapterStateWidget(
-              context,
-              controller.adapterStateValue.value,
-              controller._widgetStateData,
-            )
-            .rFill(),
-      ]);
+        ensureSliverItem
+            ? adapterStateWidget.rFill()
+            : adapterStateWidget.center(),
+      ], ensureSliverItem: ensureSliverItem);
     }
-    Widget result = CustomScrollView(
-      scrollDirection: widget.scrollDirection,
-      reverse: widget.reverse,
-      controller: widget.controller,
-      primary: widget.primary,
-      physics: widget.physics,
-      scrollBehavior: widget.scrollBehavior,
-      shrinkWrap: widget.shrinkWrap,
-      center: widget.center,
-      anchor: widget.anchor,
-      cacheExtent: widget.cacheExtent,
-      scrollCacheExtent: widget.scrollCacheExtent,
-      semanticChildCount: widget.semanticChildCount,
-      dragStartBehavior: widget.dragStartBehavior,
-      keyboardDismissBehavior: widget.keyboardDismissBehavior,
-      restorationId: widget.restorationId,
-      clipBehavior: widget.clipBehavior,
-      slivers: slivers,
-    );
+
+    Widget result;
+    if (scrollType == .waterfallFlow) {
+      RItemTile? first;
+      if (children?.firstOrNull is RItemTile) {
+        first = children?.firstOrNull as RItemTile;
+      }
+      result = waterfall.WaterfallFlow.builder(
+        scrollDirection:
+            first?.tileWrapScrollDirection ?? widget.scrollDirection,
+        reverse: widget.reverse,
+        controller: widget.controller,
+        primary: widget.primary,
+        physics: first?.tileWrapPhysics ?? widget.physics,
+        shrinkWrap: widget.shrinkWrap,
+        padding: first?.tileWrapPadding,
+        gridDelegate:
+            waterfall.SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount:
+                  first?.crossAxisCount ?? widget.crossAxisCount ?? 1,
+              mainAxisSpacing:
+                  first?.mainAxisSpacing ?? widget.mainAxisSpacing ?? 0,
+              crossAxisSpacing:
+                  first?.crossAxisSpacing ?? widget.crossAxisSpacing ?? 0,
+              lastChildLayoutTypeBuilder: (index) =>
+                  (widget.enableLoadMore && children?.getOrNull(index) == null)
+                  ? .foot
+                  : .none,
+              /* collectGarbage: collectGarbage,
+            viewportBuilder: viewportBuilder,
+            closeToTrailing: closeToTrailing,*/
+            ),
+        itemBuilder: (context, index) {
+          return slivers.getOrNull(index) ?? empty;
+        },
+        itemCount: slivers.length,
+        cacheExtent: widget.scrollCacheExtent?.value ?? widget.cacheExtent,
+        semanticChildCount: widget.semanticChildCount,
+        dragStartBehavior: widget.dragStartBehavior,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        restorationId: widget.restorationId,
+        clipBehavior: widget.clipBehavior,
+      );
+    } else {
+      result = CustomScrollView(
+        scrollDirection: widget.scrollDirection,
+        reverse: widget.reverse,
+        controller: widget.controller,
+        primary: widget.primary,
+        physics: widget.physics,
+        scrollBehavior: widget.scrollBehavior,
+        shrinkWrap: widget.shrinkWrap,
+        center: widget.center,
+        anchor: widget.anchor,
+        /*cacheExtent: widget.cacheExtent,*/
+        scrollCacheExtent:
+            widget.scrollCacheExtent ??
+            (widget.cacheExtent != null
+                ? ScrollCacheExtent.pixels(widget.cacheExtent!)
+                : null),
+        semanticChildCount: widget.semanticChildCount,
+        dragStartBehavior: widget.dragStartBehavior,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        restorationId: widget.restorationId,
+        clipBehavior: widget.clipBehavior,
+        slivers: slivers,
+      );
+    }
+
     if (widget.enableRefresh) {
       result = widget.controller?.wrapRefreshWidget(context, result) ?? result;
     }
@@ -351,7 +446,7 @@ extension RScrollViewEx on WidgetNullList {
   /// [RScrollView]
   Widget rScroll({
     RScrollController? controller,
-    Axis axis = Axis.vertical,
+    Axis axis = .vertical,
     ScrollBehavior? scrollBehavior,
     ScrollPhysics? physics = kScrollPhysics,
     ChildrenBuilder? childrenBuilder,
@@ -376,4 +471,13 @@ extension RScrollViewEx on WidgetNullList {
       children: filterNull(),
     );
   }
+}
+
+/// 列表类型
+enum RScrollType {
+  /// 使用[CustomScrollView]
+  customScrollView,
+
+  /// 使用[waterfall.WaterfallFlow]
+  waterfallFlow,
 }

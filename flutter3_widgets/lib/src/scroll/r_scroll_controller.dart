@@ -14,6 +14,9 @@ part of '../../flutter3_widgets.dart';
 /// - [notifyRebuildScrollViewWidget] 触发更新界面
 ///
 class RScrollController extends ScrollController {
+  /// [RScrollView.scrollType]
+  RScrollType? scrollType;
+
   /// 用来控制刷新的key
   /// - [wrapRefreshWidget] 中使用
   /// [RefreshIndicatorState]
@@ -365,8 +368,8 @@ class RScrollController extends ScrollController {
     final state = loadMoreKey.currentState;
     if (state == null) {
       assert(() {
-        l.d("[${classHash()}]无法重建布局!");
-        debugger();
+        l.d("[${classHash()}]无法重建布局, 请检查是否使用了[loadMoreKey]!");
+        debugger(when: scrollType == .customScrollView);
         return true;
       }());
     } else {

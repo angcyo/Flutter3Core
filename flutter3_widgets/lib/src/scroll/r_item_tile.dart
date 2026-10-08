@@ -105,8 +105,8 @@ class RItemTile extends StatefulWidget {
     this.lastPaddingBottom,
     //SliverGrid
     this.crossAxisCount = 0,
-    this.mainAxisSpacing = 0,
-    this.crossAxisSpacing = 0,
+    this.mainAxisSpacing,
+    this.crossAxisSpacing,
     this.childAspectRatio = 1.0,
     this.mainAxisExtent,
     this.edgePaddingLeft,
@@ -396,21 +396,21 @@ class RItemTile extends StatefulWidget {
   /// 交叉轴的数量, 比如网格的列数. 不为0时开启功能.
   /// 列数相同的[RItemTile]会被合并到同一个[SliverGrid]中,
   /// 并且默认使用第一个[RItemTile]的属性配置[SliverGrid].
-  /// [SliverGridDelegateWithFixedCrossAxisCount.crossAxisCount]
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.crossAxisCount]
   final int crossAxisCount;
 
   /// 主轴间隙, 如果方向是垂直的, 则是行间隙, 如果方向是水平的, 则是列间隙
-  /// [SliverGridDelegateWithFixedCrossAxisCount.mainAxisSpacing]
-  final double mainAxisSpacing;
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.mainAxisSpacing]
+  final double? mainAxisSpacing;
 
   /// 交叉轴间隙
-  /// [SliverGridDelegateWithFixedCrossAxisCount.crossAxisSpacing]
-  final double crossAxisSpacing;
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.crossAxisSpacing]
+  final double? crossAxisSpacing;
 
-  /// [SliverGridDelegateWithFixedCrossAxisCount.childAspectRatio]
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.childAspectRatio]
   final double childAspectRatio;
 
-  /// [SliverGridDelegateWithFixedCrossAxisCount.mainAxisExtent]
+  /// [waterfall.SliverGridDelegateWithFixedCrossAxisCount.mainAxisExtent]
   /// 只在[SliverGrid]中有效, 主轴方向的上占用的空间, 不指定则使用[childAspectRatio]
   final double? mainAxisExtent;
 
@@ -579,7 +579,7 @@ class RItemTile extends StatefulWidget {
   }) {
     final first = firstAnchor ?? list.firstOrNull;
     if (first is RItemTile) {
-      final crossAxisCount = first.crossAxisCount;
+      final crossAxisCount = first.crossAxisCount ?? 1;
       debugger(when: crossAxisCount <= 0);
       final isEdgeLeft = index % crossAxisCount == 0;
       final isEdgeRight = index % crossAxisCount == crossAxisCount - 1;
@@ -595,16 +595,16 @@ class RItemTile extends StatefulWidget {
       if (isEdge) {
         //需要padding
         final double left = isEdgeLeft
-            ? first.edgePaddingLeft ?? first.crossAxisSpacing
+            ? first.edgePaddingLeft ?? first.crossAxisSpacing ?? 0
             : 0;
         final double top = isEdgeTop
-            ? first.edgePaddingTop ?? first.mainAxisSpacing
+            ? first.edgePaddingTop ?? first.mainAxisSpacing ?? 0
             : 0;
         final double right = isEdgeRight
-            ? first.edgePaddingRight ?? first.crossAxisSpacing
+            ? first.edgePaddingRight ?? first.crossAxisSpacing ?? 0
             : 0;
         final double bottom = isEdgeBottom
-            ? first.edgePaddingBottom ?? first.mainAxisSpacing
+            ? first.edgePaddingBottom ?? first.mainAxisSpacing ?? 0
             : 0;
 
         // 有值
