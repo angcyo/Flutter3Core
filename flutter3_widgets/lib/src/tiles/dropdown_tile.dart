@@ -146,13 +146,15 @@ class _DropdownButtonTileState extends State<DropdownButtonTile>
       onChanged: (value) {
         /*initialValue = value;
             updateState();*/
-        assert(() {
-          l.w("DropdownButtonTile.onChanged[${value.runtimeType}]: $value");
-          return true;
-        }());
-        updateValueMixin(value);
-        widget.onChanged?.call(value);
-        widget.onTextChanged?.call(strOf(value)!);
+        if (getInitialValueMixin() != value) {
+          assert(() {
+            l.w("DropdownButtonTile.onChanged[${value.runtimeType}]: $value");
+            return true;
+          }());
+          updateValueMixin(value);
+          widget.onChanged?.call(value);
+          widget.onTextChanged?.call(strOf(value)!);
+        }
       },
     );
     if (labelWidget == null) {
@@ -748,6 +750,7 @@ class _DropdownTileState extends State<DropdownTile> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
+    final initialItem = widget.dropdownValue;
     return DropdownFlutter(
       enabled: widget.enabled,
       excludeSelected: widget.excludeSelected,
@@ -766,18 +769,20 @@ class _DropdownTileState extends State<DropdownTile> {
       listItemPadding: insets(),*/
       /*searchHintText: "searchHintText",*/
       /*hideSelectedFieldWhenExpanded:,*/
-      initialItem: widget.dropdownValue,
+      initialItem: initialItem,
       /*initialItems: widget.dropdownValue,*/
       items: widget.dropdownValueList,
       /*onListChanged: widget.dropdownValueList,*/
       onChanged: (value) {
         //debugger();
-        assert(() {
-          l.d("${value.runtimeType} value: $value");
-          return true;
-        }());
-        widget.onChanged?.call(value);
-        widget.onTextChanged?.call(strOf(value)!);
+        if (initialItem != value) {
+          assert(() {
+            l.d("${value.runtimeType} value: $value");
+            return true;
+          }());
+          widget.onChanged?.call(value);
+          widget.onTextChanged?.call(strOf(value)!);
+        }
       },
     );
   }
@@ -786,9 +791,11 @@ class _DropdownTileState extends State<DropdownTile> {
 //MARK: - ex
 
 extension DropdownMenuValueListEx on List {
+  /// 下拉菜单
   /// - [dropdownValue] 默认值
   /// - [useOverlayStyle] 是否使用[DropdownMenuTile]实现
   ///
+  /// - [DropdownTile]
   /// - [DropdownButtonTile]
   /// - [DropdownMenuTile]
   ///   - [enableInputFilter] 是否启用过滤
@@ -800,7 +807,7 @@ extension DropdownMenuValueListEx on List {
     //--
     bool isDense = false,
     bool? isExpanded,
-    EdgeInsetsGeometry? tilePadding,
+    @defInjectMark EdgeInsetsGeometry? tilePadding,
     //--input style
     bool? useOverlayStyle,
     bool enableInputFilter = true,

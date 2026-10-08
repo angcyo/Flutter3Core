@@ -334,7 +334,9 @@ class RScrollController extends ScrollController {
       return true;
     } else {
       assert(() {
-        l.d("[${tag ?? debugLabel}][$oldLoadMoreState]已是目标状态[$widgetState]!");
+        l.d(
+          "[${tag ?? debugLabel ?? "updateLoadMoreState"}][$oldLoadMoreState]已是目标状态[$widgetState]!",
+        );
         return true;
       }());
     }

@@ -9,6 +9,9 @@ part of '../../../flutter3_widgets.dart';
 
 /// [WrapContentLayout]
 class MatchParentLayout extends SingleChildRenderObjectWidget {
+  /// 是否在[Sliver]中使用
+  final bool? isInSliver;
+
   /// [child]在容器中的对齐方式
   final AlignmentDirectional alignment;
 
@@ -30,6 +33,7 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
   const MatchParentLayout({
     super.key,
     super.child,
+    this.isInSliver,
     this.matchWidth = true,
     this.matchHeight = true,
     this.alignment = AlignmentDirectional.center,
@@ -45,6 +49,7 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
     matchHeight: matchHeight,
     childWrapWidth: childWrapWidth,
     childWrapHeight: childWrapHeight,
+    isInSliver: isInSliver,
     debugLabel: debugLabel,
     textDirection: Directionality.of(context),
   );
@@ -57,6 +62,7 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
       ..matchHeight = matchHeight
       ..childWrapWidth = childWrapWidth
       ..childWrapHeight = childWrapHeight
+      ..isInSliver = isInSliver
       ..debugLabel = debugLabel
       ..markNeedsLayout();
   }
@@ -64,6 +70,9 @@ class MatchParentLayout extends SingleChildRenderObjectWidget {
 
 /// [WrapContentBox]
 class MatchParentBox extends WrapContentBox {
+  /// 是否在[Sliver]中使用
+  bool? isInSliver;
+
   /// 自身和[child]是否都撑满宽度
   bool matchWidth;
 
@@ -82,6 +91,7 @@ class MatchParentBox extends WrapContentBox {
   MatchParentBox({
     super.alignment,
     super.textDirection,
+    this.isInSliver,
     this.matchWidth = true,
     this.matchHeight = true,
     this.childWrapWidth,
@@ -91,29 +101,43 @@ class MatchParentBox extends WrapContentBox {
 
   @override
   void performLayout() {
-    debugger(when: !isIos && debugLabel != null);
     BoxConstraints constraints = this.constraints;
-    BoxConstraints? parentConstraints = parentBoxConstraints;
+    BoxConstraints? parentBoxConstraints = isInSliver == true
+        ? null
+        : this.parentBoxConstraints;
+    SliverConstraints? parentSliverConstraints = isInSliver == true
+        ? this.parentSliverConstraints
+        : null;
+    parentBoxConstraints ??= parentSliverConstraints?.asBoxConstraints(
+      maxExtent: parentSliverConstraints.viewportMainAxisExtent,
+    );
+    debugger(when: !isIos && debugLabel != null);
     if (constraints.isUnconstrained) {
-      constraints = parentConstraints ?? constraints;
+      constraints = parentBoxConstraints ?? constraints;
     }
+    final maxWidth = constraints.maxWidth.ensureValid(
+      parentBoxConstraints?.maxWidth.ensureValid(
+            constraints.minWidth
+                .ensureValid(0)
+                .maxOf(parentBoxConstraints.minWidth),
+          ) ??
+          0,
+    );
+    final maxHeight = constraints.maxHeight.ensureValid(
+      parentBoxConstraints?.maxHeight.ensureValid(
+            constraints.minHeight
+                .ensureValid(0)
+                .maxOf(parentBoxConstraints.minHeight),
+          ) ??
+          0,
+    );
     if (child == null) {
       size = constraints.smallest;
     } else {
       //在可以滚动的布局中, maxWidth和maxHeight会是无限大
       final childConstraints = BoxConstraints(
-        minWidth: matchWidth
-            ? constraints.maxWidth.ensureValid(
-                constraints.minWidth.ensureValid(0),
-              )
-            : constraints.minWidth,
-        minHeight: matchHeight
-            ? constraints.maxHeight.ensureValid(
-                constraints.minHeight
-                    .ensureValid(0)
-                    .maxOf(parentConstraints?.minHeight ?? 0),
-              )
-            : constraints.minHeight,
+        minWidth: matchWidth ? maxWidth : constraints.minWidth,
+        minHeight: matchHeight ? maxHeight : constraints.minHeight,
         maxWidth: constraints.maxWidth,
         maxHeight: constraints.maxHeight,
       );
@@ -143,13 +167,14 @@ extension MatchParentLayoutEx on Widget {
   /// [WrapContentLayoutEx.wrapContent]
   /// [MatchParentLayoutEx.matchParent]
   Widget matchParent({
+    bool enable = true,
+    bool? isInSliver,
     bool? matchBoth,
     bool matchWidth = true,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
     bool? childWrapWidth,
     bool? childWrapHeight,
-    bool enable = true,
     String? debugLabel,
   }) => enable
       ? (matchBoth == true || matchWidth || matchHeight)
@@ -159,6 +184,7 @@ extension MatchParentLayoutEx on Widget {
                 matchHeight: matchBoth ?? matchHeight,
                 childWrapWidth: childWrapWidth,
                 childWrapHeight: childWrapHeight,
+                isInSliver: isInSliver,
                 debugLabel: debugLabel,
                 child: this,
               )
@@ -169,26 +195,32 @@ extension MatchParentLayoutEx on Widget {
   /// [matchParentWidth]
   /// [matchParentHeight]
   Widget matchParentWidth({
+    bool enable = true,
+    bool? isInSliver,
     bool matchWidth = true,
     bool matchHeight = false,
     AlignmentDirectional alignment = AlignmentDirectional.center,
     bool? childWrapWidth,
     bool? childWrapHeight,
     String? debugLabel,
-  }) => matchParent(
-    matchWidth: matchWidth,
-    matchHeight: matchHeight,
-    alignment: alignment,
-    childWrapWidth: childWrapWidth,
-    childWrapHeight: childWrapHeight,
-    debugLabel: debugLabel,
-  );
+  }) => !enable
+      ? this
+      : matchParent(
+          matchWidth: matchWidth,
+          matchHeight: matchHeight,
+          alignment: alignment,
+          childWrapWidth: childWrapWidth,
+          childWrapHeight: childWrapHeight,
+          isInSliver: isInSliver,
+          debugLabel: debugLabel,
+        );
 
   /// [matchParent]
   /// [matchParentWidth]
   /// [matchParentHeight]
   Widget matchParentHeight({
     bool enable = true,
+    bool? isInSliver,
     bool matchWidth = false,
     bool matchHeight = true,
     AlignmentDirectional alignment = AlignmentDirectional.center,
@@ -198,6 +230,7 @@ extension MatchParentLayoutEx on Widget {
   }) => !enable
       ? this
       : matchParent(
+          isInSliver: isInSliver,
           matchWidth: matchWidth,
           matchHeight: matchHeight,
           alignment: alignment,

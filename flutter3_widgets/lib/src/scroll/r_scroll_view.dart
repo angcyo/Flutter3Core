@@ -359,7 +359,11 @@ class _RScrollViewState extends State<RScrollView>
       slivers = _transformTileList(context, [
         ensureSliverItem
             ? adapterStateWidget.rFill()
-            : adapterStateWidget.center(),
+            : adapterStateWidget.matchParentHeight(
+                isInSliver: true,
+                /*debugLabel: "RScrollView",*/
+              ),
+        /*.bounds()*/
       ], ensureSliverItem: ensureSliverItem);
     }
 
@@ -380,8 +384,9 @@ class _RScrollViewState extends State<RScrollView>
         padding: first?.tileWrapPadding,
         gridDelegate:
             waterfall.SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-              crossAxisCount:
-                  first?.crossAxisCount ?? widget.crossAxisCount ?? 1,
+              crossAxisCount: (first?.crossAxisCount ?? 0) > 0
+                  ? first!.crossAxisCount
+                  : widget.crossAxisCount ?? 1,
               mainAxisSpacing:
                   first?.mainAxisSpacing ?? widget.mainAxisSpacing ?? 0,
               crossAxisSpacing:

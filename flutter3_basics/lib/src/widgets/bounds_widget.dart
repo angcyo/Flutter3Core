@@ -76,9 +76,10 @@ class _BoundsWidgetRenderObject extends RenderProxyBox {
 
   @override
   void performLayout() {
+    //final constraints = this.constraints;
+    debugger(when: config.debugLabel != null);
     super.performLayout();
-    /*debugger(when: config.debugLabel != null);
-    final bounds = getGlobalBounds();*/
+    /*; final bounds = getGlobalBounds();*/
   }
 
   @override

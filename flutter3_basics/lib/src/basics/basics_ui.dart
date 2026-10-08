@@ -4219,13 +4219,22 @@ extension RenderObjectEx on RenderObject {
     }
   }
 
-  /// 父布局的约束
+  /// 父布局的盒子约束
   BoxConstraints? get parentBoxConstraints {
     final parentConstraints = parent?.constraints;
     if (parentConstraints is BoxConstraints) {
       return parentConstraints;
     }
     return parent?.parentBoxConstraints;
+  }
+
+  /// 父布局的条子约束
+  SliverConstraints? get parentSliverConstraints {
+    final parentConstraints = parent?.constraints;
+    if (parentConstraints is SliverConstraints) {
+      return parentConstraints;
+    }
+    return parent?.parentSliverConstraints;
   }
 
   /// 遍历所有的子节点[RenderObject]
