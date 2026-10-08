@@ -1060,14 +1060,21 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   @api
   void selectAllElement({
     List<ElementPainter>? elements,
-    @defInjectMark bool? followPainter,
     ElementSelectType selectType = .code,
+    //--
+    @defInjectMark bool? followPainter,
+    EdgeInsets? followMargin,
+    BoxFit? followFit,
   }) {
     elements ??= this.elements;
     followPainter ??= canvasStyle.followPainterWhenSelected;
     resetSelectedElementList(elements, selectType: selectType);
     if (followPainter) {
-      canvasDelegate.followRect(rect: elements.allElementBounds);
+      canvasDelegate.followRect(
+        rect: elements.allElementBounds,
+        margin: followMargin,
+        fit: followFit,
+      );
     }
   }
 
