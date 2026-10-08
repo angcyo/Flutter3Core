@@ -220,28 +220,29 @@ class BytesWriter {
   ///
   /// [writeBytesBlock]
   ///
-  void writeBytes(List<int>? bytes, [int? length]) {
+  bool writeBytes(List<int>? bytes, [int? length]) {
     if (bytes == null || bytes.isEmpty) {
-      return;
+      return false;
     }
     if (!_canWrite()) {
-      return;
+      return false;
     }
     if (length == null) {
       _bytes.addAll(bytes);
     } else {
       _bytes.addAll(bytes.sublist(0, math.min(length, bytes.size())));
     }
+    return true;
   }
 
   /// 写入一个文本
-  /// [writeText]
-  /// [writeString]
-  void writeText(String? value, [int? length]) {
+  /// - [writeText] 不含结束字符
+  /// [writeString] 含结束字符
+  bool writeText(String? value, [int? length]) {
     if (value == null || value.isEmpty) {
-      return;
+      return false;
     }
-    writeBytes(utf8.encode(value), length);
+    return writeBytes(utf8.encode(value), length);
   }
 
   /// 写入一个ASCII文本
@@ -257,14 +258,14 @@ class BytesWriter {
   ///
   /// - [writeText]
   /// - [writeString]
-  void writeString(String? value, [int? length, bool writeEnd = true]) {
-    if (value == null || value.isEmpty) {
-      return;
+  bool writeString(String? value, [int? length, bool writeEnd = true]) {
+    if (writeText(value, length)) {
+      if (writeEnd) {
+        writeByte(0x00); //字符串结束符
+      }
+      return true;
     }
-    writeBytes(utf8.encode(value), length);
-    if (writeEnd) {
-      writeByte(0x00); //字符串结束符
-    }
+    return false;
   }
 
   /// 写入一个Hex字符串

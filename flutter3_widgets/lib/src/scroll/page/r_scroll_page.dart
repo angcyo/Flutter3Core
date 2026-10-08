@@ -452,9 +452,17 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         pageWidgetList.clear();
       }
       pageWidgetList.addAll(widgetList);
-      pageWidgetCountLive <= pageWidgetList.size();
+    } else {
+      if (pageWidgetList.isEmpty) {
+        requestPage.reset();
+      }
     }
-    _scrollViewUpdateSignal.update();
+    pageWidgetCountLive <= pageWidgetList.size();
+    if (pageWidgetList.isEmpty) {
+      finishRefresh();
+    } else {
+      _scrollViewUpdateSignal.update();
+    }
   }
 
   /// 调用此方法, 直接更新[pageWidgetList]页面数据
@@ -797,6 +805,14 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         }
       }
     }
+  }
+
+  /// 移除所有tile
+  @api
+  void removeAllTile() {
+    pageWidgetList.clear();
+    pageWidgetCountLive <= 0;
+    _scrollViewUpdateSignal.update();
   }
 
   /// 支持使用数据结构[value]删除对应的tile

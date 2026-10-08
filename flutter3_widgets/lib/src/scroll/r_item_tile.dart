@@ -1208,8 +1208,8 @@ extension RItemTileExtension on Widget {
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
     int crossAxisCount = 0,
-    double mainAxisSpacing = 0,
-    double crossAxisSpacing = 0,
+    double? mainAxisSpacing,
+    double? crossAxisSpacing,
     double childAspectRatio = 1.0,
     double? mainAxisExtent,
     SliverPersistentHeaderWidgetBuilder? headerChildBuilder,
@@ -1248,10 +1248,23 @@ extension RItemTileExtension on Widget {
     UpdateValueNotifier? updateSignal,
     List<String>? groups = const [] /*分组依据*/,
     dynamic sliverType,
+    //--
+    //--
+    EdgeInsetsGeometry? tileWrapPadding,
+    Axis? tileWrapScrollDirection,
+    bool? tileWrapShrinkWrap,
+    ScrollPhysics? tileWrapPhysics,
   }) {
+    crossAxisSpacing ??= mainAxisSpacing;
     return RItemTile(
       key: key,
       tag: tag,
+      //--
+      tileWrapPadding: tileWrapPadding,
+      tileWrapScrollDirection: tileWrapScrollDirection,
+      tileWrapShrinkWrap: tileWrapShrinkWrap,
+      tileWrapPhysics: tileWrapPhysics,
+      //--
       childBuilder: childBuilder,
       isSliverItem: isSliverItem,
       sliverType: sliverType,

@@ -237,17 +237,20 @@ class _RScrollViewState extends State<RScrollView>
         if ((callback == null &&
                 children.length >= controller.requestPage.requestPageSize) ||
             (callback != null && callback())) {
+          final loadMoreStateValue = controller.loadMoreStateValue.value;
           //show load more
           loadMoreWidget = controller.buildLoadMoreStateWidget.call(
             context,
-            controller.loadMoreStateValue.value,
+            loadMoreStateValue,
             controller._widgetStateData,
-          );
-          if (controller.requestPage.isFirstPage) {
+          )
+          /*.bounds()*/;
+          if (loadMoreStateValue.isNoneState || loadMoreStateValue.isLoading) {
             //如果是第一页, 并且列表数据不足一页, 则检查滚动位置, 触发加载更多
-            postFrameCallback((_) {
+            //2026-10-8 网格布局有可能好几页了, 页面还是没有撑满布局
+            postDelayCallback(() {
               controller.checkScrollPosition();
-            });
+            }, const Duration(milliseconds: 160));
           }
         }
       }
@@ -393,7 +396,7 @@ class _RScrollViewState extends State<RScrollView>
                   first?.crossAxisSpacing ?? widget.crossAxisSpacing ?? 0,
               lastChildLayoutTypeBuilder: (index) =>
                   (widget.enableLoadMore && children?.getOrNull(index) == null)
-                  ? .foot
+                  ? .fullCrossAxisExtent /*紧跟主轴空间*/ //.foot /*一直在底部*/
                   : .none,
               /* collectGarbage: collectGarbage,
             viewportBuilder: viewportBuilder,

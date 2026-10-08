@@ -31,17 +31,21 @@ extension MenuWidgetEx on Widget {
   /// - [menus] 菜单列表
   /// - [onMenusTap] 菜单点击回调, 会自动pop路由
   @adaptiveLayout
-  Widget adaptiveMenus(WidgetNullList? menus,
-      List<VoidCallback?>? onMenusTap, {
-        bool? useClickMenu,
-        @defInjectMark bool? useLongPressMenu,
-        @defInjectMark bool? useMouseRightMenu,
-      }) {
+  Widget adaptiveMenus(
+    WidgetNullList? menus,
+    List<VoidCallback?>? onMenusTap, {
+    bool? useClickMenu,
+    @defInjectMark bool? useLongPressMenu,
+    @defInjectMark bool? useMouseRightMenu,
+    // 无效点击区域
+    Rect? invalidClickArea,
+  }) {
     final List<Widget>? menuList = menus?.filterNull();
     if (isNil(menuList)) {
       return this;
     }
     //--
+
     void showMenus_(BuildContext context, Offset offset) {
       context.showMenus(
         menuList!,
@@ -63,6 +67,18 @@ extension MenuWidgetEx on Widget {
             ),
         ]),
       );
+    }
+
+    void show(BuildContext context, Offset offset, {bool? isClick}) {
+      if (isClick == true &&
+          invalidClickArea != null &&
+          invalidClickArea.contains(offset)) {
+        //no op
+      } else if (isMobile) {
+        showMenusDialog_(context);
+      } else {
+        showMenus_(context, offset);
+      }
     }
 
     //--
@@ -95,20 +111,12 @@ extension MenuWidgetEx on Widget {
         return body.onTouchDetector(
           onClick: useClickMenu == true
               ? (render, event) {
-            if (isMobile) {
-              showMenusDialog_(ctx);
-            } else {
-              showMenus_(ctx, event.localPosition);
-            }
-          }
+                  show(ctx, event.localPosition, isClick: true);
+                }
               : null,
           enableLongPress: useLongPressMenu ?? isMobile,
           onLongPress: (render, event) {
-            if (isMobile) {
-              showMenusDialog_(ctx);
-            } else {
-              showMenus_(ctx, event.localPosition);
-            }
+            show(ctx, event.localPosition);
           },
         );
       },
@@ -116,7 +124,7 @@ extension MenuWidgetEx on Widget {
     if ((useMouseRightMenu ?? true)) {
       result = result.mouseRightMenu(
         onMouseRightContextTap: (ctx, downDetails) {
-          showMenus_(ctx, downDetails.localPosition);
+          show(ctx, downDetails.localPosition);
         },
       );
     }

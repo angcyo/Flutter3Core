@@ -29,7 +29,7 @@ class RScrollController extends ScrollController {
   /// 滚动视图更新信号, 调用更新信号, 更新滚动小部件重构更新
   /// - 触发更新整体的界面
   /// - 一般是重建[RScrollView]
-  /// - 在[RScrollPage.pageRScrollView]中赋值
+  /// - 在[RScrollPage.pageRScrollView]中赋值. 驱动
   @configProperty
   UpdateValueNotifier? scrollViewUpdateSignal;
 

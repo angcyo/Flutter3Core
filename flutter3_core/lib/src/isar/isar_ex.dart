@@ -223,6 +223,14 @@ extension CollectionObjectEx on Object {
     });
   }
 
+  /// 删除所有
+  /// - 清空
+  void deleteCollectionAllSync<OBJ>(IsarCollection<OBJ> collection) {
+    $isar.writeTxnSync(() {
+      collection.clearSync();
+    });
+  }
+
   /// 删除数据或集合
   bool deleteCollectionSync<OBJ>(IsarCollection<OBJ> collection) {
     return $isar.writeTxnSync(() {
