@@ -102,7 +102,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
       tabInfo: LogPanelTabData(title: "Log"),
       fixed: true,
       keepAlive: true,
-      tabBuilder: (ctx, child, index, data, isSelected) {
+      tabBuilder: (tabEntry, ctx, child, index, data, isSelected) {
         return [
           "日志"
               .text()
@@ -117,7 +117,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
     TabEntryInfo(
       tabInfo: LogPanelTabData(title: "files"),
       fixed: true,
-      tabBuilder: (ctx, child, index, data, isSelected) {
+      tabBuilder: (tabEntry, ctx, child, index, data, isSelected) {
         return [
           "文件"
               .text()
@@ -137,7 +137,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
     TabEntryInfo(
       tabInfo: LogPanelTabData(title: "caches"),
       fixed: true,
-      tabBuilder: (ctx, child, index, data, isSelected) {
+      tabBuilder: (tabEntry, ctx, child, index, data, isSelected) {
         return [
           "缓存文件"
               .text()
@@ -157,7 +157,7 @@ class _LogPanelContainerState extends State<LogPanelContainer>
     TabEntryInfo(
       tabInfo: LogPanelTabData(title: "tempFile"),
       fixed: true,
-      tabBuilder: (ctx, child, index, data, isSelected) {
+      tabBuilder: (tabEntry, ctx, child, index, data, isSelected) {
         return [
           "临时文件"
               .text()

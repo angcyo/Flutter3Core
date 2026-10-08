@@ -644,6 +644,14 @@ class CanvasListener {
   final void Function(CanvasDelegate delegate, int paintCount)?
   onCanvasPaintAction;
 
+  /// [CanvasDelegate.dispatchCanvasAttach]
+  final void Function(CanvasDelegate delegate, RenderObject render)?
+  onCanvasAttachAction;
+
+  /// [CanvasDelegate.dispatchCanvasDetach]
+  final void Function(CanvasDelegate delegate, RenderObject render)?
+  onCanvasDetachAction;
+
   /// [CanvasDelegate.dispatchCanvasIdle]
   final void Function(CanvasDelegate delegate, Duration lastRefreshTime)?
   onCanvasIdleAction;
@@ -882,6 +890,8 @@ class CanvasListener {
 
   CanvasListener({
     this.onCanvasPaintAction,
+    this.onCanvasAttachAction,
+    this.onCanvasDetachAction,
     this.onCanvasIdleAction,
     this.onCanvasViewBoxPaintBoundsChangedAction,
     this.onCanvasViewBoxChangedAction,

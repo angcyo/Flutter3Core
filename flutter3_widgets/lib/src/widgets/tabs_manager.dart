@@ -55,7 +55,7 @@ class TabsManagerController {
 
   /// 创建新的标签
   @configProperty
-  final TabEntryInfo? Function(BuildContext?, dynamic data)?
+  final TabEntryInfo? Function(BuildContext? context, dynamic data)?
   onCreateNewTabAction;
 
   //MARK: - api
@@ -319,6 +319,16 @@ class TabsManagerController {
   }
 }
 
+typedef TabEntryWidgetBuilder<T> =
+    Widget Function(
+      TabEntryInfo tabEntry,
+      BuildContext context,
+      Widget widget,
+      int index,
+      T data,
+      bool? isSelected,
+    );
+
 /// 标签信息
 class TabEntryInfo with Equatable {
   //MARK: - config
@@ -338,7 +348,7 @@ class TabEntryInfo with Equatable {
 
   /// 完全自定义的tab构建方法, 数据是[tabInfoLive.value]
   @configProperty
-  final TransformDataWidgetBuilder? tabBuilder;
+  final TabEntryWidgetBuilder? tabBuilder;
 
   //--
 
@@ -406,6 +416,7 @@ class TabEntryInfo with Equatable {
           empty;
       if (tabBuilder != null) {
         return tabBuilder!.call(
+          this,
           context,
           child,
           index,

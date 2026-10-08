@@ -91,18 +91,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
 
   /// [RenderObject.attach]
   @entryPoint
-  void attach(RenderObject object) {
+  void attach(RenderObject render) {
     //no op
     isAttached = true;
+    dispatchCanvasAttach(render);
   }
 
   /// [RenderObject.detach]
   @entryPoint
-  void detach(RenderObject object) {
+  void detach(RenderObject render) {
     _cancelIdleTimer();
     _ticker?.dispose();
     _ticker = null;
     isAttached = false;
+    dispatchCanvasDetach(render);
   }
 
   /// 释放所有资源, 主动调用, 请在主界面销毁时主动调用
@@ -1206,6 +1208,20 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
         return true;
       }());
     }
+  }
+
+  /// 派发画布附加的回调
+  void dispatchCanvasAttach(RenderObject render) {
+    _eachCanvasListener((element) {
+      element.onCanvasAttachAction?.call(this, render);
+    });
+  }
+
+  /// 派发画布移除的回调
+  void dispatchCanvasDetach(RenderObject render) {
+    _eachCanvasListener((element) {
+      element.onCanvasDetachAction?.call(this, render);
+    });
   }
 
   /// 派发画布重绘的次数
