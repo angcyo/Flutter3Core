@@ -1957,7 +1957,7 @@ class ElementPainter extends IElementPainter {
   /// 是否是路径元素
   /// [elementOutputPathList]
   @output
-  bool get isPathElement => elementOutputPathList.isNotEmpty;
+  bool get isPathElement => elementOutputPathList?.isNotEmpty == true;
 
   /// 获取元素的transform后输出[Path], 当前仅支持[PathElementPainter]元素
   /// 重写此方法以便支持更多类型的元素
@@ -1983,14 +1983,20 @@ class ElementPainter extends IElementPainter {
   /// 其他元素可能需要重写[elementOutputPath]方法
   @dp
   @output
-  List<Path> get elementOutputPathList {
+  List<Path>? get elementOutputPathList {
     final result = <Path>[];
     if (this is ElementGroupPainter) {
       (this as ElementGroupPainter).children?.forEach((element) {
-        result.addAll(element.elementOutputPathList);
+        final list = element.elementOutputPathList;
+        if (list != null && list.isNotEmpty) {
+          result.addAll(list);
+        }
       });
     } else {
       elementOutputPath?.let((it) => result.add(it));
+    }
+    if (result.isEmpty) {
+      return null;
     }
     return result;
   }

@@ -42,18 +42,18 @@ class TextElementPainter extends ElementPainter {
   }
 
   @override
-  Path? get elementOutputPath => elementOutputPathList.reduce((path, element) {
+  Path? get elementOutputPath => elementOutputPathList?.reduce((path, element) {
     path.addPath(element, .zero);
     return path;
   });
 
   /// 进行了矩阵变换后的[vectorCharPathList]路径数据
   @override
-  List<Path> get elementOutputPathList {
+  List<Path>? get elementOutputPathList {
     if (isVectorTextElement) {
-      return transformElementOperatePathList(vectorCharPathList) ?? [];
+      return transformElementOperatePathList(vectorCharPathList);
     } else {
-      return super.elementOutputPathList;
+      return null;
     }
   }
 

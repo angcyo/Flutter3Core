@@ -127,7 +127,7 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
     final result = <Path>[];
     for (final element in elementList) {
       final pathList = element.elementOutputPathList;
-      if (pathList.isEmpty) {
+      if (pathList == null || pathList.isEmpty) {
         if (useElementBounds) {
           element.elementOutputBoundsPath?.let((it) => result.add(it));
         }
