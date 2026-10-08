@@ -31,13 +31,20 @@ class _CctvNewsItemWidgetState extends State<CctvNewsItemWidget> {
       return true;
     }());*/
     return [
-      bean?.image?.toImageWidget(size: 120).click(() {
-        buildContext?.showWidgetDialog(
-          SinglePhotoDialog(
-            imageProvider: bean.image?.toCacheNetworkImageProvider(),
-          ),
-        );
-      }),
+      bean?.image
+          ?.toImageWidget(size: 120)
+          .hero("${bean.id}_${bean.image}")
+          .click(() {
+            buildContext?.pushWidget(
+              SinglePhotoDialog(
+                imageProvider: bean.image?.toCacheNetworkImageProvider(),
+                heroTag: "${bean.id}_${bean.image}",
+              ),
+              type: .none,
+              opaque: false,
+              rootNavigator: true,
+            );
+          }),
       [
             bean?.title?.text(
               selectable: true,

@@ -9,16 +9,16 @@ part of '../../flutter3_pub.dart';
 /// ```
 /// bean.imageUrl
 ///    ?.toImageWidget(fit: .scaleDown, size: 80)
-///    .hero("${bean.id}_${bean.imageUrl}") // 添加 Hero 动画
+///    .hero("${bean.id}_${bean.imageUrl}")                 // 添加 Hero 动画
 ///    .click(() {
-///      buildContext?.pushWidget( //必须使用[PageRoute]页面路由
+///      buildContext?.pushWidget(                          //必须使用[PageRoute]页面路由
 ///        SinglePhotoDialog(
 ///          filePath: bean.imageUrl,
 ///          heroTag: "${bean.id}_${bean.imageUrl}",
 ///        ),
-///        type: .none, //移除默认的页面动画
-///        opaque: false, //开启全透明
-///        rootNavigator: true, //可选
+///        type: .none,                                     //移除默认的页面动画
+///        opaque: false,                                   //开启全透明
+///        rootNavigator: true,                             //可选
 ///      );
 ///    })
 /// ```

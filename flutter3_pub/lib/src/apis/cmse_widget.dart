@@ -29,13 +29,20 @@ class _CmseItemWidgetState extends State<CmseItemWidget> {
       return true;
     }());*/
     return [
-      bean?.imgUrl?.toImageWidget(size: 120).click(() {
-        buildContext?.showWidgetDialog(
-          SinglePhotoDialog(
-            imageProvider: bean.imgUrl?.toCacheNetworkImageProvider(),
-          ),
-        );
-      }),
+      bean?.imgUrl
+          ?.toImageWidget(size: 120)
+          .hero("${bean.title}_${bean.imgUrl}")
+          .click(() {
+            buildContext?.pushWidget(
+              SinglePhotoDialog(
+                imageProvider: bean.imgUrl?.toCacheNetworkImageProvider(),
+                heroTag: "${bean.title}_${bean.imgUrl}",
+              ),
+              type: .none,
+              opaque: false,
+              rootNavigator: true,
+            );
+          }),
       [
             bean?.title?.text(selectable: true),
             ...?bean?.infoItemList?.map(
