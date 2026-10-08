@@ -810,9 +810,9 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// 移除所有tile
   @api
   void removeAllTile() {
-    pageWidgetList.clear();
-    pageWidgetCountLive <= 0;
-    _scrollViewUpdateSignal.update();
+    updatePageWidgetsAction((pageWidgetList) {
+      pageWidgetList.clear();
+    });
   }
 
   /// 支持使用数据结构[value]删除对应的tile
@@ -868,7 +868,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
 
       if (pageWidgetList.isEmpty) {
         //显示空页面
-        updateAdapterState(WidgetBuildState.empty);
+        requestPage.reset();
+        updateAdapterState(.empty);
       } else if (checkScroll ?? false /*scrollController._isEnableLoadMore*/ ) {
         scrollController.checkScrollPosition();
       }

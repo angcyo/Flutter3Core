@@ -1448,11 +1448,7 @@ extension WidgetEx on Widget {
   /// [Flexible]
   ///  - [Expanded]
   /// [Spacer] 空白占位 `const SizedBox.shrink()`
-  Widget expanded({
-    int flex = 1,
-    FlexFit fit = FlexFit.tight,
-    bool enable = true,
-  }) {
+  Widget expanded({int flex = 1, FlexFit fit = .tight, bool enable = true}) {
     if (!enable) {
       return this;
     }
@@ -1938,7 +1934,7 @@ extension WidgetEx on Widget {
     double? radius,
     BorderRadiusGeometry? borderRadius,
     CustomClipper<RRect>? clipper,
-    Clip clipBehavior = Clip.antiAlias,
+    Clip clipBehavior = .antiAlias,
   }) {
     return borderRadius == null && radius == null
         ? this
@@ -2951,8 +2947,8 @@ extension WidgetEx on Widget {
     ShapeBorder? shape,
     Color? color = Colors.transparent,
     Color? surfaceTintColor,
-    MaterialType type = MaterialType.canvas,
-    Clip clipBehavior = Clip.none,
+    MaterialType type = .canvas,
+    Clip clipBehavior = .none,
     BorderRadiusGeometry? borderRadius,
     double? radius,
     TextStyle? textStyle,
