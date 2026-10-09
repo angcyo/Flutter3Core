@@ -275,17 +275,33 @@ extension CodeStringEx on String {
 
 /// 过滤条码能够输入的内容
 /// [def] 验证失败时的默认文本
-TextInputFormatter codeTextInputFormatter(Barcode code, [String? def]) {
+TextInputFormatter codeTextInputFormatter(
+  Barcode code, [
+  String? def,
+  dynamic Function(Object error, TextEditingValue newValue)? errorAction,
+]) {
   return TextInputFormatter.withFunction((oldValue, newValue) {
     try {
       //debugger();
-      code.verify(newValue.text);
+      if (newValue.isNil) {
+        return newValue;
+      }
+      //code.verify(newValue.text);
+      //code.makeBytes(newValue.text.bytes, width: 200, height: 80);
+      final width = 200;
+      final height = 80;
+      final image = img.Image(width: width, height: height, numChannels: 1);
+      drawBarcode(image, code, newValue.text);
       return newValue;
     } catch (e) {
       assert(() {
-        printError(e, StackTrace.current);
+        l.e(e, stack: StackTrace.current);
         return true;
       }());
+      final result = errorAction?.call(e, newValue);
+      if (result is TextEditingValue) {
+        return result;
+      }
       return def != null ? TextEditingValue(text: def) : oldValue;
     }
   });

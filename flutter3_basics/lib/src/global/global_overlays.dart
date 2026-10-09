@@ -91,7 +91,7 @@ OverlayEntry? toast(
       );
     },
     position: position,
-    animate: animate ?? OverlayAnimate.opacity,
+    animate: animate ?? .opacity,
     loadingInfoNotifier: loadingInfoNotifier,
     onRemoveAction: () {
       if (mutex) {
@@ -113,7 +113,7 @@ OverlayEntry? toastBlur({
   Widget? msg,
   Object? text,
   double? bgBlurSigma = kM,
-  OverlayPosition position = OverlayPosition.center,
+  OverlayPosition position = .center,
   LoadingValueNotifier? loadingInfoNotifier,
   bool maintainBottomViewPadding = true /*是否保持底部的Padding(键盘/导航)*/,
 }) => toast(
@@ -339,7 +339,7 @@ OverlayEntry? showNotification(
   Duration? reverseAnimationDuration,
   Key? key,
   GlobalKey<OverlayAnimatedState>? overlayStateKey,
-  OverlayPosition position = OverlayPosition.center,
+  OverlayPosition position = .center,
   OverlayAnimate? animate,
   BuildContext? context,
   LoadingValueNotifier? loadingInfoNotifier,
@@ -351,41 +351,41 @@ OverlayEntry? showNotification(
       OverlayAnimate anim;
       if (animate == null) {
         switch (position) {
-          case OverlayPosition.top:
-            anim = OverlayAnimate.topSlide;
+          case .top:
+            anim = .topSlide;
             break;
-          case OverlayPosition.center:
-            anim = OverlayAnimate.opacity;
+          case .center:
+            anim = .opacity;
             break;
-          case OverlayPosition.bottom:
-            anim = OverlayAnimate.bottomSlide;
+          case .bottom:
+            anim = .bottomSlide;
             break;
         }
       } else {
         anim = animate;
       }
 
-      if (anim == OverlayAnimate.topSlide) {
+      if (anim == .topSlide) {
         content = TopSlideNotification(builder: builder, progress: progress);
-      } else if (anim == OverlayAnimate.opacity) {
+      } else if (anim == .opacity) {
         content = OpacityNotification(builder: builder, progress: progress);
-      } else if (anim == OverlayAnimate.bottomSlide) {
+      } else if (anim == .bottomSlide) {
         content = BottomSlideNotification(builder: builder, progress: progress);
-      } else if (anim == OverlayAnimate.scale) {
+      } else if (anim == .scale) {
         content = ScaleNotification(builder: builder, progress: progress);
       } else {
         content = builder(context);
       }
 
       Alignment alignment;
-      if (position == OverlayPosition.center) {
-        alignment = Alignment.center;
-      } else if (position == OverlayPosition.top) {
-        alignment = Alignment.topCenter;
-      } else if (position == OverlayPosition.bottom) {
-        alignment = Alignment.bottomCenter;
+      if (position == .center) {
+        alignment = .center;
+      } else if (position == .top) {
+        alignment = .topCenter;
+      } else if (position == .bottom) {
+        alignment = .bottomCenter;
       } else {
-        alignment = Alignment.center;
+        alignment = .center;
       }
       return Align(alignment: alignment, child: content);
     },
@@ -395,7 +395,7 @@ OverlayEntry? showNotification(
     key: key,
     overlayStateKey: overlayStateKey,
     context: context,
-    curve: animate == OverlayAnimate.scale ? Curves.easeOutBack : null,
+    curve: animate == .scale ? Curves.easeOutBack : null,
     loadingInfoNotifier: loadingInfoNotifier,
     onRemoveAction: onRemoveAction,
   );

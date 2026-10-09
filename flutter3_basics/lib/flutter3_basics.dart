@@ -292,6 +292,9 @@ bool isNullOrEmpty(dynamic value) {
   if (value is Path) {
     return value.isEmpty;
   }
+  if (value is TextEditingValue) {
+    return value.text.isEmpty;
+  }
   return false;
 }
 

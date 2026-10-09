@@ -129,8 +129,16 @@ extension ExceptionEx on Object {
   String get message => switch (null) {
     _ when this is ShellException => (this as ShellException).message,
     _ when this is ProcessException => (this as ProcessException).message,
-    _ => toString(),
+    _ => _message ?? toString(),
   };
+
+  String? get _message {
+    try {
+      return (this as dynamic).message;
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 /// - copy from [ProcessRunProcessResultsExt]

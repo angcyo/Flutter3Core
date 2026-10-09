@@ -78,7 +78,7 @@ dynamic clamp(
   num? min,
   num? max, {
   bool correctMinMaxValue = false,
-  void Function(bool /*是否clamp过*/, dynamic /*返回的值*/)? didClamp ,
+  void Function(bool /*是否clamp过*/, dynamic /*返回的值*/)? didClamp,
 }) {
   if (correctMinMaxValue) {
     if (min != null && max != null) {
@@ -281,6 +281,7 @@ void reportError(Object exception) {
 /// [StackTrace.current]
 /// [reportError]
 /// [printError]
+/// [printStackTrace]
 void printError(dynamic exception, [StackTrace? stack]) {
   assert(() {
     l.e("[printError]错误信息->$exception");
@@ -295,6 +296,17 @@ void printError(dynamic exception, [StackTrace? stack]) {
           ),
     forceReport: true,
   );
+}
+
+/// 打印堆栈信息[StackTrace]
+/// [printError]
+/// [printStackTrace]
+void printStackTrace(
+  StackTrace? stackTrace, {
+  String? label,
+  int? maxFrames = 100,
+}) {
+  debugPrintStack(stackTrace: stackTrace, label: label, maxFrames: maxFrames);
 }
 
 /// [FlutterError.presentError]

@@ -274,6 +274,10 @@ class L {
         debugLabel: debugLabel,
         filterType: filterType,
       );
+      /*if (isDebug) {
+        printStackTrace(stack ?? StackTrace.current);
+      }
+      return result;*/
     }
     return null;
   }
@@ -357,7 +361,7 @@ class L {
         '$msgType$msg';
 
     //MARK: - log panel
-    if (isMainIsolate /*&& !isTest*/) {
+    if (isMainIsolate /*&& !isTest*/ ) {
       final controller =
           LogScope.get(GlobalConfig.def.globalAppContext) ?? $logController;
       controller.addLogData(
