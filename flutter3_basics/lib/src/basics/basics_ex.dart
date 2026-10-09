@@ -3086,6 +3086,23 @@ extension ListEx<T> on List<T> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;
 
+  //MARK: - sort
+
+  /// 按照指定的key倒序排序
+  /// - [desc] 是否倒序
+  /// @return [this]
+  List<T> sortDescBy<K extends Comparable<K>>(
+    K Function(T element) keyOf, {
+    bool desc = true,
+  }) {
+    sortBy(keyOf);
+    if (desc) {
+      //倒序
+      reverse(this);
+    }
+    return this;
+  }
+
   /// 确保列表中, 至少有指定个数的元素, 不足时, 循环填充数据
   List<T> ensureLength(int length, [T Function(int index)? create]) {
     if (this.length >= length) {
