@@ -1526,7 +1526,8 @@ extension OffsetEx on Offset {
   Offset abs() => Offset(dx.abs(), dy.abs());
 
   /// 平移矩阵
-  Matrix4 get translateMatrix => Matrix4.identity()..translate(dx, dy);
+  Matrix4 get translateMatrix =>
+      Matrix4.identity()..translateByDouble(dx, dy, 0, 1);
 
   /// mm单位的offset, 转换成dp单位
   @dp
@@ -1868,7 +1869,8 @@ extension RectEx on Rect {
   }) {
     //基础矩形
     final rect = Rect.fromLTWH(0, 0, width, height);
-    final translateMatrix = Matrix4.identity()..translate(left, top);
+    final translateMatrix = Matrix4.identity()
+      ..translateByDouble(left, top, 0, 1);
     final Matrix4 beforeMatrix;
     if (originMatrix == null) {
       beforeMatrix = translateMatrix;
@@ -3090,13 +3092,18 @@ extension ListEx<T> on List<T> {
 
   /// 按照指定的key倒序排序
   /// - [desc] 是否倒序
+  ///   - [null] 不排序
+  ///   - [true] 倒序
+  ///   - [false] 正序
   /// @return [this]
   List<T> sortDescBy<K extends Comparable<K>>(
     K Function(T element) keyOf, {
-    bool desc = true,
+    bool? desc = true,
   }) {
-    sortBy(keyOf);
-    if (desc) {
+    if (desc != null) {
+      sortBy(keyOf);
+    }
+    if (desc == true) {
       //倒序
       reverse(this);
     }
@@ -3662,7 +3669,7 @@ extension MapEx<K, V> on Map<K, V> {
         return value as Map<K, V>;
       } catch (e) {
         assert(() {
-          print(e);
+          l.e(e);
           return true;
         }());
         return this;
@@ -3715,7 +3722,7 @@ extension AxisDirectionEx on AxisDirection {
 }
 
 extension StreamBytesEx on Stream<List<int>> {
-  /// 转换成List<int>
+  /// 转换成 [List<int>]
   Future<List<int>> toBytes() async {
     final bytes = <int>[];
     await for (final data in this) {

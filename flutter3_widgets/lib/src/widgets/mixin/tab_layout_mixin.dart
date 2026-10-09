@@ -202,6 +202,7 @@ mixin TabLayoutMixin<T extends StatefulWidget>
     bool autoTextAnimate = true /*是否使用文本样式变化动画*/,
     bool firstIndexNotify = false /*首次mount时, 是否需要通知*/,
     void Function(int from, int to)? onIndexChangedAction,
+    void Function(int index, bool isSelected)? onIndexClickAction,
     //--
     bool? pageViewAnimate,
     //--
@@ -258,9 +259,12 @@ mixin TabLayoutMixin<T extends StatefulWidget>
               .mapIndex(
                 (child, index) => child.click(() {
                   assert(() {
-                    l.w("[${classHash()}] 点击了Tab索引: $index .");
+                    l.w(
+                      "[${classHash()}] 点击了Tab索引: $index 复选: ${isTabIndexSelected(index).toDC()}.",
+                    );
                     return true;
                   }());
+                  onIndexClickAction?.call(index, isTabIndexSelected(index));
                   if (this is PageViewMixin) {
                     tabLayoutController.selectedItem(
                       index,

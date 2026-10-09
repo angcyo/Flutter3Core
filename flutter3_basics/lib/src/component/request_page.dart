@@ -305,3 +305,17 @@ class RequestPage {
     }
   }
 }
+
+/// 更新排序字段
+/// - [null] 不排序
+/// - [true] 倒序
+/// - [false] 正序
+bool? updateDescSort(bool? old) {
+  if (old == null) {
+    return true;
+  }
+  if (old == true) {
+    return false;
+  }
+  return null;
+}
