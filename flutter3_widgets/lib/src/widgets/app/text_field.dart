@@ -195,6 +195,13 @@ class TextFieldConfig {
   /// 由[_SingleInputWidgetState._onFocusChanged]驱动
   final DoubleValueChanged<bool, String>? onFocusAction;
 
+  /// 构建输入框上下文菜单项
+  /// [SingleInputWidget.onBuildContextMenuItems]
+  final InputContextMenuItemsBuilder? onBuildContextMenuItems;
+
+  /// [SingleInputWidget.onContextMenuBuilder]
+  final EditableTextContextMenuBuilder? onContextMenuBuilder;
+
   //endregion 回调方法
 
   //region 自动完成
@@ -332,6 +339,8 @@ class TextFieldConfig {
     this.maxLength,
     this.showObscureTooltip,
     this.hideObscureTooltip,
+    this.onBuildContextMenuItems,
+    this.onContextMenuBuilder,
     //MARK: auto complete
     this.autoOptionsBuilder,
     this.autoDisplayStringForOption = RawAutocomplete.defaultStringForOption,
@@ -850,6 +859,13 @@ class SingleInputWidget extends StatefulWidget {
 
   final double gapPadding;
 
+  /// 构建输入框上下文菜单项
+  final InputContextMenuItemsBuilder? onBuildContextMenuItems;
+
+  /// 完全接管构建输入框上下文菜单
+  /// [TextField.contextMenuBuilder]
+  final EditableTextContextMenuBuilder? onContextMenuBuilder;
+
   //MARK: - label
 
   /// [labelText]
@@ -1150,6 +1166,8 @@ class SingleInputWidget extends StatefulWidget {
     this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
     this.debugLabel,
+    this.onBuildContextMenuItems,
+    this.onContextMenuBuilder,
   });
 
   /// 不带输入框的样式
@@ -1220,6 +1238,8 @@ class SingleInputWidget extends StatefulWidget {
     this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
     this.debugLabel,
+    this.onBuildContextMenuItems,
+    this.onContextMenuBuilder,
   });
 
   /// 去掉了所有默认装饰的样式
@@ -1292,6 +1312,8 @@ class SingleInputWidget extends StatefulWidget {
     this.canRequestFocus = true,
     this.autoSubmitOnUnFocus = false,
     this.debugLabel,
+    this.onBuildContextMenuItems,
+    this.onContextMenuBuilder,
   });
 
   @override
@@ -1511,7 +1533,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
   Widget build(BuildContext context) {
     //debugger();
     //圆角填充的输入装饰样式
-    final globalTheme = GlobalTheme.of(context);
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = globalConfig.globalTheme;
     //normal正常状态
     final normalBorderSide =
         widget.borderColor == Colors.transparent || widget.borderWidth <= 0
@@ -1725,11 +1748,93 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           //selectionControls: ,
           //selectionHeightStyle: ,
           //selectionWidthStyle: ,
+          contextMenuBuilder:
+              widget.onContextMenuBuilder ??
+              widget.config.onContextMenuBuilder ??
+              (ctx, editableTextState) {
+                final items =
+                    widget.onBuildContextMenuItems?.call(
+                      ctx,
+                      editableTextState,
+                      widget.config,
+                    ) ??
+                    widget.config.onBuildContextMenuItems?.call(
+                      ctx,
+                      editableTextState,
+                      widget.config,
+                    );
+
+                final contextMenuButtonItems =
+                    editableTextState.contextMenuButtonItems;
+                if (items != null) {
+                  contextMenuButtonItems.addAll([
+                    for (final item in items)
+                      ContextMenuButtonItem(
+                        label: item.label,
+                        onPressed: () {
+                          final result = item.onPressed();
+                          if (result is bool && result == true) {
+                            // 拦截默认处理(隐藏Toolbar)
+                          } else {
+                            editableTextState.hideToolbar(item.hideHandles);
+                          }
+                        },
+                      ),
+                  ]);
+                }
+                //--
+                Widget menu;
+                if (SystemContextMenu.isSupportedByField(editableTextState)) {
+                  menu = SystemContextMenu.editableText(
+                    editableTextState: editableTextState,
+                  );
+                } else {
+                  menu = AdaptiveTextSelectionToolbar.buttonItems(
+                    buttonItems: contextMenuButtonItems,
+                    anchors: editableTextState.contextMenuAnchors,
+                  );
+                }
+                return Theme(
+                  data: (globalConfig.themeData ?? Theme.of(context)).copyWith(
+                    // 修改工具栏背景色
+                    cardColor: globalTheme.surfaceBgColor,
+                  ),
+                  child: menu,
+                );
+              },
         ),
       ),
     );
     return widget.config.buildWrapAutocomplete(context, child);
   }
+}
+
+/// 输入框上下文菜单项构建器
+typedef InputContextMenuItemsBuilder =
+    List<InputContextMenuItem>? Function(
+      BuildContext context,
+      EditableTextState editableTextState,
+      TextFieldConfig config,
+    );
+
+/// 输入框上下文菜单项
+final class InputContextMenuItem {
+  /// 菜单文本标签
+  final String label;
+
+  /// 菜单点击回调
+  /// - [EditableTextState.hideToolbar]
+  /// @return true, 表示拦截默认处理(隐藏Toolbar).
+  final dynamic Function() onPressed;
+
+  /// - [EditableTextState.hideToolbar]
+  final bool hideHandles;
+
+  const InputContextMenuItem({
+    required this.label,
+    required this.onPressed,
+    this.hideHandles = false,
+  });
 }
 
 /// 选项item小部件构建
