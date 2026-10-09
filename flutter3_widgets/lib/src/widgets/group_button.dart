@@ -39,6 +39,9 @@ class SplitButton extends StatefulWidget {
   @defInjectMark
   final Alignment? popupPreferredFollowerAlignment;
 
+  /// 选项小部件的提示
+  final String? optionTooltip;
+
   //MARK: - part
 
   /// 填充的颜色, 默认样式
@@ -71,6 +74,7 @@ class SplitButton extends StatefulWidget {
     this.popupBodyWidget,
     this.popupTargetAnchor,
     this.popupPreferredFollowerAlignment,
+    this.optionTooltip,
     //--
     this.mainAxisSize = .min,
     this.fillColor,
@@ -96,11 +100,12 @@ class _SplitButtonState extends State<SplitButton> with DesktopPopupStateMixin {
     final optionWidget = !showOptionWidget
         ? null
         : (widget.optionWidget ??
-              Icon(
-                Icons.keyboard_arrow_down,
-                size: 16,
-                color: widget.optionColor,
-              ).box(width: widget.height));
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 16,
+                    color: widget.optionColor,
+                  ).box(width: widget.height))
+              .tooltip(widget.optionTooltip);
     return [
       widget.child
           ?.center()
