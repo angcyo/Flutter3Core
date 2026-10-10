@@ -55,7 +55,11 @@ class TabsManagerController {
 
   /// 创建新的标签
   @configProperty
-  final TabEntryInfo? Function(BuildContext? context, dynamic data)?
+  final TabEntryInfo? Function(
+    TabsManagerController controller,
+    BuildContext? context,
+    dynamic data,
+  )?
   onCreateNewTabAction;
 
   //MARK: - api
@@ -64,6 +68,11 @@ class TabsManagerController {
   @api
   bool closeCurrentTab() {
     return removeTab(currentTabEntryLive.value);
+  }
+
+  @api
+  Future<bool> maybeCloseCurrentTab() async {
+    return maybeRemoveTab(currentTabEntryLive.value);
   }
 
   /// 按照索引选择标签
@@ -158,7 +167,7 @@ class TabsManagerController {
     dynamic data,
     bool selected = true,
   }) {
-    final tabEntry = onCreateNewTabAction?.call(context, data);
+    final tabEntry = onCreateNewTabAction?.call(this, context, data);
     if (tabEntry != null) {
       addTab(tabEntry, selected: selected);
     } else {
@@ -171,8 +180,11 @@ class TabsManagerController {
     return tabEntry;
   }
 
-  /// 移除指定的标签
+  /// 移除指定的标签, 不检查
   /// - [direction] 移除之后, 默认选中右边的标签
+  ///
+  /// - [removeTab]
+  /// - [maybeRemoveTab]
   @api
   bool removeTab(TabEntryInfo? tabEntry, {AxisDirection direction = .right}) {
     if (tabEntry == null) {
@@ -200,6 +212,23 @@ class TabsManagerController {
     return true;
   }
 
+  /// 检查是否可以移除指定的标签
+  @api
+  Future<bool> maybeRemoveTab(
+    TabEntryInfo? tabEntry, {
+    AxisDirection direction = .right,
+  }) async {
+    if (tabEntry != null) {
+      final result = await tabEntry.onCloseTabAction?.call(tabEntry);
+      if (result == null || result == true) {
+        // 可以关闭
+      } else {
+        return false;
+      }
+    }
+    return removeTab(tabEntry, direction: direction);
+  }
+
   /// 更新指定标签
   @api
   void updateTabEntry({dynamic tabInfo}) {
@@ -218,6 +247,14 @@ class TabsManagerController {
     return tabEntryListLive.value?.firstWhereOrNull(
       (element) => element.tabInfoLive.value == tabInfo,
     );
+  }
+
+  /// 查找符合条件的标签列表
+  @api
+  List<TabEntryInfo>? findTabEntryList(
+    bool Function(TabEntryInfo element) predicate,
+  ) {
+    return tabEntryListLive.value?.whereToList((element) => predicate(element));
   }
 
   /// 更新所有标签信息
@@ -362,6 +399,13 @@ class TabEntryInfo with Equatable {
   /// 在使用[contentBuilder]构建内容时, 是否要保持状态, 否则每次切换tab都会重新创建
   final bool? keepAlive;
 
+  //--
+
+  /// 是否可以关闭当前的标签回调
+  /// @return true: 可以关闭
+  @configProperty
+  final FutureOr<bool> Function(TabEntryInfo tabEntry)? onCloseTabAction;
+
   /// 是否固定的标签, 固定的标签不支持关闭
   /// - [buildCloseTabButton]
   bool get isFixed => fixedLive.value == true;
@@ -373,6 +417,7 @@ class TabEntryInfo with Equatable {
     this.contentWidget,
     this.contentBuilder,
     this.keepAlive,
+    this.onCloseTabAction,
     bool fixed = false,
   }) {
     tabInfoLive << tabInfo;
@@ -769,7 +814,8 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
         .material();
   }
 
-  /// 创建添加标签按钮
+  /// 创建关闭标签按钮
+  /// - 关闭标签的按钮
   Widget buildCloseTabButton(
     BuildContext context,
     GlobalTheme globalTheme,
@@ -779,7 +825,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
         .insets(all: 6)
         .inkWellCircle(
           () {
-            widget.controller.removeTab(entry);
+            widget.controller.maybeRemoveTab(entry);
           },
           borderRadiusNum: radius,
           hoverColor: _getHoverColor(context, globalTheme),
