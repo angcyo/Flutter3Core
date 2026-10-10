@@ -136,3 +136,20 @@ https://pub.dev/packages/flutter_local_notifications
 - Android: API level 24 (Android 7.0)
 - iOS: 13.0 (iPhone11)
 - macOS: 10.15 (Catalina)
+
+## sentry_flutter
+
+https://pub.dev/packages/sentry_flutter
+
+https://docs.sentry.io/platforms/dart/guides/flutter/migration/v9-to-v10/#minimum-supported-versions
+
+| Dependency	              | v9 Minimum	 | v10 Minimum |
+|-------------------------|------------|-------------|
+| Dart	                    | 3.5.0	      | 3.12.0      |
+| Flutter	                 | 3.24.0	     | 3.44.0      |
+| Android API (minSdk)	    | 21	         | 26          |
+| iOS deployment target	   | 12.0	       | 15.0        |
+| macOS deployment target	 | 10.14	      | 12.0        |
+
+
+
