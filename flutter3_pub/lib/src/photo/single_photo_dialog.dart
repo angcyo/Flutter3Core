@@ -63,6 +63,19 @@ class SinglePhotoDialog extends StatefulWidget {
 
   @override
   State<SinglePhotoDialog> createState() => _SinglePhotoDialogState();
+
+  /// 显示图片查看对话框
+  @api
+  Future show(BuildContext? context, {bool useRootNavigator = true}) async {
+    return heroTag == null
+        ? context?.showWidgetDialog(this, useRootNavigator: useRootNavigator)
+        : context?.pushWidget(
+            this,
+            type: .none,
+            opaque: false,
+            rootNavigator: useRootNavigator,
+          );
+  }
 }
 
 class _SinglePhotoDialogState extends State<SinglePhotoDialog> {

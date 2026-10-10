@@ -637,7 +637,8 @@ extension WidgetEx on Widget {
           child: this,
         );
 
-  /// [Hero]
+  /// [Hero], 在源页面 (Source Route)和目标页面 (Destination Route)使用相同的标签即可使用动画
+  ///
   /// hero动画不能在Dialog中使用, 否则没有效果
   /// - hero 不能在[PopupRoute]中使用
   /// - hero 必须在[PageRoute]中使用
