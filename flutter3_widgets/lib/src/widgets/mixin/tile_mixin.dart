@@ -299,9 +299,9 @@ mixin TileMixin {
         (themeStyle
             ? globalTheme.textBodyStyle.copyWith(
                 fontWeight: selectedTextBold ? ui.FontWeight.bold : null,
-                color: context.isThemeDark
-                    ? globalTheme.blackColor
-                    : selectedTextColor,
+                color:
+                    selectedTextColor ??
+                    (context.isThemeDark ? globalTheme.blackColor : null),
               )
             : null);
 

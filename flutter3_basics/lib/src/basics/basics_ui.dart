@@ -2250,7 +2250,7 @@ extension WidgetEx on Widget {
   /// [shadowDecorated]
   Widget shadowRadius({
     bool clipContent = true,
-    Color? decorationColor = Colors.white,
+    Color? decorationColor,
     Color shadowColor = kShadowColor,
     Offset shadowOffset = Offset.zero,
     double blurRadius = kDefaultBlurRadius,

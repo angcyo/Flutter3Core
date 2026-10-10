@@ -18,21 +18,21 @@ extension GeometryWidgetEx on Widget {
 
   /// 将当前的小部件, 包裹在一个[Padding]中
   /// 根据html的padding属性, 生成padding
-  @Deprecated("请使用[paddingOnly]")
+  @Deprecated("请使用[insets]")
   Widget padding([double? v1, double? v2, double? v3, double? v4]) {
     final insets = edgeInsets(v1, v2, v3, v4);
     return paddingInsets(insets);
   }
 
-  @Deprecated("请使用[paddingOnly]")
+  @Deprecated("请使用[insets]")
   Widget paddingCss([double? v1, double? v2, double? v3, double? v4]) =>
       padding(v1, v2, v3, v4);
 
   /// 将当前的小部件, 包裹在一个[Padding]中
-  @Deprecated("请使用[paddingOnly]")
+  @Deprecated("请使用[insets]")
   Widget paddingAll(double value) => paddingInsets(EdgeInsets.all(value));
 
-  @Deprecated("请使用[paddingOnly]")
+  @Deprecated("请使用[insets]")
   Widget paddingLTRB(double left, double top, double right, double bottom) =>
       paddingInsets(EdgeInsets.fromLTRB(left, top, right, bottom));
 

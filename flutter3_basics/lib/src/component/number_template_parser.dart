@@ -56,7 +56,7 @@ class NumberTemplateParser {
 
   ///
   String _parseTemplate(String? text, String? template) {
-    final result = StringBuffer();
+    final buffer = StringBuffer();
     var templateIndex = 0;
     final length = math.max(text?.length ?? 0, template?.length ?? 0);
     for (var i = 0; i < length; i++) {
@@ -71,13 +71,13 @@ class NumberTemplateParser {
         //数字不够, 补齐
         while (padCharList.contains(templateChar)) {
           //是补齐符
-          result.write(templateChar);
+          buffer.write(templateChar);
           templateIndex++;
           templateChar = template?.getOrNull(templateIndex);
 
           if (splitCharList.contains(templateChar)) {
             //是分隔符
-            result.write(templateChar);
+            buffer.write(templateChar);
             while (splitCharList.contains(templateChar)) {
               templateIndex++;
               templateChar = template?.getOrNull(templateIndex);
@@ -89,13 +89,13 @@ class NumberTemplateParser {
       //
       if (templateChar == null) {
         //模板不够, 原样输出
-        result.write(intChar);
+        buffer.write(intChar);
         continue;
       }
       //
       if (splitCharList.contains(templateChar)) {
         //是分隔符
-        result.write(templateChar);
+        buffer.write(templateChar);
         while (splitCharList.contains(templateChar)) {
           templateIndex++;
           templateChar = template?.getOrNull(templateIndex);
@@ -104,15 +104,20 @@ class NumberTemplateParser {
 
       if (placeholderCharList.contains(templateChar) ||
           padCharList.contains(templateChar)) {
-        result.write(intChar);
+        buffer.write(intChar);
       } else {
-        result.write(templateChar);
+        buffer.write(templateChar);
       }
 
       templateIndex++;
     }
 
-    return result.toString();
+    //删除末尾的分隔符
+    String result = buffer.toString();
+    while (splitCharList.contains(result.lastSubstring(1))) {
+      result = result.substring(0, result.length - 1);
+    }
+    return result;
   }
 }
 
