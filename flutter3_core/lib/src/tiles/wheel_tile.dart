@@ -164,6 +164,8 @@ class LabelWheelTile extends StatefulWidget {
   final String? label;
   final TextStyle? labelTextStyle;
   final Widget? labelWidget;
+  final EdgeInsets? labelPadding;
+  final BoxConstraints? labelConstraints;
 
   /// content
   final dynamic initValue;
@@ -176,6 +178,9 @@ class LabelWheelTile extends StatefulWidget {
 
   /// 显示[initValue]小部件的宽度
   final double? valueWidth;
+
+  /// 显示[initValue]小部件的最小高度
+  final double? valueMinHeight;
 
   /// [values]改变回调, 如果有
   final ValueCallback? onValueChanged;
@@ -194,6 +199,9 @@ class LabelWheelTile extends StatefulWidget {
 
   /// [WheelDialog.title]对话框的标题, 默认[label]
   final String? wheelTitle;
+
+  /// 显示[initValue]小部件的内边距
+  final EdgeInsets? valuePadding;
 
   //--
 
@@ -227,12 +235,20 @@ class LabelWheelTile extends StatefulWidget {
     this.label,
     this.labelTextStyle,
     this.labelWidget,
+    this.labelPadding = kLabelPadding,
+    this.labelConstraints = kLabelConstraints,
+    //--
     this.leftWidget,
     this.rightWidget,
     this.initValue,
     this.values,
     this.valueWidth,
+    this.valueMinHeight = kMinInteractiveHeight,
     this.valuesWidget,
+    this.valuePadding = const EdgeInsets.symmetric(
+      horizontal: kH,
+      vertical: kX,
+    ),
     this.transformValueWidget,
     this.onValueChanged,
     this.onValueIndexChanged,
@@ -269,6 +285,8 @@ class _LabelWheelTileState extends State<LabelWheelTile>
       label: widget.label,
       labelStyle: widget.labelTextStyle,
       labelWidget: widget.labelWidget,
+      labelPadding: widget.labelPadding,
+      constraints: widget.labelConstraints,
     );
 
     //是否显示箭头
@@ -294,12 +312,12 @@ class _LabelWheelTileState extends State<LabelWheelTile>
 
     final content =
         Container(
-              padding: const EdgeInsets.symmetric(horizontal: kH, vertical: kX),
+              padding: widget.valuePadding,
               alignment: Alignment.centerLeft,
               constraints: BoxConstraints(
                 minWidth: widget.valueWidth ?? 0,
                 maxWidth: widget.valueWidth ?? double.infinity,
-                minHeight: kMinInteractiveHeight,
+                minHeight: widget.valueMinHeight ?? 0,
               ),
               child: [
                 widget.leftWidget,
@@ -421,6 +439,8 @@ class LabelWheelDateTimeTile extends StatefulWidget {
   /// label
   final String? label;
   final Widget? labelWidget;
+  final EdgeInsets? labelPadding;
+  final BoxConstraints? labelConstraints;
 
   /// dateTime
   final DateTime initDateTime;
@@ -449,6 +469,8 @@ class LabelWheelDateTimeTile extends StatefulWidget {
     //title
     this.label,
     this.labelWidget,
+    this.labelPadding = kLabelPadding,
+    this.labelConstraints = kLabelConstraints,
     //dateTime
     required this.initDateTime,
     this.minDateTime,
@@ -477,6 +499,8 @@ class _LabelWheelDateTimeTileState extends State<LabelWheelDateTimeTile>
     final label = buildLabelWidget(
       context,
       label: widget.label,
+      labelPadding: widget.labelPadding,
+      constraints: widget.labelConstraints,
       labelWidget: widget.labelWidget,
     );
 
@@ -517,9 +541,6 @@ class _LabelWheelDateTimeTileState extends State<LabelWheelDateTimeTile>
           },
     );
 
-    return [
-      label,
-      content.align(Alignment.centerRight).expanded(),
-    ].row()!.material();
+    return [label, content.align(.centerRight).expanded()].row()!.material();
   }
 }

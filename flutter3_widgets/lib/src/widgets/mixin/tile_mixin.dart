@@ -202,7 +202,7 @@ mixin TileMixin {
     TextAlign? labelTextAlign,
     bool themeStyle = true,
     //--
-    EdgeInsets? labelPadding,
+    @defInjectMark EdgeInsets? labelPadding,
     EdgeInsets? padding,
     BoxConstraints? constraints = kLabelConstraints,
     //--

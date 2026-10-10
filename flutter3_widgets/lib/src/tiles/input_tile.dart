@@ -214,7 +214,7 @@ class SingleLabelInputTile extends StatefulWidget with LabelMixin, InputMixin {
     this.onInputTextChanged,
     this.onInputTextConfirmChange,
     this.onInputSubmitted,
-    this.inputBorderType = InputBorderType.none,
+    this.inputBorderType = .none,
     this.inputMaxLines = 1,
     this.inputMaxLength,
     this.inputFormatters,
