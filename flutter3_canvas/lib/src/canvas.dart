@@ -876,7 +876,7 @@ class CanvasListener {
   )?
   onCanvasOverlayComponentAction;
 
-  /// [CanvasDelegate.dispatchCanvasOverlayComponentChanged]
+  /// [CanvasDelegate.dispatchCanvasMaybePop]
   final Future<bool> Function(CanvasDelegate delegate)? onCanvasMaybePop;
 
   /// [CanvasDelegate.dispatchCanvasFocusChanged]
