@@ -679,9 +679,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 移除选中的所有元素, 并且清空选择
   @api
   @supportUndo
-  bool removeSelectedElement({
-    ElementSelectType selectType = ElementSelectType.code,
-  }) {
+  bool removeSelectedElement({ElementSelectType selectType = .code}) {
     if (isSelectedElement) {
       final list = elementSelectComponent.children?.clone();
       //elementSelectComponent.resetChildren(null, enableResetElementAngle);
@@ -1371,7 +1369,7 @@ class ElementSelectComponent extends ElementGroupPainter
             final last = elementList.lastOrNull;
             if (last != null) {
               //多指选中元素
-              addSelectElement(last, selectType: ElementSelectType.multiTouch);
+              addSelectElement(last, selectType: .multiTouch);
               canvasElementControlManager.updateControlTargetIf(this);
             }
           }
@@ -1728,11 +1726,8 @@ class ElementSelectComponent extends ElementGroupPainter
   void updateSelectBounds(@sceneCoordinate Rect? bounds, bool select) {
     if (select) {
       //需要选择元素
-      resetSelectElement(
-        _getSelectBoundsElementList(bounds),
-        ElementSelectType.pointer,
-      );
-      canvasElementControlManager.updatePaintInfoType(PaintInfoType.size);
+      resetSelectElement(_getSelectBoundsElementList(bounds), .pointer);
+      canvasElementControlManager.updatePaintInfoType(.size);
     }
     selectBounds = bounds;
     canvasElementControlManager.canvasDelegate
@@ -1804,6 +1799,10 @@ class ElementSelectComponent extends ElementGroupPainter
             children,
             selectType,
           );
+        }
+        //清除选择框
+        if (selectBounds != null) {
+          updateSelectBounds(null, false);
         }
       } else {
         assert(() {
