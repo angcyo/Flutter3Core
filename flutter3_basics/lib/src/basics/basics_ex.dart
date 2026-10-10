@@ -891,6 +891,9 @@ extension StringEx on String {
 
   //MARK: - wrap
 
+  /// 调试字符串标识
+  String get debug => "$this'";
+
   /// 将字符串用()圆括号 (Parentheses / Round Brackets)包裹起来
   /// - [wph]
   /// - [wsb]
