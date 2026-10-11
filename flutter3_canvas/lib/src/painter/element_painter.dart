@@ -51,7 +51,7 @@ class IElementPainter extends IPainter
   ///
   /// [updatePainterPaintProperty]
   @configProperty
-  PaintingStyle paintStyle = PaintingStyle.stroke;
+  PaintingStyle paintStyle = .stroke;
 
   /// 会在[onPaintingSelfBefore]中使用
   @configProperty
@@ -63,9 +63,9 @@ class IElementPainter extends IPainter
   @configProperty
   Paint paint = Paint()
     ..isAntiAlias = true
-    ..filterQuality = FilterQuality.medium
-    ..strokeJoin = StrokeJoin.round
-    ..strokeCap = StrokeCap.round;
+    ..filterQuality = .medium
+    ..strokeJoin = .round
+    ..strokeCap = .round;
 
   /// 选中/鼠标悬浮后的边框绘制颜色
   ///  - [paintPropertyRect]
