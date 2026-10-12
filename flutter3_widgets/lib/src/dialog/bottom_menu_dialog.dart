@@ -125,6 +125,7 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
           context,
           [
             body,
+            //cancel 按钮 以及 分割线/或分割间隙
             if (cancel != null)
               isTransparentStyle
                   ? Empty.height(kX)

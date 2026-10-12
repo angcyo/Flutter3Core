@@ -703,11 +703,12 @@ mixin DialogMixin implements TranslationTypeImpl {
     final globalTheme = GlobalTheme.of(context);
     final navigator = context.navigatorOf();
     final route = context.modalRoute;
-    final align = useDesktopLayout ? Alignment.center : Alignment.bottomCenter;
+    final Alignment align = useDesktopLayout ? .center : .bottomCenter;
 
     Widget result = body
         .size(height: height)
         .safeArea(
+          top: fullScreen,
           useSafeArea: useSafeArea,
           maintainBottomViewPadding: maintainBottomViewPadding,
         )
