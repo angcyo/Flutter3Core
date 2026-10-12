@@ -296,11 +296,11 @@ extension WidgetListEx on WidgetNullList {
     }
     return Column(
       key: key,
-      mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
-      mainAxisSize: mainAxisSize ?? MainAxisSize.min,
-      crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+      mainAxisAlignment: mainAxisAlignment ?? .start,
+      mainAxisSize: mainAxisSize ?? .min,
+      crossAxisAlignment: crossAxisAlignment ?? .center,
       textDirection: textDirection,
-      verticalDirection: verticalDirection ?? VerticalDirection.down,
+      verticalDirection: verticalDirection ?? .down,
       textBaseline: textBaseline,
       spacing: gap ?? 0,
       children: children,
