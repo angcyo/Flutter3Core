@@ -186,7 +186,11 @@ const kScrollPhysics = AlwaysScrollableScrollPhysics(
 /// [RenderView.paint]
 /// [debugAddPaintCallback]
 /// [isDebugFlag]
-const bool isDebug = kDebugMode;
+const bool isDebug = isCloseDebug == true ? false : kDebugMode;
+
+/// 是否全局关闭debug模式
+/// - 比如临时关闭调试, 方便在模拟器环境中截图使用
+const bool isCloseDebug = false;
 
 /// 随机数生成器
 final random = math.Random();

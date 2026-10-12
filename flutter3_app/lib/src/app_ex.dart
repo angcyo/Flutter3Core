@@ -512,6 +512,25 @@ extension ShareStringEx on String {
 
 //MARK: - debug
 
+/// 是否运行在模拟器设备
+Future<bool> get $isEmulator async {
+  final deviceInfo = await $platformDeviceInfo;
+  try {
+    return (deviceInfo as dynamic).isPhysicalDevice == false;
+  } catch (e) {
+    return false;
+  }
+}
+
+bool get $isEmulatorCache {
+  final deviceInfo = $platformDeviceInfoCache;
+  try {
+    return (deviceInfo as dynamic).isPhysicalDevice == false;
+  } catch (e) {
+    return false;
+  }
+}
+
 /// App名称, 非包名
 String? get $appName => $platformPackageInfoCache?.appName;
 
