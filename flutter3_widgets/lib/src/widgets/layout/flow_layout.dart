@@ -73,9 +73,9 @@ class FlowLayout extends MultiChildRenderObjectWidget {
     this.equalWidthRange,
     this.lineMaxChildCount,
     this.lineChildCount,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.lineMainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.mainAxisAlignment = .start,
+    this.lineMainAxisAlignment = .start,
+    this.crossAxisAlignment = .start,
     this.matchLineHeight,
     this.onBeforePaint,
     this.onAfterPaint,
@@ -474,7 +474,7 @@ class FlowLayoutRender extends RenderBox
     _childUsedWidth = 0;
     _childUsedHeight = 0;
     measureChild(debugLabel: debugLabel);
-    layoutChild(/*debugLabel: debugLabel*/);
+    layoutChild(debugLabel: debugLabel);
 
     final childSize = Size(_childUsedWidth, _childUsedHeight);
     size =
@@ -809,7 +809,7 @@ class FlowLayoutRender extends RenderBox
 
     //matchLineHeight 功能适配
     childrenLineList.forEachIndexed((index, lineChildList) {
-      /*debugger(when: !isIos && debugLabel != null);*/
+      debugger(when: /*!isIos && */ debugLabel != null);
       double lineHeight = getLineUsedHeight(lineChildList);
       for (final child in lineChildList) {
         final childParentData = child.parentData! as FlowLayoutParentData;
