@@ -46,7 +46,7 @@ extension PopupEx on BuildContext {
     Rect? anchorRect,
     BuildContext? anchorChild,
     bool rootNavigator = false,
-    double? edgeMargin /*距离容器的边界距离*/,
+    @defInjectMark double? edgeMargin /*距离容器的边界距离*/,
     //--
     Alignment targetAnchor = .topRight /*对齐锚点的什么位置*/,
     Alignment? preferredFollowerAlignment /*优先使用自身的什么位置对齐*/,
@@ -62,8 +62,8 @@ extension PopupEx on BuildContext {
     @defInjectMark AxisDirection? arrowDirection /*箭头方向*/,
     bool animate = true,
     Color? barriersColor = Colors.transparent,
-    EdgeInsets? contentPadding,
-    EdgeInsets? contentMargin,
+    @defInjectMark EdgeInsets? contentPadding,
+    @defInjectMark EdgeInsets? contentMargin,
     IgnorePointerType? barrierIgnorePointerType,
     TranslationType? translationType,
     //--

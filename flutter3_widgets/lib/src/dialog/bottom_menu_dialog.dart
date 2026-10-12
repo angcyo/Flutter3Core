@@ -145,8 +145,9 @@ class BottomMenuItemsDialog extends StatelessWidget with DialogMixin {
           bgColor: surfaceColor,
           clipTopRadius: isTransparentStyle ? 0 : clipRadius,
           isPopupStyle: isInPopup,
+          useSafeArea: !isInPopup,
         )
-        .paddingAll(isTransparentStyle ? kX : 0)
+        .insets(all: isTransparentStyle ? kX : 0)
         .desktopConstrained(
           enable: isInPopup,
           maxWidth: isInPopup
