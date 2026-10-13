@@ -127,7 +127,11 @@ extension HexIntEx on int {
   /// 将整数转换为十六进制字符串。
   /// 1->01
   /// 200->C8
-  String toHex([int? length]) => _HEX.encoder.convert(toBytes(length));
+  /// - [intLog] 是否需要int数字的日志
+  String toHex([int? length, bool? intLog]) {
+    final hex = _HEX.encoder.convert(toBytes(length));
+    return intLog == true ? "$hex($this)" : hex;
+  }
 
   /// - [toHex]
   String toHexDebug([int? length]) =>
