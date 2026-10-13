@@ -104,13 +104,15 @@ mixin AbsScrollPage {
     PreferredSizeWidget? appBar,
     Widget? body,
     //--SafeArea
-    bool useSafeArea = true,
+    bool? useSafeArea,
     bool safeAreaLeft = true,
     bool safeAreaTop = false,
     bool safeAreaRight = true,
     bool safeAreaBottom = true,
   }) {
     //debugger();
+    resizeToAvoidBottomInset ??= getResizeToAvoidBottomInset(context);
+    useSafeArea ??= usePageSafeArea ?? true;
     final useSliverAppBar = this.useSliverAppBar(context) == true;
     return Scaffold(
       appBar: useSliverAppBar
@@ -119,8 +121,7 @@ mixin AbsScrollPage {
           ? (appBar ?? buildAppBar(context))
           : null,
       backgroundColor: backgroundColor ?? getBackgroundColor(context),
-      resizeToAvoidBottomInset:
-          resizeToAvoidBottomInset ?? getResizeToAvoidBottomInset(context),
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       body:
           (body ??
                   (this is RebuildBodyMixin
@@ -149,6 +150,9 @@ mixin AbsScrollPage {
         ? globalTheme.surfaceBgColor
         : Colors.transparent;
   }
+
+  /// 是否使用[SafeArea]
+  bool? get usePageSafeArea => true;
 
   /// 默认不适配底部键盘
   bool getResizeToAvoidBottomInset(BuildContext context) => false;
@@ -266,11 +270,7 @@ mixin AbsScrollPage {
     final after = buildBodyAfter(context);
     return before == null && after == null
         ? body
-        : [
-            ?before,
-            body.expanded(),
-            ?after,
-          ].column(mainAxisSize: MainAxisSize.max)!;
+        : [?before, body.expanded(), ?after].column(mainAxisSize: .max)!;
   }
 
   /// 构建内容前面的内容
