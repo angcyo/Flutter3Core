@@ -1739,8 +1739,8 @@ extension WidgetEx on Widget {
   /// 底部安全区域
   /// [safeArea]
   Widget safeBottomArea({
-    bool useSafeArea = true,
-    bool useSliverSafeArea = false,
+    bool? useSafeArea,
+    bool? useSliverSafeArea,
     //--
     bool left = false,
     bool top = false,
@@ -1749,8 +1749,9 @@ extension WidgetEx on Widget {
     EdgeInsets minimum = .zero,
     bool maintainBottomViewPadding = true,
   }) {
+    useSafeArea ??= useSliverSafeArea ?? true;
     return useSafeArea
-        ? (useSliverSafeArea
+        ? (useSliverSafeArea == true
               ? SliverSafeArea(
                   left: left,
                   top: top,
