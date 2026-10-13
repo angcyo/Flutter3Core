@@ -409,7 +409,7 @@ mixin AbsScrollPage {
   bool? enableAppBar(BuildContext context) =>
       context.isInRootNavigator || useSliverAppBar(context) == true;
 
-  /// 获取标题栏系统样式
+  /// 获取标题栏系统样式, 优先于[isDarkAppBar]
   ///
   /// - [SystemUiOverlayStyle.light]
   /// - [SystemUiOverlayStyle.dark]
@@ -419,13 +419,13 @@ mixin AbsScrollPage {
   SystemUiOverlayStyle? getAppBarSystemUiOverlayStyle(BuildContext context) =>
       null;
 
-  /// 状态栏是否是暗色模式
-  /// # 暗色模式: true
+  /// 本身的[AppBar]是什么模式, 或以什么模式初始化状态栏的样式
+  /// # true : 本身是暗色模式 -> [SystemUiOverlayStyle.light]
   ///   - 背景黑色, 状态栏图标/文本为白色
-  /// # 亮色模式: false
+  /// # false : 本身是亮色模式 -> [SystemUiOverlayStyle.dark]
   ///   - 背景白色, 状态栏图标/文本为黑色
   @property
-  bool? isDarkStatusBar(BuildContext context) {
+  bool? isDarkAppBar(BuildContext context) {
     //debugger();
     final globalConfig = GlobalConfig.of(context);
     if (globalConfig.isThemeDark) {
@@ -563,7 +563,7 @@ mixin AbsScrollPage {
       }
     }
     final overlayStyle = getAppBarSystemUiOverlayStyle(context);
-    final darkStatusBar = isDarkStatusBar(context);
+    final darkStatusBar = isDarkAppBar(context);
     assert(() {
       l.i("[${classHash()}]状态栏样式->$overlayStyle $darkStatusBar");
       return true;
@@ -591,11 +591,7 @@ mixin AbsScrollPage {
       //渐变背景
       systemOverlayStyle:
           overlayStyle ??
-          (darkStatusBar == null
-              ? null
-              : (darkStatusBar
-                    ? SystemUiOverlayStyle.light
-                    : SystemUiOverlayStyle.dark)),
+          (darkStatusBar == null ? null : (darkStatusBar ? .light : .dark)),
     );
   }
 
