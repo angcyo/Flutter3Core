@@ -7,7 +7,6 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 可以滑动切换多个值的tile
 class LabelTabLayoutTile extends StatefulWidget {
-
   //MARK: - label
   /// label
   final String? label;
@@ -47,7 +46,7 @@ class LabelTabLayoutTile extends StatefulWidget {
     this.values,
     this.valuesWidget,
     this.onTabIndexChanged,
-    this.axis = Axis.horizontal,
+    this.axis = .horizontal,
     this.isExpanded = true,
     this.backgroundColor,
     this.indicatorColor,
