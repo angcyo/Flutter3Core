@@ -189,6 +189,7 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
                   .padding(4, 2)
                   .shadowDecorated(radius: 4, decorationColor: Colors.black26)
                   .paddingAll(kH)
+                  .safeArea()
                   .position(left: 0, top: 0)
             : null,
       );

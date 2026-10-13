@@ -1702,7 +1702,7 @@ extension WidgetEx on Widget {
 
   /// 将当前的小部件, 包裹在一个[SafeArea]中
   /// - 需要注意手机横屏的情况
-  /// [safeBottomArea] 底部安全区域
+  /// [safeBottomArea] 仅底部安全区域
   Widget safeArea({
     bool useSafeArea = true,
     bool useSliverSafeArea = false,

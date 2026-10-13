@@ -282,8 +282,8 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
         webviewPullToRefreshController?.endRefreshing().ignore();
       },
       onProgressChanged: (controller, progress) async {
-        l.d('onProgressChanged[${await controller.getTitle()}]->$progress');
         onSelfWebviewProgress(progress);
+        l.d('onProgressChanged[$webviewTile]->$progress');
         /*if (progress == 100) {
           webviewPullToRefreshController?.endRefreshing().ignore();
         }
@@ -512,6 +512,36 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 更新加载进度, 并承载着加载完成的处理
   void updateWebviewProgress(int progress) async {
+    //--
+    try {
+      //MissingPluginException(No implementation found for method getTitle on channel com.pichillilorenzo/flutter_inappwebview_2)
+      webviewTile = await inAppWebViewController?.getTitle();
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+    }
+    try {
+      //MissingPluginException(No implementation found for method getUrl on channel com.pichillilorenzo/flutter_inappwebview_2)
+      webviewUrl = await inAppWebViewController?.getUrl();
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+    }
+    try {
+      //MissingPluginException(No implementation found for method getOriginalUrl on channel com.pichillilorenzo/flutter_inappwebview_2854456911840)
+      webviewOriginUrl = await inAppWebViewController?.getOriginalUrl();
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      webviewOriginUrl ??= webviewUrl;
+    }
+    //--
     if (progress >= 100) {
       _handlePendingPageCompleter(true);
     }
@@ -524,18 +554,7 @@ mixin InAppWebViewStateMixin<T extends StatefulWidget> on State<T> {
       webviewPullToRefreshController?.endRefreshing().ignore();
     }
     webviewLoadProgress = progress;
-    webviewTile = await inAppWebViewController?.getTitle();
-    webviewUrl = await inAppWebViewController?.getUrl();
-    //MissingPluginException(No implementation found for method getOriginalUrl on channel com.pichillilorenzo/flutter_inappwebview_2854456911840)
-    try {
-      webviewOriginUrl = await inAppWebViewController?.getOriginalUrl();
-    } catch (e) {
-      assert(() {
-        print(e);
-        return true;
-      }());
-      webviewOriginUrl ??= webviewUrl;
-    }
+
     updateState();
   }
 
