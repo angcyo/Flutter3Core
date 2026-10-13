@@ -59,12 +59,12 @@ class ReceiveIntent {
       //MARK: - first
       appLinks.getInitialLink().get((uri, _) {
         if (uri is Uri) {
+          l.t("First处理uri->$uri");
           if (isDebugFlag) {
-            l.t("First处理uri->$uri");
             toastInfo("First处理uri->$uri");
           }
           uriStream.add(uri);
-          _handleUri(uri);
+          _handleUri(uri, debugLabel: "getInitialLink");
         }
       });
       appLinks.getInitialLinkString().get((text, _) {
@@ -76,12 +76,12 @@ class ReceiveIntent {
       // Subscribe to all events (initial link and further)
       appLinks.uriLinkStream.listen((uri) {
         // Do something (navigation, ...)
+        l.t("处理uri->$uri");
         if (isDebugFlag) {
-          l.t("处理uri->$uri");
           toastInfo("处理uri->$uri");
         }
         uriStream.add(uri);
-        _handleUri(uri);
+        _handleUri(uri, debugLabel: "uriLinkStream");
       });
       appLinks.stringLinkStream.listen((text) {
         textStream.add(text);
@@ -93,70 +93,56 @@ class ReceiveIntent {
     // 首次打开软件时, 检查平台分享数据
     ReceiveSharingIntentPlus.getInitialMedia().get((value, _) {
       if (value is List<SharedMediaFile> && value.isNotEmpty) {
-        assert(() {
-          l.i(
-            'Initial Shared Media[${value.size()}]:${value.map((f) => f.path).join(',') ?? ''}',
-          );
-          return true;
-        }());
+        l.i(
+          'Initial Shared Media[${value.size()}]:${value.map((f) => f.path).join(',') ?? ''}',
+        );
         mediaFileStream.add(value);
         fileStream.add(value.map((f) => File(f.path)).toList());
       }
     });
     ReceiveSharingIntentPlus.getInitialText().get((value, _) {
       if (value is String) {
-        assert(() {
-          l.i('Initial Shared Text:$value');
-          return true;
-        }());
+        l.i('Initial Shared Text:$value');
         textStream.add(value);
       }
     });
     ReceiveSharingIntentPlus.getInitialTextAsUri().get((value, _) {
       if (value is Uri) {
-        assert(() {
-          l.i('Initial Shared Uri[${value.runtimeType}]:$value');
-          return true;
-        }());
+        l.i('Initial Shared Uri[${value.runtimeType}]:$value');
         uriStream.add(value);
-        _handleUri(value);
+        _handleUri(value, debugLabel: "getInitialTextAsUri");
       }
     });
     //MARK: - listen
     // 监听平台分享数据
     ReceiveSharingIntentPlus.getMediaStream().listen((value) {
-      assert(() {
-        //Shared Media:/data/user/0/com.angcyo.flutter3.abc/cache/PXL_20230627_030415927.jpg
+      //Shared Media:/data/user/0/com.angcyo.flutter3.abc/cache/PXL_20230627_030415927.jpg
 
-        //Shared Media:/data/user/0/com.angcyo.flutter3.abc/cache/PXL_20230627_030415927.jpg,/data/user/0/com.angcyo.flutter3.abc/cache/IMG_20230417152853656.jpg
-        l.i('Shared Media:${value.map((f) => f.path).join(',') ?? ''}');
-        return true;
-      }());
+      //Shared Media:/data/user/0/com.angcyo.flutter3.abc/cache/PXL_20230627_030415927.jpg,/data/user/0/com.angcyo.flutter3.abc/cache/IMG_20230417152853656.jpg
+      l.i('Shared Media:${value.map((f) => f.path).join(',') ?? ''}');
       mediaFileStream.add(value);
       fileStream.add(value.map((f) => File(f.path)).toList());
     });
     ReceiveSharingIntentPlus.getTextStream().listen((value) {
-      assert(() {
-        //[String]Shared Text:content://com.tencent.mobileqq.fileprovider/external_files/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Menlo-Italic.ttf
-        l.i('Shared Text:$value');
-        return true;
-      }());
+      //[String]Shared Text:content://com.tencent.mobileqq.fileprovider/external_files/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Menlo-Italic.ttf
+      l.i('Shared Text:$value');
       textStream.add(value);
     });
     ReceiveSharingIntentPlus.getTextStreamAsUri().listen((value) {
-      assert(() {
-        //Shared Uri[_SimpleUri][content]:content://com.tencent.mobileqq.fileprovider/external_files/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/test-xlsx.xlsx
-        //[String]Shared Uri[_SimpleUri][content]:content://com.tencent.mobileqq.fileprovider/external_files/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Menlo-Italic.ttf
-        l.i('Shared Uri[${value.runtimeType}][${value.scheme}]:$value');
-        return true;
-      }());
+      //Shared Uri[_SimpleUri][content]:content://com.tencent.mobileqq.fileprovider/external_files/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/test-xlsx.xlsx
+      //[String]Shared Uri[_SimpleUri][content]:content://com.tencent.mobileqq.fileprovider/external_files/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Menlo-Italic.ttf
+      l.i('Shared Uri[${value.runtimeType}][${value.scheme}]:$value');
       uriStream.add(value);
-      _handleUri(value);
+      _handleUri(
+        value,
+        toastError: !uriStream.hasListener,
+        debugLabel: "getTextStreamAsUri",
+      );
     });
   }
 
   /// 处理[Uri]
-  bool _handleUri(Uri uri, {bool? toastError = true}) {
+  bool _handleUri(Uri uri, {bool? toastError = true, String? debugLabel}) {
     if (uri.scheme == "content") {
       uri_to_file.toFile("$uri").get((file, _) {
         if (file is File) {
@@ -174,8 +160,16 @@ class ReceiveIntent {
           printError(e, s);
           return true;
         }());
+        if (uri.host == "open") {
+          //唤醒app
+          return true;
+        }
         if (toastError == true) {
-          toastInfo("不支持处理[${uri.scheme}]: $uri");
+          if (isDebug && debugLabel != null) {
+            toastInfo("[$debugLabel]不支持处理[${uri.scheme}]: $uri");
+          } else {
+            toastInfo("不支持处理[${uri.scheme}]: $uri");
+          }
         }
       }
     }
@@ -194,7 +188,7 @@ class ReceiveIntent {
     }
     try {
       final uri = Uri.parse(path);
-      return _handleUri(uri, toastError: toastError);
+      return _handleUri(uri, toastError: toastError, debugLabel: "handlePath");
     } catch (e, s) {
       assert(() {
         printError(e, s);

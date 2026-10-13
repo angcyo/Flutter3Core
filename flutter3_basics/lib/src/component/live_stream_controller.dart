@@ -37,6 +37,9 @@ class LiveStreamController<T> {
 
   final StreamController<T> controller = StreamController<T>.broadcast();
 
+  /// 是否有监听器
+  bool get hasListener => controller.hasListener;
+
   LiveStreamController(
     T initialValue, {
     this.autoClearValue = false,
