@@ -133,6 +133,16 @@ class RScrollController extends ScrollController {
   @api
   void checkScrollPosition() {
     //debugger();
+    final ScrollPosition? position;
+    try {
+      position = this.position;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      return;
+    }
     if (!position.isScrollingNotifier.value /*没有在滚动*/ &&
         position.hasContentDimensions /*具有内容的尺寸信息*/ &&
         position.pixels >= position.maxScrollExtent /*到底了*/ ) {

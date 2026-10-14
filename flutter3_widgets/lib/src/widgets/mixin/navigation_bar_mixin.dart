@@ -170,8 +170,9 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
         : null;
     //--
     final selectedIndex = clamp(currentNavigateIndexMixin, 0, items.length - 1);
+    final Widget navigationBar;
     if (useNavigationRail == true) {
-      return NavigationRail(
+      navigationBar = NavigationRail(
         elevation: elevation == 0 ? null : elevation,
         /*useIndicator: ,*/
         /*indicatorColor: ,*/
@@ -198,35 +199,46 @@ mixin NavigationBarMixin<T extends StatefulWidget> on State<T> {
         trailing: railTrailing,
         leading: railLeading,
       );
+    } else {
+      navigationBar = BottomNavigationBar(
+        items: items,
+        elevation: elevation,
+        currentIndex: selectedIndex,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: backgroundColor,
+        iconSize: selectedIconSize,
+        landscapeLayout: landscapeLayout,
+        //--
+        selectedItemColor: selectedItemColor,
+        unselectedItemColor: unselectedItemColor,
+        //--
+        selectedLabelStyle: selectedLabelStyle,
+        unselectedLabelStyle: unselectedLabelStyle,
+        //--
+        selectedFontSize: selectedLabelStyle?.fontSize ?? 0,
+        unselectedFontSize: unselectedLabelStyle?.fontSize ?? 0,
+        //--
+        selectedIconTheme: selectedIconTheme,
+        unselectedIconTheme: unselectedIconTheme,
+        //--
+        showSelectedLabels: showSelectedLabels,
+        showUnselectedLabels: showUnselectedLabels,
+        //--
+        onTap: (index) {
+          onSelfNavigationIndexChanged(context, index);
+        },
+      );
     }
-    return BottomNavigationBar(
-      items: items,
-      elevation: elevation,
-      currentIndex: selectedIndex,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: backgroundColor,
-      iconSize: selectedIconSize,
-      landscapeLayout: landscapeLayout,
-      //--
-      selectedItemColor: selectedItemColor,
-      unselectedItemColor: unselectedItemColor,
-      //--
-      selectedLabelStyle: selectedLabelStyle,
-      unselectedLabelStyle: unselectedLabelStyle,
-      //--
-      selectedFontSize: selectedLabelStyle?.fontSize ?? 0,
-      unselectedFontSize: unselectedLabelStyle?.fontSize ?? 0,
-      //--
-      selectedIconTheme: selectedIconTheme,
-      unselectedIconTheme: unselectedIconTheme,
-      //--
-      showSelectedLabels: showSelectedLabels,
-      showUnselectedLabels: showUnselectedLabels,
-      //--
-      onTap: (index) {
-        onSelfNavigationIndexChanged(context, index);
-      },
-    );
+    //
+    if (this is PageViewMixin) {
+      final currentPageIndex = (this as PageViewMixin).currentPageIndex;
+      if ( /*currentPageIndex != null &&*/ currentPageIndex != selectedIndex) {
+        postFrame(() {
+          onSelfNavigationIndexChanged(context, selectedIndex);
+        });
+      }
+    }
+    return navigationBar;
   }
 
   /// 底部导航改变回调
