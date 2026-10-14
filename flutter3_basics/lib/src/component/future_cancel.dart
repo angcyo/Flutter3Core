@@ -41,7 +41,7 @@ class FutureCancelToken {
   void cancel([Object? reason]) {
     if (isCanceled) {
       assert(() {
-        l.w("[${classHash()}]已经被取消!");
+        l.w("[${classHash()}]已经被取消->$reason");
         return true;
       }());
       debugger();
