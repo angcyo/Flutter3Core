@@ -92,6 +92,7 @@ extension FutureEx<T> on Future<T> {
           } else {
             assert(() {
               l.w('[$tag]Future异常:$error↓');
+              printStackTrace(stack ?? errorStack);
               //printError(error, stack ?? errorStack);
               return true;
             }());
