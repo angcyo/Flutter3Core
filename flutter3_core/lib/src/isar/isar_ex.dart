@@ -64,7 +64,18 @@ String defIsarFilePath = "";
 /// 别名
 /// 所有[Collection], 都需要使用[registerIsarCollection]注册
 /// `xxxCollectionSchema`
+/// ```
+/// @isarCollection
+/// class xxxCollectionSchema {
+/// }
+/// ```
 const isarCollection = collection;
+
+/// Unsupported type. Please annotate the property with @ignore.
+/// ```
+/// @isarIgnore
+/// ```
+const isarIgnore = ignore;
 
 /// 别名
 /// [Collection]
