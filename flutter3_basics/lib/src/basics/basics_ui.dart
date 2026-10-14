@@ -3474,8 +3474,8 @@ extension WidgetEx on Widget {
     Key? key,
     AlignmentGeometry alignment = .center,
     TextDirection? textDirection,
-    StackFit fit = StackFit.loose,
-    Clip clipBehavior = Clip.hardEdge,
+    StackFit fit = .loose,
+    Clip clipBehavior = .hardEdge,
   }) => after == null && before == null
       ? this
       : [before, this, after].stack(
