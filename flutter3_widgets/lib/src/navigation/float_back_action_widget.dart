@@ -20,7 +20,11 @@ class FloatBackActionWidget extends StatefulWidget {
   @defInjectMark
   final Widget? child;
 
-  /// 导航器key
+  /// 指定body顶上的Context, 用来find导航器
+  /// - 导航器在此Context下面
+  final BuildContext? rootContext;
+
+  /// 指定导航器key
   final GlobalKey<NavigatorState>? navigatorKey;
 
   /// 检查是否可以关闭
@@ -31,6 +35,7 @@ class FloatBackActionWidget extends StatefulWidget {
     this.floatStyle,
     this.result,
     this.child,
+    this.rootContext,
     this.navigatorKey,
     this.checkDismissal,
   });
@@ -61,6 +66,9 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+    final noForceNavigator =
+        widget.navigatorKey == null && widget.rootContext == null;
+    //--
     Widget body =
         widget.child ??
         globalConfig.appBarDismissalBuilder(context, widget) ??
@@ -68,15 +76,19 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
           Icons.arrow_back_ios_new,
           color: globalConfig.globalTheme.icoNormalColor,
         ).insets(all: kX);
+    //--
     body = body
         .inkWellCircle(() {
           //debugger();
           //widget.navigatorKey?.currentState?.maybePop();
+          final navigator =
+              widget.navigatorKey?.currentState ??
+              widget.rootContext?.findNavigatorState();
           buildContext?.maybePop(
-            navigator: widget.navigatorKey?.currentState,
+            navigator: navigator,
+            rootNavigator: noForceNavigator,
             result: widget.result,
-            checkDismissal:
-                widget.checkDismissal ?? widget.navigatorKey == null,
+            checkDismissal: widget.checkDismissal ?? noForceNavigator,
           );
         })
         .card(
@@ -87,7 +99,9 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
     if (isFloatStyle) {
       body = body.mouseHoverVisibility().mouseHoverProvider();
     }
-    return body;
+    return body /*.visible(
+      visible: navigator?.canPop() == true || noForceNavigator,
+    )*/;
   }
 }
 
@@ -97,19 +111,24 @@ extension FloatBackActionWidgetEx on Widget {
   /// - [floatStyle] 是否要强制浮动, 否则一直显示. 在桌面端默认浮动显示
   /// - [result] 路由pop返回结果
   Widget floatBackActionWidget({
+    bool enable = true,
     Key? key,
     bool? floatStyle,
     Object? result,
     Widget? child,
+    BuildContext? rootContext,
     GlobalKey<NavigatorState>? navigatorKey,
-  }) => [
-    this,
-    FloatBackActionWidget(
-      key: key,
-      floatStyle: floatStyle,
-      result: result,
-      navigatorKey: navigatorKey,
-      child: child,
-    ),
-  ].stack()!;
+  }) => enable
+      ? [
+          this,
+          FloatBackActionWidget(
+            key: key,
+            floatStyle: floatStyle,
+            result: result,
+            rootContext: rootContext,
+            navigatorKey: navigatorKey,
+            child: child,
+          ),
+        ].stack()!
+      : this;
 }

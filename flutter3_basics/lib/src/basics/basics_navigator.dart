@@ -404,7 +404,7 @@ extension NavigatorEx on BuildContext {
   /// 从上往下查找 [NavigatorState]
   /// [Navigator.of]
   NavigatorState? findNavigatorState() {
-    var element = findElementOfWidget<Navigator>();
+    final element = findElementOfWidget<Navigator>();
     if (element is StatefulElement) {
       return element.state as NavigatorState;
     }
@@ -491,7 +491,7 @@ extension NavigatorEx on BuildContext {
         return findNavigator;
       } else {
         assert(() {
-          l.w("当前上下文[${classHash()}]中, 未找到[NavigatorState]");
+          l.w("当前上下文[${classHash()}]中, 无[NavigatorState]");
           return true;
         }());
       }
@@ -736,12 +736,23 @@ extension NavigatorEx on BuildContext {
     NavigatorState? navigator,
   }) async {
     //debugger();
-    final isAppBarDismissal =
-        (navigator == null ? modalRoute : ModalRoute.of(navigator.context))
-            ?.impliesAppBarDismissal ??
-        false;
-    if (!checkDismissal || (checkDismissal && isAppBarDismissal)) {
-      return (navigator ?? navigatorOf(rootNavigator)).maybePop(result);
+    final navigatorState = navigator ?? navigatorMaybeOf(rootNavigator);
+    final modalRoute =
+        navigator?.context.modalRoute ??
+        this.modalRoute ??
+        navigatorState?.context.modalRoute;
+    final dismissal = modalRoute?.impliesAppBarDismissal ?? true;
+    if (!checkDismissal || (checkDismissal && dismissal)) {
+      return await navigatorState?.maybePop(result) == true;
+    } else {
+      assert(() {
+        if (navigatorState == null) {
+          l.d("操作被忽略, 无法找到导航器!");
+        } else if (checkDismissal) {
+          l.d("操作被忽略, 路由是根路由->[$modalRoute]");
+        }
+        return true;
+      }());
     }
     return false;
   }
