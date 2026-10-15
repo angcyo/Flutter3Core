@@ -102,7 +102,7 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
               .paddingOnly(all: kX)
               .inkWellCircle(() {
                 _fetchIdiom();
-              })
+              }, cursor: SystemMouseCursors.click)
               .align(.topRight)
               .material(),
         )

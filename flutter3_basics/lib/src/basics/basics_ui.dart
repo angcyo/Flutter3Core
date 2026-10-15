@@ -3377,6 +3377,7 @@ extension WidgetEx on Widget {
     Color? hoverColor,
     double? borderRadiusNum,
     double? radius,
+    MouseCursor? cursor,
     bool enable = true,
     //--
     BorderRadius? borderRadius /*指定圆角之后, 就不是圆了*/,
@@ -3399,6 +3400,7 @@ extension WidgetEx on Widget {
           highlightShape: .rectangle,
           borderRadiusNum: borderRadiusNum,
           radius: radius,
+          cursor: cursor,
           onLongPress: onLongPress,
           periodicDuration: periodicDuration,
           onLongPressPeriodic: onLongPressPeriodic,
