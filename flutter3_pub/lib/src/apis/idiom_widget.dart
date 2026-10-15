@@ -12,42 +12,57 @@ class IdiomWidget extends StatelessWidget {
   /// 显示的成语数据
   final IdiomBean? idiomBean;
 
+  /// 错误信息
+  final Object? error;
+
   /// 是否显示简要信息
   final bool isBrief;
 
-  const IdiomWidget({super.key, required this.idiomBean, this.isBrief = true});
+  const IdiomWidget({
+    super.key,
+    required this.idiomBean,
+    this.isBrief = true,
+    this.error,
+  });
 
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
     final globalTheme = globalConfig.globalTheme;
-    final body = idiomBean == null
+    final bean = idiomBean;
+    final body = error != null
+        ? "成语获取失败".text(textAlign: .center).insets(all: kX)
+        : bean == null
         ? globalConfig
               .loadingIndicatorBuilder(context, this, null, null)
               .align(Alignment.center)
               .paddingOnly(all: kXx)
         : [
-                idiomBean!.pronounce.text(
+                bean.pronounce.text(
                   style: globalTheme.textPlaceStyle,
                   fontSize: 9,
                 ),
-                idiomBean!.name.text(),
+                bean.name.text(),
                 if (!isBrief)
-                  idiomBean!.des
+                  bean.des
                       .text(style: globalTheme.textDesStyle)
                       .paddingOnly(top: kL),
                 if (!isBrief)
-                  idiomBean!.sample
+                  bean.sample
                       .text(style: globalTheme.textSubStyle)
                       .paddingOnly(top: kL),
               ]
-              .column(crossAxisAlignment: CrossAxisAlignment.start)!
+              .column(crossAxisAlignment: .start)!
               .paddingOnly(all: kH)
-              .ink(() {
-                //idiomBean!.url.launch();
-                openWebUrl(idiomBean!.url, context);
-              });
-    return body.animatedSize(alignment: Alignment.topCenter).card();
+              .ink(
+                () {
+                  //idiomBean!.url.launch();
+                  openWebUrl(bean.url, context);
+                },
+                enable: !isNil(bean.url),
+                useDisableCursorStyle: false,
+              );
+    return body.animatedSize(alignment: .topCenter).card();
   }
 }
 
@@ -63,6 +78,9 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
   /// 随机获取到的成语
   IdiomBean? _idiomBean;
 
+  /// 错误信息
+  Object? _error;
+
   /// 鼠标是否进入
   bool _isHover = false;
 
@@ -77,7 +95,7 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return IdiomWidget(idiomBean: _idiomBean, isBrief: !_isHover)
+    return IdiomWidget(idiomBean: _idiomBean, isBrief: !_isHover, error: _error)
         .frameOf(
           Icon(Icons.refresh, color: Colors.grey)
               .rotateAnimation(enable: _isFetch)
@@ -85,11 +103,11 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
               .inkWellCircle(() {
                 _fetchIdiom();
               })
-              .align(Alignment.topRight)
+              .align(.topRight)
               .material(),
         )
         .mouse(
-          onMouseAction: (enter) {
+          onMouseAction: (event, enter) {
             _isHover = enter;
             updateState();
           },
@@ -100,10 +118,23 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
   void _fetchIdiom() {
     _isFetch = true;
     updateState();
-    $idiomApi.getRandomIdiom().get((data, error) {
-      _idiomBean = data;
-      _isFetch = false;
-      updateState();
+    $idiomApi.getRandomIdiom(throwError: true).get((data, error) {
+      if (data == null) {
+        $idiomApi.getRandomIdiomFromChineseXinhua(throwError: true).get((
+          data,
+          error,
+        ) {
+          _idiomBean = data;
+          _error = error;
+          _isFetch = false;
+          updateState();
+        });
+      } else {
+        _idiomBean = data;
+        _error = error;
+        _isFetch = false;
+        updateState();
+      }
     });
   }
 }

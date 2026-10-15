@@ -21,7 +21,7 @@ class ConfigFile {
   /// [key] 通常是文件名, [loadAssetString]
   /// [subFolder] 子目录
   /// [httpUrl] 如果磁盘文件不存在, 则从网络上下载
-  /// [forceFetch] 是否要强制拉取网络数据, 否则只在磁盘上没数据时才拉取
+  /// [forceFetch] 是否要强制拉取网络数据, 否则只在磁盘上没数据时才拉取.
   /// [forceAssetToFile] 是否要强制将Asset中的文件, 拷贝到磁盘
   /// [waitHttp] 是否要等待网络数据的返回
   /// [onHttpAction] 网络数据返回后的回调
@@ -31,6 +31,7 @@ class ConfigFile {
     String prefix = kDefAssetsConfigPrefix,
     String? package,
     String? subFolder,
+    bool ignoreFileCache = isDebug /*临时忽略文件缓存*/,
     bool forceFetch = false,
     bool forceAssetToFile = isDebug,
     bool waitHttp = false,
@@ -49,7 +50,7 @@ class ConfigFile {
                 : p.join(configFolder.path, subFolder, key))
             .file();
     try {
-      if (!isDebug && !forceAssetToFile && file.existsSync()) {
+      if (!ignoreFileCache && !forceAssetToFile && file.existsSync()) {
         //磁盘上的文件已经存在, 则直接读取
         result = await file.readAsString();
       } else {

@@ -9,6 +9,14 @@ import '../../flutter3_pub.dart';
 ///
 /// 每日一语 / 每日一成语
 /// 数据来源: https://chengyu.t086.com/
+///
+/// # chinese-xinhua
+/// https://github.com/pwxcoo/chinese-xinhua
+///
+/// https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/refs/heads/master/data/idiom.json
+///
+/// ## 歇后语
+/// http://xhy.5156edu.com/html2/xhy.html
 class IdiomApi {
   IdiomApi();
 
@@ -22,7 +30,7 @@ class IdiomApi {
   /// - https://chengyu.t086.com/cy/paihang.html 成语人气排行榜
   /// - https://chengyu.t086.com/cy8/8786.html 成语详情
   @api
-  Future<IdiomBean?> getRandomIdiom() async {
+  Future<IdiomBean?> getRandomIdiom({bool? throwError}) async {
     //debugger();
     try {
       final bytes = await "$_host/cy/paihang.html".dioGetBytes();
@@ -74,9 +82,71 @@ class IdiomApi {
     } catch (e, s) {
       //debugger();
       assert(() {
-        printError(e, s);
+        l.e(e, stack: s);
         return true;
       }());
+      if (throwError == true) {
+        rethrow;
+      }
+    }
+    return null;
+  }
+
+  /// 从`chinese-xinhua`中获取一个随机成语
+  ///
+  /// https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/refs/heads/master/data/idiom.json
+  ///
+  /// ```
+  /// [
+  ///     {
+  ///         "derivation": "语出《法华经·法师功德品》下至阿鼻地狱。”",
+  ///         "example": "但也有少数意志薄弱的……逐步上当，终至堕入～。★《上饶集中营·炼狱杂记》",
+  ///         "explanation": "阿鼻梵语的译音，意译为无间”，即痛苦无有间断之意。常用来比喻黑暗的社会和严酷的牢狱。又比喻无法摆脱的极其痛苦的境地。",
+  ///         "pinyin": "ā bí dì yù",
+  ///         "word": "阿鼻地狱",
+  ///         "abbreviation": "abdy"
+  ///     },
+  ///     ...
+  /// ]
+  /// ```
+  Future<IdiomBean?> getRandomIdiomFromChineseXinhua({
+    String? url,
+    bool? throwError,
+  }) async {
+    /*final url =
+        "https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/refs/heads/master/data/idiom.json";*/
+    url ??=
+        "https://codeberg.org/angcyo/chinese-xinhua/raw/branch/master/data/idiom.json";
+    final name = "idiom.json";
+    try {
+      final string = await ConfigFile.readConfigFile(
+        name,
+        ignoreFileCache: false,
+        forceAssetToFile: false,
+        httpUrl: url,
+        waitHttp: true,
+      );
+      if (isNil(string)) return null;
+      final list = string!.toJson();
+      final value = list[nextInt(list.length)];
+      final derivation = value["derivation"];
+      final example = value["example"];
+      return IdiomBean(
+        name: value["word"],
+        pronounce: value["pinyin"],
+        des: value["explanation"],
+        provenance: derivation,
+        sample: example == "无" ? derivation : example,
+      );
+    } catch (e, s) {
+      //debugger();
+      assert(() {
+        l.e(e, stack: s);
+        return true;
+      }());
+      if (throwError == true) {
+        rethrow;
+      }
     }
     return null;
   }
@@ -100,13 +170,13 @@ class IdiomBean with Equatable {
   final String sample;
 
   /// 近义词
-  final String synonym;
+  final String? synonym;
 
   /// 页面详情url
-  final String url;
+  final String? url;
 
   /// 时间
-  final int time;
+  final int? time;
 
   IdiomBean({
     required this.name,
@@ -114,9 +184,9 @@ class IdiomBean with Equatable {
     required this.des,
     required this.provenance,
     required this.sample,
-    required this.synonym,
-    required this.url,
-    required this.time,
+    this.synonym,
+    this.url,
+    this.time,
   });
 
   @override

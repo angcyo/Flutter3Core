@@ -938,7 +938,7 @@ extension WidgetEx on Widget {
   ///
   Widget mouse({
     //--
-    void Function(bool enter)? onMouseAction,
+    void Function(PointerEvent event, bool enter)? onMouseAction,
     //--
     Key? key,
     PointerEnterEventListener? onEnter,
@@ -955,20 +955,20 @@ extension WidgetEx on Widget {
               onEnter ??
               (onMouseAction != null
                   ? (event) {
-                      onMouseAction(true);
+                      onMouseAction(event, true);
                     }
                   : null),
           onExit:
               onExit ??
               (onMouseAction != null
                   ? (event) {
-                      onMouseAction(false);
+                      onMouseAction(event, false);
                     }
                   : null),
           onHover: onHover,
           cursor: cursor,
           opaque: opaque,
-          hitTestBehavior: hitTestBehavior,
+          hitTestBehavior: hitTestBehavior /*?? .deferToChild*/,
           child: this,
         )
       : this;
