@@ -18,6 +18,8 @@ const double kXh = 16;
 const double kXx = 24;
 const double kXxh = 32;
 const double kXxx = 48;
+/// 红点提示的大小
+const double kDotSize = 6;
 
 /// Not Applicable / Not Available
 const String kNA = "N/A";

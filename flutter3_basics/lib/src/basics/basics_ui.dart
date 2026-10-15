@@ -3493,8 +3493,11 @@ extension WidgetEx on Widget {
     bool? showDot = true,
     bool? enable = true,
     //--
+    double? offset,
     @defInjectMark double? right,
     @defInjectMark double? top,
+    double? left,
+    double? bottom,
     //--
     @defInjectMark double? dotSize,
     @defInjectMark Color? dotColor,
@@ -3507,9 +3510,14 @@ extension WidgetEx on Widget {
       if (showDot == true)
         (dotWidget ??
                 Empty.size(
-                  dotSize ?? 8,
+                  dotSize ?? kDotSize,
                 ).decoration(dotDecoration(color: dotColor)))
-            .position(right: right ?? 0, top: top ?? 0),
+            .position(
+              right: right ?? offset ?? (left != null ? null : 0),
+              top: top ?? offset ?? (bottom != null ? null : 0),
+              left: left,
+              bottom: bottom,
+            ),
     ].stack()!;
   }
 
