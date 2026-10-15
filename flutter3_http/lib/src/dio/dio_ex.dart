@@ -731,8 +731,7 @@ extension DioFutureResponseEx<T> on Future<T> {
           //有数据
           //debugger();
           final data = handle.handleResponse(response);
-          final callbackValue = callback?.call(data, null);
-          return callbackValue ?? data;
+          return callback == null ? data : callback.call(data, null);
         }
       },
       tag: tag ?? debugLabel,

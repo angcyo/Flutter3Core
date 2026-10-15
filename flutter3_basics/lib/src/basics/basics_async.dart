@@ -56,8 +56,7 @@ extension FutureEx<T> on Future<T> {
       (value) {
         try {
           //debugger();
-          final data = get?.call(value, null); //这一层的错误会被捕获
-          return data ?? value;
+          return get == null ? value : get.call(value, null); //这一层的错误会被捕获
         } catch (error, s) {
           //debugger();
           if (throwError == true) {
