@@ -29,11 +29,11 @@ class DioScope extends InheritedWidget {
 
 /// 合并请求选项
 Options? _mergeOptions(Options? options, Map<String, dynamic>? headers) {
-  if (options == null && headers == null) {
-    return null;
+  if (headers == null) {
+    return options;
   }
-  final res = options ?? Options();
-  return res.copyWith(headers: headers);
+  final opt = options ?? Options();
+  return opt.copyWith(headers: headers);
 }
 
 extension DioMapEx on Map<String, dynamic> {

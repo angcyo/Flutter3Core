@@ -33,7 +33,9 @@ class IdiomApi {
   Future<IdiomBean?> getRandomIdiom({bool? throwError}) async {
     //debugger();
     try {
-      final bytes = await "$_host/cy/paihang.html".dioGetBytes();
+      final bytes = await "$_host/cy/paihang.html".dioGetBytes(
+        options: Options(receiveTimeout: 3.seconds, connectTimeout: 3.seconds),
+      );
       if (isNil(bytes)) return null;
       final html = gbk.decode(bytes!);
       //debugger();
@@ -92,6 +94,9 @@ class IdiomApi {
     return null;
   }
 
+  @tempFlag
+  List? _chineseXinhuaList;
+
   /// 从`chinese-xinhua`中获取一个随机成语
   ///
   /// https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/refs/heads/master/data/idiom.json
@@ -119,15 +124,18 @@ class IdiomApi {
         "https://codeberg.org/angcyo/chinese-xinhua/raw/branch/master/data/idiom.json";
     final name = "idiom.json";
     try {
-      final string = await ConfigFile.readConfigFile(
-        name,
-        ignoreFileCache: false,
-        forceAssetToFile: false,
-        httpUrl: url,
-        waitHttp: true,
-      );
-      if (isNil(string)) return null;
-      final list = string!.toJson();
+      if (_chineseXinhuaList == null) {
+        final string = await ConfigFile.readConfigFile(
+          name,
+          ignoreFileCache: false,
+          forceAssetToFile: false,
+          httpUrl: url,
+          waitHttp: true,
+        );
+        if (isNil(string)) return null;
+        _chineseXinhuaList = string!.toJson();
+      }
+      final list = _chineseXinhuaList!;
       final value = list[nextInt(list.length)];
       final derivation = value["derivation"];
       final example = value["example"];
