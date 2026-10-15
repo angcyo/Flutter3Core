@@ -30,7 +30,7 @@ import '_script_common.dart';
 /// ```
 ///
 void main(List<String> arguments) async {
-  colorLog('[localazy]工作路径->$currentPath');
+  colorLog('[localazy]工作路径->  $currentPath');
   final config = $value("localazy");
   if (config is! Map) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[localazy]脚本";

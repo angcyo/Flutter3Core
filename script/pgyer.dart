@@ -20,7 +20,7 @@ const host = "https://www.pgyer.com";
 const apiBase = "https://www.pgyer.com/apiv2/app";
 
 void main(List<String> arguments) async {
-  colorLog('[$currentFileName]工作路径->$currentPath');
+  colorLog('[$currentFileName]工作路径-> $currentPath');
   final config = $value("pgyer");
   if (config is! Map) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[pgyer]脚本";

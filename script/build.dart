@@ -47,7 +47,7 @@ void main(List<String> arguments) {
     const targetPath = "assets/config";
 
     final currentPath = Directory.current.path;
-    print('[build]工作路径->$currentPath');
+    print('[build]工作路径-> $currentPath');
 
     //模板文件
     final templateFile = File("$currentPath/$templatePath/app_setting.tl.json");

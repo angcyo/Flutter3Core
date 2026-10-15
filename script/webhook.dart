@@ -12,7 +12,7 @@ import '_script_common.dart';
 ///
 /// Webhook
 void main(List<String> arguments) async {
-  colorLog('[webhook]工作路径->$currentPath');
+  colorLog('[webhook]工作路径-> $currentPath');
   final webhookConfig = $value("webhook");
   if (webhookConfig is! Map) {
     throw "请在根目录的[script.yaml]或[script.local.yaml]文件中配置[webhook]脚本";
@@ -42,7 +42,7 @@ void main(List<String> arguments) async {
   }
 
   /*final currentPath = Directory.current.path;
-  print('工作路径->$currentPath');
+  print('工作路径-> $currentPath');
   final yamlFile = File("$currentPath/script.yaml");
   print('配置文件路径->${yamlFile.path}');
 

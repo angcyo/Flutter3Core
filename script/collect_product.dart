@@ -76,7 +76,7 @@ import 'build_config.dart';
 /// 默认文件名是: `windows/CMakeLists.txt`中`BINARY_NAME`对应的值
 ///
 void main(List<String> arguments) async {
-  colorLog('🚀 [$currentFileName]工作路径->$currentPath');
+  colorLog('🚀 [$currentFileName]工作路径-> $currentPath');
   final config = $value(currentFileName);
   if (config is! Map) {
     throw "❌ 请在[$currentPath]目录的[script.yaml]或[script.local.yaml]文件中配置[$currentFileName]脚本的收集产品名称";
