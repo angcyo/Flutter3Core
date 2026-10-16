@@ -20,6 +20,7 @@ export 'package:flame/collisions.dart';
 export 'package:flame/palette.dart';
 export 'package:flame/particles.dart';
 export 'package:flame/particles.dart';
+export 'package:flame/camera.dart';
 export 'src/debug/child_counter_component.dart';
 export 'src/debug/time_track_component.dart';
 
@@ -55,6 +56,7 @@ Widget createGameWorld<W extends World, T extends Game>(
     Vector2.all(0.5),
     EffectController(duration: 0.5),
   );*/
+  //CircularViewport();
   return GameWidget(
     game: game ?? (FlameGame(world: world)..debugMode = debugMode),
   );
