@@ -6,10 +6,10 @@ part of '../../flutter3_widgets.dart';
 ///
 /// 用来监听路由的变化, 当不是根路由时显示pop小部件, 用于弹出路由
 ///
-/// - 需要注册路由观察者[routeBackObserver]
+/// - 需要注册路由观察者[routeBackObserverDispatcher]
 ///
-/// - [FloatBackActionWidget]
 /// - [RouteBackWidget]
+///   - [FloatBackActionWidget]
 class RouteBackWidget extends StatefulWidget {
   /// 指定返回按键
   @defInjectMark

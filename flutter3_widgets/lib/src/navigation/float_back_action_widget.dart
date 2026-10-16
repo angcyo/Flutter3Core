@@ -5,8 +5,8 @@ part of '../../flutter3_widgets.dart';
 /// @date 2026/02/09
 ///
 /// 浮动在左上角的导航back按钮小部件
-/// - [FloatBackActionWidget]
-/// - [RouteBackWidget]
+/// - [FloatBackActionWidget] 只在当前页上使用
+/// - [RouteBackWidget] 在所有路由上使用
 class FloatBackActionWidget extends StatefulWidget {
   /// 是否要浮动, 否则一直显示. 在桌面端默认浮动显示
   /// - 浮动时: 鼠标悬停时, 显示; 鼠标离开时, 隐藏;
@@ -66,8 +66,9 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+    final forceNavigator = widget.navigatorKey?.currentState;
     final noForceNavigator =
-        widget.navigatorKey == null && widget.rootContext == null;
+        forceNavigator == null && widget.rootContext == null;
     //--
     Widget body =
         widget.child ??
@@ -82,8 +83,7 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
           //debugger();
           //widget.navigatorKey?.currentState?.maybePop();
           final navigator =
-              widget.navigatorKey?.currentState ??
-              widget.rootContext?.findNavigatorState();
+              forceNavigator ?? widget.rootContext?.findNavigatorState();
           buildContext?.maybePop(
             navigator: navigator,
             rootNavigator: noForceNavigator,
@@ -100,7 +100,8 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
       body = body.mouseHoverVisibility().mouseHoverProvider();
     }
     return body /*.visible(
-      visible: navigator?.canPop() == true || noForceNavigator,
+      enable: forceNavigator != null,
+      visible: forceNavigator?.canPop() == true,
     )*/;
   }
 }
