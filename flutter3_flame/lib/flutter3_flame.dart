@@ -18,7 +18,7 @@ export 'package:flame/experimental.dart';
 export 'package:flame/extensions.dart';
 export 'package:flame/collisions.dart';
 export 'package:flame/palette.dart';
-export 'package:flame/particles.dart';
+export 'package:flame/parallax.dart';
 export 'package:flame/particles.dart';
 export 'package:flame/camera.dart';
 export 'src/debug/child_counter_component.dart';
