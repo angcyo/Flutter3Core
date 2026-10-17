@@ -471,6 +471,8 @@ class MenuTriggerScope extends InheritedWidget {
 
 extension MenuTriggerWidgetEx on Widget {
   /// 主菜单显示触发器
+  /// - [menuTrigger]
+  ///   - [submenuTrigger]
   @dsl
   MenuTriggerWidget menuTrigger({
     Key? key,
@@ -506,6 +508,8 @@ extension MenuTriggerWidgetEx on Widget {
   }
 
   /// 子菜单显示触发器
+  /// - [menuTrigger]
+  ///   - [submenuTrigger]
   @dsl
   SubmenuTriggerWidget submenuTrigger({
     Key? key,
