@@ -66,6 +66,7 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
   @override
   Widget build(BuildContext context) {
     final globalConfig = GlobalConfig.of(context);
+    final globalTheme = globalConfig.globalTheme;
     final forceNavigator = widget.navigatorKey?.currentState;
     final noForceNavigator =
         forceNavigator == null && widget.rootContext == null;
@@ -75,7 +76,7 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
         globalConfig.appBarDismissalBuilder(context, widget) ??
         Icon(
           Icons.arrow_back_ios_new,
-          color: globalConfig.globalTheme.icoNormalColor,
+          color: globalTheme.icoNormalColor,
         ).insets(all: kX);
     //--
     body = body
@@ -93,7 +94,8 @@ class _FloatBackActionWidgetState extends State<FloatBackActionWidget> {
         })
         .card(
           shape: CircleBorder(),
-          /*color: globalConfig.globalTheme.appBarBackgroundColor,*/
+          color: globalTheme.themeWhiteColor,
+          /*color: globalTheme.appBarBackgroundColor,*/
         );
     final isFloatStyle = widget.floatStyle ?? isDesktopOrWeb;
     if (isFloatStyle) {

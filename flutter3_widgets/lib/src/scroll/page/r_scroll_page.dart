@@ -57,6 +57,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// [RScrollController.buildAdapterStateWidget] 自定义情感图状态
   /// [RScrollController.buildLoadMoreStateWidget] 自定义加载更多状态
   /// [RequestPage]
+  ///
+  /// [RScrollController.jumpTo]
+  /// [RScrollController.animateTo]
+  /// [ScrollControllerEx.scrollToTop]
   late final RScrollController scrollController =
       RScrollController(tag: classHash(), debugLabel: null)
         ..isSupportScrollLoadDataCallback = isSelfSupportScrollLoadData
@@ -514,6 +518,10 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     scrollController.enableAutoLoadMore = value;
   }
 
+  /// 是否启用返回顶部功能
+  @configProperty
+  bool get enablePageScrollToTop => true;
+
   @output
   RequestPage get requestPage => scrollController.requestPage;
 
@@ -660,7 +668,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     return rebuild(_scrollViewUpdateSignal, (context, value) {
       scrollController.scrollViewUpdateSignal = _scrollViewUpdateSignal;
       //debugger();
-      return RScrollView(
+      final body = RScrollView(
         controller: scrollController,
         tag: classHash(),
         enableRefresh: enableRefresh ?? enablePageRefresh,
@@ -668,7 +676,34 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
         itemTileWrapBuilder: itemTileWrapBuilder,
         children: wrapScrollChildren(children ?? pageWidgetList),
       );
+      if (enablePageScrollToTop) {
+        return body.stackOf(
+          rebuild(scrollController, (ctx, value) {
+            //加载2页数据后, 显示返回顶部按钮
+            final visible =
+                requestPage.requestPageIndex >= 2 &&
+                (scrollController.currentScrollPixels ?? 0) > $screenHeight / 6;
+            return pageBuildScrollTopButton(ctx, visible);
+          }),
+        );
+      }
+      return body;
     });
+  }
+
+  /// 构建返回顶部按钮
+  @overridePoint
+  Widget pageBuildScrollTopButton(BuildContext context, bool visible) {
+    final globalConfig = GlobalConfig.of(context);
+    final globalTheme = globalConfig.globalTheme;
+    return Icon(Icons.arrow_upward, color: globalTheme.icoNormalColor)
+        .insets(all: kX)
+        .inkWellCircle(() {
+          scrollController.scrollToTop(anim: false);
+        }, enable: visible)
+        .card(shape: CircleBorder(), color: globalTheme.themeWhiteColor)
+        .visible(visible: visible, anim: true, maintainInteractivity: false)
+        .position(right: kX, bottom: kX);
   }
 
   //--

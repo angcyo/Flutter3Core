@@ -3570,30 +3570,47 @@ extension WidgetEx on Widget {
     Key? key,
     bool enable = true,
     required bool visible,
-    bool maintainSize = false /*是否占据空间*/,
-    bool? maintainState /*是否维护状态*/,
-    bool? maintainFocusability /*是否维护焦点状态*/,
+    bool? maintainState /*是否维护状态, 总开关*/,
+    bool maintainSize = false /*隐藏后, 是否占据空间*/,
+    bool? maintainAnimation /*隐藏后, 是否动画继续执行 */,
+    bool? maintainSemantics /*隐藏后, 是否保留语义*/,
+    bool? maintainFocusability /*隐藏后, 是否可获取焦点 */,
+    bool? maintainInteractivity /*隐藏后, 是否可交互*/,
+    //--
     bool anim = false,
+    Duration? duration,
+    VoidCallback? onEnd,
   }) {
     if (!enable) {
       return this;
     }
+    maintainAnimation ??= maintainSize;
+    maintainSemantics ??= maintainSize;
+    maintainInteractivity ??= maintainSize;
+    maintainFocusability ??= maintainInteractivity ?? maintainSize;
+    maintainState ??=
+        maintainSize == true ||
+        maintainAnimation == true ||
+        maintainSemantics == true ||
+        maintainFocusability == true ||
+        maintainInteractivity == true;
     Widget result = Visibility(
       key: anim ? null : key,
-      visible: visible,
+      visible: visible || anim,
       maintainSize: maintainSize,
-      maintainState:
-          maintainFocusability == true || (maintainState ?? maintainSize),
-      maintainAnimation: maintainState ?? maintainSize,
-      maintainFocusability:
-          maintainFocusability ?? maintainState ?? maintainSize,
+      maintainState: maintainState,
+      maintainAnimation: maintainAnimation,
+      maintainFocusability: maintainFocusability,
+      maintainSemantics: maintainSemantics,
+      maintainInteractivity: maintainInteractivity,
       child: this,
     );
     if (anim) {
       result = AnimatedOpacity(
         key: key,
         opacity: visible ? 1 : 0,
-        duration: kDefaultAnimationDuration,
+        duration: duration ?? kDefaultAnimationDuration,
+        onEnd: onEnd,
         child: result,
       );
     }

@@ -240,7 +240,7 @@ extension RebuildFunctionEx on Function {
   /// (){}.rebuild(signal);
   /// ```
   Widget rebuild(
-    @updateSignalMark ValueNotifier updateSignal, {
+    @updateSignalMark Listenable updateSignal, {
     bool enable = true,
   }) {
     return enable ? rebuildSingle(updateSignal, () => this()) : this();
@@ -254,7 +254,7 @@ extension RebuildFunctionEx on Function {
 /// [UpdateValueNotifier]
 @dsl
 Widget rebuild(
-  @updateSignalMark ValueNotifier updateSignal,
+  @updateSignalMark Listenable updateSignal,
   DynamicDataWidgetBuilder builder,
 ) {
   return RebuildWidget(updateSignal: updateSignal, builder: builder);
@@ -272,7 +272,7 @@ Widget rebuildList(
 /// 简单的[rebuild]
 @dsl
 Widget rebuildSingle(
-  @updateSignalMark ValueNotifier updateSignal,
+  @updateSignalMark Listenable updateSignal,
   Widget Function() action,
 ) => rebuild(updateSignal, (context, value) => action());
 

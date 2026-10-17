@@ -128,6 +128,22 @@ class RScrollController extends ScrollController {
     adapterStateValue.value = .none;
   }
 
+  /// 当前滚动了多少距离
+  @api
+  double? get currentScrollPixels {
+    final ScrollPosition? position;
+    try {
+      position = this.position;
+    } catch (e) {
+      assert(() {
+        l.e(e);
+        return true;
+      }());
+      return null;
+    }
+    return position.pixels;
+  }
+
   /// 检查滚动位置
   /// 监听滚动到底部,驱动触发加载更多
   @api
