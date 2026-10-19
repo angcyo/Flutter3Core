@@ -49,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAiProvider": MessageLookupByLibrary.simpleMessage("提供商"),
     "libAiSend": MessageLookupByLibrary.simpleMessage("发送"),
     "libBack": MessageLookupByLibrary.simpleMessage("返回"),
+    "libBackToTop": MessageLookupByLibrary.simpleMessage("返回顶部"),
     "libBackgroundDownload": MessageLookupByLibrary.simpleMessage("后台下载"),
     "libCancel": MessageLookupByLibrary.simpleMessage("取消"),
     "libCanvasAdaptive": MessageLookupByLibrary.simpleMessage("自适应"),

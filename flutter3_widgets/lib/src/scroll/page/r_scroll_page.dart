@@ -698,6 +698,7 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
     final globalTheme = globalConfig.globalTheme;
     return Icon(Icons.arrow_upward, color: globalTheme.icoNormalColor)
         .insets(all: kX)
+        .tooltip(context.libRes?.libBackToTop, enable: visible)
         .inkWellCircle(() {
           scrollController.scrollToTop(anim: false);
         }, enable: visible)

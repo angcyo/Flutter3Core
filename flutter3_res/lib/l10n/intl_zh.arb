@@ -139,6 +139,7 @@
   "libAiGeneralTip": "当前操作需要模型具有「多模态」的能力",
   "libAiImageEditTip": "当前操作需要模型具有「图片编辑」的能力",
   "libAiImageGenerateTip": "当前操作需要模型具有「图片生成」的能力",
+  "libBackToTop": "返回顶部",
   "@libPlaceholder": {
     "placeholders": {
       "des": {

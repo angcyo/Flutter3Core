@@ -53,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libAiProvider": MessageLookupByLibrary.simpleMessage("Provider"),
     "libAiSend": MessageLookupByLibrary.simpleMessage("Send"),
     "libBack": MessageLookupByLibrary.simpleMessage("Back"),
+    "libBackToTop": MessageLookupByLibrary.simpleMessage("Back to Top"),
     "libBackgroundDownload": MessageLookupByLibrary.simpleMessage(
       "Bg Download",
     ),

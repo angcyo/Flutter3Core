@@ -616,6 +616,7 @@ extension WidgetEx on Widget {
   /// - [Tooltip.dismissAllToolTips] 移除所有tooltip
   Widget tooltip(
     String? tip, {
+    bool enable = true,
     InlineSpan? richMessage,
     TextStyle? textStyle,
     bool? enableFeedback,
@@ -623,7 +624,7 @@ extension WidgetEx on Widget {
     Decoration? decoration,
     MouseCursor? cursor,
     TooltipTriggerMode? triggerMode,
-  }) => (tip == null || tip.isEmpty) && richMessage == null
+  }) => !enable || ((tip == null || tip.isEmpty) && richMessage == null)
       ? this
       : Tooltip(
           message: tip,

@@ -764,6 +764,11 @@ class LibRes {
       args: [],
     );
   }
+
+  /// `返回顶部`
+  String get libBackToTop {
+    return Intl.message('返回顶部', name: 'libBackToTop', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<LibRes> {

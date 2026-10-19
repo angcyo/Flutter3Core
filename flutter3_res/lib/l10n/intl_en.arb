@@ -130,6 +130,7 @@
   "libAiGeneralTip": "This operation requires multimodal capability",
   "libAiImageEditTip": "This operation requires image editing capability",
   "libAiImageGenerateTip": "This operation requires image generation capability",
+  "libBackToTop": "Back to Top",
   "@libPlaceholder": {
     "placeholders": {
       "des": {
