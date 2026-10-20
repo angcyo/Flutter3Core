@@ -271,6 +271,9 @@ class LiveStreamController<T> {
     }
     return false;
   }
+
+  @override
+  String toString() => "${latestValue ?? ""}";
 }
 
 /// 用来调试

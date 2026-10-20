@@ -1327,7 +1327,8 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           (widget.alwaysShowSuffixIcon != false &&
               widget.enabled &&
               widget.config.hasFocus)) &&
-      widget.config.controller.text.isNotEmpty;
+      widget.config.controller.text.isNotEmpty &&
+      !widget.readOnly;
 
   /// 前缀图标
   Widget? _buildPrefixIcon(BuildContext context) {
