@@ -683,14 +683,17 @@ extension DioFutureResponseEx<T> on Future<T> {
   /// [throwError] 遇到错误时, 是否抛出异常
   Future http(
     ValueErrorCallback? callback, {
-    HttpResultHandle? resultHandle,
     bool? showErrorToast,
     bool? throwError,
+    //--
+    HttpResultHandle? resultHandle,
     List<String>? codeKeyList,
     List<String>? dataKeyList,
     List<String>? messageKeyList,
     bool? useDataCodeStatus /*是否使用数据code*/,
+    bool? downgradeResponseData /*是否降级响应数据*/,
     bool Function(dynamic code)? isSuccessCode /*当前code码是否表示成功*/,
+    //--
     String? tag,
     String? debugLabel,
     StackTrace? stack,
@@ -703,6 +706,8 @@ extension DioFutureResponseEx<T> on Future<T> {
     handle.messageKeyList = messageKeyList ?? handle.messageKeyList;
     handle.showErrorToast = showErrorToast ?? handle.showErrorToast;
     handle.useDataCodeStatus = useDataCodeStatus ?? handle.useDataCodeStatus;
+    handle.downgradeResponseData =
+        downgradeResponseData ?? handle.downgradeResponseData;
     handle.isSuccessCode = isSuccessCode ?? handle.isSuccessCode;
     return get(
       (response, error) {

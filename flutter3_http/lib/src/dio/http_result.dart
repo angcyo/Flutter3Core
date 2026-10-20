@@ -36,6 +36,10 @@ class HttpResultHandle {
   @configProperty
   bool useDataCodeStatus = true;
 
+  /// 当指定的[dataKeyList]可以没有数据时, 是否降级到[Response]数据
+  @configProperty
+  bool downgradeResponseData = false;
+
   /// 处理当前[Response].[code]码是否表示成功
   late bool Function(dynamic code) isSuccessCode = (code) =>
       code is int && code >= 200 && code < 300;
@@ -86,7 +90,10 @@ class HttpResultHandle {
               //成功
               return isNil(dataKeyList)
                   ? data
-                  : data.getValue(dataKeyList, data);
+                  : data.getValue(
+                      dataKeyList,
+                      downgradeResponseData ? data : null,
+                    );
             } else {
               throw RHttpException(
                 message:
@@ -99,7 +106,12 @@ class HttpResultHandle {
               );
             }
           } else {
-            return isNil(dataKeyList) ? data : data.getValue(dataKeyList, data);
+            return isNil(dataKeyList)
+                ? data
+                : data.getValue(
+                    dataKeyList,
+                    downgradeResponseData ? data : null,
+                  );
           }
         } else {
           //不需要判断逻辑code码, 则直接返回数据
