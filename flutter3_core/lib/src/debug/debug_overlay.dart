@@ -207,11 +207,21 @@ class DebugOverlayDialog extends StatefulWidget with DialogMixin {
 }
 
 class _DebugOverlayDialogState extends State<DebugOverlayDialog>
-    with DebugActionMixin, GlobalAppStateMixin {
+    with
+        DebugActionMixin,
+        GlobalAppStateMixin,
+        WidgetsBindingObserver,
+        MediaQueryDataChangeMixin {
   @override
   void initState() {
     _buildRouteStackWidget(context);
     super.initState();
+  }
+
+  @override
+  void onSelfMediaQueryDataChanged(MediaQueryData? from, MediaQueryData to) {
+    super.onSelfMediaQueryDataChanged(from, to);
+    _routeTextSpan = null;
   }
 
   @override

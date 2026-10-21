@@ -423,33 +423,6 @@ Future _initAppDebugInfo() async {
   });
 }
 
-/// 在具有[BuildContext]时, 进行首次初始化
-/// [MaterialApp.onGenerateTitle]中的[BuildContext]拿不到[Navigator].[Overlay]
-/// 推荐在[MaterialApp.home]中使用[Builder]小部件初始化
-///
-/// [checkOrShowNavigatorRouteOverlay]
-///
-/// - [$onGlobalAppContextChanged]
-///
-@entryPoint
-@initialize
-Future initGlobalAppAtContext(BuildContext context) async {
-  //debugger();
-  if (GlobalConfig.def.globalAppContext == context) {
-    return;
-  }
-  GlobalConfig.def.updateGlobalAppContext(context);
-}
-
-/// [NavigatorRouteOverlay]
-@entryPoint
-void checkOrShowNavigatorRouteOverlay([BuildContext? context]) {
-  context ??= GlobalConfig.def.globalAppContext;
-  if (context != null && isDebugFlag) {
-    NavigatorRouteOverlay.show(context);
-  }
-}
-
 /// [loadAssetSvgWidget]
 Widget loadRootImageWidget(
   String key, {

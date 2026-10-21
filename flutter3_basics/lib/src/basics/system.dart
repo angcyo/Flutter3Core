@@ -20,8 +20,9 @@ part of '../../flutter3_basics.dart';
 /// ```
 /// [MediaQueryData]
 ///
-/// - [DeviceOrientation.landscapeRight] // 横屏模式，向右旋转
-/// - [DeviceOrientation.landscapeLeft] // 横屏模式 向左旋转
+/// - [setScreenLandscape] 设置横屏
+///   - [DeviceOrientation.landscapeRight] // 横屏模式，向右旋转
+///   - [DeviceOrientation.landscapeLeft] // 横屏模式 向左旋转
 /// - 空, 则表示全方向都支持
 Future<void> setScreenOrientation([DeviceOrientation? orientation]) =>
     setScreenOrientations(orientation == null ? [] : [orientation]);
@@ -37,6 +38,8 @@ Future<void> setScreenOrientations([
 }
 
 /// 设置横屏
+/// - [setScreenLandscape]
+/// - [setScreenPortrait]
 Future<void> setScreenLandscape([
   List<DeviceOrientation> orientations = const [
     DeviceOrientation.landscapeLeft,
@@ -45,6 +48,8 @@ Future<void> setScreenLandscape([
 ]) => setScreenOrientations(orientations);
 
 /// 设置竖屏
+/// - [setScreenLandscape]
+/// - [setScreenPortrait]
 Future<void> setScreenPortrait([
   List<DeviceOrientation> orientations = const [
     DeviceOrientation.portraitUp,
@@ -61,6 +66,15 @@ Future<void> setScreenPortrait([
 /// - [LayoutBuilder]
 Widget orientationBuilder(OrientationWidgetBuilder builder, [Key? key]) {
   return OrientationBuilder(builder: builder, key: key);
+}
+
+/// 设置系统UI模式 - 全屏模式
+/// - [SystemUiMode.immersiveSticky] 推荐的全屏模式。系统栏完全隐藏，用户从屏幕边缘滑动可临时呼出，随后自动隐藏。
+/// - [SystemUiMode.immersive] 与 immersiveSticky 类似，但呼出系统栏的手势会被应用接收。
+/// - [SystemUiMode.leanBack] 全屏模式，通过点击屏幕任意位置来呼出系统栏。
+/// - [SystemUiMode.edgeToEdge] Flutter 的默认模式。内容延伸到屏幕边缘，但状态栏和导航栏仍然可见。
+void setEnabledSystemUIMode([SystemUiMode? mode]) {
+  SystemChrome.setEnabledSystemUIMode(mode ?? SystemUiMode.immersiveSticky);
 }
 
 extension OrientationEx on Orientation {

@@ -42,15 +42,19 @@ class NavigatorRouteOverlay extends StatefulWidget {
     final logBuffer = StringBuffer();
     final routeTextSpan = textSpanBuilder((builder) {
       bool isFirst = true;
+
+      //header
+      final md = platformMediaQueryData;
+      final size = md.size;
+      builder.addTextStyle(
+        "${size.width.toDigits()} x ${size.height.toDigits()} dp/${md.devicePixelRatio.toDigits(digits: 3)} "
+        "(${screenWidthPixel.toDigits()} x ${screenHeightPixel.toDigits()} px)",
+        style: globalTheme.textPlaceStyle,
+      );
+
       for (final part in routeList) {
         //debugger();
         if (isFirst) {
-          final md = platformMediaQueryData;
-          final size = md.size;
-          builder.addTextStyle(
-            "${size.width.toDigits()}, ${size.height.toDigits()}/${md.devicePixelRatio.toDigits(digits: 3)}",
-            style: globalTheme.textPlaceStyle,
-          );
           builder.newLine();
           builder.addTextStyle("当前路由信息如下[$length]↓");
         }
@@ -333,5 +337,14 @@ class _NavigatorRouteOverlayState extends State<NavigatorRouteOverlay>
       });
     }
     return _routeTextSpan ?? "...".text();
+  }
+}
+
+/// [NavigatorRouteOverlay]
+@entryPoint
+void checkOrShowNavigatorRouteOverlay([BuildContext? context]) {
+  context ??= GlobalConfig.def.globalAppContext;
+  if (context != null && isDebugFlag) {
+    NavigatorRouteOverlay.show(context);
   }
 }

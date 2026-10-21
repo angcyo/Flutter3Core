@@ -1233,6 +1233,31 @@ mixin GlobalAppStateMixin<T extends StatefulWidget> on State<T> {
   }
 }
 
+/// 在具有[BuildContext]时, 进行首次初始化
+/// [MaterialApp.onGenerateTitle]中的[BuildContext]拿不到[Navigator].[Overlay]
+/// 推荐在[MaterialApp.home]中使用[Builder]小部件初始化
+///
+/// [checkOrShowNavigatorRouteOverlay]
+///
+/// - [$onGlobalAppContextChanged]
+///
+/// ```
+///  home: builder((ctx) {
+///    initGlobalAppAtContext(ctx);
+///    return const FlameGamesScreen();
+///  }),
+/// ```
+///
+@entryPoint
+@initialize
+void initGlobalAppAtContext(BuildContext context) {
+  //debugger();
+  if (GlobalConfig.def.globalAppContext == context) {
+    return;
+  }
+  GlobalConfig.def.updateGlobalAppContext(context);
+}
+
 extension ThemeModeEx on ThemeMode {
   /// 获取当前主题的亮度
   Brightness get brightness => this == ThemeMode.system

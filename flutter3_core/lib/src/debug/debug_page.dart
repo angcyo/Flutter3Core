@@ -18,6 +18,9 @@ class DebugPage extends StatefulWidget {
   ///   MaterialApp(),
   /// );
   /// ```
+  ///
+  /// - [initGlobalAppAtContext] 更新全局App上下文, 才有浮动按钮功能
+  ///   - [GlobalConfig.updateGlobalAppContext]
   static Widget wrap(BuildContext context, Widget body, {bool enable = true}) {
     if (!enable) {
       return body;

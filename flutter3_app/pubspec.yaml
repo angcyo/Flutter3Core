@@ -141,6 +141,7 @@ dependencies:
   # flutter_move_task_back: ^1.0.0 #ANDROID
   flutter_move_task_back:
     git: git@github.com:angcyo/flutter_move_task_back.git
+  # in flutter3_http
   json_annotation: ^4.12.0
 
   # https://pub.dev/packages/pasteboard
