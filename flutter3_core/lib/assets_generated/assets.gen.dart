@@ -196,9 +196,7 @@ class $AssetsSvgGen {
   ];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const String package = 'flutter3_core';
 
   static const $AssetsPngGen png = $AssetsPngGen();
