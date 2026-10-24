@@ -816,16 +816,19 @@ extension CanvasEx on Canvas {
     @defInjectMark TextDirection? textDirection,
     //--样式
     TextStyle? textStyle,
+    //--
+    Paint? foreground,
+    Paint? background,
     Color? textColor = Colors.black,
     double? fontSize = kDefaultFontSize,
     FontWeight? fontWeight,
     bool bold = false,
     List<Shadow>? shadows,
     bool shadow = false,
-    TextAlign textAlign = TextAlign.start,
+    TextAlign textAlign = .start,
     //--位置
     Rect? bounds /*alignment的容器*/,
-    Alignment alignment = Alignment.topLeft,
+    Alignment alignment = .topLeft,
     ui.Offset offset = ui.Offset.zero,
     Offset? Function(TextPainter painter)? getOffset,
     //--拦截绘制操作
@@ -841,8 +844,11 @@ extension CanvasEx on Canvas {
         style:
             textStyle ??
             TextStyle(
-              color: textColor,
+              color: foreground == null ? textColor : null,
               fontSize: fontSize,
+              fontWeight: fontWeight ?? (bold ? FontWeight.bold : null),
+              foreground: foreground,
+              background: background,
               shadows:
                   shadows ??
                   (shadow
@@ -854,11 +860,10 @@ extension CanvasEx on Canvas {
                           ),
                         ]
                       : null),
-              fontWeight: fontWeight ?? (bold ? FontWeight.bold : null),
             ),
       ),
       textAlign: textAlign,
-      textDirection: textDirection ?? TextDirection.ltr,
+      textDirection: textDirection ?? .ltr,
     )..layout();
     final textOffset =
         (getOffset?.call(painter) ??

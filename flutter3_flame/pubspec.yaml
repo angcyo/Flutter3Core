@@ -15,11 +15,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^6.0.0
-
   flutter3_basics:
     path: ../flutter3_basics
 
@@ -30,6 +25,18 @@ dev_dependencies:
   # https://pub.dev/packages/vector_math
   # https://docs.flame-engine.org
   flame: ^1.38.2
+
+  # https://pub.dev/packages/bonfire
+  # https://pub.dev/packages/a_star_algorithm
+  # https://pub.dev/packages/flame
+  # https://pub.dev/packages/http
+  # https://pub.dev/packages/tiledjsonreader
+  #bonfire: ^4.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -2145,7 +2145,7 @@ extension WidgetEx on Widget {
   Widget transform(
     Matrix4 transform, {
     Offset? origin,
-    AlignmentGeometry? alignment = Alignment.center,
+    AlignmentGeometry? alignment = .center,
     bool transformHitTests = true,
     FilterQuality? filterQuality,
   }) => Transform(
@@ -3648,6 +3648,29 @@ extension WidgetEx on Widget {
           )
         : this;
   }
+
+  /// 透明度调整
+  /// - [opacity] 不透明度为1是完全不透明的。不透明度为零是完全透明的 (即不可见)
+  ///   - 1: 完全不透明
+  ///   - 0: 完全透明
+  Widget opacity({
+    bool enable = true,
+    required double opacity,
+    Key? key,
+    Duration? duration,
+    VoidCallback? onEnd,
+    bool anim = false,
+  }) => enable
+      ? (anim
+            ? AnimatedOpacity(
+                key: key,
+                opacity: opacity,
+                duration: duration ?? kDefaultAnimationDuration,
+                onEnd: onEnd,
+                child: this,
+              )
+            : Opacity(opacity: opacity, child: this))
+      : this;
 
   //endregion ---Single Widget---
 

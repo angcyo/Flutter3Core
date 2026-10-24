@@ -16,7 +16,10 @@ enum RotateState {
   stop,
 }
 
-/// 无限旋转动画小部件
+/// 无限旋转动画小部件 / 旋转动画
+///
+/// - [ScaleAnimation] 缩放动画
+/// - [RotateAnimation] 旋转动画
 class RotateAnimation extends StatefulWidget {
   /// 旋转的角度步长, 角度
   final double angleStep;

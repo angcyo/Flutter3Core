@@ -168,6 +168,15 @@ extension TimeEx on int {
     return toPatternTime(pattern: pattern, unit: unit, is24Hour: is24Hour);
   }
 
+  /// [多少m]多少s多少ms
+  String toMMSTime({
+    List<int> pattern = const [1, 1, 0, 0, 0],
+    List<String> unit = kMSUnit,
+    bool is24Hour = false,
+  }) {
+    return toPatternTime(pattern: pattern, unit: unit, is24Hour: is24Hour);
+  }
+
   /// 多少h多少m多少s
   String toHMSTime({
     List<int> pattern = const [-1, 1, 1, 1, 0],

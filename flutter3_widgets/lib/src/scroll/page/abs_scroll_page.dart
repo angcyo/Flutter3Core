@@ -200,7 +200,7 @@ mixin AbsScrollPage {
   RItemTileWrapBuilder? get pageItemTileWrapBuilder => null;
 
   /// 滚动控制器
-  RScrollController? pageScrollController;
+  RScrollController? get pageScrollController => null;
 
   /// 构建滚动内容
   /// [build]->[buildScaffold]->[buildBody]->[buildScrollBody]
@@ -248,9 +248,8 @@ mixin AbsScrollPage {
         children: buildChildren(),
         itemTileWrapBuilder: pageItemTileWrapBuilder,
       );
-      pageScrollController ??= page.scrollController;
     } else {
-      pageScrollController ??= RScrollController();
+      final scrollController = pageScrollController ?? RScrollController();
       body = RScrollView(
         /*physics: null,
           scrollBehavior: null,*/
@@ -262,8 +261,8 @@ mixin AbsScrollPage {
           final children = buildChildren();
           if (isNil(children)) {
             return [
-              pageScrollController!
-                  .buildAdapterStateWidget(context, pageEmptyWidgetState, null)!
+              scrollController
+                  .buildAdapterStateWidget(context, pageEmptyWidgetState, null)
                   .rFill(),
             ];
           }

@@ -196,6 +196,7 @@ part 'src/widgets/rebuild_widget.dart';
 part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
+part 'src/widgets/scale_animation.dart';
 
 // @formatter:on
 

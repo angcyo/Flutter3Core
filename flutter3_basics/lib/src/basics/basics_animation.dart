@@ -203,8 +203,31 @@ extension AnimationWidgetEx on Widget {
     );
   }
 
+  /// 无限缩放动画
+  /// - [ScaleAnimation] 缩放动画
+  /// - [RotateAnimation] 旋转动画
+  ///
+  /// - [scaleTransition]
+  Widget scaleAnimation({
+    Key? key,
+    bool enable = true,
+    //--
+    double begin = 1.0,
+    double end = .8,
+    Duration? duration,
+  }) => enable
+      ? ScaleAnimation(
+          this,
+          key: key,
+          begin: begin,
+          end: end,
+          duration: duration,
+        )
+      : this;
+
   /// 无限旋转动画
-  /// - [RotateAnimation]
+  /// - [ScaleAnimation] 缩放动画
+  /// - [RotateAnimation] 旋转动画
   ///
   /// - [rotationTransition]
   Widget rotateAnimation({Key? key, bool enable = true}) =>
