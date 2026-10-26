@@ -33,6 +33,21 @@ dependencies:
   # https://pub.dev/packages/tiledjsonreader
   #bonfire: ^4.0.0
 
+  # https://pub.dev/packages/flame_audio
+  # https://pub.dev/packages/audioplayers
+  # https://pub.dev/packages/flame
+  # https://pub.dev/packages/synchronized
+  flame_audio: ^2.12.2
+  # https://pub.dev/packages/audioplayers
+  #audioplayers: ^6.8.1
+
+  # https://pub.dev/packages/flame_forge2d
+  # https://pub.dev/packages/flame
+  # https://pub.dev/packages/forge2d
+  flame_forge2d: ^0.20.0
+  # https://pub.dev/packages/forge2d
+  #forge2d: ^0.15.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

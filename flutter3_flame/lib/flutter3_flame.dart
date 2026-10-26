@@ -27,6 +27,7 @@ export 'package:flame/layout.dart';
 
 export 'src/debug/child_counter_component.dart';
 export 'src/debug/time_track_component.dart';
+export 'src/flame/audio/audio.dart';
 export 'src/flame/components/flame_text_component.dart';
 export 'src/flame/components/flow_component.dart';
 export 'src/flame/components/fullscreen_route.dart';

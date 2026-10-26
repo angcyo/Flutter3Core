@@ -139,6 +139,27 @@ extension ComponentEx on Component {
       keepChildAnchor: keepChildAnchor,
     );
   }
+
+  /// 点击之后, 切换精灵
+  ButtonComponent toggleSprite(
+    Sprite? Function()? onTap, {
+    //--
+    Vector2? size,
+    Vector2? scale,
+    double? angle,
+  }) {
+    assert(this is SpriteComponent);
+    final that = this as SpriteComponent;
+    return that.button(
+      () {
+        that.sprite = onTap?.call();
+      },
+      useTapUp: true,
+      size: size,
+      scale: scale,
+      angle: angle,
+    );
+  }
 }
 
 extension PositionComponentEx on PositionComponent {
