@@ -6,6 +6,17 @@ part of "../../flutter3_flame.dart";
 ///
 /// Flame混合
 extension GameEx on Game {
+  /// 游戏环境是否已准备好
+  /// - [isMounted]
+  bool get isGameReady =>
+      this is FlameGame ? (this as FlameGame).camera.parent != null : false;
+
+  /// 可见世界矩形
+  /// - 如果是[Flame2DGame], 则返回的mm坐标值
+  Rect get visibleWorldRect => this is FlameGame
+      ? (this as FlameGame).camera.visibleWorldRect
+      : Rect.zero;
+
   //MARK: base
 
   /// 弹出路由

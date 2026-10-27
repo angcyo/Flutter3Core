@@ -1959,6 +1959,17 @@ extension RectEx on Rect {
         rect.top >= top &&
         rect.bottom <= bottom;*/
   }
+
+  /// 获取旋转后的矩形
+  /// - [radians] 旋转弧度
+  Rect rotate(double radians, {double? anchorX, double? anchorY}) {
+    final matrix = createRotateMatrix(
+      radians,
+      anchorX: anchorX ?? centerX,
+      anchorY: anchorY ?? centerY,
+    );
+    return matrix.mapRect(this);
+  }
 }
 
 extension SizeEx on Size {
@@ -2000,6 +2011,12 @@ extension BoolEx on bool {
 /// [round] 四舍五入
 /// [truncate] 截断
 extension NumEx on num {
+  /// 将一个竖线旋转指定弧度后, 宽度增加的大小
+  /// - 旋转后的宽度增量
+  double getRotateDelta(double radians) {
+    return (this * math.cos(pi / 2 - radians)).abs();
+  }
+
   /// 是否是正数
   bool get isPositive => this > 0;
 

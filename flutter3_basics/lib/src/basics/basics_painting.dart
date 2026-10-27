@@ -591,6 +591,37 @@ extension CanvasEx on Canvas {
 
   //region ---draw---
 
+  /// 在2点之间使用绘制虚线
+  void drawDashedLine(
+    Offset p1,
+    Offset p2, {
+    double dashLength = 8,
+    double gapLength = 5,
+    Paint? paint,
+  }) {
+    final linePaint =
+        paint ??
+        (Paint()
+          ..color = const Color(0xFF000000)
+          ..strokeWidth = 2
+          ..style = PaintingStyle.stroke);
+
+    final dx = p2.dx - p1.dx;
+    final dy = p2.dy - p1.dy;
+    final distance = math.sqrt(dx * dx + dy * dy);
+
+    if (distance == 0) return;
+
+    final direction = Offset(dx / distance, dy / distance);
+    final step = dashLength + gapLength;
+
+    for (double start = 0; start < distance; start += step) {
+      final end = math.min(start + dashLength, distance);
+
+      drawLine(p1 + direction * start, p1 + direction * end, linePaint);
+    }
+  }
+
   /// 将原本在[src]位置绘制的东西, 绘制到[dst]位置
   /// 会自动平移到[dst]矩形位置, 并且缩放至[dst]矩形大小
   /// [dst] 绘制到的目标位置和大小.

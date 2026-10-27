@@ -7,8 +7,19 @@ part of "../../flutter3_flame.dart";
 /// 组件混合
 /// - 扩展
 extension ComponentEx on Component {
+
+  /// 组件是否添加到游戏
+  bool get isAddedToGame => findGame() != null;
+
   /// 游戏是否暂停
   bool get isGamePaused => findGame()?.paused ?? true;
+
+  /// 清空游戏, 仅保留游戏必备组件
+  void clearGameChildren() {
+    removeWhere(
+      (component) => component is CameraComponent && component is World,
+    );
+  }
 
   /// 移除所有子元素
   void removeAllChildren([bool Function(Component component)? test]) {

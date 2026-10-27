@@ -105,6 +105,7 @@ extension Matrix4Ex on vector.Matrix4 {
 
   /// 映射一个矩形[Rect], 返回新的矩形
   /// 映射后的矩形left/top依旧是小值, right/bottom依旧是大值
+  /// @return 映射后的新矩形
   Rect mapRect(Rect rect) => MatrixUtils.transformRect(this, rect);
 
   /// 映射一个[Path]
