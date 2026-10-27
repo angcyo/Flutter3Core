@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -114,6 +115,16 @@ Vector2 calculateImpulse(Vector2 p1, Vector2 p2,
   return impulse;
 }
 
+/// 根据冲量, 质量计算速度
+/// - [impulse] 冲量
+/// - [mass] 质量
+/// @return 增量的速度, 如果有原始速度, 则需要累加
+Vector2 calculateVelocity(Vector2 impulse, double mass) {
+  debugger(when: mass <= 0);
+  return impulse / mass.ensureValid(1);
+}
+
+
 /// 根据拖动时间，计算发射的力度
 ///
 /// 拖动时间	计算结果
@@ -167,6 +178,33 @@ double calculateStrength(Duration dragDuration, {
 /// - [mass] 质量
 double densityForMass(double radius, double mass) {
   return mass / (fb.$pi * radius * radius);
+}
+
+/// 预测轨迹
+List<Vector2> predictTrajectory({
+  required Vector2 start,
+  required Vector2 velocity,
+  required double gravity,
+  double duration = 2.0,
+  double step = 0.05,
+  //--边界
+  Vector2? min,
+  Vector2? max,
+}) {
+  final points = <Vector2>[];
+
+  for (double t = 0; t <= duration; t += step) {
+    final x = start.x + velocity.x * t;
+    final y = start.y + velocity.y * t + 0.5 * gravity * t * t;
+    points.add(Vector2(x, y,));
+    if (min != null && max != null) {
+      if (x < min.x || x > max.x || y < min.y || y > max.y) {
+        break;
+      }
+    }
+  }
+
+  return points;
 }
 
 //#endregion

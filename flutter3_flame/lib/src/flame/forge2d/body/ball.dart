@@ -63,6 +63,12 @@ class Ball extends BodyComponent
   @override
   double get outlineWidth => strokeWidth;
 
+  /// 简单的计算球的质量
+  /// \[
+  /// m=\rho\pi r^2
+  /// \]
+  double get ballMass => density * fb.$pi * radius * radius;
+
   @override
   Body createBody() {
     final shapeDef = ShapeDef(
