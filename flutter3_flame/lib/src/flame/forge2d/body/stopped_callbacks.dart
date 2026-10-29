@@ -30,7 +30,7 @@ mixin StoppedCallbacks<T extends BodyComponent> on BodyComponent {
   @fb.tempFlag
   int _stoppedFrames = 0;
 
-  /// 球是否停止处理
+  /// 球是否已经回调了停止
   @fb.tempFlag
   bool _stopHandled = false;
 
@@ -54,9 +54,16 @@ mixin StoppedCallbacks<T extends BodyComponent> on BodyComponent {
 
     // 连续 15 帧低速，才认定停止
     if (_stoppedFrames >= stoppedFramesMixin && !_stopHandled) {
+      _stoppedFrames = 0;
       _stopHandled = true;
       onSelfStopped();
     }
+  }
+
+  @override
+  void onRemove() {
+    super.onRemove();
+    // 需要立即停止?
   }
 
   /// 自身停止的回调

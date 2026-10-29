@@ -12,6 +12,12 @@ class SplitLayout extends LayoutComponent {
   /// [1, 1] : 总空间占用多少份
   final List<int>? ratios;
 
+  /// child位置缩放比例
+  final Vector2? positionScale;
+
+  /// child大小缩放比例
+  final Vector2? sizeScale;
+
   SplitLayout({
     super.key,
     super.position,
@@ -21,6 +27,9 @@ class SplitLayout extends LayoutComponent {
     required super.children,
     //--
     this.ratios,
+    //--
+    this.positionScale,
+    this.sizeScale,
   });
 
   @override
@@ -47,8 +56,14 @@ class SplitLayout extends LayoutComponent {
       final partsForChild = this.partsForChild(index);
       final width = (partsForChild / totalParts) * maxWidth;
       final height = maxHeight;
-      child.size = Vector2(width, height);
-      child.position = Vector2(left, 0);
+      child.size = Vector2(
+        width * (sizeScale?.x ?? 1.0),
+        height * (sizeScale?.y ?? 1.0),
+      );
+      child.position = Vector2(
+        left * (positionScale?.x ?? 1.0),
+        0 * (positionScale?.y ?? 1.0),
+      );
       left += width;
       index++;
     }

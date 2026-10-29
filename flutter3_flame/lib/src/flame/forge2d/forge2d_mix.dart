@@ -6,6 +6,8 @@ import 'package:forge2d/forge2d.dart';
 import '../../../flutter3_flame.dart' as ff;
 import 'body/wall.dart';
 
+export 'base_forge2d_game.dart';
+export 'base_forge2d_world.dart';
 export 'body/ball.dart';
 export 'body/body_mix.dart';
 export 'body/bucket.dart';
@@ -57,6 +59,7 @@ BodyComponent createBodyComponent({
 
 extension Forge2DGameEx on Forge2DGame {
   /// 为游戏添加边界墙
+  /// - [reset]是否重置之前的[Wall]
   List<Wall> addBoundariesWall(
     Forge2DGame game, {
     ff.Component? target,
@@ -67,6 +70,7 @@ extension Forge2DGameEx on Forge2DGame {
     //--
     @fb.mm double? strokeWidth = 0,
     @fb.defInjectMark fb.UiColor? color,
+    bool? reset = true,
   }) {
     //Rect.fromLTRB(-8.3, -4.0, 8.3, 4.0)
     @fb.mm
@@ -115,6 +119,9 @@ extension Forge2DGameEx on Forge2DGame {
       ),
     ];
     //--
+    if (reset == true) {
+      (target ?? game.world).removeAllChildren((e) => e is Wall);
+    }
     (target ?? game.world).addAll(result);
     return result;
   }

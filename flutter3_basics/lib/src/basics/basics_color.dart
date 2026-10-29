@@ -40,6 +40,8 @@ extension ColorEx on Color {
 
   int get A => (a * 255).round().clamp(0, 255);
 
+  int get rgbValue => R << 16 | G << 8 | B;
+
   /// 默认的[value]时argb
   /// 这里返回rgba
   int get rgbaValue => red << 24 | green << 16 | blue << 8 | alpha;

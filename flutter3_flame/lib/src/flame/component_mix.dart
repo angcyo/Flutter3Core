@@ -7,6 +7,35 @@ part of "../../flutter3_flame.dart";
 /// 组件混合
 /// - 扩展
 extension ComponentEx on Component {
+  /// 组件的位置
+  Vector2? get componentPosition =>
+      this is PositionComponent ? (this as PositionComponent).position : null;
+
+  /// 获取游戏可见世界矩形边界
+  Rect get worldVisibleRect => findGame()?.visibleWorldRect ?? Rect.zero;
+
+  /// 当前组件是否在[Forge2DWorld]世界中
+  bool get isInForge2DWorld =>
+      findParent<World>(includeSelf: true) is Forge2DWorld;
+
+  /// 像素要缩放多少倍, 才能对应物理世界的M米
+  ///
+  /// ```
+  /// px * pixelsScale = m
+  /// ```
+  double get pixelsScale {
+    double scale = 1;
+    final world = findParent<World>(includeSelf: true);
+    if (world is Forge2DWorld) {
+      final viewfinder = findGame()?.camera.viewfinder;
+      if (viewfinder is Forge2DViewfinder) {
+        scale = 1 / viewfinder.metersToPixels;
+      }
+    }
+    return scale;
+  }
+
+  //--
 
   /// 组件是否添加到游戏
   bool get isAddedToGame => findGame() != null;
@@ -14,10 +43,25 @@ extension ComponentEx on Component {
   /// 游戏是否暂停
   bool get isGamePaused => findGame()?.paused ?? true;
 
+  //--
+
+  /// 打印所有子元素日志
+  void logAllChildren() {
+    final children = this.children;
+    final buffer = StringBuffer();
+    buffer.write("[${classHash()}]所有子元素如下[${children.length}]:");
+    for (final (index, child) in children.indexed) {
+      buffer.write("\n[$index]->$child");
+    }
+    fb.l.d(buffer.toString());
+  }
+
   /// 清空游戏, 仅保留游戏必备组件
-  void clearGameChildren() {
+  void clearGameChildren([bool Function(Component component)? or]) {
     removeWhere(
-      (component) => component is CameraComponent && component is World,
+      (component) =>
+          (component is CameraComponent && component is World) ||
+          (or?.call(component) ?? false),
     );
   }
 
@@ -174,6 +218,22 @@ extension ComponentEx on Component {
 }
 
 extension PositionComponentEx on PositionComponent {
+  /// 获取组件在世界中的边界
+  /// - 支持2d世界
+  Rect get worldRect {
+    final child = this;
+    final childSize = child.size;
+    final childPosition = child.topLeftPosition;
+    final sizeScale = pixelsScale;
+    final positionScale = pixelsScale;
+    return Rect.fromLTWH(
+      childPosition.x * positionScale,
+      childPosition.y * positionScale,
+      childSize.x * sizeScale,
+      childSize.y * sizeScale,
+    );
+  }
+
   /// 获取缩放对应的的偏移量
   Vector2 get scaleOffset {
     final child = this;

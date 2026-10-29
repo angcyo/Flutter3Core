@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -9,6 +10,8 @@ import 'package:flame/input.dart';
 import 'package:flame/layout.dart';
 import 'package:flame_forge2d/contact.dart';
 import 'package:flame_forge2d/contact_callbacks.dart';
+import 'package:flame_forge2d/forge2d_viewfinder.dart';
+import 'package:flame_forge2d/forge2d_world.dart';
 import 'package:flutter/widgets.dart' as ui;
 import 'package:flutter3_basics/flutter3_basics.dart' as fb;
 import 'package:forge2d/forge2d.dart' as fd;
@@ -58,7 +61,12 @@ part 'src/flame/sprite_mix.dart';
 typedef FBody = fd.Body;
 typedef FBodyDef = fd.BodyDef;
 typedef FShapeDef = fd.ShapeDef;
+typedef FShapeGeometry = fd.ShapeGeometry;
 typedef FPolygon = fd.Polygon;
+typedef FSegment = fd.Segment;
+typedef FCapsule = fd.Capsule;
+typedef FCircle = fd.Circle;
+typedef FShape = fd.Shape;
 typedef FContactCallbacks = ContactCallbacks;
 typedef FContact = Contact;
 
@@ -206,5 +214,49 @@ List<Vector2> predictTrajectory({
 
   return points;
 }
+
+/// 生成弧形的折点坐标 / 多边形
+/// 计算圆弧的所有折点，包含起点和终点。
+///
+/// [start]      圆弧起点
+/// [center]     圆心
+/// [sweepAngle] 扫过的角度，单位为弧度；正值沿屏幕顺时针方向旋转, 负值沿屏幕逆时针方向旋转
+/// [segments]   分段数，必须大于 0
+///
+/// 返回 segments + 1 个点。
+List<Vector2> generateArcPoints({
+  required Vector2 start,
+  required Vector2 center,
+  required double sweepAngle,
+  int segments = 16,
+}) {
+  if (segments <= 0) {
+    throw ArgumentError.value(segments, 'segments', '必须大于 0');
+  }
+
+  final dx = start.x - center.x;
+  final dy = start.y - center.y;
+  final radius = math.sqrt(dx * dx + dy * dy);
+
+  if (radius == 0) {
+    throw ArgumentError('起点不能与圆心重合');
+  }
+
+  // 起点相对于圆心的初始角度
+  final startAngle = math.atan2(dy, dx);
+
+  // 每段扫过的角度
+  final angleStep = sweepAngle / segments;
+
+  return List.generate(segments + 1, (i) {
+    final angle = startAngle + angleStep * i;
+
+    return Vector2(
+      center.x + radius * math.cos(angle),
+      center.y + radius * math.sin(angle),
+    );
+  });
+}
+
 
 //#endregion

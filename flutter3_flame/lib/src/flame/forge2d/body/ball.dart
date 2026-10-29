@@ -21,6 +21,14 @@ class Ball extends BodyComponent
   @fb.configProperty
   double density;
 
+  /// 球的摩擦系数
+  @fb.configProperty
+  double friction;
+
+  /// 球的弹性
+  @fb.configProperty
+  double restitution;
+
   late Paint originalPaint;
   final Vector2 bodyPosition;
   final BodyType bodyType;
@@ -53,6 +61,8 @@ class Ball extends BodyComponent
     this.userData,
     this.material,
     this.density = 1,
+    this.friction = 0.6,
+    this.restitution = 0.7,
     void Function(Ball component)? onStoppedAction,
   }) : bodyPosition = position ?? Vector2.zero() {
     originalPaint = Paint()..color = color ?? Colors.purple;
@@ -72,7 +82,9 @@ class Ball extends BodyComponent
   @override
   Body createBody() {
     final shapeDef = ShapeDef(
-      material: material ?? SurfaceMaterial(restitution: 0.7),
+      material:
+          material ??
+          SurfaceMaterial(friction: friction, restitution: restitution),
       enableContactEvents: enableContactEvents,
       enableSensorEvents: enableSensorEvents,
       density: density,
@@ -91,10 +103,10 @@ class Ball extends BodyComponent
     return body;
   }
 
-  final _impulseForce = Vector2(0, 1000);
+  //final _impulseForce = Vector2(0, 1000);
 
+  /// no op
   @override
-  @mustCallSuper
   void update(double dt) {
     super.update(dt);
     /*_timeSinceNudge += dt;

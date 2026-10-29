@@ -1,5 +1,10 @@
+import 'dart:ui' as ui;
+
+import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter3_basics/flutter3_basics.dart' as fb;
+
+import '../../../../flutter3_flame.dart' as ff;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -51,7 +56,7 @@ extension BodyEx on Body {
   }) {
     //Vector2.random() * 1000
     assert(() {
-      fb.l.d("applyLinearImpulseEx: $impulse");
+      fb.l.d("[${classHash()}]applyLinearImpulseEx: $impulse");
       return true;
     }());
     applyLinearImpulse(impulse, point: point, wake: wake);
@@ -105,5 +110,237 @@ extension BodyEx on Body {
       return Vector2.zero();
     }
     return Vector2(maxX - minX, maxY - minY);
+  }
+
+  /// 创建N个线段的几何形状
+  List<Shape> createSegmentGeometry(
+    List<Vector2> points, {
+    ShapeDef? shapeDef,
+    // 摩擦系数
+    double friction = 0.6,
+    // 弹性
+    double restitution = 0,
+    // 滚动阻力
+    double rollingResistance = 0,
+    // 颜色 0xrrggbb
+    @fb.implementation int customColor = 0,
+  }) {
+    // 每两个相邻点构成一段碰撞边界。
+    final shapes = <Shape>[];
+    for (var i = 0; i < points.length - 1; i++) {
+      shapes.add(
+        createShape(
+          Segment(point1: points[i], point2: points[i + 1]),
+          shapeDef ??
+              ShapeDef(
+                material: SurfaceMaterial(
+                  friction: friction,
+                  restitution: restitution,
+                  customColor: customColor,
+                ),
+              ),
+        ),
+      );
+    }
+    return shapes;
+  }
+}
+
+/// 刚体组件扩展
+extension BodyComponentEx on BodyComponent {
+  /// 父组件的边界
+  /// - [pixelsScale]
+  @fb.mm
+  ui.Rect? get parentRect {
+    final parent = findParent<PositionComponent>();
+    if (parent == null) {
+      return null;
+    }
+    final childPosition = parent.topLeftPosition;
+    return ui.Rect.fromLTWH(
+      childPosition.x,
+      childPosition.y,
+      parent.size.x,
+      parent.size.y,
+    );
+  }
+
+  /// 父组件在世界中的边界
+  @fb.mm
+  ui.Rect get parentWorldRect =>
+      findParent<PositionComponent>()?.worldRect ?? worldVisibleRect;
+
+  /// 获取刚体的大小
+  Vector2 get bodySize => body.getSize();
+
+  /// 向物理世界中创建一个刚体
+  /// - [def] 刚体的属性
+  ///   - 位置
+  ///   - 线速度
+  ///   - 角速度
+  /// - [geometry] 刚体的几何形状
+  ///   - [Segment] 线段
+  ///   - [Capsule] 胶囊
+  ///   - [Polygon] 多边形, 最小3个点, 最多8个点[Polygon.maxVertices]
+  ///   - [Circle] 圆形
+  /// - [shapeDef] 刚体的几何形状属性
+  ///   - 密度
+  ///   - 材质
+  ///     - 静摩擦
+  ///     - 动摩擦
+  ///     - 弹性
+  Body worldCreateBody({
+    BodyDef? def,
+    ShapeGeometry? geometry,
+    ShapeDef? shapeDef,
+  }) {
+    final body = world.createBody(def);
+    if (geometry != null) {
+      body.createShape(geometry, shapeDef);
+    }
+    return body;
+  }
+}
+
+/// 刚体组件
+class FBodyComponent<T extends Forge2DGame> extends BodyComponent<T>
+    with ContactCallbacks {
+  final String? tag;
+  final String? debugLabel;
+
+  //MARK: Body
+
+  /// 刚体的位置, 是相对于[Forge2DGame].[Forge2DWorld]的,
+  /// 所以这里不能是相对于父的坐标
+  Vector2 bodyPosition;
+  BodyType bodyType;
+
+  /// 是否启用刚体, 关闭后, 刚体将不会响应物理模拟
+  bool isEnabled;
+
+  //MARK: Shape
+
+  /// 球的材质, 摩擦力 / 反弹力 / 阻力
+  SurfaceMaterial? material;
+  bool enableContactEvents;
+  bool enableSensorEvents;
+
+  /// 球的密度 / 影响质量
+  double density;
+
+  FBodyComponent({
+    super.paint,
+    super.children,
+    super.priority,
+    super.renderBody = true,
+    super.bodyDef,
+    super.shapeSpecs,
+    super.key,
+    //--
+    fb.UiColor? color,
+    this.tag,
+    this.debugLabel,
+    //--
+    Vector2? position,
+    this.bodyType = .static,
+    this.isEnabled = true,
+    //--
+    this.material,
+    this.enableContactEvents = true,
+    this.enableSensorEvents = true,
+    this.density = 1,
+  }) : bodyPosition = position ?? Vector2.zero() {
+    if (color != null) {
+      super.paint.color = color;
+    }
+  }
+
+  /// 加载刚体
+  @override
+  Future<void> onLoad() {
+    return super.onLoad();
+  }
+
+  @override
+  Body createBody() {
+    final bodyDef =
+        this.bodyDef ??
+        BodyDef(
+          userData: (enableContactEvents || enableSensorEvents) ? this : null,
+          angularDamping: 0,
+          position: bodyPosition,
+          type: bodyType,
+          isEnabled: isEnabled,
+        );
+    final body = world.createBody(bodyDef);
+    //--
+    final bodyHasCallbacks = bodyDef.userData is ContactCallbacks;
+    for (final spec in shapeSpecs ?? const <ShapeSpec>[]) {
+      final definition = spec.definition ?? ShapeDef();
+      if (bodyHasCallbacks || definition.userData is ContactCallbacks) {
+        definition.enableContactEvents = true;
+        definition.enableSensorEvents = true;
+      }
+      body.createShape(spec.geometry, definition);
+    }
+    //--
+    final geometry = createGeometry(body);
+    if (geometry != null) {
+      body.createShape(
+        geometry,
+        ShapeDef(
+          material: material,
+          enableContactEvents: enableContactEvents,
+          enableSensorEvents: enableSensorEvents,
+          density: density,
+        ),
+      );
+    }
+    return body;
+  }
+
+  /// 创建刚体的几何形状
+  @fb.overridePoint
+  ShapeGeometry? createGeometry(Body body) {
+    return null;
+  }
+
+  /// 重新加载刚体
+  void reloadBody() {
+    if (!world.isRemoving || world.destroyBodiesOnRemove) {
+      world.destroyBody(body);
+    }
+    body = createBody();
+  }
+
+  //--
+
+  @override
+  void beginContact(Object other, Contact contact) {
+    super.beginContact(other, contact);
+    if (debugLabel != null) {
+      assert(() {
+        fb.l.d("[$this] 与 [$other]开始接触, 传感器: ${contact.isSensorEvent}");
+        return true;
+      }());
+    }
+  }
+
+  @override
+  void endContact(Object other, Contact contact) {
+    super.endContact(other, contact);
+    if (debugLabel != null) {
+      assert(() {
+        fb.l.i("[$this] 与 [$other]结束接触, 传感器: ${contact.isSensorEvent}");
+        return true;
+      }());
+    }
+  }
+
+  //--
+
+  @override
+  String toString() {
+    return "${classHash()}${tag?.wph ?? ""}";
   }
 }
