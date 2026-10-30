@@ -77,6 +77,9 @@ class PullBackWidget extends StatefulWidget {
   /// 下拉返回触发的回调
   final void Function(BuildContext context)? onPullBack;
 
+  /// 获取下拉pop返回值
+  final Object? Function(BuildContext context)? onPullBackResult;
+
   /// 下拉进度回调
   final void Function(double progress)? onPullProgress;
 
@@ -128,6 +131,7 @@ class PullBackWidget extends StatefulWidget {
     this.pullBackController,
     this.onPullBack,
     this.onPullProgress,
+    this.onPullBackResult,
     this.pullMaxBound,
     this.enablePullMaxBoundOverScroll = true,
     this.useScrollConsume = true,
@@ -516,16 +520,21 @@ class _PullBackWidgetState extends State<PullBackWidget>
   void _pullBack() {
     //debugger();
     //l.d('completed:${_pullBackValue}');
+    final ctx = buildContext;
+    if (ctx == null) {
+      return;
+    }
     if (widget.onPullBack == null) {
+      final result = widget.onPullBackResult?.call(ctx);
       if (widget.pullMaxBound == null) {
         if (widget.useMaybePop) {
-          buildContext?.maybePop();
+          ctx.maybePop(result: result);
         } else {
-          buildContext?.pop();
+          ctx.pop(result: result);
         }
       }
-    } else if (buildContext != null) {
-      widget.onPullBack?.call(buildContext!);
+    } else {
+      widget.onPullBack?.call(ctx);
     }
   }
 
@@ -730,6 +739,7 @@ extension PullBackWidgetExtension on Widget {
     bool useScrollConsume = true,
     PullBackController? pullBackController,
     double? pullMaxBound,
+    Object? Function(BuildContext context)? onPullBackResult,
     void Function(BuildContext context)? onPullBack,
     void Function(double progress)? onPullProgress,
     Future<bool> Function()? canPullBackAction,
@@ -743,6 +753,7 @@ extension PullBackWidgetExtension on Widget {
       useScrollConsume: useScrollConsume,
       pullBackController: pullBackController,
       useMaybePop: useMaybePop,
+      onPullBackResult: onPullBackResult,
       onPullBack:
           onPullBack ??
           (context) {

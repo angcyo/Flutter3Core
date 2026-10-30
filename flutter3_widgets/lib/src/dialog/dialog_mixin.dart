@@ -494,6 +494,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool maybePop = false /*使用[maybePop]还是[pop]*/,
     double? pullMaxBound /*可以下拉的最大比例, 或者底部需要预留的高度*/,
     void Function(BuildContext context)? onPullBack,
+    Object? Function(BuildContext context)? onPullBackResult /*获取下拉pop返回值*/,
     bool useScroll = false,
     bool useRScroll = false,
     bool shrinkWrap = false,
@@ -749,6 +750,7 @@ mixin DialogMixin implements TranslationTypeImpl {
         useScrollConsume: useScrollConsume,
         pullMaxBound: pullMaxBound,
         useMaybePop: maybePop,
+        onPullBackResult: onPullBackResult,
         onPullBack:
             onPullBack ??
             (context) {
@@ -759,10 +761,11 @@ mixin DialogMixin implements TranslationTypeImpl {
                     closeDialogIf(context, true, maybePop);
                   } else {*/
                 /*}*/
+                final popResult = onPullBackResult?.call(context);
                 if (maybePop) {
-                  navigator.maybePop();
+                  navigator.maybePop(popResult);
                 } else {
-                  navigator.removeRouteIf(route);
+                  navigator.removeRouteIf(route, popResult);
                 }
               }
             },
@@ -889,7 +892,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     bool close = true,
     bool maybePop = false,
     Route? route,
-    dynamic result,
+    Object? result,
   }) async {
     if (close && context?.isMounted == true) {
       if (dialogInOverlay == true) {
@@ -908,7 +911,11 @@ mixin DialogMixin implements TranslationTypeImpl {
           result: result ?? popDialogResult,
         );
       } else {
-        context?.removeRouteIf(route, rootNavigator: dialogUseRootNavigator);
+        context?.removeRouteIf(
+          route,
+          rootNavigator: dialogUseRootNavigator,
+          result: result ?? popDialogResult,
+        );
       }
       return true;
     }
