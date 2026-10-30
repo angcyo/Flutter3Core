@@ -838,6 +838,7 @@ mixin TileMixin {
   Widget buildNumberWidget(
     BuildContext context,
     dynamic number, {
+    String? numberText,
     Widget? numberWidget,
     GestureTapCallback? onTap,
     GestureContextTapCallback? onContextTap,
@@ -860,7 +861,8 @@ mixin TileMixin {
           /*decoration: decoration,*/
           constraints: constraints,
           padding: padding,
-          child: (numberWidget ?? "${number ?? ""}".text()).center(),
+          child: (numberWidget ?? "${numberText ?? (number ?? "")}".text())
+              .center(),
         )
         .ink(
           () {
