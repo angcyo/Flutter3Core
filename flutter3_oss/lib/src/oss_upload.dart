@@ -70,6 +70,7 @@ Future<String?> uploadAliyunOssFile(
     filepath,
     fileKey: key,
     cancelToken: cancelToken,
+    dioOptions: Options(sendTimeout: kDefFileSendTimeout.seconds),
     option:
         option ??
         _putRequestOption(
@@ -158,6 +159,7 @@ Future<List<String>> uploadAliyunOssFileList(
   await OssClient.aliyunOssClient?.putObjectFiles(
     assetEntities,
     cancelToken: cancelToken,
+    dioOptions: Options(sendTimeout: kDefFileSendTimeout.seconds),
   );
   return result;
 }
@@ -188,6 +190,7 @@ Future<String?> uploadAliyunOssBytes(
     bytes,
     key,
     cancelToken: cancelToken,
+    dioOptions: Options(sendTimeout: kDefFileSendTimeout.seconds),
     option:
         option ??
         _putRequestOption(

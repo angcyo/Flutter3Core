@@ -33,6 +33,9 @@ final LogFileInterceptor _logFileInterceptor = LogFileInterceptor();
 /// 默认的超时时长, s
 const kDefTimeout = 10;
 
+/// 文件发送超时, s
+const kDefFileSendTimeout = 60 * 60;
+
 class RDio {
   /// 获取一个上层提供的[RDio],如果有.
   /// 如果有没有则返回单例

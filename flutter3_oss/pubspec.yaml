@@ -31,7 +31,7 @@ dependencies:
   flutter_oss_aliyun:
     git:
       url: git@github.com:angcyo/flutter_oss_aliyun.git
-      ref: 6.4.2-fix1
+      ref: 6.4.2-fix2
 
 dependency_overrides:
   # in flutter3_core

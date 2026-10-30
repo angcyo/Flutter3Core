@@ -10,7 +10,9 @@ import 'package:flutter_oss_aliyun/flutter_oss_aliyun.dart';
 export 'package:flutter_oss_aliyun/flutter_oss_aliyun.dart';
 
 part 'src/oss_endpoint_config_dialog.dart';
+
 part 'src/oss_object.dart';
+
 part 'src/oss_upload.dart';
 
 ///
@@ -200,7 +202,7 @@ PutRequestOption _putRequestOption({
         total: total,
       );
       assert(() {
-        l.d("发送:$chunk");
+        l.v("上传中:$chunk");
         return true;
       }());
       onSendAction?.call(chunk);
