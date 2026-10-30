@@ -799,6 +799,8 @@ extension DropdownMenuValueListEx on List {
   /// - [DropdownButtonTile]
   /// - [DropdownMenuTile]
   ///   - [enableInputFilter] 是否启用过滤
+  /// - [notifyNoDefValue] 如果默认的初始值不在列表中, 是否通知回调
+  /// - [notifyFirst] 首次是否通知回调
   Widget dropdownMenu(
     dynamic dropdownValue, {
     Key? key,
@@ -816,20 +818,32 @@ extension DropdownMenuValueListEx on List {
     String? inputLabel,
     Widget? inputLabelWidget,
     //--
+    bool? notifyNoDefValue,
     bool? notifyFirst,
   }) {
     List values;
+    bool isHaveValue = true;
     if (dropdownValue != null && !contains(dropdownValue)) {
+      isHaveValue = false;
       values = [dropdownValue, ...this];
     } else {
       values = this;
     }
-    if (notifyFirst == true || dropdownValue == null) {
-      //debugger();
-      dropdownValue ??= values.firstOrNull;
-      if (notifyFirst == true || dropdownValue != null) {
-        onChanged?.call(dropdownValue);
-        onTextChanged?.call(strOf(dropdownValue)!);
+    if (notifyNoDefValue == true && dropdownValue == null) {
+      dropdownValue = values.firstOrNull;
+      isHaveValue = false;
+    }
+    if (notifyNoDefValue == true && !isHaveValue) {
+      onChanged?.call(dropdownValue);
+      onTextChanged?.call(strOf(dropdownValue)!);
+    } else {
+      if (notifyFirst == true || dropdownValue == null) {
+        //debugger();
+        dropdownValue ??= values.firstOrNull;
+        if (notifyFirst == true || dropdownValue != null) {
+          onChanged?.call(dropdownValue);
+          onTextChanged?.call(strOf(dropdownValue)!);
+        }
       }
     }
     if (useOverlayStyle == true) {
