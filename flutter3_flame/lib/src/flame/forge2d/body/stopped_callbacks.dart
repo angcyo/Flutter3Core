@@ -20,6 +20,9 @@ mixin StoppedCallbacks<T extends BodyComponent> on BodyComponent {
   /// 球停止后的回调
   void Function(T component)? onStoppedAction;
 
+  /// 球被移除后的回调
+  void Function(T component)? onRemovedAction;
+
   @override
   void update(double dt) {
     super.update(dt);
@@ -64,6 +67,11 @@ mixin StoppedCallbacks<T extends BodyComponent> on BodyComponent {
   void onRemove() {
     super.onRemove();
     // 需要立即停止?
+    assert(() {
+      fb.l.i("[${classHash()}]已被移除->$this");
+      return true;
+    }());
+    onRemovedAction?.call(this as T);
   }
 
   /// 自身停止的回调
