@@ -313,7 +313,11 @@ class RNiceException implements Exception {
     if (!isDebugFlag) {
       return msg ?? cause?.runtimeType.toString() ?? "Exception!";
     }
-    return msg ?? cause?.toString() ?? "[${classHash()}]";
+    final result = msg ?? cause?.toString() ?? "[${classHash()}]";
+    if (isDebug) {
+      //no op
+    }
+    return result;
   }
 }
 
