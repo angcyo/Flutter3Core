@@ -2171,7 +2171,7 @@ extension WidgetEx on Widget {
     Color? surfaceTintColor,
     @defInjectMark double? elevation,
     ShapeBorder? shape /*卡片形状*/,
-    EdgeInsetsGeometry? margin,
+    @defInjectMark EdgeInsetsGeometry? margin,
     Clip? clipBehavior = Clip.antiAlias,
     bool borderOnForeground = true,
   }) => Card(

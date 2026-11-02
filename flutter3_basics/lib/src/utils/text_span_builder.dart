@@ -36,12 +36,14 @@ class TextSpanBuilder {
     Color? color,
     double? fontSize,
     double? letterSpacing,
+    GestureRecognizer? recognizer,
   }) {
     if (text == null) {
       return this;
     }
     _textSpans.add(
       TextSpan(
+        recognizer: recognizer,
         text: text,
         style:
             style ??

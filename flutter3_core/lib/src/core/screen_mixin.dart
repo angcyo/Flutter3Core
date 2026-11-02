@@ -12,8 +12,9 @@ part of flutter3_core;
 ///
 /// - [DialogMixin]
 ///
-/// [ScreenMixin]
-/// [ScreenStateMixin]
+/// [ScreenMixin] 核心
+/// [ScreenStateMixin] 状态混入
+/// [ScreenWidgetEx.showScreenWidget] 显示对应的屏幕
 mixin ScreenMixin on Widget implements TranslationTypeImpl {
   //MARK: - ScreenMixin
 
@@ -114,15 +115,20 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   @callPoint
   Widget buildScaffold(
     ScreenStateContext screenContext,
-    ScreenBodyWidget body,
-  ) {
+    ScreenBodyWidget body, {
+    @defInjectMark bool? expandedScroll /*是否展开滚动内容*/,
+  }) {
     assert(screenContext is BuildContext || screenContext is State);
     assert(body is Widget || body is Iterable<Widget?>);
     final screenWidget = switch (screenType) {
       .overlay => buildOverlayScaffold(screenContext, body),
       .page => throw UnimplementedError(),
       .topDialog => buildTopDialogScaffold(screenContext, body),
-      .bottomDialog => buildBottomDialogScaffold(screenContext, body),
+      .bottomDialog => buildBottomDialogScaffold(
+        screenContext,
+        body,
+        expandedScroll: expandedScroll,
+      ),
       .centerDialog => buildCenterDialogScaffold(screenContext, body),
       .rightSlideDialog => buildRightSlideDialogScaffold(screenContext, body),
       .leftSlideDialog => buildLeftSlideDialogScaffold(screenContext, body),
@@ -390,7 +396,8 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
   //MARK: - DialogPullBack
 
   /// 是否允许对话框拖拽回退
-  bool get dialogPullBack => isScreenInMobile;
+  /// - [isScreenInMobile]
+  bool get dialogPullBack => screenType == .bottomDialog;
 
   /// 构建[ScreenType.bottomDialog]的脚手架
   /// 在桌面端, 按[LogicalKeyboardKey.escape]键, 会自动关闭对话框
@@ -763,6 +770,13 @@ mixin ScreenStateMixin<T extends StatefulWidget> on State<T> {
   /// 获取弹出结果
   @output
   Object? get screenPopResult => null;
+
+  /// 构建屏幕小部件
+  @overridePoint
+  @override
+  Widget build(BuildContext context) {
+    return (widget as ScreenMixin).buildScaffold(this, []);
+  }
 }
 
 extension ScreenStateContextEx on ScreenStateContext {
@@ -1034,3 +1048,14 @@ extension ScreenWidgetEx on Widget {
     return future;
   }
 }
+
+/// - [ScreenStateMixin]
+/*abstract class BaseScreenState<T extends StatefulWidget> extends State<T>
+    with ScreenStateMixin {
+
+  @override
+  Widget build(BuildContext context) {
+
+  }
+
+}*/
