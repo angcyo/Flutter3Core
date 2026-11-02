@@ -29,7 +29,7 @@ extension GeometryWidgetEx on Widget {
       padding(v1, v2, v3, v4);
 
   /// 将当前的小部件, 包裹在一个[Padding]中
-  @Deprecated("请使用[insets]")
+  //@Deprecated("请使用[insets]")
   Widget paddingAll(double value) => paddingInsets(EdgeInsets.all(value));
 
   @Deprecated("请使用[insets]")
@@ -50,13 +50,12 @@ extension GeometryWidgetEx on Widget {
     double top = kH,
     double right = kX,
     double bottom = kH,
-  }) =>
-      paddingOnly(
-        left: horizontal ?? left,
-        top: vertical ?? top,
-        right: horizontal ?? right,
-        bottom: vertical ?? bottom,
-      );
+  }) => paddingOnly(
+    left: horizontal ?? left,
+    top: vertical ?? top,
+    right: horizontal ?? right,
+    bottom: vertical ?? bottom,
+  );
 
   /// 对称, 左右上下一样大
   Widget paddingSymmetric({
@@ -66,13 +65,12 @@ extension GeometryWidgetEx on Widget {
     double top = kX,
     double right = kX,
     double bottom = kX,
-  }) =>
-      paddingOnly(
-        left: horizontal ?? left,
-        top: vertical ?? top,
-        right: horizontal ?? right,
-        bottom: vertical ?? bottom,
-      );
+  }) => paddingOnly(
+    left: horizontal ?? left,
+    top: vertical ?? top,
+    right: horizontal ?? right,
+    bottom: vertical ?? bottom,
+  );
 
   /// [edgeInsets]
   /// [edgeOnly]
@@ -100,20 +98,18 @@ extension GeometryWidgetEx on Widget {
     double? bottom,
     //替换设置
     EdgeInsetsGeometry? insets,
-  }) =>
-      paddingInsets(
-        insets ??
-            EdgeInsets.only(
-              left:
+  }) => paddingInsets(
+    insets ??
+        EdgeInsets.only(
+          left:
               left ?? nTop ?? nRight ?? nBottom ?? h ?? horizontal ?? all ?? 0,
-              top: top ?? nLeft ?? nRight ?? nBottom ?? v ?? vertical ?? all ??
-                  0,
-              right:
+          top: top ?? nLeft ?? nRight ?? nBottom ?? v ?? vertical ?? all ?? 0,
+          right:
               right ?? nLeft ?? nTop ?? nBottom ?? h ?? horizontal ?? all ?? 0,
-              bottom:
+          bottom:
               bottom ?? nLeft ?? nTop ?? nRight ?? v ?? vertical ?? all ?? 0,
-            ),
-      );
+        ),
+  );
 
   /// [insets]
   /// [paddingOnly]
@@ -139,32 +135,31 @@ extension GeometryWidgetEx on Widget {
     double? bottom,
     //替换设置
     EdgeInsetsGeometry? insets,
-  }) =>
-      this.insets(
-        all: all,
-        v: v,
-        h: h,
-        vertical: vertical,
-        horizontal: horizontal,
-        nLeft: nLeft,
-        nTop: nTop,
-        nRight: nRight,
-        nBottom: nBottom,
-        left: left,
-        top: top,
-        right: right,
-        bottom: bottom,
-        insets: insets,
-      );
+  }) => this.insets(
+    all: all,
+    v: v,
+    h: h,
+    vertical: vertical,
+    horizontal: horizontal,
+    nLeft: nLeft,
+    nTop: nTop,
+    nRight: nRight,
+    nBottom: nBottom,
+    left: left,
+    top: top,
+    right: right,
+    bottom: bottom,
+    insets: insets,
+  );
 
-/*Widget paddingFromWindowPadding() {
+  /*Widget paddingFromWindowPadding() {
     return Padding(
       padding: EdgeInsets.fromWindowPadding(WidgetsBinding.instance!.window.viewInsets, WidgetsBinding.instance!.window.devicePixelRatio),
       child: this,
     );
   }*/
 
-//endregion ---Padding---
+  //endregion ---Padding---
 }
 
 /// [edgeInsets]
@@ -188,13 +183,12 @@ EdgeInsets edgeOnly({
   double? top,
   double? right,
   double? bottom,
-}) =>
-    EdgeInsets.only(
-      left: left ?? nTop ?? nRight ?? nBottom ?? h ?? horizontal ?? all ?? 0,
-      top: top ?? nLeft ?? nRight ?? nBottom ?? v ?? vertical ?? all ?? 0,
-      right: right ?? nLeft ?? nTop ?? nBottom ?? h ?? horizontal ?? all ?? 0,
-      bottom: bottom ?? nLeft ?? nTop ?? nRight ?? v ?? vertical ?? all ?? 0,
-    );
+}) => EdgeInsets.only(
+  left: left ?? nTop ?? nRight ?? nBottom ?? h ?? horizontal ?? all ?? 0,
+  top: top ?? nLeft ?? nRight ?? nBottom ?? v ?? vertical ?? all ?? 0,
+  right: right ?? nLeft ?? nTop ?? nBottom ?? h ?? horizontal ?? all ?? 0,
+  bottom: bottom ?? nLeft ?? nTop ?? nRight ?? v ?? vertical ?? all ?? 0,
+);
 
 /// [edgeOnly]
 /// [insets]
@@ -216,22 +210,21 @@ EdgeInsets insets({
   double? top,
   double? right,
   double? bottom,
-}) =>
-    edgeOnly(
-      all: all,
-      vertical: vertical,
-      horizontal: horizontal,
-      v: v,
-      h: h,
-      nLeft: nLeft,
-      nTop: nTop,
-      nRight: nRight,
-      nBottom: nBottom,
-      left: left,
-      top: top,
-      right: right,
-      bottom: bottom,
-    );
+}) => edgeOnly(
+  all: all,
+  vertical: vertical,
+  horizontal: horizontal,
+  v: v,
+  h: h,
+  nLeft: nLeft,
+  nTop: nTop,
+  nRight: nRight,
+  nBottom: nBottom,
+  left: left,
+  top: top,
+  right: right,
+  bottom: bottom,
+);
 
 /// 将当前的小部件, 包裹在一个[Padding]中
 /// 根据html的padding属性, 生成padding

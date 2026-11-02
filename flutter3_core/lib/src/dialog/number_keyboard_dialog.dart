@@ -698,6 +698,7 @@ class NumberKeyboardInputController {
   /// - [numberText]
   /// - [numberValue]
   @api
+  @output
   num? get numberValue {
     if (checkInputValue(numberText)) {
       if (isSupportDecimal) {

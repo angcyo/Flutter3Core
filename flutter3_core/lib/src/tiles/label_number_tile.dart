@@ -6,9 +6,14 @@ part of '../../flutter3_core.dart';
 /// @date 2024/06/10
 ///
 /// 数字输入tile
-/// 上[label]     右[number].[value].(支持键盘输入)
+/// 上[label]     右[number].[value].(支持弹窗/键盘输入)
 /// 下[des]
 /// [LabelNumberSliderTile]
+///
+/// - [LabelNumberTile]
+///   - [buildNumberInputWidget]
+///   - [buildNumberWidget]
+///
 class LabelNumberTile extends StatefulWidget {
   /// 标签
   final String? label;
@@ -125,7 +130,7 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
       numType: widget._numType,
       digits: widget.maxDigits,
     );
-    final number = isDesktopOrWeb
+    final numberWidget = isDesktopOrWeb
         ? buildNumberInputWidget(
             context,
             numberStr,
@@ -171,10 +176,10 @@ class _LabelNumberTileState extends State<LabelNumberTile> with TileMixin {
               des: widget.des,
               desPadding: widget.desPadding,
             ),
-          ].column(crossAxisAlignment: CrossAxisAlignment.start)?.expanded(),
-          number,
+          ].column(crossAxisAlignment: .start)?.expanded(),
+          numberWidget,
         ]
-        .row(crossAxisAlignment: CrossAxisAlignment.center)!
+        .row(crossAxisAlignment: .center)!
         .paddingInsets(widget.tilePadding ?? globalTheme.tilePadding)
         .material();
   }

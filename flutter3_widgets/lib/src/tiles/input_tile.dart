@@ -754,7 +754,7 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
       context,
       Row(
             children: [
-              if (label != null) label,
+              ?label,
               NumberInputWidget(
                 inputText: _currentNumber,
                 contentPadding: widget.contentPadding,
@@ -773,7 +773,7 @@ class _LabelNumberInputTileState extends State<LabelNumberInputTile>
                 },
                 onSubmitted: widget.onSubmitted,
               ).expanded(),
-              if (trailingWidget != null) trailingWidget,
+              ?trailingWidget,
             ],
           )
           .paddingInsets(widget.tilePadding)

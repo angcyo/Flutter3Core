@@ -835,6 +835,9 @@ mixin TileMixin {
 
   /// 数字显示, 并输入的小部件
   /// [NumberKeyboardDialog]
+  ///
+  /// - [buildNumberInputWidget]
+  /// - [buildNumberWidget]
   Widget buildNumberWidget(
     BuildContext context,
     dynamic number, {
@@ -884,6 +887,9 @@ mixin TileMixin {
 
   /// 数字输入的小部件
   /// [NumberInputWidget]
+  ///
+  /// - [buildNumberInputWidget]
+  /// - [buildNumberWidget]
   Widget buildNumberInputWidget(
     BuildContext context,
     dynamic number, {
