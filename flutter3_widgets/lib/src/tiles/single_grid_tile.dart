@@ -158,16 +158,10 @@ class SingleGridTile extends StatelessWidget with TileMixin {
             ?.colorFiltered(color: enable ? null : globalTheme.icoDisableColor);
 
     //--
-    Widget body = [
-      if (top != null) top,
-      if (bottom != null) bottom,
-    ].column(mainAxisAlignment: MainAxisAlignment.center)!;
+    Widget body = [?top, ?bottom].column(mainAxisAlignment: .center)!;
 
     if (bgWidget != null) {
-      body = [
-        bgWidget,
-        body,
-      ].stack(alignment: Alignment.center, fit: StackFit.expand)!;
+      body = [bgWidget, body].stack(alignment: .center, fit: .expand)!;
     }
 
     return Padding(
