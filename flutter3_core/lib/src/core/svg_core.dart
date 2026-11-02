@@ -61,7 +61,7 @@ class _AppPackageAssetsWidgetState extends State<AppPackageAssetsWidget> {
   String? loadResKey;
 
   /// 是否是svg
-  bool get isSvg => widget.resKey?.endsWith(".svg") ?? false;
+  bool get isSvgRes => widget.resKey?.endsWith(".svg") ?? false;
 
   @override
   void initState() {
@@ -80,7 +80,7 @@ class _AppPackageAssetsWidgetState extends State<AppPackageAssetsWidget> {
     final empty = widget.emptyWidget ?? const Empty();
     return isNil(loadResKey)
         ? empty
-        : isSvg
+        : isSvgRes
         ? loadAssetSvgWidget(
             loadResKey!,
             package: null,
