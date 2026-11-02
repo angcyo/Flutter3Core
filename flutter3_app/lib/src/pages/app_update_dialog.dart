@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../assets_generated/assets.gen.dart';
 import '../../flutter3_app.dart';
-import 'app_update_handler.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -116,7 +115,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
           ),
         ).expanded()
       else
-        //直接下载
+        //直接下载 / 立即下载
         GradientButton(
           onTap: () {
             if (downloadStateMixin == .downloading) {

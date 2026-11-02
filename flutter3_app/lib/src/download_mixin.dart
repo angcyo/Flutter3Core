@@ -81,6 +81,9 @@ mixin DioDownloadMixin {
             }
             downloadStateMixin = .downloadFailed;
             tryUpdateState();
+            if (isDebugFlag) {
+              toast("${RNiceException(cause: error)}".text(useDefStyle: false));
+            }
           }
         });
     return filePath;
