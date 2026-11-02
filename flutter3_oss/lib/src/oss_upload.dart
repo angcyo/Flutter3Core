@@ -62,9 +62,8 @@ Future<String?> uploadAliyunOssFile(
   //--
 }) async {
   //--
-  key ??= prefixKey == null
-      ? filepath.fileName()
-      : prefixKey.connectUrl(filepath.fileName());
+  final defKey = filepath.fileName().apkRenameIf();
+  key ??= prefixKey == null ? defKey : prefixKey.connectUrl(defKey);
   baseUrl ??= OssClient.ossBaseUrl;
   await OssClient.aliyunOssClient!.putObjectFile(
     filepath,
@@ -116,11 +115,9 @@ Future<List<String>> uploadAliyunOssFileList(
   int allReceiveCount = 0;
 
   pathList.forEachIndexed((index, filepath) {
+    final defKey = filepath.fileName().apkRenameIf();
     final key =
-        keyList?[index] ??
-        (prefixKey == null
-            ? filepath.fileName()
-            : "$prefixKey/${filepath.fileName()}");
+        keyList?[index] ?? (prefixKey == null ? defKey : "$prefixKey/$defKey");
     result.add((baseUrl ?? "").connectUrl(key).encodeUri());
     assetEntities.add(
       AssetFileEntity(

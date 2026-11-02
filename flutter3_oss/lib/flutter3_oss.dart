@@ -66,6 +66,13 @@ class OssClient {
   /// 支持切换的OSS配置信息列表
   static List<OssConfigData> ossConfigList = [];
 
+  /// OSS 不支持直接上传 `.apk` 的文件, 所以这里需要重命名为 `.apk.1`
+  ///
+  /// ```
+  /// The APK file is not allowed to be distributed in a public network using the OSS endpoint, please use CNAME instead.
+  /// ```
+  static String? apkRenameTo;
+
   //MARK: - OssClient
 
   OssClient._();
@@ -142,7 +149,10 @@ void initAliyunOssSts({
   String? stsUrl,
   FutureOr<Auth> Function()? authGetter,
   //--
+  String? apkRenameTo,
 }) {
+  OssClient.apkRenameTo = apkRenameTo;
+
   ossEndpoint ??= $bc?["ossEndpoint"];
   ossBucket ??= $bc?["ossBucket"];
   if (ossEndpoint != null && ossEndpoint.startsWith("^https?://")) {
@@ -236,4 +246,22 @@ PutRequestOption _putRequestOption({
 extension OssStringEx on String {
   /// 将当前fileKey转换成可以下载的url链接
   String get ossUrl => OssClient.ossBaseUrl!.connectUrl(this);
+
+  /// 重命名apk文件 / 后缀
+  String apkRenameIf() {
+    final apkRenameTo = OssClient.apkRenameTo;
+    if (apkRenameTo == null) {
+      return this;
+    }
+    final fileName = this;
+    if (fileName.endsWith(".apk")) {
+      //尾部替换
+      return fileName.replaceRange(
+        fileName.length - apkRenameTo.length,
+        fileName.length,
+        apkRenameTo,
+      );
+    }
+    return fileName;
+  }
 }
