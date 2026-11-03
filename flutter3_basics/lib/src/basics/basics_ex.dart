@@ -2782,9 +2782,9 @@ extension IteratorEx<E> on Iterator<E> {
   }
 }
 
-/// - [IteratorEx]
-/// - [IterableEx]
-/// - [ListEx]
+/// - [IteratorEx] 迭代器
+/// - [IterableEx] 可迭代对象
+///   - [ListEx]
 extension IterableEx<E> on Iterable<E> {
   /// [length]
   int size() => length;
@@ -3101,9 +3101,9 @@ extension IterableEx<E> on Iterable<E> {
   }
 }
 
-/// - [IteratorEx]
-/// - [IterableEx]
-/// - [ListEx]
+/// - [IteratorEx] 迭代器
+/// - [IterableEx] 可迭代对象
+///   - [ListEx]
 extension ListEx<T> on List<T> {
   /// 最后一个元素的索引
   int get lastIndex => length - 1;

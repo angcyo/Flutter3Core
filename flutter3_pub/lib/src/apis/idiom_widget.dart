@@ -18,11 +18,15 @@ class IdiomWidget extends StatelessWidget {
   /// 是否显示简要信息
   final bool isBrief;
 
+  /// 是否启用动画大小
+  final bool? enableAnimatedSize;
+
   const IdiomWidget({
     super.key,
     required this.idiomBean,
     this.isBrief = true,
     this.error,
+    this.enableAnimatedSize,
   });
 
   @override
@@ -62,13 +66,18 @@ class IdiomWidget extends StatelessWidget {
                 enable: !isNil(bean.url),
                 useDisableCursorStyle: false,
               );
-    return body.animatedSize(alignment: .topCenter).card();
+    return body
+        .animatedSize(enable: enableAnimatedSize ?? true, alignment: .topCenter)
+        .card();
   }
 }
 
 /// 随机获取一个成语并显示
 class RandomIdiomWidget extends StatefulWidget {
-  const RandomIdiomWidget({super.key});
+  /// 一直显示详细信息
+  final bool? isAlwaysDetail;
+
+  const RandomIdiomWidget({super.key, this.isAlwaysDetail});
 
   @override
   State<RandomIdiomWidget> createState() => _RandomIdiomWidgetState();
@@ -95,7 +104,12 @@ class _RandomIdiomWidgetState extends State<RandomIdiomWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return IdiomWidget(idiomBean: _idiomBean, isBrief: !_isHover, error: _error)
+    return IdiomWidget(
+          idiomBean: _idiomBean,
+          isBrief: widget.isAlwaysDetail == true ? false : !_isHover,
+          error: _error,
+          enableAnimatedSize: widget.isAlwaysDetail == null,
+        )
         .frameOf(
           Icon(Icons.refresh, color: Colors.grey)
               .rotateAnimation(enable: _isFetch)

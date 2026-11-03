@@ -1407,6 +1407,7 @@ extension WidgetEx on Widget {
 
   /// 当child的大小发生改变时, 自动触发动画
   Widget animatedSize({
+    bool enable = true,
     Key? key,
     AlignmentGeometry alignment = Alignment.bottomCenter,
     Curve curve = Curves.linear,
@@ -1414,7 +1415,7 @@ extension WidgetEx on Widget {
     Duration? reverseDuration,
     Clip clipBehavior = Clip.hardEdge,
     VoidCallback? onEnd,
-  }) => duration == null
+  }) => duration == null || !enable
       ? this
       : AnimatedSize(
           key: key,
