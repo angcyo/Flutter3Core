@@ -40,14 +40,18 @@ mixin DioDownloadMixin {
   /// @return 下载成功返回本地路径
   @api
   Future<String?> startDownloadMixin(String url) async {
+    //--
+    downloadProgressMixin = 0;
+    downloadStateMixin = .downloading;
+    tryUpdateState();
+
+    //--
     downloadTokenMixin?.cancel();
     downloadTokenMixin = CancelToken();
 
-    downloadProgressMixin = 0;
-    downloadStateMixin = .downloading;
     String name = url.fileName();
     /*if (name.endsWith(".apk.1")) {
-      //是否需要重命名为 .apk ? 不需要.
+      //是否需要重命名为 `.apk` ? 不需要, 支持直接安装 `.apk.1` 文件
       name = name.substring(0, name.length - 2);
       //name = name.replaceAll(".apk.1", ".apk");
     }*/
@@ -110,15 +114,27 @@ mixin DioDownloadMixin {
   //MARK: - build
 
   /// 构建下载进度小部件
-  Widget? buildProgressWidget(BuildContext context) {
+  Widget? buildProgressWidget(
+    BuildContext context, {
+    bool? showProgressText = true,
+  }) {
     double progress = downloadProgressMixin;
     if (downloadStateMixin == .none) {
       return null;
     }
     //debugger();
-    return ProgressBar(
+    final progressBar = ProgressBar(
       progress: progress == -1 ? 1 : progress,
       enableFlowProgressAnimate: downloadStateMixin == .downloading,
-    ).size(height: 6).insets(vertical: kL);
+    ).size(height: 6);
+
+    //--
+    final result = showProgressText == true
+        ? [
+            progressBar.expanded(),
+            "${(progress <= 0 ? 0 : progress * 100).toInt()}%".text(),
+          ].row(gap: kM)
+        : progressBar;
+    return result?.insets(vertical: kL);
   }
 }

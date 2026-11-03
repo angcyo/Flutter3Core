@@ -125,9 +125,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
               return;
             }
             final _ = switch (downloadStateMixin) {
-              .none => startDownloadMixin(bean.downloadUrl ?? ""),
-              .downloaded => _startInstall(),
-              .downloadFailed => startDownloadMixin(bean.downloadUrl ?? ""),
+              .none => startDownloadMixin(bean.downloadUrl ?? ""), //开始下载
+              .downloaded => _startInstall(), //下载完成
+              .downloadFailed => startDownloadMixin(
+                bean.downloadUrl ?? "",
+              ), //下载失败
               _ => null,
             };
           },
@@ -136,7 +138,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
               (downloadStateMixin == .none
                       ? lRes?.libDownloadNow
                       : (downloadStateMixin == .downloading
-                            ? lRes?.libBackgroundDownload
+                            ? downloadProgressMixin <= 0
+                                  ? "..."
+                                  : lRes?.libBackgroundDownload
                             : (downloadStateMixin == .downloaded
                                   ? lRes?.libInstallNow
                                   : (downloadStateMixin == .downloadFailed
