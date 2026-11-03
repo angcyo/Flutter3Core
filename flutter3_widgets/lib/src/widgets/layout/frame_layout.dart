@@ -91,6 +91,46 @@ class FrameLayoutRender extends RenderBox
     return defaultHitTestChildren(result, position: position);
   }
 
+  ///
+  @override
+  Size getDryLayout(covariant BoxConstraints constraints) {
+    return super.getDryLayout(constraints);
+  }
+
+  ///
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    return super.computeDryLayout(constraints);
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) {
+    return getChildren().fold(0, (previous, element) {
+      return max(previous, element.computeMinIntrinsicWidth(height));
+    });
+  }
+
+  @override
+  double computeMaxIntrinsicWidth(double height) {
+    return getChildren().fold(0, (previous, element) {
+      return max(previous, element.computeMaxIntrinsicWidth(height));
+    });
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) {
+    return getChildren().fold(0, (previous, element) {
+      return max(previous, element.computeMinIntrinsicHeight(width));
+    });
+  }
+
+  @override
+  double computeMaxIntrinsicHeight(double width) {
+    return getChildren().fold(0, (previous, element) {
+      return max(previous, element.computeMaxIntrinsicHeight(width));
+    });
+  }
+
   @override
   void performLayout() {
     final BoxConstraints constraints = this.constraints;
