@@ -46,7 +46,11 @@ class TextSpanBuilder {
         recognizer: recognizer,
         text: text,
         style:
-            style ??
+            style?.copyWith(
+              color: color,
+              fontSize: fontSize,
+              letterSpacing: letterSpacing,
+            ) ??
             TextStyle(
               color: color,
               fontSize: fontSize,
@@ -68,7 +72,11 @@ class TextSpanBuilder {
     addText(
       text,
       style:
-          style ??
+          style?.copyWith(
+            color: color,
+            fontSize: fontSize,
+            letterSpacing: letterSpacing,
+          ) ??
           TextStyle(
             color: color,
             fontSize: fontSize,
