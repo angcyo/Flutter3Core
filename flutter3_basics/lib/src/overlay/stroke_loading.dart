@@ -105,8 +105,8 @@ class StrokeLoadingRenderObject extends RenderBox {
     final paint = Paint()
       ..color = lineColor
       ..strokeWidth = lineWidth
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
+      ..strokeCap = .round
+      ..style = .stroke;
 
     Size size = contentSize ?? this.size;
     size = ui.Size(
@@ -129,7 +129,7 @@ class StrokeLoadingRenderObject extends RenderBox {
     if (progress == null) {
       //no
     } else if (progress == -1) {
-      //无线进度
+      //无限进度
       canvas.drawArc(
         rect,
         _startAngle.hds,

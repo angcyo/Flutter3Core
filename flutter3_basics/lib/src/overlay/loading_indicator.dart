@@ -65,7 +65,7 @@ class LoadingIndicator extends StatelessWidget {
                 strokeWidth: 2,
               )
             : StrokeLoadingWidget(
-                progress: progressValue,
+                progress: progressValue ?? -1,
                 color: color ?? Colors.white,
               ),
       ),
