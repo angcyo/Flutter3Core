@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -87,7 +88,8 @@ const bool isDebugMode = fb.isDebug;
 ///
 /// - [RouterComponent]
 ///
-ui.Widget createGameWorld<W extends World, T extends Game>(W? world, {
+ui.Widget createGameWorld<W extends World, T extends Game>(
+  W? world, {
   T? game,
   bool debugMode = false,
 }) {
@@ -103,15 +105,18 @@ ui.Widget createGameWorld<W extends World, T extends Game>(W? world, {
   //AlignComponent
 
   return GameWidget(
-    game: game ?? (FlameGame(world: world)
-      ..debugMode = debugMode),
+    game: game ?? (FlameGame(world: world)..debugMode = debugMode),
   );
 }
 
 /// 使用两个点之间的位移计算冲量
 /// 弹弓式发射：拖得越远，发射越快
-Vector2 calculateImpulse(Vector2 p1, Vector2 p2,
-    {double strength = 5.0, double maxImpulse = 30.0}) {
+Vector2 calculateImpulse(
+  Vector2 p1,
+  Vector2 p2, {
+  double strength = 5.0,
+  double maxImpulse = 30.0,
+}) {
   final impulse = (p1 - p2) * strength;
 
   // 限制最大冲量，避免拖动距离过大导致物体飞得过远。
@@ -131,7 +136,6 @@ Vector2 calculateVelocity(Vector2 impulse, double mass) {
   debugger(when: mass <= 0);
   return impulse / mass.ensureValid(1);
 }
-
 
 /// 根据拖动时间，计算发射的力度
 ///
@@ -166,7 +170,8 @@ Vector2 calculateVelocity(Vector2 impulse, double mass) {
 /// - 100 ms 或更短：strength = 20
 /// - 550 ms：strength = 11
 /// - 1000 ms 或更长：strength = 2
-double calculateStrength(Duration dragDuration, {
+double calculateStrength(
+  Duration dragDuration, {
   double minStrength = 2.0,
   double maxStrength = 20.0,
   double minDurationMs = 100.0,
@@ -174,9 +179,10 @@ double calculateStrength(Duration dragDuration, {
 }) {
   final ms = dragDuration.inMilliseconds.toDouble();
 
-  final t = ((maxDurationMs - ms) /
-      (maxDurationMs - minDurationMs))
-      .clamp(0.0, 1.0);
+  final t = ((maxDurationMs - ms) / (maxDurationMs - minDurationMs)).clamp(
+    0.0,
+    1.0,
+  );
 
   return minStrength + (maxStrength - minStrength) * t;
 }
@@ -204,7 +210,7 @@ List<Vector2> predictTrajectory({
   for (double t = 0; t <= duration; t += step) {
     final x = start.x + velocity.x * t;
     final y = start.y + velocity.y * t + 0.5 * gravity * t * t;
-    points.add(Vector2(x, y,));
+    points.add(Vector2(x, y));
     if (min != null && max != null) {
       if (x < min.x || x > max.x || y < min.y || y > max.y) {
         break;
@@ -258,5 +264,97 @@ List<Vector2> generateArcPoints({
   });
 }
 
+/// 根据中心坐标和半径生成椭圆折点。
+///
+/// center   : 椭圆中心坐标
+/// rx       : X 轴半径
+/// ry       : Y 轴半径
+/// segments : 分段数
+///
+/// 返回 segments 个折点，不重复最后一个闭合点。
+List<Vector2> generateEllipsePoints({
+  required Vector2 center,
+  required double rx,
+  required double ry,
+  int segments = 64,
+}) {
+  if (rx <= 0 || ry <= 0) {
+    throw ArgumentError('rx 和 ry 必须大于 0');
+  }
+
+  if (segments < 3) {
+    throw ArgumentError('segments 必须大于等于 3');
+  }
+
+  return List.generate(segments, (i) {
+    final angle = 2 * math.pi * i / segments;
+
+    final x = center.x + rx * math.cos(angle);
+    final y = center.y + ry * math.sin(angle);
+
+    return Vector2(x, y);
+  });
+}
+
+/// 根据宽高生成箭的多边形折点。
+///
+/// width  : 箭的总长度
+/// height : 箭的最大高度
+///
+/// 返回箭的多边形顶点，箭头朝右。
+List<Vector2> generateArrowPoints({
+  required double width,
+  required double height,
+  double? maxHeadWidth,
+  double? maxTailWidth,
+  double? headLength,
+  double? tailLength,
+  double? shaftWidth,
+}) {
+  assert(width > 0 && height > 0);
+
+  // 箭头、箭尾的最大高度
+  final headW = min(maxHeadWidth ?? height * 0.9, height);
+  final tailW = min(maxTailWidth ?? height * 0.7, height);
+
+  // 箭头和箭尾长度
+  final headL = min(headLength ?? width * 0.25, width * 0.5);
+  final tailL = min(tailLength ?? width * 0.18, width * 0.5);
+
+  // 箭身宽度：不会超过箭头和箭尾宽度
+  final bodyW = min(shaftWidth ?? min(headW, tailW) * 0.18, min(headW, tailW));
+
+  final cy = height / 2;
+
+  // X 轴分段
+  final x0 = 0.0;
+  final x1 = tailL;
+  final x2 = width - headL;
+  final x3 = width;
+
+  final points = <Vector2>[
+    // 箭尾
+    Vector2(x0, cy - tailW / 2),
+    Vector2(x1, cy - bodyW / 2),
+
+    // 箭身
+    Vector2(x2, cy - bodyW / 2),
+
+    // 箭头
+    Vector2(x2, cy - headW / 2),
+    Vector2(x3, cy),
+
+    Vector2(x2, cy + headW / 2),
+
+    // 箭身
+    Vector2(x2, cy + bodyW / 2),
+    Vector2(x1, cy + bodyW / 2),
+
+    // 箭尾
+    Vector2(x0, cy + tailW / 2),
+  ];
+
+  return points;
+}
 
 //#endregion

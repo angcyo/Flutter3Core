@@ -28,6 +28,29 @@ extension BodyEx on Body {
     return false;
   }
 
+  /// 立即刚体的运动
+  /// - [static] 是否将刚体设置为静态, 不受重力影响
+  /// - [enable] 是否启用刚体
+  void stopBody({bool static = true, bool? enable}) {
+    linearVelocity = Vector2.zero();
+    angularVelocity = 0;
+    isAwake = false;
+    if (enable != null) {
+      isEnabled = enable;
+    }
+    if (static) {
+      type = .static;
+    }
+  }
+
+  /// 禁用刚体的所有联系人事件
+  void disableContactEvents({bool disable = true}) {
+    for (final shape in shapes) {
+      shape.sensorEventsEnabled = !disable;
+      shape.contactEventsEnabled = !disable;
+    }
+  }
+
   //MARK: 速度
 
   /// 判断刚体是否停止滚动
@@ -56,6 +79,7 @@ extension BodyEx on Body {
   }) {
     //Vector2.random() * 1000
     assert(() {
+      //[Body(120d39fe)]applyLinearImpulseEx: [1.6319999694824219,-1.4880001544952393]
       fb.l.d("[${classHash()}]applyLinearImpulseEx: $impulse");
       return true;
     }());
@@ -144,6 +168,30 @@ extension BodyEx on Body {
     }
     return shapes;
   }
+
+  /// 创建多边形
+  Shape createPolygonGeometry(
+    List<Vector2> points, {
+    ShapeDef? shapeDef,
+    // 摩擦系数
+    double friction = 0.6,
+    // 弹性
+    double restitution = 0,
+    // 滚动阻力
+    double rollingResistance = 0,
+    // 颜色 0xrrggbb
+    @fb.implementation int customColor = 0,
+  }) => createShape(
+    Polygon(points),
+    shapeDef ??
+        ShapeDef(
+          material: SurfaceMaterial(
+            friction: friction,
+            restitution: restitution,
+            customColor: customColor,
+          ),
+        ),
+  );
 }
 
 /// 刚体组件扩展
@@ -200,9 +248,23 @@ extension BodyComponentEx on BodyComponent {
     }
     return body;
   }
+
+  /// 重新加载刚体
+  void reloadBody() {
+    if (!world.isRemoving || world.destroyBodiesOnRemove) {
+      world.destroyBody(body);
+    }
+    body = createBody();
+  }
 }
 
 /// 刚体组件
+///
+/// - [FBodyComponent.createGeometry] 创建刚体的几何形状
+/// - [BodyEx.createSegmentGeometry] 创建线段几何形状
+/// ```
+/// body.createShape(ff.FPolygon()) //多边形
+/// ```
 class FBodyComponent<T extends Forge2DGame> extends BodyComponent<T>
     with ContactCallbacks {
   final String? tag;
@@ -284,33 +346,25 @@ class FBodyComponent<T extends Forge2DGame> extends BodyComponent<T>
       body.createShape(spec.geometry, definition);
     }
     //--
-    final geometry = createGeometry(body);
+    final shapeDef = ShapeDef(
+      material: material,
+      enableContactEvents: enableContactEvents,
+      enableSensorEvents: enableSensorEvents,
+      density: density,
+    );
+    final geometry = createGeometry(body, shapeDef);
     if (geometry != null) {
-      body.createShape(
-        geometry,
-        ShapeDef(
-          material: material,
-          enableContactEvents: enableContactEvents,
-          enableSensorEvents: enableSensorEvents,
-          density: density,
-        ),
-      );
+      body.createShape(geometry, shapeDef);
     }
     return body;
   }
 
   /// 创建刚体的几何形状
   @fb.overridePoint
-  ShapeGeometry? createGeometry(Body body) {
+  ShapeGeometry? createGeometry(Body body, ShapeDef shapeDef) {
+    //body.createShape(ff.FPolygon(points));
+    //body.createSegmentGeometry(ff.FPolygon(points));
     return null;
-  }
-
-  /// 重新加载刚体
-  void reloadBody() {
-    if (!world.isRemoving || world.destroyBodiesOnRemove) {
-      world.destroyBody(body);
-    }
-    body = createBody();
   }
 
   //--

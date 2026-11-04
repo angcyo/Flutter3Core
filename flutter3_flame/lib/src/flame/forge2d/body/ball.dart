@@ -17,6 +17,13 @@ class Ball extends BodyComponent
   @fb.configProperty
   double radius;
 
+  late Paint originalPaint;
+
+  double strokeWidth;
+  String? tag;
+
+  //MARK: shape
+
   /// 球的密度 / 影响质量
   @fb.configProperty
   double density;
@@ -29,42 +36,59 @@ class Ball extends BodyComponent
   @fb.configProperty
   double restitution;
 
-  late Paint originalPaint;
-  final Vector2 bodyPosition;
-  final BodyType bodyType;
+  bool enableContactEvents;
+  bool enableSensorEvents;
 
-  final double strokeWidth;
-  final String? tag;
-  final bool enableContactEvents;
-  final bool enableSensorEvents;
-  final Object? userData;
-
-  /// 是否启用刚体, 关闭后, 刚体将不会响应物理模拟
-  final bool isEnabled;
+  /// 是否传感器, 传感器不会响应物理碰撞, 但会触发碰撞事件
+  bool isSensor;
 
   /// 球的材质, 摩擦力 / 反弹力 / 阻力
   @fb.defInjectMark
-  final SurfaceMaterial? material;
+  SurfaceMaterial? material;
+
+  //MARK: body
+
+  /// 初始位置
+  Vector2 bodyPosition;
+
+  /// 初始旋转
+  Rot bodyRotation;
+
+  /// 初始线性速度
+  Vector2? linearVelocity;
+  double angularVelocity;
+
+  BodyType bodyType;
+
+  /// 是否启用刚体, 关闭后, 刚体将不会响应物理模拟
+  bool isEnabled;
+
+  Object? userData;
 
   //--
   Ball({
     this.tag,
-    Vector2? position,
-    this.bodyType = .dynamic,
     @fb.mm this.radius = 0.2,
     @fb.mm this.strokeWidth = 0.01,
     Color? color,
+    this.bodyType = .dynamic,
+    Vector2? position,
+    Rot? rotation,
+    this.linearVelocity,
+    this.angularVelocity = 0,
     super.renderBody = true,
     this.enableContactEvents = true,
     this.enableSensorEvents = true,
     this.isEnabled = true,
+    this.isSensor = false,
     this.userData,
     this.material,
     this.density = 1,
     this.friction = 0.6,
     this.restitution = 0.7,
     void Function(Ball component)? onStoppedAction,
-  }) : bodyPosition = position ?? Vector2.zero() {
+  }) : bodyPosition = position ?? Vector2.zero(),
+       bodyRotation = rotation ?? Rot.identity() {
     originalPaint = Paint()..color = color ?? Colors.purple;
     paint = originalPaint;
     this.onStoppedAction = onStoppedAction;
@@ -88,19 +112,34 @@ class Ball extends BodyComponent
       enableContactEvents: enableContactEvents,
       enableSensorEvents: enableSensorEvents,
       density: density,
+      isSensor: isSensor,
     );
 
     final bodyDef = BodyDef(
+      type: bodyType,
+      isEnabled: isEnabled,
       userData: this,
       angularDamping: 0.8,
       position: bodyPosition,
-      type: bodyType,
-      isEnabled: isEnabled,
+      rotation: bodyRotation,
+      linearVelocity: linearVelocity,
+      angularVelocity: angularVelocity,
     );
-
+    //--
     final body = world.createBody(bodyDef);
-    final shape = body.createShape(Circle(radius: radius), shapeDef);
+    final geometry = createBallGeometry(body);
+    if (geometry != null) {
+      body.createShape(geometry, shapeDef);
+    }
     return body;
+  }
+
+  /// 创建Ball的几何形状
+  @fb.overridePoint
+  ShapeGeometry? createBallGeometry(Body body) {
+    //body.createShape(ff.FPolygon(points));
+    //body.createSegmentGeometry(ff.FPolygon(points));
+    return Circle(radius: radius);
   }
 
   //final _impulseForce = Vector2(0, 1000);
