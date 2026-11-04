@@ -288,16 +288,25 @@ class GlobalTheme {
   TextStyle get textBigGeneralStyle =>
       const TextStyle(fontSize: 28, color: Color(0xff182334));
 
+  /// - [textTitleStyle]
+  /// - [textTitleBoldStyle]
+  /// - [textTitleBigBoldStyle]
   TextStyle get textTitleStyle =>
       const TextStyle(fontSize: 16, color: Color(0xff333333));
 
+  /// - [textTitleStyle]
+  /// - [textTitleBoldStyle]
+  /// - [textTitleBigBoldStyle]
   TextStyle get textTitleBoldStyle =>
-      textTitleStyle.copyWith(fontWeight: FontWeight.bold);
+      textTitleStyle.copyWith(fontWeight: .bold);
 
+  /// - [textTitleStyle]
+  /// - [textTitleBoldStyle]
+  /// - [textTitleBigBoldStyle]
   TextStyle get textTitleBigStyle => textTitleStyle.copyWith(fontSize: 18);
 
   TextStyle get textTitleBigBoldStyle =>
-      textTitleBigStyle.copyWith(fontWeight: FontWeight.bold);
+      textTitleBigStyle.copyWith(fontWeight: .bold);
 
   TextStyle get textSubTitleStyle =>
       const TextStyle(fontSize: 14, color: Color(0xff929292));

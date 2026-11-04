@@ -204,7 +204,7 @@ mixin ScreenMixin on Widget implements TranslationTypeImpl {
     //(title * (isDebug ? 5 : 1))
     final title = getTitle(screenContext.itContext);
     return title
-        ?.text(style: globalTheme.textTitleStyle)
+        ?.text(style: globalTheme.textTitleBoldStyle)
         .insets(all: globalTheme.x);
   }
 
