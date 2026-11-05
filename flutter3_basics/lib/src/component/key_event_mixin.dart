@@ -134,7 +134,7 @@ mixin KeyEventMixin {
   @callPoint
   @overridePoint
   KeyEventResult handleKeyEventResultMixin(KeyEvent event) {
-    KeyEventResult handle = KeyEventResult.ignored;
+    KeyEventResult handle = .ignored;
     //l.w("onHandleKeyEventMixin[${event.isKeyUp}]->$event");
     //debugger(when: event.isKeyUp);
     if (event.isKeyDown) {

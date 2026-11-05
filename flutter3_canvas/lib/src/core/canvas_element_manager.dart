@@ -140,18 +140,41 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [canvas] 处理掉基础的[offset]的canvas
   /// 绘制元素入口, 裁剪了[CanvasViewBox.canvasBounds]区域
   /// [CanvasPaintManager.paint]
+  ///
+  /// - [CanvasElementManager.paintElement]
+  ///
   @entryPoint
   void paintElements(Canvas canvas, PaintMeta paintMeta) {
     final canvasViewBox = canvasDelegate.canvasViewBox;
+    final enableHoverTopDraw = canvasStyle.enableHoverTopDraw;
     canvas.withClipRect(canvasViewBox.canvasBounds, () {
       //--元素绘制入口
       //debugger();
       for (final element in beforeElements) {
         paintElement(canvas, paintMeta, element);
       }
+      //--
       for (final element in elements) {
-        paintElement(canvas, paintMeta, element);
+        if (enableHoverTopDraw) {
+          final isHoverElement = element.paintState.isHover;
+          if (isHoverElement) {
+            continue;
+          } else {
+            paintElement(canvas, paintMeta, element);
+          }
+        } else {
+          paintElement(canvas, paintMeta, element);
+        }
       }
+      if (enableHoverTopDraw) {
+        for (final element in elements) {
+          final isHoverElement = element.paintState.isHover;
+          if (isHoverElement) {
+            paintElement(canvas, paintMeta, element);
+          }
+        }
+      }
+      //--
       for (final element in afterElements) {
         paintElement(canvas, paintMeta, element);
       }
@@ -182,7 +205,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   }
 
   /// 绘制元素
-  /// [paintElements]驱动
+  /// [CanvasElementManager.paintElements]驱动
   @property
   void paintElement(
     Canvas canvas,
@@ -212,7 +235,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //元素事件控制派发
     canvasElementControlManager.handlePointerEvent(event);
 
-    //元素自身的事件派发
+    //元素自身的事件派发 / event.isPointerHover 悬停事件
     if (canvasElementControlManager.enableElementControl ||
         canvasStyle.enableElementEvent == true) {
       //将事件发送元素
@@ -323,33 +346,25 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// [afterElements]
   /// [beforeElements]
   bool addAfterElement(ElementPainter? element) =>
-      _addElementIn(CanvasElementType.after, afterElements, element);
+      _addElementIn(.after, afterElements, element);
 
   //--
 
   /// [afterElements]
   /// [beforeElements]
   bool removeBeforeElement(ElementPainter? element) =>
-      _removeElementFrom(CanvasElementType.before, beforeElements, element);
+      _removeElementFrom(.before, beforeElements, element);
 
   /// [afterElements]
   /// [beforeElements]
   bool removeAfterElement(ElementPainter? element) =>
-      _removeElementFrom(CanvasElementType.after, afterElements, element);
+      _removeElementFrom(.after, afterElements, element);
 
   bool removeBeforeElementList(List<ElementPainter>? elementList) =>
-      _removeElementListFrom(
-        CanvasElementType.element,
-        beforeElements,
-        elementList,
-      );
+      _removeElementListFrom(.element, beforeElements, elementList);
 
   bool removeAfterElementList(List<ElementPainter>? elementList) =>
-      _removeElementListFrom(
-        CanvasElementType.element,
-        afterElements,
-        elementList,
-      );
+      _removeElementListFrom(.element, afterElements, elementList);
 
   //--
 
@@ -612,8 +627,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool followPainter = false,
     bool followContent = false,
     bool? animate,
-    UndoType undoType = UndoType.normal,
-    ElementSelectType selectType = ElementSelectType.code,
+    UndoType undoType = .normal,
+    ElementSelectType selectType = .code,
   }) {
     if (element == null) {
       assert(() {
@@ -656,8 +671,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     bool followPainter = false,
     bool followContent = false,
     bool? animate,
-    UndoType undoType = UndoType.normal,
-    ElementSelectType selectType = ElementSelectType.code,
+    UndoType undoType = .normal,
+    ElementSelectType selectType = .code,
   }) {
     //过滤出不在列表中的元素
     final op = _filterElementList(list, elements);
@@ -783,8 +798,14 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// 删除所有元素
   @api
   @supportUndo
-  void removeAllElement({UndoType undoType = UndoType.normal}) {
-    removeElementList(elements.clone(), undoType: undoType);
+  void removeAllElement({
+    bool Function(ElementPainter element)? test,
+    UndoType undoType = UndoType.normal,
+  }) {
+    final list = test == null
+        ? elements.clone()
+        : elements.where(test).toList();
+    removeElementList(list, undoType: undoType);
   }
 
   /// 删除元素

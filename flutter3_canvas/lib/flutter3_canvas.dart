@@ -53,6 +53,7 @@ part 'src/painter/base_char_painter.dart';
 part 'src/painter/base_text_painter.dart';
 part 'src/painter/element_painter.dart';
 part 'src/painter/image_element_painter.dart';
+part 'src/painter/loading_element_painter.dart';
 part 'src/painter/painter.dart';
 part 'src/painter/path_element_painter.dart';
 part 'src/painter/path_simulation_painter.dart';

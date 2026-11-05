@@ -20,6 +20,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   CanvasAxisManager get axisManager =>
       canvasDelegate.canvasPaintManager.axisManager;
 
+  CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
+
   /// 画布平移组件, 操控[CanvasViewBox]对象
   /// - [CanvasViewBox.translateTo]
   /// - [CanvasViewBox.translateBy]
@@ -76,7 +78,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
   void handlePointerEvent(@viewCoordinate PointerEvent event) {
     final localPosition = event.localPosition;
     pointerPosition = localPosition;
-    if (!canvasDelegate.canvasStyle.enableCanvasEvent) {
+    if (!canvasStyle.enableCanvasEvent) {
       //事件总开关被关闭, 不处理任何手势
       assert(() {
         l.w("[${classHash()}]事件总开关被关闭, 不处理任何手势->>$event");
@@ -109,7 +111,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }
 
     if (!_cancelDispatchEvent) {
-      if (canvasDelegate.canvasStyle.enableWidgetRender) {
+      if (canvasStyle.enableWidgetRender) {
         _handleWidgetPainterEvent(event);
       }
       //派发事件到客户端
@@ -199,19 +201,21 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }());*/
 
     //距离测量
-    final measureKeyboardKey = canvasDelegate.canvasStyle.measureKeyboardKey;
-    if (measureKeyboardKey != null &&
-        event.isKeyDown &&
-        isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
-      //触发测量模式, 测距组件
-      if (canvasDelegate._overlayComponent == null) {
-        canvasDelegate.attachOverlay(
-          CanvasMeasureComponent(
-            autoCompleteKey: measureKeyboardKey,
-            clickMeasure: false,
-          ),
-          cancelSelectedElement: false,
-        );
+    if (canvasStyle.enableCanvasKeyEvent != false) {
+      final measureKeyboardKey = canvasStyle.measureKeyboardKey;
+      if (measureKeyboardKey != null &&
+          event.isKeyDown &&
+          isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
+        //触发测量模式, 测距组件
+        if (canvasDelegate._overlayComponent == null) {
+          canvasDelegate.attachOverlay(
+            CanvasMeasureComponent(
+              autoCompleteKey: measureKeyboardKey,
+              clickMeasure: false,
+            ),
+            cancelSelectedElement: false,
+          );
+        }
       }
     }
     final overlayComponent = canvasDelegate._overlayComponent;
@@ -220,8 +224,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     }
     bool handle = false;
     //--
-    if (canvasDelegate.canvasStyle.enableElementControl ||
-        canvasDelegate.canvasStyle.enableElementKeyEvent == true) {
+    if (canvasStyle.enableElementControl ||
+        canvasStyle.enableElementKeyEvent == true) {
       //将事件发送元素
       if (_keyEventInterceptClient != null) {
         handle = _keyEventInterceptClient!.handleKeyEvent(event);

@@ -102,19 +102,30 @@ class StrokeLoadingRenderObject extends RenderBox {
   void paint(PaintingContext context, ui.Offset offset) {
     super.paint(context, offset);
     final canvas = context.canvas;
+    paintSelf(canvas, offset);
+  }
+
+  /// 自定义绘制
+  void paintSelf(Canvas canvas, ui.Offset offset) {
     final paint = Paint()
       ..color = lineColor
       ..strokeWidth = lineWidth
       ..strokeCap = .round
       ..style = .stroke;
 
-    Size size = contentSize ?? this.size;
-    size = ui.Size(
-      math.min(size.width, this.size.width),
-      math.min(size.width, this.size.height),
-    );
-    final off =
-        offset + alignChildOffset(Alignment.center, this.size, childSize: size);
+    final thisSize = parent != null ? this.size : (contentSize ?? Size.zero);
+    Size size = contentSize ?? thisSize;
+    if (parent != null) {
+      size = ui.Size(
+        math.min(size.width, thisSize.width),
+        math.min(size.width, thisSize.height),
+      );
+    }
+    if (isNil(size)) {
+      debugger();
+      return;
+    }
+    final off = offset + alignChildOffset(.center, thisSize, childSize: size);
 
     Rect rect = (off & size).deflateValue(lineWidth / 2);
     canvas.drawArc(rect, 0, 360.hd, false, paint);
@@ -154,7 +165,7 @@ class StrokeLoadingRenderObject extends RenderBox {
       return true;
     }());*/
 
-    if (!pause) {
+    if (!pause && parent != null) {
       postMarkNeedsPaint();
     }
   }

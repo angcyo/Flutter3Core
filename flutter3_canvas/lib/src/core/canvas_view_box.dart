@@ -139,15 +139,6 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       }
     }
 
-    //viewBox
-    if (fromInitialize) {
-      scheduleMicrotask(() {
-        canvasDelegate.dispatchCanvasViewBoxChanged(this, fromInitialize, true);
-      });
-    } else {
-      canvasDelegate.dispatchCanvasViewBoxChanged(this, fromInitialize, true);
-    }
-
     //paintBounds
     if (isPaintBoundsChanged) {
       if (fromInitialize) {
@@ -178,6 +169,25 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
           anim: false,
         );
       }
+    }
+
+    //viewBox
+    if (fromInitialize) {
+      scheduleMicrotask(() {
+        canvasDelegate.dispatchCanvasViewBoxChanged(
+          this,
+          fromInitialize,
+          isFirstInitialize,
+          true,
+        );
+      });
+    } else {
+      canvasDelegate.dispatchCanvasViewBoxChanged(
+        this,
+        fromInitialize,
+        isFirstInitialize,
+        true,
+      );
     }
   }
 
@@ -368,14 +378,19 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       ) {
         final matrix = matrixTween.lerp(value);
         canvasMatrix.setFrom(matrix);
-        completedAction?.call(isCompleted);
-        canvasDelegate.dispatchCanvasViewBoxChanged(this, false, isCompleted);
-        //--
         if (_changeMatrixCompleter?.isCompleted == true) {
         } else {
           _changeMatrixCompleter?.complete(isCompleted);
         }
         _changeMatrixCompleter = null;
+        //--
+        canvasDelegate.dispatchCanvasViewBoxChanged(
+          this,
+          false,
+          false,
+          isCompleted,
+        );
+        completedAction?.call(isCompleted);
       });
       if (_changeMatrixCompleter != null) {
         return _changeMatrixCompleter!.future;
@@ -383,8 +398,8 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       return true;
     } else {
       canvasMatrix.setFrom(_checkMatrix(target));
+      canvasDelegate.dispatchCanvasViewBoxChanged(this, false, false, true);
       completedAction?.call(true);
-      canvasDelegate.dispatchCanvasViewBoxChanged(this, false, true);
     }
     //canvasMatrix.clone();
     //canvasMatrix.setFrom(arg)
@@ -435,7 +450,16 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
   /// - [CanvasKeyManager.zoomIn]
   /// - [CanvasKeyManager.zoomOut]
   @api
-  void scaleBy({double? sx, double? sy, Offset? pivot, bool anim = true}) {
+  void scaleBy({
+    double? scale,
+    double? sx,
+    double? sy,
+    Offset? pivot,
+    bool anim = true,
+  }) {
+    sx ??= scale;
+    sy ??= scale;
+
     if (sx != null) {
       if ((sx < 1 && scaleX <= minScaleX) || (sx > 1 && scaleX >= maxScaleX)) {
         //已经达到了最小/最大, 还想缩放/放大
@@ -461,8 +485,17 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
 
   /// 使用指定比例缩放画布
   @api
-  void scaleTo({double? sx, double? sy, Offset? pivot, bool anim = true}) {
+  void scaleTo({
+    double? scale,
+    double? sx,
+    double? sy,
+    Offset? pivot,
+    bool anim = true,
+    void Function(bool isCompleted)? completedAction,
+  }) {
     pivot ??= canvasSceneVisibleBounds.center;
+    sx ??= scale;
+    sy ??= scale;
     sx = sx != null ? clamp(sx, minScaleX, maxScaleX) : null;
     sy = sy != null ? clamp(sy, minScaleY, maxScaleY) : null;
     assert(() {
@@ -473,6 +506,7 @@ class CanvasViewBox with DiagnosticableTreeMixin, DiagnosticsMixin {
       canvasMatrix.clone()
         ..scaleTo(sx: sx, sy: sy, pivotX: pivot.dx, pivotY: pivot.dy),
       animate: anim,
+      completedAction: completedAction,
     );
   }
 

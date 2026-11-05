@@ -20,9 +20,10 @@ class CanvasScaleRadioTile extends StatefulWidget {
 class _CanvasScaleRadioTileState extends State<CanvasScaleRadioTile> {
   /// 画布监听
   late final canvasListener = CanvasListener(
-    onCanvasViewBoxChangedAction: (viewBox, isInitialize, isCompleted) {
-      updateState();
-    },
+    onCanvasViewBoxChangedAction:
+        (viewBox, isInitialize, isFirstInitialize, isCompleted) {
+          updateState();
+        },
   );
 
   /// 缩放比例列表

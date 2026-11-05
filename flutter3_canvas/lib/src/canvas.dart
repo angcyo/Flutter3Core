@@ -225,6 +225,8 @@ class CanvasRenderBox extends RenderBox
   @property
   CanvasDelegate canvasDelegate;
 
+  CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
+
   /// 父级焦点[FocusNode]
   ///
   /// - [parentNode]
@@ -591,23 +593,24 @@ class CanvasRenderBox extends RenderBox
   /// 画布键盘事件处理
   @override
   KeyEventResult handleKeyEventResultMixin(KeyEvent event) {
-    KeyEventResult handler = KeyEventResult.ignored;
+    KeyEventResult handler = .ignored;
     //
-    if (canvasDelegate.canvasStyle.enableElementControl ||
-        canvasDelegate.canvasStyle.enableCanvasKeyEvent == true) {
+    if (canvasStyle.enableElementControl ||
+        (canvasStyle.enableCanvasKeyEvent == true &&
+            canvasStyle.isCanvasKeyEvent(event))) {
       //快捷按键匹配
       handler = super.handleKeyEventResultMixin(event);
       final keyHandler = canvasDelegate.canvasKeyManager.handleKeyEvent(
         this,
         event,
       );
-      if (keyHandler == KeyEventResult.handled) {
+      if (keyHandler == .handled) {
         handler = keyHandler;
       }
       //debugger();
     }
     if (canvasDelegate.handleKeyEvent(this, event, handler)) {
-      handler = KeyEventResult.handled;
+      handler = .handled;
     }
     return handler;
   }
@@ -669,6 +672,7 @@ class CanvasListener {
   final void Function(
     CanvasViewBox canvasViewBox,
     bool fromInitialize,
+    bool isFirstInitialize,
     bool isCompleted,
   )?
   onCanvasViewBoxChangedAction;

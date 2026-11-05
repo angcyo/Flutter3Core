@@ -664,14 +664,14 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   }
 
   /// 跟随一个元素, 自动居中处理
-  /// [followRect]
+  /// [followRect] : 支持更多自适应
   /// [CanvasFollowManager.followRect]
   @api
   void followPainter({
     @sceneCoordinate Rect? rect,
     ElementPainter? elementPainter,
     @viewCoordinate EdgeInsets? margin,
-    BoxFit? fit = BoxFit.none,
+    BoxFit? fit = .none,
     Alignment? alignment /*= Alignment.center*/,
     bool? animate,
   }) {
@@ -1274,6 +1274,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   void dispatchCanvasViewBoxChanged(
     CanvasViewBox canvasViewBox,
     bool fromInitialize,
+    bool isFirstInitialize,
     bool isCompleted,
   ) {
     canvasElementManager.canvasElementControlManager.updateControlBounds();
@@ -1286,6 +1287,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       element.onCanvasViewBoxChangedAction?.call(
         canvasViewBox,
         fromInitialize,
+        isFirstInitialize,
         isCompleted,
       );
     });

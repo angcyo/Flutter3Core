@@ -101,12 +101,16 @@ class CanvasStyle {
 
   /// 是否要开启画布键盘事件, 不指定则使用[enableElementControl]的值
   /// [CanvasRenderBox.handleKeyEventResultMixin]处理
+  ///
+  /// - [measureKeyboardKey] 测距功能
+  ///
   /// - [enableCanvasKeyEvent]
   /// - [enableCanvasEvent]
   bool? enableCanvasKeyEvent;
 
   /// 是否要开启画布元素键盘事件, 不指定则使用[enableElementControl]的值
   /// [CanvasRenderBox.handleKeyEventResultMixin]处理
+  ///
   bool? enableElementKeyEvent;
 
   //--
@@ -134,6 +138,15 @@ class CanvasStyle {
   /// - [enableElementEvent]
   /// - [enableElementKeyEvent]
   bool enableCanvasEvent = true;
+
+  /// 是否激活元素的精确选中
+  /// - 开启后, 使用元素的精确边界[Path]选中元素
+  /// - 关闭后, 则直接使用[Rect]选中
+  bool enableElementExactSelect = false;
+
+  /// 是否激活悬停时, 顶层绘制
+  /// - 开启后, 悬停时, 会绘制在最上层
+  bool enableHoverTopDraw = false;
 
   //--key
 
@@ -385,4 +398,29 @@ class CanvasStyle {
   double adsorbEscapeThreshold = 10;
 
   //endregion adsorb
+
+  //region method
+
+  /// 开启纯净模式
+  void enablePureMode() {
+    showAxis = false;
+    showGrid = false;
+    showRefLine = false;
+    //--
+    enableRefLine = false;
+    enableElementEvent = false;
+    enableElementKeyEvent = false;
+    enableElementControl = false;
+    enableElementAdsorb = false;
+    //--
+    enableCanvasMenu = false;
+    enableCanvasKeyEvent = true;
+  }
+
+  /// 当前按键是否是操作画布的, 而不是操作元素的
+  bool isCanvasKeyEvent(KeyEvent event) {
+    return event.logicalKey == dragKeyboardKey;
+  }
+
+  //endregion method
 }

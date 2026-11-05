@@ -189,12 +189,21 @@ extension PathEx on Path {
   bool contains(Offset offset) => this.contains(offset);
 
   /// 是否和矩形相交
-  bool intersectsRect(Rect rect) => intersects(Path()..addRect(rect));
+  bool intersectsRect(Rect rect) => intersects(Path()..addRect(rect)) ?? false;
 
   /// 是否和另一个路径相交
-  bool intersects(Path other) {
-    final intersection = Path.combine(PathOperation.intersect, this, other);
-    return !intersection.isEmpty;
+  bool? intersects(Path other) {
+    try {
+      final intersection = Path.combine(.intersect, this, other);
+      return !intersection.isEmpty;
+    } catch (e) {
+      /*assert(() {
+        l.w("intersects error:$e");
+        return true;
+      }());*/
+      //debugger();
+      return null;
+    }
   }
 
   /// 判断当前路径是否完全包含另一个路径

@@ -163,7 +163,7 @@ class IElementPainter extends IPainter
       ..style = paintStyle;
     //抑制画布缩放
     if (paintStrokeWidthSuppressCanvasScale == true) {
-      if (paint.style == PaintingStyle.stroke) {
+      if (paint.style == .stroke) {
         paint.strokeWidth = paint.strokeWidth / paintMeta.canvasScale;
       }
     }
@@ -442,15 +442,10 @@ class ElementPainter extends IElementPainter {
 
   PaintProperty? get paintProperty => _paintProperty;
 
-  /*set paintProperty(PaintProperty? value) {
-    //debugger();
-    final old = _paintProperty;
+  /// 请尽量使用[updatePainterPaintProperty]方法更新绘制属性信息
+  set paintProperty(PaintProperty value) {
     _paintProperty = value;
-    if (old != value) {
-      dispatchSelfPaintPropertyChanged(
-          old, value, PainterPropertyType.paint, null);
-    }
-  }*/
+  }
 
   @override
   void applyPaintTransform(IPainter child, Matrix4 transform) {
@@ -1113,10 +1108,9 @@ class ElementPainter extends IElementPainter {
   @sceneCoordinate
   void paintItUiPath(Canvas canvas, PaintMeta paintMeta, UiPath? path) {
     if (path != null) {
-      if (paintProperty?.rect.isEmpty == true &&
-          paint.style == PaintingStyle.fill) {
+      if (paintProperty?.rect.isEmpty == true && paint.style == .fill) {
         //在没有宽度或高度时, 比如线. 此时必须要设置style为stroke, 否则绘制出来的线看不到
-        paint.style = PaintingStyle.stroke;
+        paint.style = .stroke;
       }
       //debugger(when: paintMeta.host == elementOutputHost);
       Path? drawPath = path.transformPath(paintProperty?.operateMatrix);
@@ -1156,23 +1150,38 @@ class ElementPainter extends IElementPainter {
     if (point == null && rect == null && path == null) {
       return false;
     }
+    //碰撞目标
+    path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
+    if (canvasStyle?.enableElementExactSelect == true) {
+      //启用元素精确选择
+      inflate = false;
+      final selfPath = elementOutputPath ?? elementOutputBoundsPath;
+      if (selfPath != null) {
+        if (path.getBounds().overlaps(selfPath.getBounds())) {
+          bool? hit = selfPath.intersects(path);
+          if (hit != null) {
+            return hit;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
     final property = _paintProperty;
     if (property == null || !isVisible) {
       final elementBounds = elementsBounds;
       if (elementBounds != null) {
         //没有绘制属性, 但是有元素边界, 可能是自定义的元素
-        path ??= Path()
-          ..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
-        bool hit = elementBounds.toPath().intersects(path);
+        bool hit = elementBounds.toPath().intersects(path) ?? false;
         if (!hit && inflate) {
-          hit = elementBounds.inflateValue(10).toPath().intersects(path);
+          hit =
+              elementBounds.inflateValue(10).toPath().intersects(path) ?? false;
         }
         return hit;
       }
       return false;
     }
-    path ??= Path()..addRect(rect ?? Rect.fromLTWH(point!.dx, point.dy, 1, 1));
-    bool hit = property.paintPath.intersects(path);
+    bool hit = property.paintPath.intersects(path) ?? false;
     if (!hit && inflate) {
       //没有命中时, 膨胀一下, 再判断一次
       @dp
@@ -1195,7 +1204,7 @@ class ElementPainter extends IElementPainter {
         if (isLittleElement || isLineElement || isPainterLine) {
           final bounds = property.paintPath.getExactBounds();
           //debugger();
-          hit = bounds.inflateValue(10).toPath().intersects(path);
+          hit = bounds.inflateValue(10).toPath().intersects(path) ?? false;
         }
       }
     }
