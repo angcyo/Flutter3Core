@@ -38,11 +38,17 @@ export 'package:flame_forge2d/forge2d_world.dart';
 
 export 'src/debug/child_counter_component.dart';
 export 'src/debug/time_track_component.dart';
+export 'src/flame/base_flame_game.dart';
+export 'src/flame/base_flame_world.dart';
 export 'src/flame/audio/audio.dart';
 export 'src/flame/components/flame_text_component.dart';
 export 'src/flame/components/flow_component.dart';
 export 'src/flame/components/fullscreen_route.dart';
 export 'src/flame/components/split_layout.dart';
+export 'src/flame/components/tap_move_mixin.dart';
+export 'src/flame/effects/blink_effect.dart';
+export 'src/flame/effects/interval_effect.dart';
+export 'src/flame/effects/off_screen_remove_effect.dart';
 export 'src/flame/forge2d/forge2d_mix.dart';
 export 'src/widgets/widgets.dart';
 

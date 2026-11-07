@@ -18,6 +18,8 @@ extension ComponentEx on Component {
   bool get isInForge2DWorld =>
       findParent<World>(includeSelf: true) is Forge2DWorld;
 
+  World? get world => findParent<World>(includeSelf: true);
+
   /// 像素要缩放多少倍, 才能对应物理世界的M米
   ///
   /// ```
@@ -25,7 +27,7 @@ extension ComponentEx on Component {
   /// ```
   double get pixelsScale {
     double scale = 1;
-    final world = findParent<World>(includeSelf: true);
+    final world = this.world;
     if (world is Forge2DWorld) {
       final viewfinder = findGame()?.camera.viewfinder;
       if (viewfinder is Forge2DViewfinder) {
@@ -103,13 +105,17 @@ extension ComponentEx on Component {
   }
 
   /// 是否有指定key的子元素
-  bool hasChild(
-    ComponentKey key, {
+  bool hasChild({
+    bool Function(Component component)? test,
+    ComponentKey? key,
+    //--
     bool includeSelf = false,
     bool reversed = false,
   }) {
     return findChild(
-          (component) => component.key == key,
+          (component) =>
+              (key != null && component.key == key) ||
+              test?.call(component) == true,
           includeSelf: includeSelf,
           reversed: reversed,
         ) !=
@@ -274,6 +280,32 @@ extension PositionComponentEx on PositionComponent {
       offsetY = childSize.y * ay;
     }
     return Vector2(offsetX, offsetY);
+  }
+
+  /// 旋转到指定的角度
+  /// - [angle]弧度
+  ///   - >2pi <-2pi 时视为角度单位, 自动转成弧度
+  PositionComponent rotateTo(double angle, {Anchor? anchor = .center}) {
+    final child = this;
+    if (anchor != null) {
+      child.anchor = anchor;
+    }
+    if (angle > 2 * pi || angle < -2 * pi) {
+      angle = angle * pi / 180;
+    }
+    child.angle = angle;
+    return child;
+  }
+
+  /// 设置大小
+  /// - [size]大小
+  PositionComponent sizeTo(Vector2 size, {Anchor? anchor = .center}) {
+    final child = this;
+    if (anchor != null) {
+      child.anchor = anchor;
+    }
+    child.size = size;
+    return child;
   }
 }
 
