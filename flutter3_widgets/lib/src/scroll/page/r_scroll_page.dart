@@ -1005,7 +1005,9 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
 
   final kSearchOverlayTag = "RScrollPageRefreshMixinSearch";
 
-  /// 是否激活过滤功能
+  /// 是否激活过滤功能 / 实现查找搜索功能
+  /// - 通过重写[wrapScrollChildren]方式实现[inputFilterTextMixin]属性的过滤功能
+  ///
   /// - [RScrollPageRefreshMixin.pageRScrollView]中注册对应的快捷键
   /// - [showInputFilterOverlay] 显示对应的过滤输入框
   /// - [pageRScrollView]
@@ -1143,8 +1145,10 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
       alignmentOffset: alignmentOffset ?? Offset(-30, 40),
       closeBefore: true,
       onHide: () {
-        inputFilterTextMixin = null;
-        rebuildScrollView(rebuildAllTile: true);
+        if (!isNil(inputFilterTextMixin)) {
+          inputFilterTextMixin = null;
+          rebuildScrollView(rebuildAllTile: true);
+        }
       },
     );
   }
