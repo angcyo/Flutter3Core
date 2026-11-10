@@ -88,6 +88,13 @@ class CanvasStyle {
   /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势选择/交互控制元素.
   bool enableElementControl = true;
 
+  /// 是否要仅开启元素的选择事件, 不指定则使用[enableElementControl]的值
+  /// - 开启后, 有悬停事件 / 有元素选中事件
+  ///   - 关闭元素的平移 / 旋转 / 缩放 / 控制角
+  /// - [enableElementSelect]
+  /// - [enableElementSelected]
+  bool? enableElementSelected;
+
   /// 是否要开启元素的事件回调, 不指定则使用[enableElementControl]的值
   /// [CanvasElementManager.handleElementPointerEvent]处理
   ///
@@ -116,10 +123,16 @@ class CanvasStyle {
   //--
 
   /// 是否激活选择元素组件
+  /// - [enableElementSelect]
+  /// - [enableElementSelected]
   bool enableElementSelect = true;
 
   /// 是否激活多指多选元素操作
-  bool enableMultiSelect = true;
+  bool enableElementMultiSelect = true;
+
+  /// 是否激活元素鼠标框选选择
+  /// - [enableElementSelect]默认
+  bool? enableElementBoxSelect;
 
   /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
   bool enableResetElementAngle = true;
@@ -168,7 +181,7 @@ class CanvasStyle {
   LogicalKeyboardKey? ignoreAdsorbKeyboardKey = LogicalKeyboardKey.control;
 
   /// 当按下此键时, 视为多选元素
-  /// [enableMultiSelect] 需要先开启此项
+  /// [enableElementMultiSelect] 需要先开启此项
   LogicalKeyboardKey? multiSelectKeyboardKey = LogicalKeyboardKey.control;
 
   /// 当按下此键时, 激活画布测距功能
@@ -402,6 +415,7 @@ class CanvasStyle {
   //region method
 
   /// 开启纯净模式
+  /// - [enableCanvasEvent]
   void enablePureMode() {
     showAxis = false;
     showGrid = false;
@@ -415,6 +429,16 @@ class CanvasStyle {
     //--
     enableCanvasMenu = false;
     enableCanvasKeyEvent = true;
+  }
+
+  /// 仅开启元素选择模式
+  /// - [enableElementMultiSelect]
+  void enableElementSelectedMode() {
+    enableElementControl = false;
+    enableElementEvent = true;
+    enableElementSelect = true;
+    enableElementSelected = true;
+    enableElementBoxSelect = false;
   }
 
   /// 当前按键是否是操作画布的, 而不是操作元素的

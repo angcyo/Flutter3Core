@@ -891,7 +891,7 @@ class TranslateControl extends BaseControl
               //按在指定的元素上
               isPointerDownIn = true;
 
-              if (canvasStyle.enableMultiSelect &&
+              if (canvasStyle.enableElementMultiSelect &&
                   isKeyPressed(key: canvasStyle.multiSelectKeyboardKey)) {
                 //多选元素
                 canvasElementControlManager.canvasElementManager

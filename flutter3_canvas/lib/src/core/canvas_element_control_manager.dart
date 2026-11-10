@@ -26,12 +26,17 @@ enum PaintInfoType {
 /// 元素控制操作管理
 ///
 /// [CanvasElementManager] 的成员
+///   - [CanvasElementManager.canvasElementControlManager]
 class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   final CanvasElementManager canvasElementManager;
 
   /// 是否激活元素的控制操作, 关闭之后, 将无法通过手势交互控制元素
   bool get enableElementControl =>
       canvasDelegate.canvasStyle.enableElementControl;
+
+  /// 是否激活元素选中状态
+  bool get enableElementSelected =>
+      canvasDelegate.canvasStyle.enableElementSelected ?? enableElementControl;
 
   /// 是否激活元素[PaintProperty]属性改变后, 重置旋转角度
   bool get enableResetElementAngle =>
@@ -174,19 +179,19 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     if (isSelectedElement) {
       if (paintPainterInfo) {
         //绘制元素的控制信息
-        if (_paintInfoType == PaintInfoType.size) {
+        if (_paintInfoType == .size) {
           _paintControlSizeInfo(
             canvas,
             paintMeta,
             elementSelectComponent.paintProperty,
           );
-        } else if (_paintInfoType == PaintInfoType.rotate) {
+        } else if (_paintInfoType == .rotate) {
           _paintControlRotateInfo(
             canvas,
             paintMeta,
             elementSelectComponent.paintProperty,
           );
-        } else if (_paintInfoType == PaintInfoType.location) {
+        } else if (_paintInfoType == .location) {
           _paintControlLocationInfo(
             canvas,
             paintMeta,
@@ -240,6 +245,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     //debugger();
     final localPosition = event.localPosition;
     if (enableElementControl) {
+      //translateControl.enableEventHandled = true;
       bool ignoreHandle = false;
       if (elementMenuControl.needHandleElementMenu() &&
           elementMenuControl.handleMenuEvent(event)) {
@@ -253,6 +259,10 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         ignoreHandlePointer(event, !isInCanvas || ignoreHandle);
       }
       //在画布内点击才响应
+      handleDispatchEvent(event);
+    } else if (enableElementSelected) {
+      //translateControl.enableEventHandled = false;
+      translateControl.ignoreEventHandle = true;
       handleDispatchEvent(event);
     }
     if (event.isTouchPointerEvent && event.isPointerDown) {
@@ -1218,7 +1228,12 @@ class ElementSelectComponent extends ElementGroupPainter
       isCanvasComponentEnable && canvasStyle?.enableElementSelect != false;
 
   /// 是否激活多指多选元素操作
-  bool get enableMultiSelect => canvasStyle?.enableMultiSelect == true;
+  bool get enableElementMultiSelect =>
+      canvasStyle?.enableElementMultiSelect == true;
+
+  /// 是否激活鼠标移动选择元素
+  bool get enableElementBoxSelect =>
+      canvasStyle?.enableElementBoxSelect ?? enableEventHandled;
 
   //--
 
@@ -1351,7 +1366,8 @@ class ElementSelectComponent extends ElementGroupPainter
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     //debugger(when: event.isPointerDown);
     debugger(when: pointDebugLabel != null);
-    if (enableMultiSelect && pointerCount > 0 && isSelectedElement) {
+    if (enableElementMultiSelect && pointerCount > 0 && isSelectedElement) {
+      //多选判断
       if (event.isPointerDown) {
         _multiSelectPointerId = event.pointer;
       } else if (event.isPointerUp) {
@@ -1436,21 +1452,23 @@ class ElementSelectComponent extends ElementGroupPainter
             false,
           );
         } else if (event.isPointerMove) {
-          //debugger();
-          //l.d('pointerMove pointerCount:$pointerCount');
-          if (pointerCount == 1) {
-            //单指移动, 更新选择区域
-            final scenePoint = viewBox.toScenePoint(event.localPosition);
-            updateSelectBounds(
-              Rect.fromPoints(_downScenePoint, scenePoint),
-              false,
-            );
-          } else {
-            //多指时移动, 取消选域
-            ignoreEventHandle = true;
-            updateSelectBounds(null, false);
+          if (enableElementBoxSelect) {
+            //debugger();
+            //l.d('pointerMove pointerCount:$pointerCount');
+            if (pointerCount == 1) {
+              //单指移动, 更新选择区域
+              final scenePoint = viewBox.toScenePoint(event.localPosition);
+              updateSelectBounds(
+                Rect.fromPoints(_downScenePoint, scenePoint),
+                false,
+              );
+            } else {
+              //多指时移动, 取消选域
+              ignoreEventHandle = true;
+              updateSelectBounds(null, false);
+            }
+            //l.d(' selectBounds:$selectBounds');
           }
-          //l.d(' selectBounds:$selectBounds');
         } else if (event.isPointerUp) {
           //选择结束
           //debugger();
