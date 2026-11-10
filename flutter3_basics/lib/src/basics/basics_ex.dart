@@ -2581,6 +2581,18 @@ extension IntEx on int {
 }
 
 extension DoubleEx on double {
+  /// 输出百分比
+  String get percent => toPercent(0);
+
+  /// 输出千分之
+  String get perMille => toPerMille(0);
+
+  String toPercent([int fractionDigits = 0]) =>
+      "${(this * 100).toStringAsFixed(fractionDigits)}%";
+
+  String toPerMille([int fractionDigits = 0]) =>
+      "${(this * 1000).toStringAsFixed(fractionDigits)}‰";
+
   /// 弧度对应的余弦值
   double cos() => math.cos(this);
 

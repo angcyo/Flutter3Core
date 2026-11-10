@@ -18,7 +18,17 @@ extension ComponentEx on Component {
   bool get isInForge2DWorld =>
       findParent<World>(includeSelf: true) is Forge2DWorld;
 
-  World? get world => findParent<World>(includeSelf: true);
+  World? get world {
+    final world = findParent<World>(includeSelf: true);
+    if (world != null) {
+      return world;
+    }
+    final game = findGame();
+    if (game != null) {
+      return game.world;
+    }
+    return null;
+  }
 
   /// 像素要缩放多少倍, 才能对应物理世界的M米
   ///
@@ -65,6 +75,18 @@ extension ComponentEx on Component {
           (component is CameraComponent && component is World) ||
           (or?.call(component) ?? false),
     );
+  }
+
+  /// 移除所有指定类型的子元素
+  void removeWhereType<T>() {
+    /*final tList = children.whereType<T>();
+    debugger(when: tList.isNotEmpty);
+    removeWhere((component) {
+      final isT = component is T;
+      debugger(when: isT);
+      return isT;
+    });*/
+    removeWhere((component) => component is T);
   }
 
   /// 移除所有子元素
@@ -120,6 +142,52 @@ extension ComponentEx on Component {
           reversed: reversed,
         ) !=
         null;
+  }
+
+  /// 在上一个子元素的位置上继续追加一个新的元素
+  /// - [anchorIndex] 插入位置的锚点child索引
+  /// @return 预测下一个新元素的位置
+  Vector2 append(
+    PositionComponent child, {
+    int? anchorIndex,
+    Axis direction = .vertical,
+    Vector2? offset,
+  }) {
+    if (child.position.isZero()) {
+      Iterable<PositionComponent> anchorChildren = children
+          .where((e) => e is PositionComponent && !e.isRemoving)
+          .whereType<PositionComponent>();
+      if (anchorChildren.isEmpty) {
+        final game = findGame();
+        if (game != null) {
+          anchorChildren = game.queue
+              .map(
+                (e) => e.child is PositionComponent && !e.child!.isRemoving
+                    ? e.child
+                    : null,
+              )
+              .filterNull();
+        }
+      }
+      final previousChild = anchorIndex == null
+          ? anchorChildren.lastOrNull
+          : anchorChildren.get(anchorIndex);
+      Vector2 startPosition = previousChild?.position ?? Vector2.zero();
+      if (previousChild != null) {
+        startPosition +=
+            (direction == .vertical
+                ? Vector2(0, previousChild.size.y)
+                : Vector2(previousChild.size.x, 0)) +
+            (offset ?? Vector2.zero());
+      }
+      // 设置位置
+      child.position = startPosition;
+    }
+    add(child);
+    return child.position +
+        (direction == .vertical
+            ? Vector2(0, child.size.y)
+            : Vector2(child.size.x, 0));
   }
 
   //MARK: Component
@@ -307,6 +375,17 @@ extension PositionComponentEx on PositionComponent {
     child.size = size;
     return child;
   }
+
+  /// 设置缩放
+  /// - [scale]缩放大小
+  PositionComponent scaleTo(Vector2 scale, {Anchor? anchor = .center}) {
+    final child = this;
+    if (anchor != null) {
+      child.anchor = anchor;
+    }
+    child.scale = scale;
+    return child;
+  }
 }
 
 extension IterableComponentEx on Iterable<Component> {
@@ -316,4 +395,12 @@ extension IterableComponentEx on Iterable<Component> {
       component.removeFromParent();
     }
   }
+}
+
+extension WorldEx on World {
+  /// 游戏大小
+  Vector2 get gameSize => findGame()!.size;
+
+  /// 游戏画布大小
+  Vector2 get gameCanvasSize => findGame()!.canvasSize;
 }
