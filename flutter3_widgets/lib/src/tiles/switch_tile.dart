@@ -178,7 +178,7 @@ class LabelSwitchTile extends StatefulWidget {
   /// [Switch]的轮廓颜色
   final WidgetStateProperty<Color?>? trackOutlineColor;
 
-  //
+  //--
 
   /// tile的填充
   final EdgeInsets? tilePadding;
@@ -188,6 +188,11 @@ class LabelSwitchTile extends StatefulWidget {
 
   /// 涟漪的圆角大小
   final BorderRadius? inkBorderRadius;
+
+  //--
+
+  /// 是否使用全行点击?
+  final bool useFullLineClick;
 
   const LabelSwitchTile({
     super.key,
@@ -212,6 +217,8 @@ class LabelSwitchTile extends StatefulWidget {
     this.tilePadding = kTilePadding,
     this.radius,
     this.inkBorderRadius,
+    //--
+    this.useFullLineClick = true,
   });
 
   @override
@@ -273,6 +280,8 @@ class _LabelSwitchTileState extends State<LabelSwitchTile>
           splashColor: Colors.transparent,
           borderRadius: widget.inkBorderRadius,
           borderRadiusNum: widget.radius,
+          enable: widget.useFullLineClick,
+          useDisableCursorStyle: false,
         )
         .material();
   }
