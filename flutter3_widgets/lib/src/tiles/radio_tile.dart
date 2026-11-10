@@ -12,6 +12,9 @@ class RadioGroupTile extends StatefulWidget {
   /// 主轴大小
   final MainAxisSize? mainAxisSize;
 
+  /// 间隙
+  final double? gap;
+
   //MARK: - content
   /// content
   final dynamic initValue;
@@ -26,6 +29,7 @@ class RadioGroupTile extends StatefulWidget {
     super.key,
     this.axis = Axis.horizontal,
     this.mainAxisSize,
+    this.gap,
     //--
     this.initValue,
     this.values,
@@ -61,12 +65,15 @@ class _RadioGroupTileState extends State<RadioGroupTile>
             }
           },
           child: child.insets(right: kH),
-        ).matchParentWidth(matchWidth: widget.mainAxisSize == .max);
+        ).matchParentWidth(
+          enable: widget.axis == .vertical,
+          matchWidth: widget.mainAxisSize == .max,
+        );
       },
     );
-    if (widget.axis == Axis.vertical) {
-      return children?.column() ?? empty;
+    if (widget.axis == .vertical) {
+      return children?.column(gap: widget.gap) ?? empty;
     }
-    return children?.wrap() ?? empty;
+    return children?.wrap(gap: widget.gap) ?? empty;
   }
 }

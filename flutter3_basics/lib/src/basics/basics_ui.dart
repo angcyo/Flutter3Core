@@ -243,15 +243,16 @@ extension WidgetListEx on WidgetNullList {
   /// [crossAxisAlignment] 交叉轴对齐方式, 就是每一行的对齐方式
   Widget? wrap({
     Key? key,
+    double? gap,
     double spacing = kH,
     double runSpacing = kH,
-    Axis direction = Axis.horizontal,
-    WrapAlignment alignment = WrapAlignment.start,
-    WrapAlignment runAlignment = WrapAlignment.start,
-    WrapCrossAlignment crossAxisAlignment = WrapCrossAlignment.start,
+    Axis direction = .horizontal,
+    WrapAlignment alignment = .start,
+    WrapAlignment runAlignment = .start,
+    WrapCrossAlignment crossAxisAlignment = .start,
     TextDirection? textDirection,
-    VerticalDirection verticalDirection = VerticalDirection.down,
-    Clip clipBehavior = Clip.none,
+    VerticalDirection verticalDirection = .down,
+    Clip clipBehavior = .none,
   }) {
     WidgetList list = filterNull();
     if (isNullOrEmpty(list)) {
@@ -259,8 +260,8 @@ extension WidgetListEx on WidgetNullList {
     }
     return Wrap(
       key: key,
-      spacing: spacing,
-      runSpacing: runSpacing,
+      spacing: gap ?? spacing,
+      runSpacing: gap ?? runSpacing,
       direction: direction,
       alignment: alignment,
       runAlignment: runAlignment,
