@@ -115,6 +115,7 @@ part 'src/component/key_event_mixin.dart';
 part 'src/component/limit.dart';
 part 'src/component/listenable.dart';
 part 'src/component/live_stream_controller.dart';
+part 'src/component/list_string.dart';
 part 'src/component/mutex_key.dart';
 part 'src/component/number_template_parser.dart';
 part 'src/component/painter.dart';
