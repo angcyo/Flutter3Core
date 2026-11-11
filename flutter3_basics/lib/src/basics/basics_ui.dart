@@ -3867,11 +3867,13 @@ extension ContextEx on BuildContext {
   /// 系统当前的语言环境
   /// [platformLocale]
   /// [platformLocales]
+  /// - [Locale.languageCode]
   bool get isSystemZh {
     return platformLocale.isZh;
   }
 
   /// 当前主题是否是中文语言
+  /// - [Locale.languageCode]
   bool get isThemeZh {
     final locale = maybeLocale;
     return locale?.isZh == true;

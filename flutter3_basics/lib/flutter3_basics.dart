@@ -164,6 +164,7 @@ part 'src/overlay/route_will_pop_scope.dart';
 part 'src/overlay/stroke_loading.dart';
 part 'src/scope/open_file_scope.dart';
 part 'src/unit/unit.dart';
+part 'src/utils/password_generator.dart';
 part 'src/utils/bytes.dart';
 part 'src/utils/file_size.dart';
 part 'src/utils/frame_split.dart';

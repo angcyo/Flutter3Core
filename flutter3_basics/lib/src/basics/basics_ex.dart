@@ -1094,6 +1094,8 @@ extension StringEx on String {
       regex.toRegex().allMatches(this).map((e) => e.group(0)!).toList();
 
   /// 使用正则替换字符串
+  /// - [replaceAll]
+  /// - [replaceAllVariable]
   String replaceAll(Pattern from, String replace) => from is RegExp
       ? this.replaceAll(from, replace)
       : regex.toRegex().allMatches(this).fold(this, (previousValue, element) {
@@ -1104,6 +1106,7 @@ extension StringEx on String {
           );
         });
 
+  /// 替换正则表达式key对应的内容
   /// 使用正则替换字符串中的{xxx}字符
   /// - 支持 `{xxx}`
   /// - 支持 `{{xxx}}`
@@ -1115,8 +1118,11 @@ extension StringEx on String {
   /// //你好，angcyo！你的积分是 100
   /// ```
   /// - [params] 需要替换的数据
-  /// - [isDoubleBrace] 是否是双花括号
+  /// - [isDoubleBrace] 是否是双花括号`{{}}`, 某则就是`{}`
   /// - [replace] 拦截替换函数, 否则默认使用 [params] 中对应的值
+  ///
+  /// - [replaceAll]
+  /// - [replaceAllVariable]
   String replaceAllVariable(
     Map<String, dynamic>? params, {
     String? regex,
