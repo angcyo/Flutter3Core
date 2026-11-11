@@ -32,6 +32,9 @@ class CountdownComponent extends PositionComponent {
   /// 文字颜色
   final Color color;
 
+  /// 强制显示的文本
+  String? text;
+
   late final TextPaint _textPaint;
 
   double _elapsed = 0;
@@ -44,6 +47,7 @@ class CountdownComponent extends PositionComponent {
 
   CountdownComponent({
     required this.duration,
+    this.text,
     this.onComplete,
     this.autoStart = true,
     this.removeOnComplete = true,
@@ -129,7 +133,7 @@ class CountdownComponent extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    final text = formatTime(remaining);
+    final text = this.text ?? formatTime(remaining);
     final textComponent = TextComponent(text: text, textRenderer: _textPaint);
     size = textComponent.size;
     textComponent
