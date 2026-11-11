@@ -56,9 +56,23 @@ class CountdownComponent extends PositionComponent {
     this.color = Colors.white,
     super.position,
     super.anchor,
+    //--
+    TextStyle? style,
+    Color? textColor,
+    FontWeight? fontWeight,
+    double? letterSpacing,
+    double? wordSpacing,
+    List<Shadow>? shadows,
   }) {
     _textPaint = TextPaint(
-      style: TextStyle(fontSize: fontSize, color: color, fontWeight: .bold),
+      style: (style ?? TextPaint.defaultTextStyle).copyWith(
+        color: color,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+        wordSpacing: wordSpacing,
+        shadows: shadows,
+      ),
     );
   }
 

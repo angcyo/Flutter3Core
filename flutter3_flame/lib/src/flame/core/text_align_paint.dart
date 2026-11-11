@@ -21,6 +21,7 @@ class TextAlignPaint extends TextPaint {
     FontWeight? fontWeight,
     double? letterSpacing,
     double? wordSpacing,
+    List<Shadow>? shadows,
   }) : super(
          style: (style ?? TextPaint.defaultTextStyle).copyWith(
            color: textColor,
@@ -28,6 +29,7 @@ class TextAlignPaint extends TextPaint {
            fontWeight: fontWeight,
            letterSpacing: letterSpacing,
            wordSpacing: wordSpacing,
+           shadows: shadows,
          ),
        );
 
