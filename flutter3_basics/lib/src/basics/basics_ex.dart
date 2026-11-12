@@ -2966,7 +2966,7 @@ extension IterableEx<E> on Iterable<E> {
   /// 过滤到新的列表中
   /// [WhereIterable]
   /// [List]
-  List<E> whereToList(bool Function(dynamic) test) =>
+  List<E> whereToList(bool Function(E element) test) =>
       where(test).cast<E>().toList();
 
   /// [Iterable]转换成[Type]的[Iterable]
