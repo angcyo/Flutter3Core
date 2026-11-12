@@ -113,9 +113,13 @@ class CombatStats {
   // =========================
 
   /// 伤害加成
+  ///
+  /// - [finalDamageBonus]
   double damageBonus;
 
-  /// 伤害减免
+  /// 伤害减免比例
+  ///
+  /// - [finalDamageReduction]
   double damageReduction;
 
   //MARK: 吸血与反伤
@@ -124,12 +128,16 @@ class CombatStats {
   // 吸血与反伤
   // =========================
 
-  /// 吸血
+  /// 吸血比例
   /// - 造成伤害时, 血量恢复比例
+  ///
+  /// - [finalLifesteal]
   double lifesteal;
 
-  /// 反伤
+  /// 反伤比例
   /// - 造成伤害时, 反弹伤害的比例
+  ///
+  /// - [finalReflect]
   double reflect;
 
   //MARK: 护盾

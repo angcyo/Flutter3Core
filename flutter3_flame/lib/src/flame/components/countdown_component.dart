@@ -74,6 +74,7 @@ class CountdownComponent extends PositionComponent {
         shadows: shadows,
       ),
     );
+    updateBounds();
   }
 
   /// 剩余时间
@@ -146,15 +147,19 @@ class CountdownComponent extends PositionComponent {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-
-    final text = this.text ?? formatTime(remaining);
-    final textComponent = TextComponent(text: text, textRenderer: _textPaint);
-    size = textComponent.size;
+    final textComponent = updateBounds();
     textComponent
       ..paint.color = color
       ..anchor = .center
       ..position = size / 2
       ..render(canvas);
+  }
+
+  TextComponent updateBounds() {
+    final text = this.text ?? formatTime(remaining);
+    final textComponent = TextComponent(text: text, textRenderer: _textPaint);
+    size = textComponent.size;
+    return textComponent;
   }
 
   /// 格式化时间
