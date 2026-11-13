@@ -787,6 +787,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
     String? debugLabel,
+    //--
+    VoidAction? afterAction,
   }) {
     //debugger();
     if (elementPainter == null) {
@@ -836,10 +838,14 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
       isLockRatio: isLockRatio,
       undoType: undoType,
       debugLabel: debugLabel,
+      afterAction: afterAction,
     );
   }
 
   /// 按比例缩放元素
+  ///
+  /// - [afterAction] 缩放操作后的回调
+  ///
   /// [translateElement]
   /// [scaleElement]
   /// [rotateElement]
@@ -858,6 +864,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     bool? isLockRatio,
     UndoType undoType = UndoType.normal,
     String? debugLabel,
+    //--
+    VoidAction? afterAction,
   }) {
     if (elementPainter == null) {
       return;
@@ -882,6 +890,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         anchorAlignment: anchorAlignment,
         debugLabel: debugLabel,
       );
+      afterAction?.call();
+      //--
       final redoStateStack = elementPainter.createStateStack();
       canvasDelegate.canvasUndoManager.addUntoState(
         undoStateStack,
@@ -895,6 +905,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         anchorAlignment: anchorAlignment,
         debugLabel: debugLabel,
       );
+      afterAction?.call();
     }
   }
 
