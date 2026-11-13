@@ -119,6 +119,28 @@ class ShortcutConfigManager {
     shortcutActionMap.clear();
   }
 
+  /// 通过按键查找快捷键配置
+  @api
+  List<ShortcutConfigBean> findShortcutConfigByKeyEvent(
+    KeyEvent event, {
+    bool? control,
+    bool? alt,
+    bool? shift,
+    bool? meta,
+  }) {
+    final List<ShortcutConfigBean> list = [];
+    //用event查找
+    final keyConfig = ShortcutConfigBean.fromKeyEvent(
+      event,
+      control: control ?? isCtrlPressed,
+      alt: alt ?? isAltPressed,
+      shift: shift ?? isShiftPressed,
+      meta: meta ?? isMetaPressed,
+    );
+    list.addAll(findShortcutConfig(config: keyConfig));
+    return list;
+  }
+
   /// 触发一个快捷键执行动作
   ///
   /// - [context] 布局上下文
