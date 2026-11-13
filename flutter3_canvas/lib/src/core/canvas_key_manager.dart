@@ -115,7 +115,7 @@ class CanvasKeyManager
       //重做
       shortcutConfigManager.addShortcutConfig(
         ShortcutConfigBean.fromKey(
-          LogicalKeyboardKey.keyY,
+          LogicalKeyboardKey.keyZ,
           id: CanvasKeyActions.redo.id,
           labelAssetsKey: CanvasKeyActions.redo.assetsKey,
           meta: isMacOS,
