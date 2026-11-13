@@ -85,9 +85,13 @@ extension MimeEx on String {
   /// 'ttc': 'application/x-font-ttf',
   /// 'ttf': 'application/x-font-ttf',
   /// ```
-  bool get isFontMimeType =>
-      toLowerCase().startsWith('application/x-font-otf') ||
-      toLowerCase().startsWith('application/x-font-ttf');
+  bool get isFontMimeType {
+    final type = toLowerCase();
+    return type.startsWith('application/x-font-otf') ||
+        type.startsWith('application/x-font-ttf') ||
+        type.startsWith('font/ttf') ||
+        type.startsWith('font/otf');
+  }
 
   /// 'zip': 'application/zip'
   bool get isZipMimeType => toLowerCase().startsWith('application/zip');

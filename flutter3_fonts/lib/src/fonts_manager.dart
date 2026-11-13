@@ -163,6 +163,8 @@ class FontsManager {
 
   //region ---单线字体---
 
+  /// 单线字体所在的路径列表
+  /// - [FontType.shx] 可能还需要对应的字体编码信息 [ShxLoader]
   final List<String> shxFontPathList = [];
   final List<FontFamilyMeta> shxFontFamilyMetaList = [];
 
