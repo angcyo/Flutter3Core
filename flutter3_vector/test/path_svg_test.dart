@@ -11,8 +11,8 @@ void main() {
   ensureInitialized();
   final width = 300.0;
   final height = 100.0;
-  final rx = 30.0;
-  final ry = 20.0;
+  double rx = 30.0;
+  double ry = 20.0;
   /*final rect = Rect.fromLTWH(0, 0, 300, 100);
   //--
   Path path = Path()..addRect(rect);
@@ -21,13 +21,27 @@ void main() {
   fgPrint(path.toSvgPathString());*/
 
   Path path = Path();
-  drawCorner(path, width, height, rx, ry, .round);
+  drawCornerRect(path, width, height, rx, ry, .round);
   fgPrint(path.toSvgPathString());
   path = Path();
-  drawCorner(path, width, height, rx, ry, .inverse);
+  drawCornerRect(path, width, height, rx, ry, .inverse);
   fgPrint(path.toSvgPathString());
   path = Path();
-  drawCorner(path, width, height, rx, ry, .chamfer);
+  drawCornerRect(path, width, height, rx, ry, .chamfer);
+  fgPrint(path.toSvgPathString());
+  //--
+  rx = 100.0;
+  ry = rx;
+  final Offset p1 = Offset(0, ry);
+  final Offset p2 = Offset(rx, 0);
+  path = Path();
+  drawCornerPoint(path, p1, p2, rx, ry, .round);
+  fgPrint(path.toSvgPathString());
+  path = Path();
+  drawCornerPoint(path, p1, p2, rx, ry, .inverse);
+  fgPrint(path.toSvgPathString());
+  path = Path();
+  drawCornerPoint(path, p1, p2, rx, ry, .chamfer);
   fgPrint(path.toSvgPathString());
 }
 
@@ -40,9 +54,9 @@ enum CornerType {
   chamfer, // 倒角
 }
 
-/// -[width]、[height] 是矩形宽高，
+/// - [width]、[height] 是矩形宽高，
 /// - [rx]、[ry] 是圆角的水平和垂直半径
-Path drawCorner(
+Path drawCornerRect(
   Path path,
   double width,
   double height,
@@ -101,6 +115,37 @@ Path drawCorner(
     path.close();
   }
 
+  return path;
+}
+
+/// 在2个点之间绘制圆角
+/// - [p1] 第一个点
+/// - [p2] 第二个点
+/// - [rx] 圆角的水平半径
+/// - [ry] 圆角的垂直半径
+/// - [type] 圆角类型
+Path drawCornerPoint(
+  Path path,
+  Offset p1,
+  Offset p2,
+  double rx,
+  double ry,
+  CornerType type,
+) {
+  rx = rx.abs();
+  ry = ry.abs();
+  path.moveTo(p1.dx, p1.dy);
+  switch (type) {
+    case .round:
+      path.arcToPoint(p2, radius: Radius.elliptical(rx, ry), clockwise: true);
+      break;
+    case .inverse:
+      path.arcToPoint(p2, radius: Radius.elliptical(rx, ry), clockwise: false);
+      break;
+    case .chamfer:
+      path.lineTo(p2.dx, p2.dy);
+      break;
+  }
   return path;
 }
 
