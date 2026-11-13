@@ -19,6 +19,9 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
   late CanvasElementControlManager canvasElementControlManager =
       CanvasElementControlManager(this);
 
+  ElementMenuControl get elementMenuControl =>
+      canvasElementControlManager.elementMenuControl;
+
   //---get---
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
@@ -181,12 +184,8 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
       //--控制绘制, 在元素最上层绘制, 所以可以实现选中元素在顶层绘制
       canvasElementControlManager.paint(canvas, paintMeta);
       //--绘制菜单
-      if (canvasElementControlManager.elementMenuControl
-          .needHandleElementMenu()) {
-        canvasElementControlManager.elementMenuControl.paintMenu(
-          canvas,
-          paintMeta,
-        );
+      if (elementMenuControl.needHandleElementMenu()) {
+        elementMenuControl.paintMenu(canvas, paintMeta);
       }
       //--绘制吸附提示线
       if (canvasElementControlManager
@@ -198,7 +197,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
         );
       }
       //--绘制覆盖层
-      canvasDelegate._overlayComponent?.painting(canvas, paintMeta);
+      canvasDelegate.overlayComponent?.painting(canvas, paintMeta);
     });
     //在下面此处绘制可以在坐标轴上↓
     //paint

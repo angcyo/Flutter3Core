@@ -8,6 +8,8 @@ part of '../../flutter3_canvas.dart';
 /// 通常用于在画布上临时绘制额外的信息
 /// 比如钢笔工具/绘制形状等
 ///
+/// [CanvasDelegate.overlayComponent] 成员
+///
 /// - [CanvasPathOverlayComponent] 路径绘制
 /// - [CanvasPenOverlayComponent] 钢笔绘制
 /// - [CanvasMeasureComponent] 测距绘制
@@ -54,21 +56,22 @@ class CanvasOverlayComponent extends IElementPainter
     onOverlayDetachFromCanvasDelegate?.call(canvasDelegate, this);
   }
 
-  /// 绘制
+  /// 绘制入口
+  /// - [CanvasElementManager.paintElements] 驱动
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     super.painting(canvas, paintMeta);
   }
 
-  /// 处理元素事件
-  /// [CanvasEventManager.handlePointerEvent]驱动
+  /// 处理手势事件
+  /// [CanvasEventManager.handlePointerEvent] 驱动
   @override
   bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     return false;
   }
 
-  /// 处理元素键盘事件
-  /// [CanvasEventManager.handleKeyEvent]驱动
+  /// 处理键盘事件
+  /// [CanvasEventManager.handleKeyEvent] 驱动
   @override
   bool handleKeyEvent(KeyEvent event) {
     return false;

@@ -449,6 +449,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
   /// [CanvasEventManager.handlePointerEvent]
   CanvasOverlayComponent? _overlayComponent;
 
+  /// 请使用[attachOverlay]方法设置[overlayComponent]
   CanvasOverlayComponent? get overlayComponent => _overlayComponent;
 
   //--属性
@@ -1048,10 +1049,10 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     CanvasOverlayComponent? overlay, {
     bool cancelSelectedElement = true,
   }) {
-    if (overlay == _overlayComponent) {
+    if (overlay == overlayComponent) {
       return;
     }
-    final old = _overlayComponent;
+    final old = overlayComponent;
     detachOverlay();
     if (overlay != null) {
       if (cancelSelectedElement && canvasElementManager.isSelectedElement) {
@@ -1061,21 +1062,21 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
       overlay.attachToCanvasDelegate(this);
       refresh();
     }
-    dispatchCanvasOverlayComponentChanged(old, _overlayComponent);
+    dispatchCanvasOverlayComponentChanged(old, overlayComponent);
   }
 
-  /// 移除覆盖层[_overlayComponent]
+  /// 移除覆盖层[overlayComponent]
   /// - [overlay] 指定需要移除的覆盖层, 不指定则移除已存在的覆盖层
   @api
   void detachOverlay({CanvasOverlayComponent? overlay}) {
-    if (overlay != null && overlay != _overlayComponent) {
+    if (overlay != null && overlay != overlayComponent) {
       return;
     }
-    final old = _overlayComponent;
-    _overlayComponent?.detachFromCanvasDelegate(this);
+    final old = overlayComponent;
+    old?.detachFromCanvasDelegate(this);
     _overlayComponent = null;
     refresh();
-    dispatchCanvasOverlayComponentChanged(old, _overlayComponent);
+    dispatchCanvasOverlayComponentChanged(old, overlayComponent);
   }
 
   /// 派发画布覆盖层变化

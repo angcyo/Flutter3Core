@@ -117,8 +117,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       //派发事件到客户端
       handleDispatchEvent(event);
       //元素操作事件
-      final overlayComponent = canvasDelegate._overlayComponent;
+      final overlayComponent = canvasDelegate.overlayComponent;
       if (overlayComponent == null) {
+        //没有覆盖层
         //debugger(when: event.isPointerDown);
         //debugger(when: event.isPointerMove);
         if (canvasDelegate.isDragMode) {
@@ -149,6 +150,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
           }
         }
       } else {
+        //有覆盖层
         overlayComponent.handlePainterPointerEvent(event);
       }
     }
@@ -207,7 +209,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
           event.isKeyDown &&
           isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
         //触发测量模式, 测距组件
-        if (canvasDelegate._overlayComponent == null) {
+        if (canvasDelegate.overlayComponent == null) {
           canvasDelegate.attachOverlay(
             CanvasMeasureComponent(
               autoCompleteKey: measureKeyboardKey,
@@ -218,7 +220,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
         }
       }
     }
-    final overlayComponent = canvasDelegate._overlayComponent;
+    final overlayComponent = canvasDelegate.overlayComponent;
     if (overlayComponent != null) {
       return overlayComponent.handleKeyEvent(event);
     }
