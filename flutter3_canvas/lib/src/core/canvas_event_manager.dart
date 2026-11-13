@@ -205,7 +205,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     //距离测量
     if (canvasStyle.enableCanvasKeyEvent != false) {
       final measureKeyboardKey = canvasStyle.measureKeyboardKey;
-      if (measureKeyboardKey != null &&
+      if (!isPointerDown &&
+          measureKeyboardKey != null &&
           event.isKeyDown &&
           isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
         //触发测量模式, 测距组件
