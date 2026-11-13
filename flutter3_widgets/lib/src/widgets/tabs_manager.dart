@@ -33,8 +33,11 @@ class TabsManagerController {
   /// 当前选中的标签
   final currentTabEntryLive = $live<TabEntryInfo?>(null);
 
+  /// 当前活动的上下文, 用户自定义的数据, 框架无逻辑
+  final currentActiveContextLive = $live<Object>(null);
+
   /// 当前选中标签对应的数据信息
-  dynamic get currentTabInfo => currentTabEntryLive.value?.tabInfoLive.value;
+  Object? get currentTabInfo => currentTabEntryLive.value?.tabInfoLive.value;
 
   /// 标签数量
   int get tabCount => tabEntryListLive.value?.length ?? 0;
@@ -58,7 +61,7 @@ class TabsManagerController {
   final TabEntryInfo? Function(
     TabsManagerController controller,
     BuildContext? context,
-    dynamic data,
+    Object? data,
   )?
   onCreateNewTabAction;
 
@@ -91,21 +94,25 @@ class TabsManagerController {
     bool force = false,
     dynamic tabInfo,
   }) {
-    tabEntry ??= findTabEntryByTabInfo(tabInfo);
-    if (tabEntry == null) {
+    final newTabEntry = tabEntry ?? findTabEntryByTabInfo(tabInfo);
+    if (newTabEntry == null) {
       return false;
     }
-    if (!force && tabEntry == currentTabEntryLive.value) {
+    final oldTabEntry = currentTabEntryLive.value;
+    if (!force && newTabEntry == oldTabEntry) {
       assert(() {
-        l.w("[${classHash()}]当前已是标签: ${currentTabEntryLive.value}");
+        l.w("[${classHash()}]当前已是标签: $oldTabEntry");
         return true;
       }());
       return false;
     }
-    currentTabEntryLive << tabEntry;
+    currentTabEntryLive << newTabEntry;
     tabEntryListLive.notify();
     //--请求内容焦点
-    tabEntry.requestContentFocus();
+    newTabEntry.requestContentFocus();
+    //--callback
+    oldTabEntry?.onSelectedTabAction?.call(oldTabEntry, false);
+    newTabEntry.onSelectedTabAction?.call(newTabEntry, true);
     return true;
   }
 
@@ -372,9 +379,9 @@ class TabEntryInfo with Equatable {
 
   /// 标签的信息
   @configProperty
-  final tabInfoLive = $live<dynamic>(null);
+  final tabInfoLive = $live<Object>(null);
 
-  dynamic get tabInfo => tabInfoLive.value;
+  Object? get tabInfo => tabInfoLive.value;
 
   /// 是否固定的标签, 固定的标签不能被移除
   @configProperty
@@ -402,11 +409,18 @@ class TabEntryInfo with Equatable {
   //--
 
   /// 是否可以关闭当前的标签回调
+  /// - [TabsManagerController.maybeRemoveTab] 驱动
   /// @return true: 可以关闭
   @configProperty
   final FutureOr<bool> Function(TabEntryInfo tabEntry)? onCloseTabAction;
 
+  /// Tab选中, 取消选中回调
+  @configProperty
+  final FutureOr Function(TabEntryInfo tabEntry, bool selected)?
+  onSelectedTabAction;
+
   /// 是否固定的标签, 固定的标签不支持关闭
+  /// - 不会出现关闭按钮
   /// - [buildCloseTabButton]
   bool get isFixed => fixedLive.value == true;
 
@@ -418,7 +432,8 @@ class TabEntryInfo with Equatable {
     this.contentBuilder,
     this.keepAlive,
     this.onCloseTabAction,
-    bool fixed = false,
+    this.onSelectedTabAction,
+    bool fixed = false /*固定的标签不能被移除*/,
   }) {
     tabInfoLive << tabInfo;
     fixedLive << fixed;
