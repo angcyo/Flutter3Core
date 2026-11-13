@@ -90,11 +90,11 @@ dynamic clamp(
   if (x == null) {
     return min ?? max ?? 0;
   }
-  if (min != null && x <= min) {
+  if (min != null && x < min) {
     didClamp?.call(true, min);
     return min;
   }
-  if (max != null && x >= max) {
+  if (max != null && x > max) {
     didClamp?.call(true, max);
     return max;
   }
