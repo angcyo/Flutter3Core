@@ -810,10 +810,16 @@ class ObscureNode with DiagnosticableTreeMixin, ChangeNotifier, NotifierMixin {
 /// - [AutocompleteOptionsWidget]
 class SingleInputWidget extends StatefulWidget {
   /// 是否激活
+  /// [TextField.enabled]
   final bool enabled;
 
   /// 是否只读
+  /// [TextField.readOnly]
   final bool readOnly;
+
+  /// 是否启用交互式选择
+  /// [TextField.enableInteractiveSelection]
+  final bool? enableInteractiveSelection;
 
   /// 是否一直显示后缀图标, 一般是清除按钮和查看密码按钮
   /// - 不指定则在有焦点时自动显示, 否则隐藏
@@ -823,7 +829,16 @@ class SingleInputWidget extends StatefulWidget {
   final TextFieldConfig config;
 
   /// 光标的颜色
+  /// [TextField.cursorColor]
   final Color? cursorColor;
+
+  /// 光标错误颜色
+  /// [TextField.cursorErrorColor]
+  final Color? cursorErrorColor;
+
+  /// 是否显示光标
+  /// [TextField.showCursor]
+  final bool? showCursor;
 
   /// 背景填充颜色
   /// [decoration]属性
@@ -1104,6 +1119,7 @@ class SingleInputWidget extends StatefulWidget {
     required this.config,
     this.enabled = true,
     this.readOnly = false,
+    this.enableInteractiveSelection,
     this.fillColor,
     this.borderColor,
     this.focusBorderColor,
@@ -1126,7 +1142,9 @@ class SingleInputWidget extends StatefulWidget {
     this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
+    this.showCursor,
     this.cursorColor,
+    this.cursorErrorColor,
     this.label,
     this.labelText,
     this.labelStyle,
@@ -1176,6 +1194,7 @@ class SingleInputWidget extends StatefulWidget {
     required this.config,
     this.enabled = true,
     this.readOnly = false,
+    this.enableInteractiveSelection,
     this.fillColor /*整体填充颜色*/,
     this.borderColor = Colors.transparent /*去掉正常边框的颜色*/,
     this.focusBorderColor /*焦点时的边框颜色*/,
@@ -1198,7 +1217,9 @@ class SingleInputWidget extends StatefulWidget {
     this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
+    this.showCursor,
     this.cursorColor,
+    this.cursorErrorColor,
     this.label,
     this.labelText,
     this.labelStyle,
@@ -1250,6 +1271,7 @@ class SingleInputWidget extends StatefulWidget {
     required this.config,
     this.enabled = true,
     this.readOnly = false,
+    this.enableInteractiveSelection,
     this.fillColor,
     this.borderColor,
     this.focusBorderColor,
@@ -1272,7 +1294,9 @@ class SingleInputWidget extends StatefulWidget {
     this.textStyle,
     this.textAlign = TextAlign.start,
     this.disabledFillColor,
+    this.showCursor,
     this.cursorColor,
+    this.cursorErrorColor,
     this.label,
     this.labelText,
     this.labelStyle,
@@ -1704,6 +1728,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           /*groupId: EditableText,*/
           enabled: widget.enabled,
           readOnly: widget.readOnly,
+          enableInteractiveSelection: widget.enableInteractiveSelection,
           autofocus: widget.config.autofocus ?? widget.config.hasFocus,
           focusNode: widget.config.focusNode,
           canRequestFocus: widget.canRequestFocus,
@@ -1745,7 +1770,10 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           keyboardType: keyboardType,
           inputFormatters:
               widget.inputFormatters ?? widget.config.inputFormatters,
+          //--cursor
+          showCursor: widget.showCursor,
           cursorColor: cursorColor,
+          cursorErrorColor: widget.cursorErrorColor ?? globalTheme.errorColor,
           //selectionControls: ,
           //selectionHeightStyle: ,
           //selectionWidthStyle: ,
