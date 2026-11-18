@@ -217,7 +217,7 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
               canvasDelegate.attachOverlay(
                 CanvasMeasureComponent(
                   isCompleteKeyEventAction: (keyEvent) {
-                    if (keyEvent.isKeyDown &&
+                    if (keyEvent.isKeyUp &&
                         shortcutConfigManager.isShortcutMatchEvent(
                           keyEvent,
                           CanvasIntentActions.measureDistance.id,

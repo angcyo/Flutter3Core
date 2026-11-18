@@ -220,6 +220,20 @@ class CanvasShortcutHelper {
       )
       ..registerShortcutIntent(
         ShortcutIntentBean(
+          id: CanvasIntentActions.measureDistance.id,
+          labelResKey: CanvasIntentActions.measureDistance.resKey,
+          label: CanvasIntentActions.measureDistance.des,
+          action: (ctx, event, host, data) {
+            if (host is CanvasDelegate) {
+              //no op
+              return .handled;
+            }
+            return .ignored;
+          },
+        ),
+      )
+      ..registerShortcutIntent(
+        ShortcutIntentBean(
           id: CanvasIntentActions.ignoreLocalRatio.id,
           labelResKey: CanvasIntentActions.ignoreLocalRatio.resKey,
           label: CanvasIntentActions.ignoreLocalRatio.des,
