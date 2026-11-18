@@ -230,6 +230,9 @@ class SingleDesktopGridTile extends StatefulWidget {
   /// 长按提示文本
   final String? tooltip;
 
+  /// 快捷键ID
+  final String? shortcutId;
+
   const SingleDesktopGridTile({
     super.key,
     this.iconWidget,
@@ -243,6 +246,7 @@ class SingleDesktopGridTile extends StatefulWidget {
     this.onContextTap,
     //--
     this.tooltip,
+    this.shortcutId,
   });
 
   @override
@@ -302,7 +306,7 @@ class _SingleDesktopGridTileState extends State<SingleDesktopGridTile>
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
-        .tooltip(widget.tooltip)
+        .tooltip(widget.tooltip, shortcutId: widget.shortcutId)
         .material()
         .localLocation(
           key: widget.key,

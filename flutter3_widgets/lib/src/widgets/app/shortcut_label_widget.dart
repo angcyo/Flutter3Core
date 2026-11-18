@@ -6,6 +6,10 @@ part of '../../../flutter3_widgets.dart';
 ///
 /// 用来显示快捷键的小部件
 /// - [ShortcutConfigBean]
+///
+/// [ShortcutLabelWidget] 用来显示快捷键
+/// [ShortcutRecorderWidget] 用来记录快捷键
+///
 class ShortcutLabelWidget extends StatelessWidget {
   /// 快捷键配置信息
   final ShortcutConfigBean? configBean;

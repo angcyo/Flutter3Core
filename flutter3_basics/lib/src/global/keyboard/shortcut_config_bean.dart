@@ -34,25 +34,41 @@ class ShortcutConfigBean with Equatable, IProviderText {
   /// 快捷键的唯一标识，如 "save_document"
   final String? id;
 
-  /// 快捷键显示的标签国际化资源key / assets key
-  final String? labelAssetsKey;
+  /// 是否是默认的
+  final bool? isDefault;
 
   //--
 
   /// 主按键，如 keyS
+  /// - 0x00000000030
+  /// - 0x00000000061
+  /// - 0x00200000230
+  /// - 0x002000001f4
   final int? keyId;
+
+  /// [keyId] 或者 以下的任意按键
+  final List<int>? keyIdList;
+
+  //--
+
+  /// [isCtrlPressed]
   final bool? control;
+
+  /// [isAltPressed]
   final bool? alt;
+
+  /// [isShiftPressed]
   final bool? shift;
 
   /// macOS 下的 Command 键
   /// - macOS:
   /// - Windows:
+  /// [isMetaPressed]
   final bool? meta;
 
   //--
 
-  /// 是否只在key down时触发
+  /// 是否在[KeyDownEvent]时触发
   /// - [KeyDownEvent]
   final bool? byKeyDown;
 
@@ -60,9 +76,19 @@ class ShortcutConfigBean with Equatable, IProviderText {
   /// - [KeyRepeatEvent]
   final bool? includeRepeats;
 
+  /// 是否在[KeyUpEvent]时触发
+  final bool? byKeyUp;
+
   //MARK: - get
 
-  /// 是否有效
+  /// 是否有修饰键
+  bool get hasModifier =>
+      control == true || alt == true || shift == true || meta == true;
+
+  /// 是否仅是修饰键
+  bool get isModifierOnly => keyId == null && hasModifier;
+
+  /// 是否是有效的快捷键配置
   bool get isValid =>
       keyId != null ||
       control == true ||
@@ -70,16 +96,16 @@ class ShortcutConfigBean with Equatable, IProviderText {
       shift == true ||
       meta == true;
 
-  /// 触发的按键
-  LogicalKeyboardKey? get triggerKey =>
-      keyId == null ? null : LogicalKeyboardKey.findKeyByKeyId(keyId!);
+  /// 触发的非修饰按键
+  LogicalKeyboardKey? get triggerKey => keyId?.logicalKeyboardKey;
 
   /// 是否有触发按键, 并且是非修饰键
   bool get hasTriggerKey => triggerKey != null && !triggerKey!.isModifier;
 
   ShortcutConfigBean({
     this.id,
-    this.labelAssetsKey,
+    this.keyIdList,
+    this.isDefault,
     int? keyId,
     LogicalKeyboardKey? key,
     this.control,
@@ -87,41 +113,88 @@ class ShortcutConfigBean with Equatable, IProviderText {
     this.shift,
     this.meta,
     this.byKeyDown,
+    this.byKeyUp,
     this.includeRepeats,
   }) : keyId = key?.keyId ?? keyId;
 
+  /// copyWith
+  ShortcutConfigBean copyWith({
+    String? id,
+    List<int>? keyIdList,
+    bool? isDefault,
+    int? keyId,
+    LogicalKeyboardKey? key,
+    bool? control,
+    bool? alt,
+    bool? shift,
+    bool? meta,
+    bool? byKeyDown,
+    bool? byKeyUp,
+    bool? includeRepeats,
+  }) => ShortcutConfigBean(
+    id: id ?? this.id,
+    keyIdList: keyIdList ?? this.keyIdList,
+    isDefault: isDefault ?? this.isDefault,
+    keyId: keyId ?? this.keyId,
+    key: key,
+    control: control ?? this.control,
+    alt: alt ?? this.alt,
+    shift: shift ?? this.shift,
+    meta: meta ?? this.meta,
+    byKeyDown: byKeyDown ?? this.byKeyDown,
+    byKeyUp: byKeyUp ?? this.byKeyUp,
+    includeRepeats: includeRepeats ?? this.includeRepeats,
+  );
+
   /// 序列化为 JSON 保存
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'labelAssetsKey': labelAssetsKey,
-    'keyId': keyId,
-    'control': control,
-    'alt': alt,
-    'shift': shift,
-    'meta': meta,
-    'byKeyDown': byKeyDown,
-    'includeRepeats': includeRepeats,
+    'id': ?id,
+    'isDefault': ?isDefault?.trueOrNull,
+    'keyId': ?keyId,
+    'keyIdList': ?keyIdList,
+    'control': ?control?.trueOrNull,
+    'alt': ?alt?.trueOrNull,
+    'shift': ?shift?.trueOrNull,
+    'meta': ?meta?.trueOrNull,
+    'byKeyDown': ?byKeyDown?.trueOrNull,
+    'byKeyUp': ?byKeyUp?.trueOrNull,
+    'includeRepeats': ?includeRepeats?.trueOrNull,
   };
 
   /// 反序列化
   factory ShortcutConfigBean.fromJson(Map<String, dynamic> json) {
     return ShortcutConfigBean(
       id: json['id'],
-      labelAssetsKey: json['labelAssetsKey'],
+      keyIdList: (json['keyIdList'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
+      isDefault: json['isDefault'],
       keyId: json['keyId'],
       control: json['control'],
       alt: json['alt'],
       shift: json['shift'],
       meta: json['meta'],
+      byKeyUp: json['byKeyUp'],
       byKeyDown: json['byKeyDown'],
       includeRepeats: json['includeRepeats'],
     );
   }
 
+  /// 快捷键 esc
+  factory ShortcutConfigBean.escape() =>
+      ShortcutConfigBean.fromKey(LogicalKeyboardKey.escape);
+
+  /// 快捷键 enter
+  factory ShortcutConfigBean.enter() =>
+      ShortcutConfigBean.fromKey(LogicalKeyboardKey.enter);
+
+  /// - [modifier] 是否过滤掉修饰符的[key]
+  ///   - 修饰键, 不使用 [keyId]
   factory ShortcutConfigBean.fromKeyEvent(
     KeyEvent? event, {
     String? id,
-    String? labelAssetsKey,
+    List<int>? keyIdList,
+    bool? isDefault,
     bool modifier = true,
     //--
     bool? control,
@@ -130,25 +203,30 @@ class ShortcutConfigBean with Equatable, IProviderText {
     bool? meta,
     //--
     bool? byKeyDown,
+    bool? byKeyUp,
     bool? includeRepeats,
   }) => ShortcutConfigBean.fromKey(
     event?.logicalKey,
     id: id,
-    labelAssetsKey: labelAssetsKey,
+    keyIdList: keyIdList,
+    isDefault: isDefault,
     modifier: modifier,
     control: control,
     alt: alt,
     shift: shift,
     meta: meta,
     byKeyDown: byKeyDown,
+    byKeyUp: byKeyUp,
     includeRepeats: includeRepeats,
   );
 
   /// - [modifier] 是否过滤掉修饰符的[key]
+  ///   - 修饰键, 不使用 [keyId]
   factory ShortcutConfigBean.fromKey(
     LogicalKeyboardKey? key, {
     String? id,
-    String? labelAssetsKey,
+    List<int>? keyIdList,
+    bool? isDefault,
     bool modifier = true,
     //--
     bool? control,
@@ -157,22 +235,36 @@ class ShortcutConfigBean with Equatable, IProviderText {
     bool? meta,
     //--
     bool? byKeyDown,
+    bool? byKeyUp,
     bool? includeRepeats,
   }) {
     return ShortcutConfigBean(
       id: id,
-      labelAssetsKey: labelAssetsKey,
+      keyIdList: keyIdList,
+      isDefault: isDefault,
       keyId: modifier && key?.isModifier == true ? null : key?.keyId,
       control: modifier && (control == true || key?.isControlKey == true),
       alt: modifier && (alt == true || key?.isAltKey == true),
       shift: modifier && (shift == true || key?.isShiftKey == true),
       meta: modifier && (meta == true || key?.isMetaKey == true),
       byKeyDown: byKeyDown,
+      byKeyUp: byKeyUp,
       includeRepeats: includeRepeats,
     );
   }
 
   //MARK: - api
+
+  /// 仅判断快捷键是否相同
+  @api
+  bool isSameShortcut(ShortcutConfigBean? other) {
+    return (keyId == other?.keyId ||
+            keyIdList?.contains(other?.keyId) == true) &&
+        isBoolEqual(control, other?.control) &&
+        isBoolEqual(alt, other?.alt) &&
+        isBoolEqual(shift, other?.shift) &&
+        isBoolEqual(meta, other?.meta);
+  }
 
   /// 转换为 Flutter 官方的 SingleActivator
   @api
@@ -193,6 +285,9 @@ class ShortcutConfigBean with Equatable, IProviderText {
   /// https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf
   @api
   String getShortcutLabel() {
+    if (!isValid) {
+      return '';
+    }
     final isMac = defaultTargetPlatform == TargetPlatform.macOS;
     final List<String> parts = [];
     if (isMac) {
@@ -217,16 +312,12 @@ class ShortcutConfigBean with Equatable, IProviderText {
   }
 
   @override
-  String? provideIntlText(BuildContext context) {
-    return labelAssetsKey?.intlMessage();
-  }
-
-  @override
-  String toString() => getShortcutLabel();
+  String toString() => getShortcutLabel().connect(id?.wph);
 
   /// 快捷键相同即可认为相同
   @override
-  List<Object?> get props => [keyId, control, alt, shift, meta];
+  List<Object?> get props =>
+      id == null ? [keyId, control, alt, shift, meta] : [id];
 }
 
 extension LogicalKeyboardKeyLabelEx on LogicalKeyboardKey {

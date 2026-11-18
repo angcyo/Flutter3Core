@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "libCanvasAdaptive": MessageLookupByLibrary.simpleMessage("Adaptive"),
+    "libCanvasMeasureDistance": MessageLookupByLibrary.simpleMessage(
+      "Canvas Measure Distance",
+    ),
     "libCanvasOptions": MessageLookupByLibrary.simpleMessage("Canvas Options"),
     "libChoose": MessageLookupByLibrary.simpleMessage("Please Select"),
     "libClear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -76,6 +79,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Copy Selected Elements",
     ),
     "libDaysAgo": MessageLookupByLibrary.simpleMessage("days ago"),
+    "libDefaultHotkeys": MessageLookupByLibrary.simpleMessage(
+      "Restore Default",
+    ),
     "libDelete": MessageLookupByLibrary.simpleMessage("Delete"),
     "libDeleteSelectedElem": MessageLookupByLibrary.simpleMessage(
       "Delete Selected Elements",
@@ -106,10 +112,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "libHideElement": MessageLookupByLibrary.simpleMessage("Hide Element"),
     "libHidePassword": MessageLookupByLibrary.simpleMessage("Hide Password"),
+    "libHold": MessageLookupByLibrary.simpleMessage("Hold"),
     "libHotkeySettings": MessageLookupByLibrary.simpleMessage("Hotkeys"),
+    "libHotkeysConflict": MessageLookupByLibrary.simpleMessage(
+      "Shortcut already exists",
+    ),
     "libHoursAgo": MessageLookupByLibrary.simpleMessage("hr ago"),
     "libIgnoreLockRatio": MessageLookupByLibrary.simpleMessage(
       "Ignore Lock Ratio",
+    ),
+    "libIgnoreSmartAdsorption": MessageLookupByLibrary.simpleMessage(
+      "Ignore adsorption",
     ),
     "libInstallNow": MessageLookupByLibrary.simpleMessage("Install Now"),
     "libJustNow": MessageLookupByLibrary.simpleMessage("Just now"),
@@ -121,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libMatchCase": MessageLookupByLibrary.simpleMessage("Match Case"),
     "libMatchWord": MessageLookupByLibrary.simpleMessage("Match Word"),
     "libMinutesAgo": MessageLookupByLibrary.simpleMessage("min ago"),
+    "libMouse": MessageLookupByLibrary.simpleMessage("Mouse"),
     "libMoveElemDown": MessageLookupByLibrary.simpleMessage(
       "Move Element Down",
     ),
@@ -131,6 +145,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Move Element Right",
     ),
     "libMoveElemUp": MessageLookupByLibrary.simpleMessage("Move Element Up"),
+    "libMoveFastElemDown": MessageLookupByLibrary.simpleMessage(
+      "Move Element Down Fast",
+    ),
+    "libMoveFastElemLeft": MessageLookupByLibrary.simpleMessage(
+      "Move Element Left Fast",
+    ),
+    "libMoveFastElemRight": MessageLookupByLibrary.simpleMessage(
+      "Move Element Right Fast",
+    ),
+    "libMoveFastElemUp": MessageLookupByLibrary.simpleMessage(
+      "Move Element Up Fast",
+    ),
+    "libMultiSelectElement": MessageLookupByLibrary.simpleMessage(
+      "Multi Select Elements",
+    ),
     "libNewReleases": MessageLookupByLibrary.simpleMessage(
       "New version available",
     ),
@@ -153,11 +182,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "libSaveSuccessful": MessageLookupByLibrary.simpleMessage(
       "Saved successfully",
     ),
+    "libScaleCanvas": MessageLookupByLibrary.simpleMessage("Scale Canvas"),
     "libSecondsAgo": MessageLookupByLibrary.simpleMessage("sec ago"),
     "libSelectAll": MessageLookupByLibrary.simpleMessage("Select All"),
-    "libSetHotkeys": MessageLookupByLibrary.simpleMessage(
-      "Set Directly With Hotkeys",
-    ),
+    "libSetHotkeys": MessageLookupByLibrary.simpleMessage("Click Settings"),
     "libShare": MessageLookupByLibrary.simpleMessage("Share"),
     "libShowAllElements": MessageLookupByLibrary.simpleMessage(
       "Show All Elements",
@@ -196,6 +224,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libValidRangeTip": MessageLookupByLibrary.simpleMessage("Valid Range"),
     "libWaitTip": MessageLookupByLibrary.simpleMessage("Please wait..."),
     "libWarn": MessageLookupByLibrary.simpleMessage("Warning"),
+    "libWheel": MessageLookupByLibrary.simpleMessage("Wheel"),
     "libYes": MessageLookupByLibrary.simpleMessage("Yes"),
     "libYesterday": MessageLookupByLibrary.simpleMessage("Yesterday"),
     "libZoomIn": MessageLookupByLibrary.simpleMessage("Zoom In"),

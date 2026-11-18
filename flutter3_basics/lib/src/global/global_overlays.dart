@@ -129,7 +129,7 @@ OverlayEntry? toastBlur({
 ///
 /// [toastMessage]->[showNotification]->[showOverlay]
 OverlayEntry? toastMessage(
-  Widget msg, {
+  Widget? msg, {
   //--
   Color? background,
   double? bgBlurSigma,
@@ -138,22 +138,26 @@ OverlayEntry? toastMessage(
   //--
   OverlayPosition position = OverlayPosition.top,
   OverlayAnimate? animate = OverlayAnimate.scale,
-}) => showNotification(
-  (context) {
-    Widget child = ToastWidget(
-      background: background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
-      elevation: 10,
-      bgBlurSigma: bgBlurSigma,
-      padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
-      margin: margin ?? const EdgeInsets.all(kXh),
-      child: msg,
-    );
-    return child;
-  },
-  position: position,
-  animate: animate ?? OverlayAnimate.opacity,
-);
+}) => msg == null
+    ? null
+    : showNotification(
+        (context) {
+          Widget child = ToastWidget(
+            background:
+                background ?? GlobalConfig.def.globalTheme.themeWhiteColor,
+            elevation: 10,
+            bgBlurSigma: bgBlurSigma,
+            padding:
+                padding ??
+                const EdgeInsets.symmetric(horizontal: kXh, vertical: kX),
+            margin: margin ?? const EdgeInsets.all(kXh),
+            child: msg,
+          );
+          return child;
+        },
+        position: position,
+        animate: animate ?? OverlayAnimate.opacity,
+      );
 
 /// [toastInfo] -> [toastMessage] -> [showNotification]->[showOverlay]
 OverlayEntry? toastInfo(

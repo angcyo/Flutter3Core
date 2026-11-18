@@ -139,10 +139,12 @@ extension TouchDetectorWidgetEx on Widget {
     bool enableClick = true,
     bool enableLongPress = false,
     bool enableLoopLongPress = false,
+    bool? useDisableCursorStyle = false,
   }) {
     //debugger(when: !enableClick);
+    useDisableCursorStyle ??= isDesktopOrWeb || mouseIsConnected;
     if (!enableClick && !enableLongPress) {
-      if (isDesktopOrWeb || mouseIsConnected) {
+      if (useDisableCursorStyle) {
         return mouse(cursor: SystemMouseCursors.forbidden);
       }
       return this;
@@ -157,7 +159,7 @@ extension TouchDetectorWidgetEx on Widget {
     final clickAction = enableClick ? onClick : null;
     final longPressAction = enableLongPress ? onLongPress : null;
     if (clickAction == null && longPressAction == null) {
-      if (isDesktopOrWeb || mouseIsConnected) {
+      if (useDisableCursorStyle) {
         return mouse(cursor: SystemMouseCursors.forbidden);
       }
       return this;

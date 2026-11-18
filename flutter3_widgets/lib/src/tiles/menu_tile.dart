@@ -533,6 +533,9 @@ class DesktopIconMenuTile extends StatefulWidget {
   /// 长按提示文本
   final String? tooltip;
 
+  /// 快捷键ID
+  final String? shortcutId;
+
   const DesktopIconMenuTile({
     super.key,
     this.mainAxisAlignment = .start,
@@ -551,6 +554,7 @@ class DesktopIconMenuTile extends StatefulWidget {
     //--
     this.autoCloseMenu = false,
     this.tooltip,
+    this.shortcutId,
   });
 
   @override
@@ -634,7 +638,7 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
           borderRadius: BorderRadius.circular(radius),
           enable: isEnableTap,
         )
-        .tooltip(widget.tooltip)
+        .tooltip(widget.tooltip, shortcutId: widget.shortcutId)
         .material()
         .localLocation(
           key: widget.key,

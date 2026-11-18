@@ -55,7 +55,7 @@ class _CanvasScaleRadioTileState extends State<CanvasScaleRadioTile> {
 
   @override
   Widget build(BuildContext context) {
-    final lRes = libRes(context);
+    final libRes = context.libRes;
     final globalTheme = GlobalTheme.of(context);
     final canvasDelegate = widget.canvasDelegate;
     final viewBox = canvasDelegate?.canvasViewBox;
@@ -69,9 +69,14 @@ class _CanvasScaleRadioTileState extends State<CanvasScaleRadioTile> {
       }
     });
     return [
-      Icon(Icons.remove).ib(() {
-        canvasDelegate?.canvasKeyManager.zoomOut();
-      }),
+      Icon(Icons.remove)
+          .ib(() {
+            canvasDelegate?.canvasKeyManager.zoomOut();
+          })
+          .tooltip(
+            libRes?.libZoomOutCanvas,
+            shortcutId: CanvasIntentActions.zoomOut.id,
+          ),
       DesktopIconMenuTile(
         iconWidget: scaleText.text(textStyle: globalTheme.textBodyStyle),
         popupBodyWidget: [
@@ -79,7 +84,7 @@ class _CanvasScaleRadioTileState extends State<CanvasScaleRadioTile> {
             DesktopIconMenuTile(
               mainAxisAlignment: .center,
               iconWidget: switch (radio) {
-                -1.0 => lRes?.libCanvasAdaptive ?? "自适应",
+                -1.0 => libRes?.libCanvasAdaptive ?? "自适应",
                 _ => "${(radio * 100).round()}%",
               }.text(textStyle: globalTheme.textBodyStyle, textAlign: .center),
               onTap: () {
@@ -98,9 +103,14 @@ class _CanvasScaleRadioTileState extends State<CanvasScaleRadioTile> {
         targetAnchor: .topCenter,
         followerAnchor: .bottomCenter,
       ),
-      Icon(Icons.add).ib(() {
-        canvasDelegate?.canvasKeyManager.zoomIn();
-      }),
+      Icon(Icons.add)
+          .ib(() {
+            canvasDelegate?.canvasKeyManager.zoomIn();
+          })
+          .tooltip(
+            libRes?.libZoomInCanvas,
+            shortcutId: CanvasIntentActions.zoomIn.id,
+          ),
     ].row(mainAxisSize: .min)!;
   }
 }

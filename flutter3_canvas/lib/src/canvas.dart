@@ -227,6 +227,8 @@ class CanvasRenderBox extends RenderBox
 
   CanvasStyle get canvasStyle => canvasDelegate.canvasStyle;
 
+  CanvasKeyManager get canvasKeyManager => canvasDelegate.canvasKeyManager;
+
   /// 父级焦点[FocusNode]
   ///
   /// - [parentNode]
@@ -413,9 +415,9 @@ class CanvasRenderBox extends RenderBox
 
     //debugger();
     if (canvasDelegate.canvasStyle.enableCanvasKeyEventRegister) {
-      canvasDelegate.canvasKeyManager.registerKeyEventHandler(this);
+      canvasKeyManager.registerKeyEventHandler(this);
     } else {
-      canvasDelegate.canvasKeyManager.unregisterKeyEventHandler(this);
+      canvasKeyManager.unregisterKeyEventHandler(this);
     }
     postFrame(() {
       visitWidgetElementPainter((painter) {
@@ -450,7 +452,7 @@ class CanvasRenderBox extends RenderBox
       ..removeListener(onFocusChange);
     _focusAttachment?.detach();
 
-    canvasDelegate.canvasKeyManager.unregisterKeyEventHandler(this);
+    canvasKeyManager.unregisterKeyEventHandler(this);
 
     //--
     _validForMouseTracker = false;
@@ -600,10 +602,7 @@ class CanvasRenderBox extends RenderBox
             canvasStyle.isCanvasKeyEvent(event))) {
       //快捷按键匹配
       handler = super.handleKeyEventResultMixin(event);
-      final keyHandler = canvasDelegate.canvasKeyManager.handleKeyEvent(
-        this,
-        event,
-      );
+      final keyHandler = canvasKeyManager.handleKeyEvent(this, event);
       if (keyHandler == .handled) {
         handler = keyHandler;
       }

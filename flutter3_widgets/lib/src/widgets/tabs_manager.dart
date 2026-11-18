@@ -79,6 +79,7 @@ class TabsManagerController {
   }
 
   /// 按照索引选择标签
+  /// - [index] 标签索引, 从0开始, 0有可能是首页
   @api
   bool selectTab(int index) {
     return switchTab(tabEntryListLive.value?.get(index));
@@ -785,6 +786,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
               },
               borderRadiusNum: radius,
               hoverColor: _getHoverColor(context, globalTheme),
+              useDisableCursorStyle: false,
             )
             .material(key: ValueKey(entry.tabInfoLive.hashCode));
       },

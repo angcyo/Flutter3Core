@@ -74,8 +74,8 @@ class TextFieldConfig {
   }
 
   /// 调用此方法更新输入框的值
-  /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldText]
-  /// 此方法会在自动绑定[_SingleInputWidgetState._updateFieldValue]
+  /// 此方法会在自动绑定[SingleInputWidgetState._updateFieldText]
+  /// 此方法会在自动绑定[SingleInputWidgetState._updateFieldValue]
   @autoInjectMark
   void Function(TextEditingValue? value, bool? notify)? updateFieldValueFn;
 
@@ -192,7 +192,7 @@ class TextFieldConfig {
 
   /// 焦点改变后的回调
   /// [FocusNode]
-  /// 由[_SingleInputWidgetState._onFocusChanged]驱动
+  /// 由[SingleInputWidgetState._onFocusChanged]驱动
   final DoubleValueChanged<bool, String>? onFocusAction;
 
   /// 构建输入框上下文菜单项
@@ -953,7 +953,7 @@ class SingleInputWidget extends StatefulWidget {
   final BoxConstraints? prefixIconConstraints;
 
   /// 后缀/前缀图标的padding
-  /// @defInjectMark
+  @defInjectMark
   final EdgeInsetsGeometry? suffixIconPadding;
   @defInjectMark
   final EdgeInsetsGeometry? prefixIconPadding;
@@ -967,10 +967,10 @@ class SingleInputWidget extends StatefulWidget {
 
   /// 后缀/前缀图标的构建器
   /// - [alwaysShowSuffixIcon]
-  final TransformChildWidgetBuilder? prefixIconBuilder;
+  final InputStateWidgetBuilder? prefixIconBuilder;
 
   /// - [alwaysShowSuffixIcon]
-  final TransformChildWidgetBuilder? suffixIconBuilder;
+  final InputStateWidgetBuilder? suffixIconBuilder;
 
   /// 是否折叠显示, true: 则输入框的高度和文本一致
   final bool? isCollapsed;
@@ -1140,7 +1140,7 @@ class SingleInputWidget extends StatefulWidget {
     this.enableAutoSuffixIcon,
     this.alwaysShowSuffixIcon,
     this.textStyle,
-    this.textAlign = TextAlign.start,
+    this.textAlign = .start,
     this.disabledFillColor,
     this.showCursor,
     this.cursorColor,
@@ -1169,7 +1169,7 @@ class SingleInputWidget extends StatefulWidget {
     this.isDense = true,
     this.contentPadding = kInputPadding,
     this.decoration,
-    this.inputBorderType = InputBorderType.outline,
+    this.inputBorderType = .outline,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
@@ -1215,7 +1215,7 @@ class SingleInputWidget extends StatefulWidget {
     this.enableAutoSuffixIcon,
     this.alwaysShowSuffixIcon,
     this.textStyle,
-    this.textAlign = TextAlign.start,
+    this.textAlign = .start,
     this.disabledFillColor,
     this.showCursor,
     this.cursorColor,
@@ -1244,7 +1244,7 @@ class SingleInputWidget extends StatefulWidget {
     this.isDense = true,
     this.contentPadding = kInputPadding,
     this.decoration,
-    this.inputBorderType = InputBorderType.fillOutline,
+    this.inputBorderType = .fillOutline,
     this.border,
     this.focusedBorder,
     this.disabledBorder,
@@ -1321,9 +1321,9 @@ class SingleInputWidget extends StatefulWidget {
     this.isDense = true,
     this.contentPadding = kInputSubPadding,
     this.decoration,
-    this.inputBorderType = InputBorderType.outline,
-    this.border = InputBorder.none,
-    this.focusedBorder = InputBorder.none,
+    this.inputBorderType = .outline,
+    this.border = .none,
+    this.focusedBorder = .none,
     this.disabledBorder,
     this.textInputAction,
     this.onSubmitted,
@@ -1341,24 +1341,24 @@ class SingleInputWidget extends StatefulWidget {
   });
 
   @override
-  State<SingleInputWidget> createState() => _SingleInputWidgetState();
+  State<SingleInputWidget> createState() => SingleInputWidgetState();
 }
 
-class _SingleInputWidgetState extends State<SingleInputWidget> {
+class SingleInputWidgetState extends State<SingleInputWidget> {
   /// 是否显示后缀图标, 一般是清除按钮和查看密码按钮
   bool get _showSuffixIcon =>
-      (widget.alwaysShowSuffixIcon == true ||
-          (widget.alwaysShowSuffixIcon != false &&
+      widget.alwaysShowSuffixIcon == true ||
+      (((widget.alwaysShowSuffixIcon != false &&
               widget.enabled &&
               widget.config.hasFocus)) &&
-      widget.config.controller.text.isNotEmpty &&
-      !widget.readOnly;
+          widget.config.controller.text.isNotEmpty &&
+          !widget.readOnly);
 
   /// 前缀图标
   Widget? _buildPrefixIcon(BuildContext context) {
     Widget? result = widget.prefixIcon ?? widget.config.prefixIcon;
     if (widget.prefixIconBuilder != null) {
-      result = widget.prefixIconBuilder?.call(context, result);
+      result = widget.prefixIconBuilder?.call(this, context, result);
     }
     return result;
   }
@@ -1426,7 +1426,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
       }
     }
     if (widget.suffixIconBuilder != null) {
-      result = widget.suffixIconBuilder?.call(context, result);
+      result = widget.suffixIconBuilder?.call(this, context, result);
     }
     return result;
   }
@@ -1774,6 +1774,7 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
           showCursor: widget.showCursor,
           cursorColor: cursorColor,
           cursorErrorColor: widget.cursorErrorColor ?? globalTheme.errorColor,
+          cursorHeight: null,
           //selectionControls: ,
           //selectionHeightStyle: ,
           //selectionWidthStyle: ,
@@ -1837,6 +1838,14 @@ class _SingleInputWidgetState extends State<SingleInputWidget> {
     return widget.config.buildWrapAutocomplete(context, child);
   }
 }
+
+/// [SingleInputWidget]
+typedef InputStateWidgetBuilder =
+    Widget? Function(
+      SingleInputWidgetState state,
+      BuildContext context,
+      Widget? child,
+    );
 
 /// 输入框上下文菜单项构建器
 typedef InputContextMenuItemsBuilder =

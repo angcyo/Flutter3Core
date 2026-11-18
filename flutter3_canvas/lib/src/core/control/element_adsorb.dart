@@ -29,7 +29,12 @@ class ElementAdsorbControl
 
   /// 是否临时关闭吸附
   bool get isIgnoreAdsorb =>
-      isKeyPressed(key: canvasStyle.ignoreAdsorbKeyboardKey);
+      canvasDelegate.canvasKeyManager.shortcutConfigManager
+          ?.isShortcutMatchEvent(
+            null,
+            CanvasIntentActions.ignoreSmartAdsorption.id,
+          ) ==
+      true;
 
   @override
   set isCanvasComponentEnable(bool componentEnable) {

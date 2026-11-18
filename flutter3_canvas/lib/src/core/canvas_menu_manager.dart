@@ -81,7 +81,7 @@ class CanvasMenuManager
         },
         enable: enablePaste,
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.pasteElement.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.pasteElement.id)
             .firstOrNull,
       ),
       buildMenuItem(
@@ -92,7 +92,7 @@ class CanvasMenuManager
         },
         enable: enableSelect,
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.selectAllElement.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.selectAllElement.id)
             .firstOrNull,
       ),
       "100%"
@@ -109,7 +109,7 @@ class CanvasMenuManager
           canvasKeyManager.zoomIn(anchorPosition: anchorPosition);
         },
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.zoomIn.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.zoomIn.id)
             .firstOrNull,
       ),
       buildMenuItem(
@@ -119,7 +119,7 @@ class CanvasMenuManager
           canvasKeyManager.zoomOut(anchorPosition: anchorPosition);
         },
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.zoomOut.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.zoomOut.id)
             .firstOrNull,
       ),
       (libRes?.libCanvasOptions ?? "画布选项")
@@ -243,7 +243,7 @@ class CanvasMenuManager
           canvasKeyManager.copySelectedElement();
         },
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.copyElement.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.copyElement.id)
             .firstOrNull,
       ),
       //粘贴
@@ -255,7 +255,7 @@ class CanvasMenuManager
         },
         enable: enablePaste,
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.pasteElement.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.pasteElement.id)
             .firstOrNull,
       ),
       //删除
@@ -267,7 +267,9 @@ class CanvasMenuManager
         },
         enable: enablePaste,
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.deleteSelectedElement.id)
+            ?.findShortcutConfig(
+              id: CanvasIntentActions.deleteSelectedElement.id,
+            )
             .firstOrNull,
       ),
       //--组合
@@ -280,7 +282,7 @@ class CanvasMenuManager
         },
         enable: enableGroup,
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.groupElement.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.groupElement.id)
             .firstOrNull,
       ),
       //--取消组合
@@ -292,7 +294,7 @@ class CanvasMenuManager
         },
         enable: enableUngroup,
         shortcutConfig: shortcutConfigManager
-            .findShortcutConfig(id: CanvasKeyActions.ungroupElement.id)
+            ?.findShortcutConfig(id: CanvasIntentActions.ungroupElement.id)
             .firstOrNull,
       ),
       //--隐藏元素

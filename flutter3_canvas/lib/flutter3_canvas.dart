@@ -41,6 +41,7 @@ part 'src/core/canvas_style.dart';
 part 'src/core/canvas_undo_manager.dart';
 part 'src/core/canvas_view_box.dart';
 part 'src/core/canvas_key_manager.dart';
+part 'src/core/canvas_shortcut_helper.dart';
 part 'src/core/canvas_menu_manager.dart';
 part 'src/core/control/element_adsorb.dart';
 part 'src/core/control/element_control.dart';

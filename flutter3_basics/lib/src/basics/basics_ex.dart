@@ -1993,6 +1993,9 @@ extension SizeEx on Size {
 //region bool 扩展
 
 extension BoolEx on bool {
+  /// 转换成[true]或[null]
+  bool? get trueOrNull => this ? true : null;
+
   String get dc => toDC();
 
   /// 转换成对错字符显示
@@ -2309,6 +2312,10 @@ extension NumEx on num {
 }
 
 extension IntEx on int {
+  /// 根据KeyId获取对应的LogicalKeyboardKey
+  LogicalKeyboardKey? get logicalKeyboardKey =>
+      LogicalKeyboardKey.findKeyByKeyId(this);
+
   //MARK: byte size
   int get kb => this * 1024;
 

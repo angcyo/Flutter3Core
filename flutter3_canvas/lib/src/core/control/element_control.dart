@@ -607,7 +607,12 @@ class ScaleControl extends BaseControl {
 
   /// 是否临时忽略等比锁定
   bool get isIgnoreLockRation =>
-      isKeyPressed(key: canvasDelegate.canvasStyle.ignoreLockKeyboardKey);
+      canvasDelegate.canvasKeyManager.shortcutConfigManager
+          ?.isShortcutMatchEvent(
+            null,
+            CanvasIntentActions.ignoreLocalRatio.id,
+          ) ==
+      true;
 
   @sceneCoordinate
   Offset _downScenePointInvert = Offset.zero;
@@ -892,7 +897,12 @@ class TranslateControl extends BaseControl
               isPointerDownIn = true;
 
               if (canvasStyle.enableElementMultiSelect &&
-                  isKeyPressed(key: canvasStyle.multiSelectKeyboardKey)) {
+                  canvasDelegate.canvasKeyManager.shortcutConfigManager
+                          ?.isShortcutMatchEvent(
+                            null,
+                            CanvasIntentActions.multiSelectElement.id,
+                          ) ==
+                      true) {
                 //多选元素
                 canvasElementControlManager.canvasElementManager
                     .addSelectElement(downElement);

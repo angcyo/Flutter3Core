@@ -608,6 +608,10 @@ extension WidgetEx on Widget {
       key == null ? this : KeyedSubtree(key: key, child: this);
 
   /// [Tooltip] 提示
+  ///
+  /// - [shortcutId] 快捷键ID
+  /// - [shortcut] 快捷键配置
+  ///
   /// - [richMessage] 富文本提示内容
   /// - [preferBelow] 优先显示在底部
   /// - [decoration] 装饰
@@ -617,6 +621,10 @@ extension WidgetEx on Widget {
   /// - [Tooltip.dismissAllToolTips] 移除所有tooltip
   Widget tooltip(
     String? tip, {
+    String? shortcutId,
+    ShortcutConfigBean? shortcut,
+    ShortcutConfigManager? shortcutConfigManager,
+    //--
     bool enable = true,
     InlineSpan? richMessage,
     TextStyle? textStyle,
@@ -625,19 +633,41 @@ extension WidgetEx on Widget {
     Decoration? decoration,
     MouseCursor? cursor,
     TooltipTriggerMode? triggerMode,
-  }) => !enable || ((tip == null || tip.isEmpty) && richMessage == null)
-      ? this
-      : Tooltip(
-          message: tip,
-          textStyle: textStyle,
-          richMessage: richMessage,
-          enableFeedback: enableFeedback,
-          preferBelow: preferBelow,
-          decoration: decoration,
-          mouseCursor: cursor,
-          triggerMode: triggerMode,
-          child: this,
-        );
+  }) {
+    if (!enable) {
+      return this;
+    }
+    String? shortcutLabel;
+    if (isDesktopOrWeb) {
+      shortcut ??= (shortcutConfigManager ?? $globalShortcutConfigManager)
+          .findShortcutConfig(id: shortcutId)
+          .firstOrNull;
+      shortcutLabel = shortcut?.getShortcutLabel();
+      if (!isNil(shortcutLabel)) {
+        tip ??= "";
+        if (!isNil(tip)) {
+          shortcutLabel = shortcutLabel?.wph.connect(null, " ");
+        }
+      }
+    } else {
+      shortcut = null;
+    }
+    return ((tip == null || tip.isEmpty) &&
+            shortcut == null &&
+            richMessage == null)
+        ? this
+        : Tooltip(
+            message: tip?.connect(shortcutLabel),
+            textStyle: textStyle,
+            richMessage: richMessage,
+            enableFeedback: enableFeedback,
+            preferBelow: preferBelow,
+            decoration: decoration,
+            mouseCursor: cursor,
+            triggerMode: triggerMode,
+            child: this,
+          );
+  }
 
   /// [Hero], 在源页面 (Source Route)和目标页面 (Destination Route)使用相同的标签即可使用动画
   ///
@@ -2981,6 +3011,7 @@ extension WidgetEx on Widget {
     child: this,
   );
 
+  /// - [icon] 别名
   @alias
   Widget ib(
     GestureTapCallback? onTap, {

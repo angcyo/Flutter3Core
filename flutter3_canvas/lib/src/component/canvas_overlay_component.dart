@@ -702,11 +702,11 @@ class CanvasTextOverlayComponent extends CanvasOverlayComponent {}
 /// - 默认使用按下移动测量2个点
 /// - 支持点击2个点测距
 class CanvasMeasureComponent extends CanvasOverlayComponent {
-  /// 自动完成按键
-  /// - 当此按键抬起时, 自动完成
+  /// 自动完成按键回调
+  /// - 按键触发, 自动完成
   /// - [CanvasDelegate.detachOverlay]
   @configProperty
-  LogicalKeyboardKey? autoCompleteKey;
+  bool Function(KeyEvent event)? isCompleteKeyEventAction;
 
   /// 定义一个最小有效距离, 小于这个距离的数据无效
   @configProperty
@@ -747,7 +747,7 @@ class CanvasMeasureComponent extends CanvasOverlayComponent {
   CanvasMeasureComponent({
     super.tag,
     super.cursorStyle,
-    this.autoCompleteKey,
+    this.isCompleteKeyEventAction,
     this.paintAngle = true,
     this.paintEndpoint = false,
     this.paintTextBg = false,
@@ -885,9 +885,7 @@ class CanvasMeasureComponent extends CanvasOverlayComponent {
       _firstPoint = null;
       _currentPoint = null;
       onMeasureAction?.call(_currentPoint);
-    } else if (autoCompleteKey != null &&
-        event.isKeyUp &&
-        event.isKeyboardKey(autoCompleteKey)) {
+    } else if (isCompleteKeyEventAction?.call(event) == true) {
       canvasDelegate?.detachOverlay(overlay: this);
     }
     return true;

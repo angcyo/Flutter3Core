@@ -42,7 +42,8 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog>
         ? canvasDelegate
               ?.canvasKeyManager
               .shortcutConfigManager
-              .shortcutConfigList
+              ?.shortcutConfigList
+              .toList()
         : null;
     final children = [
       ...buildCanvasOptions(

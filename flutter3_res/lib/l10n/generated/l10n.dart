@@ -565,9 +565,39 @@ class LibRes {
     );
   }
 
-  /// `直接按键进行设置`
+  /// `点击设置`
   String get libSetHotkeys {
-    return Intl.message('直接按键进行设置', name: 'libSetHotkeys', desc: '', args: []);
+    return Intl.message('点击设置', name: 'libSetHotkeys', desc: '', args: []);
+  }
+
+  /// `恢复默认`
+  String get libDefaultHotkeys {
+    return Intl.message('恢复默认', name: 'libDefaultHotkeys', desc: '', args: []);
+  }
+
+  /// `按住`
+  String get libHold {
+    return Intl.message('按住', name: 'libHold', desc: '', args: []);
+  }
+
+  /// `快捷键已存在`
+  String get libHotkeysConflict {
+    return Intl.message(
+      '快捷键已存在',
+      name: 'libHotkeysConflict',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `鼠标`
+  String get libMouse {
+    return Intl.message('鼠标', name: 'libMouse', desc: '', args: []);
+  }
+
+  /// `滚轮`
+  String get libWheel {
+    return Intl.message('滚轮', name: 'libWheel', desc: '', args: []);
   }
 
   /// `组合`
@@ -595,11 +625,46 @@ class LibRes {
     return Intl.message('拖拽画布', name: 'libDragCanvas', desc: '', args: []);
   }
 
+  /// `缩放画布`
+  String get libScaleCanvas {
+    return Intl.message('缩放画布', name: 'libScaleCanvas', desc: '', args: []);
+  }
+
+  /// `多选元素`
+  String get libMultiSelectElement {
+    return Intl.message(
+      '多选元素',
+      name: 'libMultiSelectElement',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `忽略锁定比例`
   String get libIgnoreLockRatio {
     return Intl.message(
       '忽略锁定比例',
       name: 'libIgnoreLockRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `画布测距`
+  String get libCanvasMeasureDistance {
+    return Intl.message(
+      '画布测距',
+      name: 'libCanvasMeasureDistance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `忽略智能吸附`
+  String get libIgnoreSmartAdsorption {
+    return Intl.message(
+      '忽略智能吸附',
+      name: 'libIgnoreSmartAdsorption',
       desc: '',
       args: [],
     );
@@ -633,6 +698,46 @@ class LibRes {
   /// `向右移动元素`
   String get libMoveElemRight {
     return Intl.message('向右移动元素', name: 'libMoveElemRight', desc: '', args: []);
+  }
+
+  /// `向上快速移动元素`
+  String get libMoveFastElemUp {
+    return Intl.message(
+      '向上快速移动元素',
+      name: 'libMoveFastElemUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `向下快速移动元素`
+  String get libMoveFastElemDown {
+    return Intl.message(
+      '向下快速移动元素',
+      name: 'libMoveFastElemDown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `向左快速移动元素`
+  String get libMoveFastElemLeft {
+    return Intl.message(
+      '向左快速移动元素',
+      name: 'libMoveFastElemLeft',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `向右快速移动元素`
+  String get libMoveFastElemRight {
+    return Intl.message(
+      '向右快速移动元素',
+      name: 'libMoveFastElemRight',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `撤销`

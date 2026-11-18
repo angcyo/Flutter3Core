@@ -60,19 +60,6 @@ class KeyboardShortcutManager {
   }
 }
 
-/// 快捷键触发的回调
-/// - [context] 布局上下文
-/// - [event] 当前的键盘事件
-/// - [host] 宿主对象, 比如当前所在的窗口/容器/可操作对象等
-/// - [data] 调用传递的数据
-typedef ShortcutIntentAction =
-    KeyEventResult Function(
-      BuildContext? context,
-      KeyEvent? event,
-      dynamic host,
-      dynamic data,
-    );
-
 /// 快捷方式描述
 /// - [KeyboardShortcutManager]
 /// - [ShortcutDescription]

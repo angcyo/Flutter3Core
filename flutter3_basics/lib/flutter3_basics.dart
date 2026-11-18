@@ -113,9 +113,9 @@ part 'src/component/hook.dart';
 part 'src/component/id_gen.dart';
 part 'src/component/key_event_mixin.dart';
 part 'src/component/limit.dart';
+part 'src/component/list_string.dart';
 part 'src/component/listenable.dart';
 part 'src/component/live_stream_controller.dart';
-part 'src/component/list_string.dart';
 part 'src/component/mutex_key.dart';
 part 'src/component/number_template_parser.dart';
 part 'src/component/painter.dart';
@@ -164,12 +164,13 @@ part 'src/overlay/route_will_pop_scope.dart';
 part 'src/overlay/stroke_loading.dart';
 part 'src/scope/open_file_scope.dart';
 part 'src/unit/unit.dart';
-part 'src/utils/password_generator.dart';
 part 'src/utils/bytes.dart';
+part 'src/utils/canvas_intent_actions.dart';
 part 'src/utils/file_size.dart';
 part 'src/utils/frame_split.dart';
 part 'src/utils/l_time.dart';
 part 'src/utils/list_utils.dart';
+part 'src/utils/password_generator.dart';
 part 'src/utils/process_util.dart';
 part 'src/utils/shapes.dart';
 part 'src/utils/socket_mix.dart';
@@ -195,10 +196,10 @@ part 'src/widgets/pointer_listener.dart';
 part 'src/widgets/preferred_size_sliver_app_bar.dart';
 part 'src/widgets/progress_listener.dart';
 part 'src/widgets/rebuild_widget.dart';
+part 'src/widgets/scale_animation.dart';
 part 'src/widgets/test_constraints_layout.dart';
 part 'src/widgets/touch_detector_widget.dart';
 part 'src/widgets/value_listener.dart';
-part 'src/widgets/scale_animation.dart';
 
 // @formatter:on
 
@@ -254,6 +255,12 @@ enum PixelConfigType {
 
 ///[isNullOrEmpty]
 bool isNil(dynamic value) => isNullOrEmpty(value);
+
+/// 判断2个bool值是否相等
+bool isBoolEqual(bool? a, bool? b, {
+  bool defA = false,
+  bool defB = false,
+}) => (a ?? defA) == (b ?? defB);
 
 /// 当前的数据有多个
 bool isMore(dynamic value) {

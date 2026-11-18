@@ -202,22 +202,36 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
       return true;
     }());*/
 
-    //距离测量
+    //按键进行距离测量
     if (canvasStyle.enableCanvasKeyEvent != false) {
-      final measureKeyboardKey = canvasStyle.measureKeyboardKey;
-      if (!isPointerDown &&
-          measureKeyboardKey != null &&
-          event.isKeyDown &&
-          isKeyPressed(key: measureKeyboardKey, matchKeyCount: true)) {
-        //触发测量模式, 测距组件
-        if (canvasDelegate.overlayComponent == null) {
-          canvasDelegate.attachOverlay(
-            CanvasMeasureComponent(
-              autoCompleteKey: measureKeyboardKey,
-              clickMeasure: false,
-            ),
-            cancelSelectedElement: false,
-          );
+      final shortcutConfigManager =
+          canvasDelegate.canvasKeyManager.shortcutConfigManager;
+      if (!isPointerDown && shortcutConfigManager != null) {
+        if (event.isKeyDown) {
+          if (shortcutConfigManager.isShortcutMatchEvent(
+            event,
+            CanvasIntentActions.measureDistance.id,
+          )) {
+            //触发测量模式, 测距组件
+            if (canvasDelegate.overlayComponent == null) {
+              canvasDelegate.attachOverlay(
+                CanvasMeasureComponent(
+                  isCompleteKeyEventAction: (keyEvent) {
+                    if (keyEvent.isKeyDown &&
+                        shortcutConfigManager.isShortcutMatchEvent(
+                          keyEvent,
+                          CanvasIntentActions.measureDistance.id,
+                        )) {
+                      return true;
+                    }
+                    return false;
+                  },
+                  clickMeasure: false,
+                ),
+                cancelSelectedElement: false,
+              );
+            }
+          }
         }
       }
     }
@@ -414,10 +428,14 @@ class CanvasTranslateComponent extends BaseCanvasViewBoxEventComponent {
   void dispatchPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
     super.dispatchPointerEvent(dispatch, event);
     if (isCanvasComponentEnable && !ignoreEventHandle) {
-      if (event.isMouseScrollEvent &&
-          !isKeyPressed(
-            keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys,
-          )) {
+      final isScaleControlKeyboardKeys =
+          canvasDelegate.canvasKeyManager.shortcutConfigManager
+              ?.isShortcutMatchEvent(
+                null,
+                CanvasIntentActions.scaleCanvas.id,
+              ) ==
+          true;
+      if (event.isMouseScrollEvent && !isScaleControlKeyboardKeys) {
         //非控制键按下+鼠标滚轮
         final offset = -event.mouseScrollDelta;
         if (offset != Offset.zero) {
@@ -543,10 +561,14 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       final pivot = canvasDelegate.canvasViewBox.toScenePoint(
         event.localPosition,
       );
-      if (event.isMouseScrollEvent &&
-          isKeyPressed(
-            keys: canvasDelegate.canvasStyle.scaleControlKeyboardKeys,
-          )) {
+      final isScaleControlKeyboardKeys =
+          canvasDelegate.canvasKeyManager.shortcutConfigManager
+              ?.isShortcutMatchEvent(
+                null,
+                CanvasIntentActions.scaleCanvas.id,
+              ) ==
+          true;
+      if (event.isMouseScrollEvent && isScaleControlKeyboardKeys) {
         //鼠标滚动缩放画布: 控制键按下, 鼠标滚动
         final offset = event.mouseScrollDelta;
         if (offset.dy > 0) {

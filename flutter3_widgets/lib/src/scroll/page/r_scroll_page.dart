@@ -1070,7 +1070,7 @@ mixin RScrollPageRefreshMixin<T extends StatefulWidget> on RScrollPage<T> {
         return SingleInputWidget(
               config: config,
               suffixIconConstraints: null,
-              suffixIconBuilder: (ctx, child) {
+              suffixIconBuilder: (state, ctx, child) {
                 return [
                   child,
                   //严格大小写匹配
