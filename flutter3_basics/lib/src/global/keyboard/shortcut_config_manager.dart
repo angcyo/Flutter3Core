@@ -76,6 +76,12 @@ class ShortcutConfigManager {
     shortcutIntentMap[shortcutIntentBean.id] = shortcutIntentBean;
   }
 
+  /// 查找对应的快捷键意图
+  @api
+  ShortcutIntentBean? findShortcutIntent(String? id) {
+    return shortcutIntentMap[id];
+  }
+
   /// 取消注册一个快捷键意图
   @api
   void unregisterShortcutIntent(ShortcutIntentBean? shortcutIntentBean) {

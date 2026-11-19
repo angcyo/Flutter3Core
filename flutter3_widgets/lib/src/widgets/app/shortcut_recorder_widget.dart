@@ -183,7 +183,13 @@ class _ShortcutRecorderWidgetState extends State<ShortcutRecorderWidget> {
             if (find != null && find.id != current?.id) {
               // 快捷键冲突
               restoreCurrentShortcut();
-              toastBlur(text: context.libRes?.libHotkeysConflict);
+              final intentBean = widget.shortcutConfigManager
+                  ?.findShortcutIntent(find.id);
+              toastBlur(
+                text: context.libRes?.libHotkeysConflict.connect(
+                  textOf(intentBean, context)?.wsb,
+                ),
+              );
               return;
             }
           }

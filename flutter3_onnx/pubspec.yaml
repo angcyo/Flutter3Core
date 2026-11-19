@@ -22,7 +22,7 @@ dependencies:
   # https://pub.dev/packages/archive
   # https://pub.dev/packages/meta
   # https://pub.dev/packages/xml
-  image: ^4.9.1
+  image: ^4.13.1
 
   # https://onnxruntime.ai/
   # https://github.com/microsoft/onnxruntime
@@ -48,6 +48,8 @@ dependencies:
     git:
       url: git@github.com:angcyo/flutter_onnxruntime.git
       ref: windows-v1.8.3-fix1
+  #flutter_onnxruntime: ^1.9.0
+
   # https://pub.dev/packages/onnxruntime_plus
   # Updated to OnnxRuntime 1.22
   # Minimum OS Requirements / 最小支持系统版本

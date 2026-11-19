@@ -188,6 +188,10 @@ class ShortcutConfigBean with Equatable, IProviderText {
   factory ShortcutConfigBean.enter() =>
       ShortcutConfigBean.fromKey(LogicalKeyboardKey.enter);
 
+  /// 快捷键 backspace
+  factory ShortcutConfigBean.backspace() =>
+      ShortcutConfigBean.fromKey(LogicalKeyboardKey.backspace);
+
   /// - [modifier] 是否过滤掉修饰符的[key]
   ///   - 修饰键, 不使用 [keyId]
   factory ShortcutConfigBean.fromKeyEvent(
