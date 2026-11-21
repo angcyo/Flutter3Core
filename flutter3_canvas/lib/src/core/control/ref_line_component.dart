@@ -59,8 +59,9 @@ class RefLineComponent
           .elementAdsorbControl;
       if (elementAdsorbControl.isCanvasComponentEnable) {
         elementAdsorbControl.initAdsorbRefValueList(
-          ControlTypeEnum.translate,
+          .translate,
           includeRefLine: false,
+          includeCenterLine: false,
         );
         /*elementAdsorbControl.updateControlElementsBounds(
           axisManager.getRefLineSceneRect(_refLineData),
@@ -75,7 +76,7 @@ class RefLineComponent
       //debugger();
       nearestLineData = axisManager.findNearestRefLineData(_refLineData);
     } else if (event.isPointerFinish) {
-      _adsorbControl?.dispose(ControlTypeEnum.translate);
+      _adsorbControl?.dispose(.translate);
       _adsorbControl = null;
       nearestLineData = null;
     }

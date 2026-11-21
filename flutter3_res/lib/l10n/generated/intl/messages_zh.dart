@@ -132,6 +132,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libSetHotkeys": MessageLookupByLibrary.simpleMessage("点击设置"),
     "libShare": MessageLookupByLibrary.simpleMessage("分享"),
     "libShowAllElements": MessageLookupByLibrary.simpleMessage("显示所有元素"),
+    "libShowCenterLine": MessageLookupByLibrary.simpleMessage("显示中心线"),
     "libShowCoordinateSystem": MessageLookupByLibrary.simpleMessage("显示坐标系"),
     "libShowGrid": MessageLookupByLibrary.simpleMessage("显示网格"),
     "libShowGuideLines": MessageLookupByLibrary.simpleMessage("显示参考线"),

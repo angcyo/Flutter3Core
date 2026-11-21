@@ -93,6 +93,7 @@
   "libMatchCase": "Match Case",
   "libMatchWord": "Match Word",
   "libShowGrid": "Show Grid",
+  "libShowCenterLine": "Show Center Line",
   "libShowCoordinateSystem": "Show Coordinate System",
   "libActivateGuideLines": "Activate Guide Lines",
   "libShowGuideLines": "Show Guide Lines",

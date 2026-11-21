@@ -8,6 +8,7 @@ part of '../../flutter3_canvas.dart';
 /// 以及一些内容控制方面的配置信息
 ///
 /// [CanvasPaintManager]的成员
+///   - [CanvasPaintManager.contentManager]
 ///
 /// - [contentTemplate] 内容绘制模板
 ///
@@ -99,7 +100,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
         canvas.drawRect(
           canvasDelegate.canvasViewBox.canvasBounds,
           Paint()
-            ..style = PaintingStyle.fill
+            ..style = .fill
             ..color = canvasStyle.canvasBgColor!,
         );
       }
@@ -164,7 +165,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
                 canvasDelegate.isThemeDark,
                 canvasStyle.axisPrimaryColorDark,
               )
-              ..style = PaintingStyle.stroke,
+              ..style = .stroke,
           );
         }
       } else if (boundsInfo.rect != null) {
@@ -181,7 +182,7 @@ class CanvasContentManager extends IPainter with CanvasComponentMixin {
                 canvasDelegate.isThemeDark,
                 canvasStyle.axisPrimaryColorDark,
               )
-              ..style = PaintingStyle.stroke,
+              ..style = .stroke,
           );
         }
       } else {

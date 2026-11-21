@@ -19,6 +19,9 @@ class CanvasStyle {
   /// 绘制坐标参考线
   static const int sDrawRefLine = sDrawGrid << 1;
 
+  /// 绘制画布范围中心线
+  static const int sDrawCenterLine = sDrawRefLine << 1;
+
   //region core
 
   //--CanvasDelegate
@@ -47,13 +50,20 @@ class CanvasStyle {
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   /// - [CanvasAxisManager.painting] 绘制坐标轴和网格
-  int drawType = sDrawAxis | sDrawGrid | sDrawRefLine;
+  int drawType = sDrawAxis | sDrawGrid | sDrawRefLine | sDrawCenterLine;
 
   /// 是否绘制网格
   bool get showGrid => drawType.have(sDrawGrid);
 
   set showGrid(bool value) {
     drawType = drawType.add(sDrawGrid, value);
+  }
+
+  /// 是否绘制中心线
+  bool get showCenterLine => drawType.have(sDrawCenterLine);
+
+  set showCenterLine(bool value) {
+    drawType = drawType.add(sDrawCenterLine, value);
   }
 
   /// 是否绘制坐标系

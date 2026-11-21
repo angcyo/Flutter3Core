@@ -102,6 +102,7 @@
   "libMatchCase": "匹配大小写",
   "libMatchWord": "匹配单词",
   "libShowGrid": "显示网格",
+  "libShowCenterLine": "显示中心线",
   "libShowCoordinateSystem": "显示坐标系",
   "libActivateGuideLines": "激活参考线",
   "libShowGuideLines": "显示参考线",

@@ -190,6 +190,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "libShowAllElements": MessageLookupByLibrary.simpleMessage(
       "Show All Elements",
     ),
+    "libShowCenterLine": MessageLookupByLibrary.simpleMessage(
+      "Show Center Line",
+    ),
     "libShowCoordinateSystem": MessageLookupByLibrary.simpleMessage(
       "Show Coordinate System",
     ),

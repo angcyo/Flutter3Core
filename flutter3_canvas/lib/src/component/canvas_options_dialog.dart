@@ -118,6 +118,18 @@ mixin CanvasOptionsMixin<T extends StatefulWidget> on State<T> {
         },
       ),
       LabelSwitchTile(
+        label: libRes?.libShowCenterLine,
+        value: canvasStyle?.showCenterLine == true,
+        labelTextStyle: labelTextStyle,
+        radius: radius,
+        onValueChanged: (value) {
+          canvasStyle?.showCenterLine = value;
+          updateState();
+          canvasDelegate?.refresh();
+          canvasDelegate?.dispatchCanvasStyleChanged();
+        },
+      ),
+      LabelSwitchTile(
         label: libRes?.libShowCoordinateSystem,
         value: canvasStyle?.showAxis == true,
         labelTextStyle: labelTextStyle,

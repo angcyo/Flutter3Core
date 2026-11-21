@@ -216,8 +216,9 @@ class ElementAdsorbControl
     bool includeCanvasContent = true,
     bool includeAxis = true,
     bool includeRefLine = true,
+    bool includeCenterLine = true,
   }) {
-    if (controlType == ControlTypeEnum.translate) {
+    if (controlType == .translate) {
       //仅在平移时支持吸附
       _initTranslateRefValue(
         controlElement: controlElement,
@@ -227,6 +228,7 @@ class ElementAdsorbControl
         includeCanvasContent: includeCanvasContent,
         includeAxis: includeAxis,
         includeRefLine: includeRefLine,
+        includeCenterLine: includeCenterLine,
       );
       //debugger();
     } else {
@@ -642,6 +644,7 @@ class ElementAdsorbControl
   /// - [includeCanvasContent] 是否需要画布内容边界的吸附?
   /// - [includeAxis] 是否需要坐标系刻度的吸附?
   /// - [includeRefLine] 是否需要参考线的吸附?
+  /// - [includeCenterLine] 是否需要中心线的吸附?
   ///
   void _initTranslateRefValue({
     ElementPainter? controlElement,
@@ -651,6 +654,7 @@ class ElementAdsorbControl
     bool includeCanvasContent = true,
     bool includeAxis = true,
     bool includeRefLine = true,
+    bool includeCenterLine = true,
   }) {
     _xRefValueList.clear();
     _yRefValueList.clear();
@@ -668,7 +672,7 @@ class ElementAdsorbControl
     void adsorbRect(Rect bounds, {ElementPainter? element}) {
       _xRefValueList.add(
         AdsorbRefValue(
-          refType: RefValueType.left,
+          refType: .left,
           refValue: bounds.left,
           refElement: element,
           refBounds: bounds,
@@ -676,7 +680,7 @@ class ElementAdsorbControl
       );
       _xRefValueList.add(
         AdsorbRefValue(
-          refType: RefValueType.center,
+          refType: .center,
           refValue: bounds.center.dx,
           refElement: element,
           refBounds: bounds,
@@ -684,7 +688,7 @@ class ElementAdsorbControl
       );
       _xRefValueList.add(
         AdsorbRefValue(
-          refType: RefValueType.right,
+          refType: .right,
           refValue: bounds.right,
           refElement: element,
           refBounds: bounds,
@@ -693,7 +697,7 @@ class ElementAdsorbControl
       //--
       _yRefValueList.add(
         AdsorbRefValue(
-          refType: RefValueType.top,
+          refType: .top,
           refValue: bounds.top,
           refElement: element,
           refBounds: bounds,
@@ -701,7 +705,7 @@ class ElementAdsorbControl
       );
       _yRefValueList.add(
         AdsorbRefValue(
-          refType: RefValueType.center,
+          refType: .center,
           refValue: bounds.center.dy,
           refElement: element,
           refBounds: bounds,
@@ -709,7 +713,7 @@ class ElementAdsorbControl
       );
       _yRefValueList.add(
         AdsorbRefValue(
-          refType: RefValueType.bottom,
+          refType: .bottom,
           refValue: bounds.bottom,
           refElement: element,
           refBounds: bounds,
@@ -747,7 +751,7 @@ class ElementAdsorbControl
         if (data.axisType.have(IUnit.axisTypePrimary)) {
           _xRefValueList.add(
             AdsorbRefValue(
-              refType: RefValueType.left,
+              refType: .left,
               refValue: data.sceneValue,
               refElement: null,
               refBounds: null,
@@ -759,7 +763,7 @@ class ElementAdsorbControl
         if (data.axisType.have(IUnit.axisTypePrimary)) {
           _yRefValueList.add(
             AdsorbRefValue(
-              refType: RefValueType.top,
+              refType: .top,
               refValue: data.sceneValue,
               refElement: null,
               refBounds: null,
@@ -768,28 +772,53 @@ class ElementAdsorbControl
         }
       }
     }
-    //--
+    //--参考线吸附
     if (includeRefLine) {
       for (final data in axisManager.refLineDataList) {
-        if (data.axis == Axis.horizontal) {
+        if (data.axis == .horizontal) {
           _yRefValueList.add(
             AdsorbRefValue(
-              refType: RefValueType.center,
+              refType: .center,
               refValue: data.sceneValue,
               refElement: null,
               refBounds: null,
             ),
           );
-        } else if (data.axis == Axis.vertical) {
+        } else if (data.axis == .vertical) {
           _xRefValueList.add(
             AdsorbRefValue(
-              refType: RefValueType.center,
+              refType: .center,
               refValue: data.sceneValue,
               refElement: null,
               refBounds: null,
             ),
           );
         }
+      }
+    }
+    //--中心线吸附
+    if (includeCenterLine && canvasStyle.showCenterLine) {
+      final contentRect = canvasDelegate
+          .canvasPaintManager
+          .contentManager
+          .canvasContentFollowRectInner;
+      if (contentRect != null) {
+        _xRefValueList.add(
+          AdsorbRefValue(
+            refType: .center,
+            refValue: contentRect.cx,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
+        _yRefValueList.add(
+          AdsorbRefValue(
+            refType: .center,
+            refValue: contentRect.cy,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
       }
     }
   }

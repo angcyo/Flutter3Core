@@ -206,6 +206,7 @@ class CanvasAxisManager extends IPainter
     }
   }
 
+  /// - [CanvasPaintManager.paint] 驱动
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     final canvasViewBox = paintManager.canvasDelegate.canvasViewBox;
@@ -308,6 +309,31 @@ class CanvasAxisManager extends IPainter
           },
         );
       });
+    }
+
+    //绘制中心线
+    if (canvasStyle.showCenterLine) {
+      final contentRect = canvasDelegate
+          .canvasPaintManager
+          .contentManager
+          .canvasContentFollowRectInner;
+      if (contentRect != null) {
+        primaryPaint
+          ..strokeWidth = primaryPaint.strokeWidth / paintMeta.canvasScale
+          ..color = canvasStyle.axisRefLineHighlightColor;
+        paintMeta.withPaintMatrix(canvas, () {
+          canvas.drawLine(
+            Offset(contentRect.left, contentRect.cy),
+            Offset(contentRect.right, contentRect.cy),
+            primaryPaint,
+          );
+          canvas.drawLine(
+            Offset(contentRect.cx, contentRect.top),
+            Offset(contentRect.cx, contentRect.bottom),
+            primaryPaint,
+          );
+        });
+      }
     }
   }
 

@@ -515,6 +515,11 @@ class LibRes {
     return Intl.message('显示网格', name: 'libShowGrid', desc: '', args: []);
   }
 
+  /// `显示中心线`
+  String get libShowCenterLine {
+    return Intl.message('显示中心线', name: 'libShowCenterLine', desc: '', args: []);
+  }
+
   /// `显示坐标系`
   String get libShowCoordinateSystem {
     return Intl.message(
