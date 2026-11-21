@@ -643,23 +643,23 @@ extension WidgetEx on Widget {
           .findShortcutConfig(id: shortcutId)
           .firstOrNull;
       shortcutLabel = shortcut?.getShortcutLabel();
-      if (!isNil(shortcutLabel)) {
+      if (shortcutLabel != null) {
+        //有快捷就要把[Tooltip]小部件挂到树上, 方便后续刷新快捷键提示
         tip ??= "";
-        if (!isNil(tip)) {
-          shortcutLabel = shortcutLabel?.wph.connect(null, " ");
+        if (!isNil(shortcutLabel)) {
+          if (!isNil(tip)) {
+            shortcutLabel = shortcutLabel.wph.connect(null, " ");
+          }
+          tip = tip.connect(shortcutLabel);
         }
       }
-    } else {
-      shortcut = null;
     }
-    return ((tip == null || tip.isEmpty) &&
-            shortcut == null &&
-            richMessage == null)
+    return (isNil(tip) && shortcut == null && richMessage == null)
         ? this
         : Tooltip(
-            message: tip?.connect(shortcutLabel),
-            textStyle: textStyle,
+            message: tip,
             richMessage: richMessage,
+            textStyle: textStyle,
             enableFeedback: enableFeedback,
             preferBelow: preferBelow,
             decoration: decoration,
