@@ -37,13 +37,13 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog>
     final globalTheme = globalConfig.globalTheme;
     final canvasDelegate = widget.canvasDelegate;
 
+    final shortcutConfigManager =
+        canvasDelegate?.canvasKeyManager.shortcutConfigManager;
     final showShortcuts = widget.showShortcuts ?? isDesktopOrWeb;
-    final List<ShortcutConfigBean>? shortcutConfigList = showShortcuts
-        ? canvasDelegate
-              ?.canvasKeyManager
-              .shortcutConfigManager
-              ?.shortcutConfigList
-              .toList()
+    final shortcutIntentList = showShortcuts
+        ? shortcutConfigManager?.shortcutIntentList.filter(
+            (e) => e.id.startsWith("canvas"),
+          )
         : null;
     final children = [
       ...buildCanvasOptions(
@@ -59,11 +59,15 @@ class _CanvasOptionsDialogState extends State<CanvasOptionsDialog>
             fontWeight: FontWeight.bold,
           ),
         ).align(.centerLeft),
-        if (shortcutConfigList != null)
-          for (final shortcut in shortcutConfigList)
+        if (shortcutIntentList != null)
+          for (final shortcutIntent in shortcutIntentList)
             [
-                  textOf(shortcut)?.text().expanded(),
-                  ShortcutLabelWidget(configBean: shortcut),
+                  textOf(shortcutIntent)?.text().expanded(),
+                  ShortcutLabelWidget(
+                    configBean: shortcutConfigManager
+                        ?.findShortcutConfig(id: shortcutIntent.id)
+                        .firstOrNull,
+                  ),
                 ]
                 .row()
                 ?.insets(h: kX, v: kX)

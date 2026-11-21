@@ -82,26 +82,26 @@ class _OptionsDialogState extends State<OptionsDialog>
     WidgetList? children = widget.buildValuesWidgetListMixin(
       context,
       transformValueWidget:
-          widget.transformValueWidget ??
-          (ctx, child, index, data, isSelected) {
+      widget.transformValueWidget ??
+              (ctx, child, index, data, isSelected) {
             //debugger();
             return [
-                  (isSelectedValueMixin(index)
-                          ? Icon(Icons.navigate_next)
-                          : empty)
-                      .size(size: 30),
-                  child,
-                ]
+              (isSelectedValueMixin(index)
+                  ? Icon(Icons.navigate_next)
+                  : empty)
+                  .size(size: 30),
+              child,
+            ]
                 .row()!
                 .paddingOnly(vertical: kL)
                 .colorFiltered(
-                  color: isSelectedValueMixin(index) ? highlightColor : null,
-                )
+              color: isSelectedValueMixin(index) ? highlightColor : null,
+            )
                 .inkWell(() {
-                  changeValueMixin(indexOfValuesMixin(data));
-                }, enable: !isSelectedValueMixin(index));
+              changeValueMixin(indexOfValuesMixin(data));
+            }, enable: !isSelectedValueMixin(index));
           },
-      textAlign: TextAlign.start,
+      textAlign: .start,
     );
 
     final title = CoreDialogTitle(
