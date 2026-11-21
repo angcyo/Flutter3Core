@@ -340,7 +340,11 @@ class ByteReader {
   /// 字节数组
   final List<int> bytes;
 
-  int get sumLength => bytes.length - excludeLength;
+  /// 字节数组长度
+  int get length => bytes.length;
+
+  /// 有效数据字节长度
+  int get sumLength => length - excludeLength;
 
   /// 排除多少个字节不读取
   int excludeLength = 0;
@@ -692,10 +696,7 @@ class ByteReader {
     if (index == -1) {
       return (-1, null);
     }
-    return (
-      index,
-      remaining ? bytes.sublist(index + bytes.length, sumLength) : null,
-    );
+    return (index, remaining ? bytes.sublist(index + length, sumLength) : null);
   }
 
   /// 匹配指定的字节数组数据, 并移动位置
@@ -704,7 +705,7 @@ class ByteReader {
     final (index, _) = findBytes(bytes, false);
     if (index != -1) {
       //找到, 移动位置
-      _index = index + bytes.length;
+      _index = index + length;
     }
     return index != -1;
   }
