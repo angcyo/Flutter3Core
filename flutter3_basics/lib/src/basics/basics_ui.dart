@@ -1100,6 +1100,7 @@ extension WidgetEx on Widget {
   ///
   /// - [Focus]
   /// - [FocusScope]
+  /// - [FocusTraversalOrder] 焦点顺序
   ///
   /// - [KeyboardListener]
   Widget focus({
