@@ -36,6 +36,10 @@ class TabsManagerController {
   /// 当前活动的上下文, 用户自定义的数据, 框架无逻辑
   final currentActiveContextLive = $live<Object>(null);
 
+  /// 当前选中标签对应的内容上下文
+  Object? get currentTabContext =>
+      currentTabEntryLive.value?.tabContextLive.value;
+
   /// 当前选中标签对应的数据信息
   Object? get currentTabInfo => currentTabEntryLive.value?.tabInfoLive.value;
 
@@ -73,9 +77,43 @@ class TabsManagerController {
     return removeTab(currentTabEntryLive.value);
   }
 
+  /// 尝试关闭当前选中的标签
+  /// @return true 表示有标签被关闭
   @api
-  Future<bool> maybeCloseCurrentTab() async {
-    return maybeRemoveTab(currentTabEntryLive.value);
+  Future<bool> maybeCloseCurrentTab({AxisDirection direction = .right}) async {
+    return maybeRemoveTab(currentTabEntryLive.value, direction: direction);
+  }
+
+  /// 尝试关闭所有标签
+  /// @return true 表示有标签被关闭
+  @api
+  Future<bool> maybeCloseAllTabs() async {
+    final currentTabEntry = currentTabEntryLive.value;
+    if (currentTabEntry == null) {
+      return true;
+    }
+    final result = await maybeRemoveTab(currentTabEntry, direction: null);
+    final list = tabEntryListLive.value!.clone(true);
+    if (result) {
+      list.remove(currentTabEntry);
+      final removeList = <TabEntryInfo>[];
+      for (final tabEntry in list) {
+        switchTab(tabEntry, force: true);
+        final removed = await maybeRemoveTab(tabEntry, direction: null);
+        if (!removed) {
+          return false;
+        }
+        if (!tabEntry.isFixed) {
+          removeList.add(tabEntry);
+        }
+      }
+      //--
+      final newList = tabEntryListLive.value!.clone(true);
+      newList.removeAll(removeList);
+      tabEntryListLive << newList;
+      switchTab(newList.lastOrNull);
+    }
+    return result;
   }
 
   /// 按照索引选择标签
@@ -93,7 +131,7 @@ class TabsManagerController {
   bool switchTab(
     TabEntryInfo? tabEntry, {
     bool force = false,
-    dynamic tabInfo,
+    Object? tabInfo,
   }) {
     final newTabEntry = tabEntry ?? findTabEntryByTabInfo(tabInfo);
     if (newTabEntry == null) {
@@ -190,11 +228,12 @@ class TabsManagerController {
 
   /// 移除指定的标签, 不检查
   /// - [direction] 移除之后, 默认选中右边的标签
+  ///   - null: 不选择新标签
   ///
   /// - [removeTab]
   /// - [maybeRemoveTab]
   @api
-  bool removeTab(TabEntryInfo? tabEntry, {AxisDirection direction = .right}) {
+  bool removeTab(TabEntryInfo? tabEntry, {AxisDirection? direction = .right}) {
     if (tabEntry == null) {
       return false;
     }
@@ -214,7 +253,7 @@ class TabsManagerController {
     tabEntryListLive << newTabEntryList;
     if (direction == .right) {
       switchTab(afterTabEntry ?? newTabEntryList.lastOrNull, force: true);
-    } else {
+    } else if (direction == .left) {
       switchTab(beforeTabEntry ?? newTabEntryList.firstOrNull, force: true);
     }
     return true;
@@ -224,12 +263,16 @@ class TabsManagerController {
   @api
   Future<bool> maybeRemoveTab(
     TabEntryInfo? tabEntry, {
-    AxisDirection direction = .right,
+    AxisDirection? direction = .right,
   }) async {
     if (tabEntry != null) {
       final result = await tabEntry.onCloseTabAction?.call(tabEntry);
       if (result == null || result == true) {
         // 可以关闭
+        if (tabEntry.isFixed) {
+          //固定的标签, 不需要关闭
+          return true;
+        }
       } else {
         return false;
       }
@@ -378,6 +421,12 @@ typedef TabEntryWidgetBuilder<T> =
 class TabEntryInfo with Equatable {
   //MARK: - config
 
+  /// Tab 的上下文信息
+  @configProperty
+  final tabContextLive = $live<Object>(null);
+
+  Object? get tabContext => tabContextLive.value;
+
   /// 标签的信息
   @configProperty
   final tabInfoLive = $live<Object>(null);
@@ -426,7 +475,8 @@ class TabEntryInfo with Equatable {
   bool get isFixed => fixedLive.value == true;
 
   TabEntryInfo({
-    dynamic tabInfo,
+    Object? tabContext,
+    Object? tabInfo,
     this.tabWidget,
     this.tabBuilder,
     this.contentWidget,
@@ -436,6 +486,7 @@ class TabEntryInfo with Equatable {
     this.onSelectedTabAction,
     bool fixed = false /*固定的标签不能被移除*/,
   }) {
+    tabContextLive << tabContext;
     tabInfoLive << tabInfo;
     fixedLive << fixed;
   }
