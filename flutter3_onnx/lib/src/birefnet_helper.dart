@@ -248,18 +248,18 @@ class BiRefNetHelper {
 
   //MARK: - run
 
-  /*static Future<Uint8List> runAsync({
+  static Future<Uint8List> runAsync({
     required Object session,
     required bool binary,
     required Uint8List inputImageBytes,
   }) async {
     return Uint8List.fromList([]);
-  }*/
+  }
 
   /// 执行推理
   /// - [inputImageBytes]输入的图片字节数据
   /// @return 输出图片字节数据
-  static Future<Uint8List> runAsync({
+  /*static Future<Uint8List> runAsync({
     required OrtSession session,
     required bool binary,
     required Uint8List inputImageBytes,
@@ -297,5 +297,5 @@ class BiRefNetHelper {
       element.dispose();
     }
     return img.encodePng(result);
-  }
+  }*/
 }

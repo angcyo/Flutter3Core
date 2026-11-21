@@ -10,9 +10,9 @@ import 'birefnet_helper.dart';
 class BirefnetManager {
   /// 在这里初始化 ONNX Runtime
   @tempFlag
-  OrtSession? _session;
+  //OrtSession? _session;
 
-  //dynamic _session;
+  dynamic _session;
 
   /// 使用模型, 移除图片背景
   /// - [modelPath] 模型所在的路径
@@ -45,7 +45,7 @@ class BirefnetManager {
     l.d("准备使用模型处理->$modelPath");
     final bytes = await image.toBytes();
     //执行算法
-    final ort = _session ??= await OnnxRuntime().createSession(modelPath);
+    final ort = _session /*??= await OnnxRuntime().createSession(modelPath)*/;
     final pngBytes = await BiRefNetHelper.runAsync(
       session: ort,
       binary: binary,

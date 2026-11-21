@@ -156,7 +156,7 @@ class IsolateInitData {
 /// - [TransferableTypedData]
 @pragma('vm:entry-point')
 void _onnxIsolateEntry(IsolateInitData data) {
-  final mainSendPort = data.sendPort;
+  /*final mainSendPort = data.sendPort;
   // 必须最先执行
   BackgroundIsolateBinaryMessenger.ensureInitialized(data.rootToken);
   final receivePort = ReceivePort();
@@ -193,7 +193,7 @@ void _onnxIsolateEntry(IsolateInitData data) {
         mainSendPort.send({'id': id, 'data': null});
       }
     }
-  });
+  });*/
 }
 
 /// [BirefnetIsolateManager]的实例
