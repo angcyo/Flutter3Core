@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
+import 'import_flutter_onnxruntime.dart';
 import 'package:image/image.dart' as img;
 
 ///
@@ -247,6 +247,14 @@ class BiRefNetHelper {
   }
 
   //MARK: - run
+
+  /*static Future<Uint8List> runAsync({
+    required Object session,
+    required bool binary,
+    required Uint8List inputImageBytes,
+  }) async {
+    return Uint8List.fromList([]);
+  }*/
 
   /// 执行推理
   /// - [inputImageBytes]输入的图片字节数据

@@ -1,4 +1,6 @@
-part of '../flutter3_onnx.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
+import 'import_flutter_onnxruntime.dart';
+import 'birefnet_helper.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -9,6 +11,8 @@ class BirefnetManager {
   /// 在这里初始化 ONNX Runtime
   @tempFlag
   OrtSession? _session;
+
+  //dynamic _session;
 
   /// 使用模型, 移除图片背景
   /// - [modelPath] 模型所在的路径

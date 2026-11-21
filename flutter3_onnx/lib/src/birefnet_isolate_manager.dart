@@ -1,4 +1,12 @@
-part of '../flutter3_onnx.dart';
+import 'dart:async';
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter3_basics/flutter3_basics.dart';
+import 'birefnet_helper.dart';
+import 'import_flutter_onnxruntime.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
