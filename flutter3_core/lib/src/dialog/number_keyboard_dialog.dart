@@ -153,7 +153,7 @@ class NumberKeyboardDialog extends StatefulWidget with DialogMixin {
 
 class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   final NumberKeyboardInputController _controller =
-      NumberKeyboardInputController();
+  NumberKeyboardInputController();
 
   final borderRadius = 4.0;
 
@@ -175,7 +175,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
   /// 是否支持负数
   bool get isSupportNegative =>
       widget.supportNegative ??
-      (widget.minValue == null || (widget.minValue ?? 0) < 0);
+          (widget.minValue == null || (widget.minValue ?? 0) < 0);
 
   /// 是否要显示收起键盘
   bool get isShowPackUp => !isSupportDecimal || !isSupportNegative;
@@ -222,7 +222,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     final showTopShadow = widget.showTopShadow ?? !dialogIsPopupStyle;
     final inputNumberPadding =
         widget.numberPadding ??
-        const EdgeInsets.symmetric(vertical: kX, horizontal: kX);
+            const EdgeInsets.symmetric(vertical: kX, horizontal: kX);
 
     final keyboard = NumberKeyboardLayout(
       showDecimal: isSupportDecimal,
@@ -243,7 +243,7 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     String? rangeText;
     if (widget.maxValue != null && widget.minValue != null) {
       rangeText =
-          "[${_formatValue(widget.minValue)}$kNRS${_formatValue(widget.maxValue)}]";
+      "[${_formatValue(widget.minValue)}$kNRS${_formatValue(widget.maxValue)}]";
     } else if (widget.maxValue != null) {
       rangeText = "[$kNRS${_formatValue(widget.maxValue)}]";
     } else if (widget.minValue != null) {
@@ -254,81 +254,81 @@ class _NumberKeyboardDialogState extends State<NumberKeyboardDialog> {
     }
 
     final body =
+    [
+      //渐变阴影
+      if (showTopShadow)
+        linearGradientWidget(
+          [Colors.transparent, Colors.black12],
+          height: 10,
+          gradientDirection: Axis.vertical,
+        ),
+      //输入框
+      [
         [
-              //渐变阴影
-              if (showTopShadow)
-                linearGradientWidget(
-                  [Colors.transparent, Colors.black12],
-                  height: 10,
-                  gradientDirection: Axis.vertical,
-                ),
-              //输入框
-              [
-                    [
-                      if (isNullOrEmpty(_controller.numberText))
-                        widget.hintText?.text(style: numberHintStyle),
-                      _controller.numberText
-                          .text(
-                            style: (widget.numberStyle ?? numberValueStyle)
-                                .copyWith(
-                                  color: context.isThemeDark
-                                      ? globalTheme.textTitleStyle.color
-                                      : globalTheme.textGeneralStyle.color,
-                                ),
-                          )
-                          .container(
-                            color: _controller.isFirstClearAll
-                                ? globalTheme.accentColor
-                                : null,
-                          ),
-                    ].stack()?.expanded(),
-                    rangeText?.text(style: rangeHintStyle),
-                  ]
-                  .row()
-                  ?.container(
-                    color: globalTheme.surfaceBgColor,
-                    padding: inputNumberPadding,
-                  )
-                  .click(() {
-                    _controller.isFirstClearAll = !_controller.isFirstClearAll;
-                    updateState();
-                  }),
-              //键盘布局
-              keyboard.safeBottomArea().backgroundColor(
-                globalTheme.whiteSubBgColor,
-              ),
-            ]
-            .column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-            )!
-            .adaptiveTablet(
-              context,
-              maxWidth: widget.dialogMaxWidth,
-              maxHeight: widget.dialogMaxHeight,
-            )
-            .willPop(() async {
-              return widget.canPop;
-            })
-            .focus(
-              onKeyEvent: (node, event) {
-                if (event.isKeyDownOrRepeat) {
-                  if (event.isEnterKey) {
-                    _onSelfFinishInput();
-                    return .handled;
-                  } else if (event.isEscKey) {
-                    context.pop(result: null);
-                    return .handled;
-                  }
-                }
-                final result = _controller.onKeyEventInput(context, event);
-                if (result) {
-                  updateState();
-                }
-                return result ? .handled : .ignored;
-              },
-            )
-            .material();
+          if (isNullOrEmpty(_controller.numberText))
+            widget.hintText?.text(style: numberHintStyle),
+          _controller.numberText
+              .text(
+            style: (widget.numberStyle ?? numberValueStyle)
+                .copyWith(
+              color: context.isThemeDark
+                  ? globalTheme.textTitleStyle.color
+                  : globalTheme.textGeneralStyle.color,
+            ),
+          )
+              .container(
+            color: _controller.isFirstClearAll
+                ? globalTheme.accentColor
+                : null,
+          ),
+        ].stack()?.expanded(),
+        rangeText?.text(style: rangeHintStyle),
+      ]
+          .row()
+          ?.container(
+        color: globalTheme.surfaceBgColor,
+        padding: inputNumberPadding,
+      )
+          .click(() {
+        _controller.isFirstClearAll = !_controller.isFirstClearAll;
+        updateState();
+      }),
+      //键盘布局
+      keyboard.safeBottomArea().backgroundColor(
+        globalTheme.whiteSubBgColor,
+      ),
+    ]
+        .column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+    )!
+        .adaptiveTablet(
+      context,
+      maxWidth: widget.dialogMaxWidth,
+      maxHeight: widget.dialogMaxHeight,
+    )
+        .willPop(() async {
+      return widget.canPop;
+    })
+        .focus(
+      onKeyEvent: (node, event) {
+        if (event.isKeyDownOrRepeat) {
+          if (event.isEnterKey) {
+            _onSelfFinishInput();
+            return .handled;
+          } else if (event.isEscKey) {
+            context.pop(result: null);
+            return .handled;
+          }
+        }
+        final result = _controller.onKeyEventInput(context, event);
+        if (result) {
+          updateState();
+        }
+        return result ? .handled : .ignored;
+      },
+    )
+        .material();
     if (dialogIsPopupStyle) {
       return body.size(width: 260, height: 224 + inputNumberPadding.vertical);
     }
@@ -378,6 +378,13 @@ class NumberKeyboardLayout extends StatefulWidget {
   /// 是否激活键盘输入
   final bool enableKeyEvent;
 
+  /// 键盘按键拦截事件回调
+  /// @return
+  /// - [KeyEventResult.skipRemainingHandlers] 表示不拦截事件.
+  /// - [KeyEventResult.ignored] 表示不拦截事件，
+  /// - [KeyEventResult.handled] 表示已处理了事件, 表示拦截事件
+  final FocusOnKeyEventCallback? onKeyboardKeyEvent;
+
   const NumberKeyboardLayout({
     super.key,
     this.showDecimal = true,
@@ -387,6 +394,7 @@ class NumberKeyboardLayout extends StatefulWidget {
     this.itemBorderRadius = 4,
     this.onKeyboardInput,
     this.enableKeyEvent = true,
+    this.onKeyboardKeyEvent,
   });
 
   @override
@@ -463,7 +471,7 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
             tintColor: context.isThemeDark ? keyboardNumberStyle.color : null,
           ).align(Alignment.center),
         ).click(
-          () {
+              () {
             _onSelfInput("", NumberKeyboardType.backspace);
           },
           onLongPress: () {
@@ -475,25 +483,27 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
         _createNumberButton("5", NumberKeyboardType.number),
         _createNumberButton("6", NumberKeyboardType.number),
         StateDecorationWidget(
-              decoration: fillDecoration(
-                color: globalTheme.accentColor,
-                radius: widget.itemBorderRadius,
-              ),
-              pressedDecoration: pressedDecoration,
-              child: LibRes.of(context).libFinish
-                  .text(style: keyboardFinishStyle)
-                  .align(Alignment.center),
-            )
+          decoration: fillDecoration(
+            color: globalTheme.accentColor,
+            radius: widget.itemBorderRadius,
+          ),
+          pressedDecoration: pressedDecoration,
+          child: LibRes
+              .of(context)
+              .libFinish
+              .text(style: keyboardFinishStyle)
+              .align(Alignment.center),
+        )
             .click(() {
-              _onSelfInput("", NumberKeyboardType.finish);
-            })
+          _onSelfInput("", NumberKeyboardType.finish);
+        })
             .flowLayoutData(
-              stack: true,
-              weight: 1.0 / 4,
-              constraints: BoxConstraints(
-                minHeight: widget.itemHeight * 3 + widget.itemGap * 2,
-              ),
-            ),
+          stack: true,
+          weight: 1.0 / 4,
+          constraints: BoxConstraints(
+            minHeight: widget.itemHeight * 3 + widget.itemGap * 2,
+          ),
+        ),
         //--
         _createEmptyButton(),
         _createNumberButton("7", NumberKeyboardType.number),
@@ -530,6 +540,10 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
     if (widget.enableKeyEvent) {
       return keyboard.focus(
         onKeyEvent: (node, event) {
+          final eventResult = widget.onKeyboardKeyEvent?.call(node, event);
+          if (eventResult == .handled) {
+            return .handled;
+          }
           if (event.isKeyDownOrRepeat) {
             if (event.isEnterKey) {
               _onSelfInput("", .finish);
@@ -553,11 +567,10 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
   /// @return true 表示处理了, 否则返回false
   @callPoint
   @desktopLayout
-  bool _onKeyEventInput(
-    BuildContext? context,
-    KeyEvent event, {
-    Object? popResult,
-  }) {
+  bool _onKeyEventInput(BuildContext? context,
+      KeyEvent event, {
+        Object? popResult,
+      }) {
     assert(() {
       l.d("[${classHash()}]onKeyEventInput[${event.character}]->$event");
       return true;
@@ -594,11 +607,10 @@ class _NumberKeyboardLayoutState extends State<NumberKeyboardLayout> {
   }
 
   /// 创建数字按钮
-  Widget _createNumberButton(
-    String text,
-    NumberKeyboardType type, [
-    TextStyle? textStyle,
-  ]) {
+  Widget _createNumberButton(String text,
+      NumberKeyboardType type, [
+        TextStyle? textStyle,
+      ]) {
     return StateDecorationWidget(
       decoration: decoration,
       pressedDecoration: pressedDecoration,
@@ -797,11 +809,10 @@ class NumberKeyboardInputController {
   /// @return true 表示处理了, 否则返回false
   @callPoint
   @desktopLayout
-  bool onKeyEventInput(
-    BuildContext? context,
-    KeyEvent event, {
-    Object? popResult,
-  }) {
+  bool onKeyEventInput(BuildContext? context,
+      KeyEvent event, {
+        Object? popResult,
+      }) {
     assert(() {
       l.d("[${classHash()}]onKeyEventInput[${event.character}]->$event");
       return true;
