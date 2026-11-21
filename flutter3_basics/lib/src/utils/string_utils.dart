@@ -180,3 +180,10 @@ class StringBuilder {
     return stringBuffer.toString();
   }
 }
+
+extension StringUtilsEx on String {
+  /// 获取gravatar头像地址
+  String get gravatarUrl {
+    return 'https://www.gravatar.com/avatar/$md5';
+  }
+}
