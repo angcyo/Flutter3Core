@@ -193,3 +193,22 @@ mixin MediaQueryDataChangeMixin<T extends StatefulWidget>
 /// - [MediaQueryDataChangeMixin]
 abstract class MediaQueryDataState<T extends StatefulWidget> extends State<T>
     with WidgetsBindingObserver, MediaQueryDataChangeMixin<T> {}
+
+/// [MediaQueryData]数据改变监听小部件
+/// 当窗口大小改变时, 会自动重建界面
+abstract class RebuildByMediaSizeState<T extends StatefulWidget>
+    extends State<T>
+    with WidgetsBindingObserver, MediaQueryDataChangeMixin<T> {
+  @override
+  void initState() {
+    updateByAny = false;
+    updateBySize = true;
+    super.initState();
+  }
+
+  /// 窗口大小改变
+  @override
+  void onSelfPlatformSizeChanged(ui.Size? from, ui.Size to) {
+    super.onSelfPlatformSizeChanged(from, to);
+  }
+}
