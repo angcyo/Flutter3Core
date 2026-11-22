@@ -10,14 +10,21 @@ class KeyboardShortcutDialog extends StatefulWidget with DialogMixin {
   @override
   TranslationType get translationType => .scaleFade;
 
-  final List<ShortcutDescription> shortcutDescriptions;
+  /// 快捷键配置管理器
+  @defInjectMark
+  final ShortcutConfigManager? shortcutConfigManager;
+
+  /// 指定要显示的快捷键描述列表
+  @defInjectMark
+  final List<ShortcutIntentBean>? shortcutIntentList;
 
   /// 通过此值, 用来关闭当前弹窗
   final ValueNotifier<bool>? closeDialogNotifier;
 
   const KeyboardShortcutDialog({
     super.key,
-    required this.shortcutDescriptions,
+    this.shortcutConfigManager,
+    this.shortcutIntentList,
     this.closeDialogNotifier,
   });
 
@@ -47,15 +54,31 @@ class _KeyboardShortcutDialogState extends State<KeyboardShortcutDialog> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    final shortcutDescriptions = widget.shortcutDescriptions;
+    final libRes = context.libRes;
+    final shortcutConfigManager =
+        widget.shortcutConfigManager ?? $globalShortcutConfigManager;
+    final shortcutIntentList =
+        widget.shortcutIntentList ??
+        shortcutConfigManager.shortcutIntentList.toList();
     return widget.buildAdaptiveCenterDialog(
       context,
       [
-        "快捷键列表"
+        (libRes?.libHotkeyList ?? "快捷键列表")
             .text(textStyle: globalTheme.textTitleStyle, bold: true)
             .insets(all: kX),
-        for (final description in shortcutDescriptions)
+        for (final shortcutIntent in shortcutIntentList)
           [
+                textOf(shortcutIntent)?.text().expanded(),
+                ShortcutLabelWidget(
+                  configBean: shortcutConfigManager
+                      .findShortcutConfig(id: shortcutIntent.id)
+                      .firstOrNull,
+                ),
+              ]
+              .row()
+              ?.insets(h: kX, v: kX)
+              .ink(() {}, splashColor: Colors.transparent),
+        /*[
             (description.builderLabel?.call(context) ??
                     description.label?.text(
                       textStyle: globalTheme.textDesStyle,
@@ -63,8 +86,8 @@ class _KeyboardShortcutDialogState extends State<KeyboardShortcutDialog> {
                 ?.expanded(),
             description.builderHint?.call(context) ??
                 ShortcutHint(activator: description.activator),
-          ].row()?.insets(h: kX, v: kH),
-        if (isNil(shortcutDescriptions))
+          ].row()?.insets(h: kX, v: kH),*/
+        if (isNil(shortcutIntentList))
           GlobalConfig.of(context)
               .emptyPlaceholderBuilder(
                 context,
@@ -139,8 +162,9 @@ class _GlobalShortcutTriggerWidgetState
       l.w("event->$event");
       return true;
     }());*/
+    final key = event.logicalKey;
     if (event.isKeyUp) {
-      if (_isShowing && _showingLogicalKey == event.logicalKey) {
+      if (_isShowing && _showingLogicalKey == key) {
         //_isShowing = false;
         //通知关闭弹窗
         _closeDialogNotifier?.value = true;
@@ -151,10 +175,10 @@ class _GlobalShortcutTriggerWidgetState
     } else if (widget.activator?.accepts(event, HardwareKeyboard.instance) ==
             true ||
         (event.isKeyDown &&
-            (event.logicalKey == LogicalKeyboardKey.metaLeft ||
-                event.logicalKey == LogicalKeyboardKey.metaRight))) {
+            (key == LogicalKeyboardKey.metaLeft ||
+                key == LogicalKeyboardKey.metaRight))) {
       //触发
-      _showingLogicalKey = event.logicalKey;
+      _showingLogicalKey = key;
       _closeDialogNotifier = ValueNotifier(false);
 
       //延迟显示
@@ -163,7 +187,7 @@ class _GlobalShortcutTriggerWidgetState
         if (_isShowing && $isAppResumed) {
           buildContext?.showWidgetDialog(
             KeyboardShortcutDialog(
-              shortcutDescriptions: $globalShortcutManager.shortcutDescriptions,
+              /*shortcutDescriptions: $globalShortcutManager.shortcutDescriptions,*/
               closeDialogNotifier: _closeDialogNotifier,
             ),
           );

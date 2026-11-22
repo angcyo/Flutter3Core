@@ -800,6 +800,11 @@ class LibRes {
     return Intl.message('快捷键', name: 'libHotkeySettings', desc: '', args: []);
   }
 
+  /// `快捷键列表`
+  String get libHotkeyList {
+    return Intl.message('快捷键列表', name: 'libHotkeyList', desc: '', args: []);
+  }
+
   /// `发送`
   String get libAiSend {
     return Intl.message('发送', name: 'libAiSend', desc: '', args: []);

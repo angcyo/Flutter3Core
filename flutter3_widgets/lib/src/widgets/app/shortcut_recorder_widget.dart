@@ -264,7 +264,9 @@ class _ShortcutRecorderWidgetState extends State<ShortcutRecorderWidget> {
               return child?.invisible(invisible: _labelConfig.isEmpty);
             },
           ).size(
-            width: widget.width ?? 130 /*(widget.onlyModifierKeys ? 80 : 140)*/,
+            width:
+                widget.width ??
+                (isMacOS ? 90 : 130) /*(widget.onlyModifierKeys ? 80 : 140)*/,
             height: widget.height ?? 30,
           ),
           widget.trailing,

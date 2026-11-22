@@ -143,6 +143,7 @@
   "libGroupElements": "组合元素",
   "libUngroupElements": "解组元素",
   "libHotkeySettings": "快捷键",
+  "libHotkeyList": "快捷键列表",
   "libAiSend": "发送",
   "libAiProvider": "提供商",
   "libAiModel": "模型",

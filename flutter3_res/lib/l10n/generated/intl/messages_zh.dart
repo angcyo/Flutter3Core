@@ -89,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libHideElement": MessageLookupByLibrary.simpleMessage("隐藏元素"),
     "libHidePassword": MessageLookupByLibrary.simpleMessage("隐藏密码"),
     "libHold": MessageLookupByLibrary.simpleMessage("按住"),
+    "libHotkeyList": MessageLookupByLibrary.simpleMessage("快捷键列表"),
     "libHotkeySettings": MessageLookupByLibrary.simpleMessage("快捷键"),
     "libHotkeysConflict": MessageLookupByLibrary.simpleMessage("快捷键已存在"),
     "libHoursAgo": MessageLookupByLibrary.simpleMessage("小时前"),

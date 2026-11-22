@@ -134,6 +134,7 @@
   "libGroupElements": "Group Elements",
   "libUngroupElements": "Ungroup Elements",
   "libHotkeySettings": "Hotkeys",
+  "libHotkeyList": "Hotkey List",
   "libAiSend": "Send",
   "libAiProvider": "Provider",
   "libAiModel": "Model",

@@ -113,6 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "libHideElement": MessageLookupByLibrary.simpleMessage("Hide Element"),
     "libHidePassword": MessageLookupByLibrary.simpleMessage("Hide Password"),
     "libHold": MessageLookupByLibrary.simpleMessage("Hold"),
+    "libHotkeyList": MessageLookupByLibrary.simpleMessage("Hotkey List"),
     "libHotkeySettings": MessageLookupByLibrary.simpleMessage("Hotkeys"),
     "libHotkeysConflict": MessageLookupByLibrary.simpleMessage(
       "Shortcut already exists",

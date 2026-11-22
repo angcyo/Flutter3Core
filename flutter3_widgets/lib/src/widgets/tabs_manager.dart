@@ -49,6 +49,7 @@ class TabsManagerController {
   TabsManagerController({
     List<TabEntryInfo>? tabEntryList,
     TabEntryInfo? currentTabEntry,
+    this.onCreateNewTabWidgetBuilder,
     this.onCreateNewTabAction,
   }) {
     if (!isNil(tabEntryList)) {
@@ -59,6 +60,15 @@ class TabsManagerController {
       currentTabEntryLive << currentTabEntry;
     }
   }
+
+  /// 创建标签的WidgetBuilder
+  @configProperty
+  final Widget? Function(
+    TabsManagerController controller,
+    BuildContext context,
+    Widget child,
+  )?
+  onCreateNewTabWidgetBuilder;
 
   /// 创建新的标签
   @configProperty
@@ -843,7 +853,10 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
       },
     );
     if (haveAddNewTab) {
-      tabList.add(buildAddNewTabButton(context, globalTheme));
+      final addNewTabButton = buildAddNewTabButton(context, globalTheme);
+      if (addNewTabButton != null) {
+        tabList.add(addNewTabButton);
+      }
     }
     return tabList.filterAndFillGap(
       gapWidget: widget.axis == .vertical
@@ -862,8 +875,8 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
   }
 
   /// 创建添加标签按钮
-  Widget buildAddNewTabButton(BuildContext context, GlobalTheme globalTheme) {
-    return Icon(Icons.add, color: Colors.white, size: kTabsItemIconSize)
+  Widget? buildAddNewTabButton(BuildContext context, GlobalTheme globalTheme) {
+    final icon = Icon(Icons.add, color: Colors.white, size: kTabsItemIconSize)
         /*.box(width: tabItemWidth, height: tabItemHeight)*/
         .center()
         .constrainedMin(
@@ -880,6 +893,12 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
           hoverColor: _getHoverColor(context, globalTheme),
         )
         .material();
+    final onCreateNewTabWidgetBuilder =
+        widget.controller.onCreateNewTabWidgetBuilder;
+    if (onCreateNewTabWidgetBuilder != null) {
+      return onCreateNewTabWidgetBuilder(widget.controller, context, icon);
+    }
+    return icon;
   }
 
   /// 创建关闭标签按钮
