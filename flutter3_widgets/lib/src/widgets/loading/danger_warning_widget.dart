@@ -25,7 +25,9 @@ class DangerWarningWidget extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, _DangerWarningRender renderObject) {
+    BuildContext context,
+    _DangerWarningRender renderObject,
+  ) {
     renderObject
       ..color = color
       ..width = width
@@ -44,10 +46,7 @@ class _DangerWarningRender extends RenderProxyBox {
   double _progress = 0;
   bool _reverse = false;
 
-  _DangerWarningRender({
-    this.color,
-    this.width = 20,
-  });
+  _DangerWarningRender({this.color, this.width = 20});
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
@@ -62,8 +61,8 @@ class _DangerWarningRender extends RenderProxyBox {
     _reverse = pair.$2;
     final w = width * _progress;
 
-    final color = this.color ?? Colors.red.shade400.withOpacity(0.75);
-    final colors = [color, color.withOpacity(0.3), Colors.transparent];
+    final color = this.color ?? Colors.red.shade400.withValues(alpha: 0.75);
+    final colors = [color, color.withValues(alpha: 0.3), Colors.transparent];
 
     final paint = Paint()
       ..color = color
@@ -82,12 +81,19 @@ class _DangerWarningRender extends RenderProxyBox {
     canvas.drawRect(right, paint);
 
     final top = Rect.fromLTWH(offset.dx, offset.dy, size.width, w);
-    paint.shader =
-        linearGradientShader(colors, from: top.topLeft, to: top.bottomLeft);
+    paint.shader = linearGradientShader(
+      colors,
+      from: top.topLeft,
+      to: top.bottomLeft,
+    );
     canvas.drawRect(top, paint);
 
-    final bottom =
-        Rect.fromLTWH(offset.dx, offset.dy + size.height - w, size.width, w);
+    final bottom = Rect.fromLTWH(
+      offset.dx,
+      offset.dy + size.height - w,
+      size.width,
+      w,
+    );
     paint.shader = linearGradientShader(
       colors,
       from: bottom.bottomLeft,

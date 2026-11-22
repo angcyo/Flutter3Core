@@ -215,7 +215,7 @@ OverlayEntry? toastInfo(
         ),
     background:
         background ??
-        GlobalConfig.def.globalTheme.blackBgColor.withOpacity(0.8),
+        GlobalConfig.def.globalTheme.blackBgColor.withValues(alpha: 0.8),
     position: position,
     bgBlurSigma: bgBlurSigma,
     padding: padding,

@@ -2117,7 +2117,8 @@ extension WidgetEx on Widget {
                     ? null
                     : [
                         BoxShadow(
-                          color: shadowColor ?? Colors.grey.withOpacity(0.1),
+                          color:
+                              shadowColor ?? Colors.grey.withValues(alpha: 0.1),
                           offset: const Offset(2, 2), //阴影y轴偏移量
                           blurRadius: shadowBlurRadius, //阴影模糊程度
                           spreadRadius: shadowSpreadRadius, //阴影扩散程度

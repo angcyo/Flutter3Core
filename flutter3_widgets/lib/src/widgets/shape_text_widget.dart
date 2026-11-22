@@ -62,7 +62,9 @@ class ShapeTextWidget extends LeafRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, _ShapeTextRenderer renderObject) {
+    BuildContext context,
+    _ShapeTextRenderer renderObject,
+  ) {
     renderObject
       ..config = this
       ..markNeedsPaint();
@@ -87,7 +89,8 @@ class _ShapeTextRenderer extends RenderBox {
     if (config.isCircleShape) {
       final radius = min(size.width, size.height) / 2;
       if (config.isSelected) {
-        paint.color = config.selectedColor ?? config.color.withOpacity(0.3);
+        paint.color =
+            config.selectedColor ?? config.color.withValues(alpha: 0.3);
         canvas.drawCircle(bounds.center, radius, paint);
       }
       //--
@@ -95,13 +98,16 @@ class _ShapeTextRenderer extends RenderBox {
       canvas.drawCircle(bounds.center, radius - config.extend, paint);
     } else {
       if (config.isSelected) {
-        paint.color = config.selectedColor ?? config.color.withOpacity(0.3);
+        paint.color =
+            config.selectedColor ?? config.color.withValues(alpha: 0.3);
         canvas.drawRRect(bounds.toRRect(config.radius), paint);
       }
       //--
       paint.color = config.color;
       canvas.drawRRect(
-          bounds.inflateValue(-config.extend).toRRect(config.radius), paint);
+        bounds.inflateValue(-config.extend).toRRect(config.radius),
+        paint,
+      );
     }
     //--
     canvas.drawText(

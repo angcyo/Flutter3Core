@@ -119,7 +119,7 @@ mixin NumberStateMixin<T extends StatefulWidget> on State<T> {
                   : fillDecoration(
                       color: context.darkOr(
                         globalTheme.themeWhiteColor.addBrightness(-5),
-                        globalTheme.themeWhiteColor.withOpacity(0.9),
+                        globalTheme.themeWhiteColor.withValues(alpha: 0.9),
                       ),
                       radius: kDefaultBorderRadiusL,
                     ),

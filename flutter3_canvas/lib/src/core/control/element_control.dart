@@ -230,7 +230,7 @@ class BaseControl
         controlSize / 2,
         Paint()
           ..color = isPointerDownIn
-              ? canvasStyle.controlBgColor.withOpacity(0.6)
+              ? canvasStyle.controlBgColor.withValues(alpha: 0.6)
               : canvasStyle.controlBgColor,
       );
       //debugger();

@@ -506,7 +506,7 @@ class CirclePointPainter extends CustomPainter {
         bounds.center + offset,
         br,
         Paint()
-          ..color = color.withOpacity(0.4)
+          ..color = color.withValues(alpha: 0.4)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
       );
     }

@@ -61,3 +61,9 @@ int $bpGridXl() => switch ($screenWidth) {
   >= 300 => 2,
   _ => 1,
 };
+
+/// 根据屏幕宽度, 指定的[itemWidth]最小宽度, 计算网格列数
+int $bpGridItem(double itemWidth, {int? maxSpan}) {
+  final span = maxOf($screenWidth ~/ itemWidth, 1);
+  return maxSpan == null ? maxOf(span, 1) : minOf(maxSpan, span);
+}

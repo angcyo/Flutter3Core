@@ -99,7 +99,8 @@ class ArrowPopupRoute extends PopupRoute<void> with ArrowDirectionMixin {
   Duration? animateDuration;
 
   @override
-  Color? get barrierColor => barriersColor ?? Colors.black.withOpacity(0.1);
+  Color? get barrierColor =>
+      barriersColor ?? Colors.black.withValues(alpha: 0.1);
 
   @override
   bool get barrierDismissible => true;

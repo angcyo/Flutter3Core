@@ -640,7 +640,7 @@ class ImageRenderController extends ChangeNotifier with NotifierMixin {
 
       //绘制网格线
       final gridSize = cropLineWidth / 2;
-      final gridColor = cropLineColor.withOpacity(0.8);
+      final gridColor = cropLineColor.withValues(alpha: 0.8);
       final gridPaint = Paint()..color = gridColor;
       final lR = Rect.fromLTWH(
         _cropBounds!.left - gridSize,

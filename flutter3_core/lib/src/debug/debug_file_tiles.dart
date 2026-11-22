@@ -110,7 +110,7 @@ class DebugFileTile extends StatelessWidget {
         .row()!
         .paddingAll(kH)
         .container(
-          color: isSelected ? globalTheme.accentColor.withOpacity(0.3) : null,
+          color: isSelected ? globalTheme.accentColor.withValues(alpha: 0.3) : null,
         )
         .ink(() {
           onTap?.call(path);

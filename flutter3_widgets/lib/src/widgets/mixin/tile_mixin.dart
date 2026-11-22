@@ -529,7 +529,7 @@ mixin TileMixin {
         final color = gradientColor ?? activeTrackGradientColors?.last;
         thumbColor ??= color;
         valueIndicatorColor ??= thumbColor;
-        overlayColor ??= color?.withOpacity(0.1);
+        overlayColor ??= color?.withValues(alpha: 0.1);
       } else {
         if (!isNil(activeTrackGradientColors) ||
             !isNil(inactiveTrackGradientColors)) {
@@ -544,7 +544,7 @@ mixin TileMixin {
           final color = gradientColor ?? activeTrackGradientColors?.last;
           thumbColor ??= color;
           valueIndicatorColor ??= thumbColor;
-          overlayColor ??= color?.withOpacity(0.1);
+          overlayColor ??= color?.withValues(alpha: 0.1);
         }
       }
     }
@@ -557,7 +557,7 @@ mixin TileMixin {
         showValueIndicator: showValueIndicator,
         thumbColor: thumbColor ?? darkAccentColor,
         activeTrackColor: activeTrackColor ?? darkAccentColor,
-        overlayColor: overlayColor ?? darkAccentColor.withOpacity(0.1),
+        overlayColor: overlayColor ?? darkAccentColor.withValues(alpha: 0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         //DropSliderValueIndicatorShape /*圆角, 带下拉箭头, 默认*/
         //RoundedRectSliderValueIndicatorShape /*仅圆角*/
@@ -669,7 +669,7 @@ mixin TileMixin {
         final color = gradientColor ?? activeTrackGradientColors?.last;
         thumbColor ??= color;
         valueIndicatorColor = thumbColor;
-        overlayColor ??= color?.withOpacity(0.1);
+        overlayColor ??= color?.withValues(alpha: 0.1);
       } else {
         if (!isNil(activeTrackGradientColors) ||
             !isNil(inactiveTrackGradientColors)) {
@@ -682,7 +682,7 @@ mixin TileMixin {
           final color = gradientColor ?? activeTrackGradientColors?.last;
           thumbColor ??= color;
           valueIndicatorColor = thumbColor;
-          overlayColor ??= color?.withOpacity(0.1);
+          overlayColor ??= color?.withValues(alpha: 0.1);
         }
       }
     }*/
@@ -701,7 +701,7 @@ mixin TileMixin {
         showValueIndicator: showValueIndicator,
         thumbColor: thumbColor ?? darkAccentColor,
         activeTrackColor: activeTrackColor ?? darkAccentColor,
-        overlayColor: overlayColor ?? darkAccentColor?.withOpacity(0.1),
+        overlayColor: overlayColor ?? darkAccentColor.withValues(alpha: 0.1),
         valueIndicatorColor: valueIndicatorColor ?? darkAccentColor,
         //PaddleRangeSliderValueIndicatorShape() /*圆角, 带下拉浆*/
         //RectangularRangeSliderValueIndicatorShape() /*圆角矩形, 默认*/

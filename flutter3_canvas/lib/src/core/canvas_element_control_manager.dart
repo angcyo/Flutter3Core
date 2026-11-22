@@ -1354,7 +1354,7 @@ class ElementSelectComponent extends ElementGroupPainter
               .canvasDelegate
               .canvasStyle
               .canvasAccentColor
-              .withOpacity(0.1)
+              .withValues(alpha: 0.1)
           ..style = PaintingStyle.fill;
         canvas.drawRect(selectBounds!, boundsPaint);
       }

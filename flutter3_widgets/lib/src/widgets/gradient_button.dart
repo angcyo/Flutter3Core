@@ -345,7 +345,7 @@ class _GradientButtonState extends State<GradientButton> {
     final tempSplashColor =
         widget.splashColor ??
         widget.colors?.lastOrNull ??
-        /*color?.withOpacity(0.3) ??*/
+        /*color?.withValues(alpha: 0.3) ??*/
         Colors.black12;
     List<Color> colors =
         widget.colors ??

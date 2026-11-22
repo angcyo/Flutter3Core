@@ -173,8 +173,8 @@ mixin DialogMixin implements TranslationTypeImpl {
                       BoxDecoration(
                         color:
                             decorationColor ??
-                            globalTheme.themeWhiteColor.withOpacity(
-                              blur ? 0.85 : 1.0,
+                            globalTheme.themeWhiteColor.withValues(
+                              alpha: blur ? 0.85 : 1.0,
                             ),
                         borderRadius: borderRadius,
                         /*boxShadow: [kBoxShadow],*/
@@ -225,6 +225,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     dynamic result,
     bool? autoCloseDialog,
     bool? showCloseButton,
+    //--
+    bool? useDesktopConstrained,
   }) {
     return buildDesktopCenterDialog(
       context,
@@ -240,6 +242,7 @@ mixin DialogMixin implements TranslationTypeImpl {
       result: result,
       autoCloseDialog: autoCloseDialog,
       showCloseButton: showCloseButton,
+      useDesktopConstrained: useDesktopConstrained,
     );
   }
 
@@ -306,6 +309,8 @@ mixin DialogMixin implements TranslationTypeImpl {
     dynamic result,
     bool? autoCloseDialog,
     bool? showCloseButton,
+    //--
+    bool? useDesktopConstrained,
   }) {
     //debugger();
     return Center(
@@ -313,7 +318,9 @@ mixin DialogMixin implements TranslationTypeImpl {
             context,
             margin: margin,
             padding: contentPadding,
-            content.desktopConstrained().matchParent(matchHeight: false),
+            content
+                .desktopConstrained(enable: useDesktopConstrained)
+                .matchParent(matchHeight: false),
             constraints: contentConstraints,
             radius: radius,
             decorationColor: decorationColor,

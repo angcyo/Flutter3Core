@@ -193,7 +193,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
     //装饰
     final decoration = _currentValue
         ? fillDecoration(
-            color: checkedColor.withOpacity(0.3),
+            color: checkedColor.withValues(alpha: 0.3),
             radius: borderRadius,
             border: strokeBorder(
               color: checkedColor,

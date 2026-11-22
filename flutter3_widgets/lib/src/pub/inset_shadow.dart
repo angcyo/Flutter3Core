@@ -532,8 +532,8 @@ Offset lerpOffsetWithPivot(Offset? a, Offset? b, double t) {
 
 Color lerpColorWithPivot(Color? a, Color? b, double t) {
   if (t < 0.5) {
-    return Color.lerp(a, a?.withOpacity(0), t * 2)!;
+    return Color.lerp(a, a?.withValues(alpha: 0), t * 2)!;
   }
 
-  return Color.lerp(b?.withOpacity(0), b, (t - 0.5) * 2)!;
+  return Color.lerp(b?.withValues(alpha: 0), b, (t - 0.5) * 2)!;
 }

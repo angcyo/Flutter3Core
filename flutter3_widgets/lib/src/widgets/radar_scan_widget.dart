@@ -302,12 +302,12 @@ class RadarScanBox2 extends RenderBox {
 
       //绘制2个圆圈
       paint.color = widget.radarScanColor
-          .withOpacity(1 - (_currentScanR - minR) / (maxR - minR));
+          .withValues(alpha: 1 - (_currentScanR - minR) / (maxR - minR));
       canvas.drawCircle(center, _currentScanR, paint);
       final r2 = _currentScanR - (maxR - minR) / 2;
       if (r2 >= minR) {
         paint.color =
-            widget.radarScanColor.withOpacity(1 - (r2 - minR) / (maxR - minR));
+            widget.radarScanColor.withValues(alpha: 1 - (r2 - minR) / (maxR - minR));
         canvas.drawCircle(center, r2, paint);
       }
     }

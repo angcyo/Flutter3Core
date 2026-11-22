@@ -365,7 +365,7 @@ class CanvasAxisManager extends IPainter
                 .canvasDelegate
                 .canvasStyle
                 .canvasAccentColor
-                .withOpacity(0.3);
+                .withValues(alpha: 0.3);
             canvas.drawRect(
               Rect.fromLTRB(left, top, right, bottom),
               elementBoundsPaint,
@@ -402,7 +402,7 @@ class CanvasAxisManager extends IPainter
                 .canvasDelegate
                 .canvasStyle
                 .canvasAccentColor
-                .withOpacity(0.3);
+                .withValues(alpha: 0.3);
             canvas.drawRect(
               Rect.fromLTRB(left, top, right, bottom),
               elementBoundsPaint,

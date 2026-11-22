@@ -80,7 +80,7 @@ class _NeuralGridPainter extends CustomPainter {
       for (int j = i + 1; j < count; j++) {
         final phase = (i + j) * 0.5 + progress * 2 * math.pi;
         final opacity = (0.1 + 0.4 * math.sin(phase)).clamp(0.05, 0.5);
-        linePaint.color = const Color(0xFF6366F1).withOpacity(opacity);
+        linePaint.color = const Color(0xFF6366F1).withValues(alpha: opacity);
         canvas.drawLine(nodes[i], nodes[j], linePaint);
       }
     }
@@ -97,7 +97,7 @@ class _NeuralGridPainter extends CustomPainter {
         /*const Color(0xFF818CF8),
         const Color(0xFFC084FC),*/
         (math.sin(nodePhase) + 1) / 2,
-      )!.withOpacity(nodeOpacity);
+      )!.withValues(alpha: nodeOpacity);
 
       canvas.drawCircle(nodes[i], nodeRadius, nodePaint);
     }

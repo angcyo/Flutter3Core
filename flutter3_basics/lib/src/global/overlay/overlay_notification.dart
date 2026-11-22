@@ -91,7 +91,7 @@ class _ToastWidgetState extends State<ToastWidget> {
     //debugger();
     result =
         Container(
-              color: widget.background ?? "#333333".toColor().withOpacity(0.6),
+              color: widget.background ?? "#333333".toColor().withValues(alpha: 0.6),
               padding: widget.padding,
               child: result,
             )

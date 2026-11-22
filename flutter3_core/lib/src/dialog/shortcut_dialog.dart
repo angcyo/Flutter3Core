@@ -32,7 +32,8 @@ class KeyboardShortcutDialog extends StatefulWidget with DialogMixin {
   State<KeyboardShortcutDialog> createState() => _KeyboardShortcutDialogState();
 }
 
-class _KeyboardShortcutDialogState extends State<KeyboardShortcutDialog> {
+class _KeyboardShortcutDialogState
+    extends RebuildByMediaSizeState<KeyboardShortcutDialog> {
   @override
   void initState() {
     widget.closeDialogNotifier?.addListener(_handleCloseDialog);
@@ -60,42 +61,48 @@ class _KeyboardShortcutDialogState extends State<KeyboardShortcutDialog> {
     final shortcutIntentList =
         widget.shortcutIntentList ??
         shortcutConfigManager.shortcutIntentList.toList();
-    return widget.buildAdaptiveCenterDialog(
-      context,
-      [
-        (libRes?.libHotkeyList ?? "快捷键列表")
-            .text(textStyle: globalTheme.textTitleStyle, bold: true)
-            .insets(all: kX),
-        for (final shortcutIntent in shortcutIntentList)
+
+    return [
+          (libRes?.libHotkeyList ?? "快捷键列表")
+              .connect(" (${shortcutIntentList.length})")
+              .text(textStyle: globalTheme.textTitleStyle, bold: true)
+              .center()
+              .insets(all: kX),
           [
-                textOf(shortcutIntent)?.text().expanded(),
-                ShortcutLabelWidget(
-                  configBean: shortcutConfigManager
-                      .findShortcutConfig(id: shortcutIntent.id)
-                      .firstOrNull,
-                ),
-              ]
-              .row()
-              ?.insets(h: kX, v: kX)
-              .ink(() {}, splashColor: Colors.transparent),
-        /*[
-            (description.builderLabel?.call(context) ??
-                    description.label?.text(
-                      textStyle: globalTheme.textDesStyle,
-                    ))
-                ?.expanded(),
-            description.builderHint?.call(context) ??
-                ShortcutHint(activator: description.activator),
-          ].row()?.insets(h: kX, v: kH),*/
-        if (isNil(shortcutIntentList))
-          GlobalConfig.of(context)
-              .emptyPlaceholderBuilder(
-                context,
-                LibRes.of(context).libAdapterNoData.text().center(),
-              )
-              .insets(all: kXxx),
-      ].scrollVertical()!,
-    );
+            for (final shortcutIntent in shortcutIntentList)
+              [
+                    textOf(shortcutIntent)?.text().expanded(),
+                    ShortcutLabelWidget(
+                      configBean: shortcutConfigManager
+                          .findShortcutConfig(id: shortcutIntent.id)
+                          .firstOrNull,
+                    ),
+                  ]
+                  .row()
+                  ?.insets(h: kX, v: kX)
+                  .ink(() {}, splashColor: Colors.transparent)
+                  .material()
+                  .rMasonryGridTile($bpGridItem(300)),
+            if (isNil(shortcutIntentList))
+              GlobalConfig.of(context)
+                  .emptyPlaceholderBuilder(
+                    context,
+                    LibRes.of(context).libAdapterNoData.text().center(),
+                  )
+                  .insets(all: kXxx),
+          ].rScroll().expanded(),
+        ]
+        .column()!
+        .decoration(
+          BoxDecoration(
+            color: globalTheme.themeWhiteColor.withValues(alpha: 0.85),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadiusXX),
+            /*boxShadow: [kBoxShadow],*/
+          ),
+        )
+        .blur()
+        .insets(all: 40)
+        .material();
   }
 }
 
