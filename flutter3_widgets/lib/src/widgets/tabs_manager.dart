@@ -49,6 +49,7 @@ class TabsManagerController {
   TabsManagerController({
     List<TabEntryInfo>? tabEntryList,
     TabEntryInfo? currentTabEntry,
+    this.onCreateCloseTabWidgetBuilder,
     this.onCreateNewTabWidgetBuilder,
     this.onCreateNewTabAction,
   }) {
@@ -78,6 +79,16 @@ class TabsManagerController {
     Object? data,
   )?
   onCreateNewTabAction;
+
+  /// 创建关闭标签的WidgetBuilder
+  @configProperty
+  final Widget? Function(
+    TabsManagerController controller,
+    TabEntryInfo entry,
+    BuildContext context,
+    Widget child,
+  )?
+  onCreateCloseTabWidgetBuilder;
 
   //MARK: - api
 
@@ -829,7 +840,7 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
             )
             .rowOf(
               isSelected == true && !entry.isFixed
-                  ? buildCloseTabButton(context, globalTheme, entry)
+                  ? (buildCloseTabButton(context, globalTheme, entry) ?? empty)
                   : empty,
             )
             .decoration(
@@ -875,6 +886,9 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
   }
 
   /// 创建添加标签按钮
+  ///
+  /// - [buildAddNewTabButton]
+  /// - [buildCloseTabButton]
   Widget? buildAddNewTabButton(BuildContext context, GlobalTheme globalTheme) {
     final icon = Icon(Icons.add, color: Colors.white, size: kTabsItemIconSize)
         /*.box(width: tabItemWidth, height: tabItemHeight)*/
@@ -903,12 +917,17 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
 
   /// 创建关闭标签按钮
   /// - 关闭标签的按钮
-  Widget buildCloseTabButton(
+  ///
+  /// - [_TabsManagerWidgetState.buildTabList]
+  ///
+  /// - [buildAddNewTabButton]
+  /// - [buildCloseTabButton]
+  Widget? buildCloseTabButton(
     BuildContext context,
     GlobalTheme globalTheme,
     TabEntryInfo entry,
   ) {
-    return Icon(Icons.close, color: Colors.white, size: 14)
+    final icon = Icon(Icons.close, color: Colors.white, size: 14)
         .insets(all: 6)
         .inkWellCircle(
           () {
@@ -918,5 +937,16 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
           hoverColor: _getHoverColor(context, globalTheme),
         )
         .material();
+    final onCreateCloseTabWidgetBuilder =
+        widget.controller.onCreateCloseTabWidgetBuilder;
+    if (onCreateCloseTabWidgetBuilder != null) {
+      return onCreateCloseTabWidgetBuilder(
+        widget.controller,
+        entry,
+        context,
+        icon,
+      );
+    }
+    return icon;
   }
 }
