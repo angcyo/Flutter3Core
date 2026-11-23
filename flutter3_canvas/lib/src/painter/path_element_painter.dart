@@ -26,8 +26,10 @@ class PathElementPainter extends ElementPainter {
   /// - [exactBounds] 是否精确计算边界, 会消耗性能
   ///
   /// 请注意[isVisibleInCanvasBox]可见性测试
+  ///
+  /// @return 是否初始化成功
   @property
-  void initFromPath(
+  bool initFromPath(
     @dp Path? path, {
     bool useDataPosition = true,
     bool moveToZero = true,
@@ -55,6 +57,7 @@ class PathElementPainter extends ElementPainter {
       }
     }
     refresh();
+    return true;
   }
 
   ///
