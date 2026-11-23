@@ -177,6 +177,11 @@ Future<void> initIsar() async {
 
 //--
 
+/// 导出core资源文件
+$AssetsPngGen get corePngAssets => Assets.png;
+
+$AssetsSvgGen get coreSvgAssets => Assets.svg;
+
 /// [Image].[StatefulWidget]
 SvgPicture? loadCoreAssetSvgPicture(String? key, {
   String? prefix = kDefAssetsSvgPrefix,

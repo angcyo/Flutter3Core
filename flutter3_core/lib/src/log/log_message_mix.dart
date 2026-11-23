@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter3_basics/flutter3_basics.dart';
+import 'package:flutter3_core/flutter3_core.dart';
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -34,6 +35,8 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
 
   /// 滚动列表
   late final ScrollController logScrollController = ScrollController();
+
+  /// - [buildLogMessageListWidget]构建对应的小部件
   late final List<LogScopeData> logDataList = [LogScopeData.message("欢迎访问!")];
 
   /// 过滤后的日志数据列表
@@ -70,11 +73,31 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
                   style: globalTheme.textDesStyle,
                   selectable: true,
                 ),
-                item.content.limit().text(
-                  selectable: true,
-                  textAlign: item.isReceived ? .start : .end,
-                  textSpan: item.contentSpan,
-                ),
+                item.content
+                    .limit()
+                    .text(
+                      selectable: true,
+                      textAlign: item.isReceived ? .start : .end,
+                      textSpan: item.contentSpan,
+                    )
+                    .rowOf(
+                      item.filePath?.isFileExistsSync() == true
+                          ? corePngAssets.coreFileIconFolder
+                                .image(width: 12, height: 12)
+                                .insets(all: 6)
+                                .inkWellCircle(() {
+                                  if (item.filePath?.isFilePath == true) {
+                                    openFilePath(item.filePath?.folderPath());
+                                  } else {
+                                    openFilePath(item.filePath);
+                                  }
+                                })
+                                .tooltip("打开所在文件夹")
+                                .material()
+                          : null,
+                      mainAxisAlignment: .start,
+                      firstExtend: true,
+                    ),
               ].column(
                 crossAxisAlignment: item.isReceived ? .start : .end,
               ) /*?.bounds()*/;
@@ -128,6 +151,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
     TextSpan? messageSpan,
     bool isReceived = false,
     bool? replaceLast,
+    String? filePath,
   }) {
     //debugger(when: isReceived);
     if (message == null && messageSpan == null) {
@@ -141,6 +165,7 @@ mixin LogMessageStateMixin<T extends StatefulWidget> on State<T> {
         message ?? "",
         isReceived: isReceived,
         contentSpan: messageSpan,
+        filePath: filePath,
       ),
     );
     updateState();

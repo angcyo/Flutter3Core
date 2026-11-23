@@ -68,12 +68,17 @@ class LogScopeData {
   /// 是否是接收到的数据
   final bool isReceived;
 
+  /// 当前消息包含的文件路径
+  /// - 设置了之后, 点击消息可以打开对应的文件夹
+  final String? filePath;
+
   /// 消息类型的日志
   LogScopeData.message(
     this.content, {
     this.contentSpan,
     this.filterTypeList,
     this.isReceived = false,
+    this.filePath,
   }) : timestamp = nowTimestamp();
 
   /// 日志类型
@@ -82,6 +87,7 @@ class LogScopeData {
     this.filterTypeList,
     this.contentSpan,
     this.isReceived = false,
+    this.filePath,
   }) : timestamp = nowTimestamp();
 }
 
