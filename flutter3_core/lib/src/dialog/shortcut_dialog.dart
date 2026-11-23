@@ -68,7 +68,11 @@ class _KeyboardShortcutDialogState
 
     return [
           (libRes?.libHotkeyList ?? "快捷键列表")
-              .connect(" (${shortcutIntentList.length})")
+              .connect(
+                shortcutIntentList.length > 0
+                    ? " (${shortcutIntentList.length})"
+                    : null,
+              )
               .text(textStyle: globalTheme.textTitleStyle, bold: true)
               .center()
               .insets(all: kX),
@@ -93,7 +97,9 @@ class _KeyboardShortcutDialogState
                     context,
                     LibRes.of(context).libAdapterNoData.text().center(),
                   )
-                  .insets(all: kXxx),
+                  .center()
+                  .insets(all: kXxx)
+                  .rFill(),
           ].rScroll().expanded(),
         ]
         .column()!
