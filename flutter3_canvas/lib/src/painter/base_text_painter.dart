@@ -701,7 +701,9 @@ class SingleCharTextPainter extends BaseTextPainter {
                   charPainterList.firstOrNull?.firstOrNull;
 
               final pathBounds =
-                  refPainter?.charBounds ??
+                  refPainter?.charBounds.copyWith(
+                    width: refPainter.charBounds.width / 2,
+                  ) ??
                   vectorTextPathMap?.values
                       .filterNull()
                       .firstOrNull

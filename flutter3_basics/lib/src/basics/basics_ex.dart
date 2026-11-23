@@ -1554,6 +1554,15 @@ Rect rectLTRB({double l = 0, double t = 0, double r = 0, double b = 0}) =>
     Rect.fromLTRB(l, t, r, b);
 
 extension RectEx on Rect {
+  /// copyWith
+  Rect copyWith({double? left, double? top, double? width, double? height}) =>
+      Rect.fromLTWH(
+        left ?? this.left,
+        top ?? this.top,
+        width ?? this.width,
+        height ?? this.height,
+      );
+
   /// [toString]
   String get log =>
       "Rect.LTRB(${left.toDigits(digits: 1)}, ${top.toDigits(digits: 1)}, ${right.toDigits(digits: 1)}, ${bottom.toDigits(digits: 1)})";
