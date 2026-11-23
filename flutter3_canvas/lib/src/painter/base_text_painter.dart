@@ -700,17 +700,19 @@ class SingleCharTextPainter extends BaseTextPainter {
                   lineList.firstOrNull ??
                   charPainterList.firstOrNull?.firstOrNull;
 
-              final pathBounds =
-                  refPainter?.charBounds.copyWith(
-                    width: refPainter.charBounds.width / 2,
-                  ) ??
+              final Rect pathBounds =
+                  refPainter?.charBounds ??
                   vectorTextPathMap?.values
                       .filterNull()
                       .firstOrNull
                       ?.getBounds() ??
-                  Rect.fromLTWH(0, -1.0, fontSize / 4 + italicCharWidth, 0);
+                  Rect.fromLTWH(0, -1.0, fontSize / 2 + italicCharWidth, 0);
 
-              addCharPathPainter(char, kEmptyPath, pathBounds);
+              addCharPathPainter(
+                char,
+                kEmptyPath,
+                pathBounds.copyWith(width: pathBounds.width / 3),
+              );
             } else {
               //正常矢量字符
               final charPath = vectorTextPathMap?[char];
