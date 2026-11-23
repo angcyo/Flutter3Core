@@ -341,19 +341,25 @@ class L {
     final stackTrace = StackTrace.current.toString();
     final stackTraceList = stackTrace.split("\n");
     //关建行
-    final lineStackTrace =
-        stackTraceList[math.min(forward, stackTraceList.length) - 1];
+    final lineStackTrace = stackTraceList.getOrNull(
+      math.min(forward, stackTraceList.length) - 1,
+    );
     //获取当前的文件名称以及路径行号:列号
     //package:flutter3_basics/src/l.dart:352:33
-    final filePathStr = lineStackTrace.substring(
-      lineStackTrace.indexOf("(") + 1,
-      lineStackTrace.indexOf(")"),
-    );
+    final filePathStr =
+        lineStackTrace == null ||
+            lineStackTrace.contains("(") == false ||
+            lineStackTrace.contains(")") == false
+        ? null
+        : lineStackTrace.substring(
+            lineStackTrace.indexOf("(") + 1,
+            lineStackTrace.indexOf(")"),
+          );
     //调用的方法名
     final methodNameList = lineStackTrace
-        .replaceAll('<anonymous closure>', '<anonymous_closure>')
+        ?.replaceAll('<anonymous closure>', '<anonymous_closure>')
         .split(" ");
-    final methodName = methodNameList.get(-2);
+    final methodName = methodNameList?.get(-2);
     //debugger();
     final log =
         '$time[$filePathStr${(!kShowMethodName || methodName == null) ? "" : "#$methodName"}]'
