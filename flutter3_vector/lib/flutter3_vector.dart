@@ -16,12 +16,20 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 export 'package:flutter_svg/svg.dart';
 export 'package:xml/xml.dart';
 
+//@formatter:off
 part 'src/gcode.dart';
 part 'src/path_simulation.dart';
 part 'src/svg_builder.dart';
 part 'src/svg_pub.dart';
 part 'src/vector_write_handle.dart';
+//@formatter:on
 
+///
+/// Email:angcyo@126.com
+/// @author angcyo
+/// @date 2024/07/04
+///
+/// 矢量字符串扩展
 extension VectorStringEx on String {
   /// 是否是GCode内容
   bool get isGCodeContent =>
