@@ -46,8 +46,12 @@ class _KeyboardShortcutDialogState
     super.dispose();
   }
 
+  bool get _isClosedNotifier => widget.closeDialogNotifier?.value == true;
+  bool _isClosed = false;
+
   void _handleCloseDialog() {
-    if (widget.closeDialogNotifier?.value == true) {
+    if (_isClosedNotifier && !_isClosed) {
+      _isClosed = true;
       buildContext?.popCurrentRoute();
     }
   }
@@ -102,7 +106,15 @@ class _KeyboardShortcutDialogState
         )
         .blur()
         .insets(all: 40)
-        .material();
+        .material()
+        .focus(
+          onFocusChange: (value) {
+            if (!value && !_isClosed) {
+              _isClosed = true;
+              buildContext?.popCurrentRoute();
+            }
+          },
+        );
   }
 }
 
@@ -171,19 +183,20 @@ class _GlobalShortcutTriggerWidgetState
     }());*/
     final key = event.logicalKey;
     if (event.isKeyUp) {
-      if (_isShowing && _showingLogicalKey == key) {
-        //_isShowing = false;
-        //通知关闭弹窗
-        _closeDialogNotifier?.value = true;
-        _closeDialogNotifier = null;
-        _timer?.cancel();
+      if (_showingLogicalKey == key) {
+        if (_isShowing) {
+          //_isShowing = false;
+          //通知关闭弹窗
+          _showingLogicalKey = null;
+          _closeDialogNotifier?.value = true;
+          _closeDialogNotifier = null;
+          _timer?.cancel();
+        }
         return true;
       }
     } else if (widget.activator?.accepts(event, HardwareKeyboard.instance) ==
             true ||
-        (event.isKeyDown &&
-            (key == LogicalKeyboardKey.metaLeft ||
-                key == LogicalKeyboardKey.metaRight))) {
+        (event.isKeyDown && key.isMetaKey)) {
       //触发
       _showingLogicalKey = key;
       _closeDialogNotifier = ValueNotifier(false);
@@ -205,6 +218,7 @@ class _GlobalShortcutTriggerWidgetState
     } else if (event.isKeyDown) {
       //按下其它按键
       _timer?.cancel();
+      _timer = null;
     }
     return false;
   }

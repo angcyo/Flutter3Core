@@ -936,7 +936,12 @@ extension NavigatorStateEx on NavigatorState {
   /// 移除指定的路由
   void removeRouteIf<T extends Object?>([Route<dynamic>? route, T? result]) {
     if (route != null) {
-      removeRoute(route, result);
+      try {
+        removeRoute(route, result);
+      } catch (e, s) {
+        l.e(e, stack: s);
+        debugger();
+      }
     }
   }
 

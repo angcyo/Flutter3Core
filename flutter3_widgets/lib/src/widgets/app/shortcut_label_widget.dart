@@ -14,21 +14,28 @@ class ShortcutLabelWidget extends StatelessWidget {
   /// 快捷键配置信息
   final ShortcutConfigBean? configBean;
 
+  /// 无快捷键时的默认小部件
+  final Widget? defWidget;
+
   //--style
 
   /// 文本样式
   @defInjectMark
   final TextStyle? textStyle;
 
-  const ShortcutLabelWidget({super.key, this.configBean, this.textStyle});
+  const ShortcutLabelWidget({
+    super.key,
+    this.configBean,
+    this.defWidget,
+    this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
-    return configBean == null
-        ? empty
-        : configBean!.getShortcutLabel().text(
-            textStyle: textStyle ?? globalTheme.textDesStyle,
-          );
+    final label = configBean?.getShortcutLabel();
+    return isNil(label)
+        ? defWidget ?? empty
+        : label!.text(textStyle: textStyle ?? globalTheme.textDesStyle);
   }
 }
