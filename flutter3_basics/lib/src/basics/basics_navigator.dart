@@ -441,8 +441,11 @@ extension NavigatorEx on BuildContext {
     return route is PageRoute ? route : null;
   }
 
+  /// 当前路由是否是页面路由[PageRoute]
+  bool get isPageRoute => modalRoute is PageRoute;
+
   /// 当前路由是否是弹窗路由[PopupRoute]
-  bool get isPopupRoute => pageRoute != null;
+  bool get isPopupRoute => modalRoute is PopupRoute;
 
   /// [ModalRoute.settingsOf]
   RouteSettings? get routeSettings => modalRoute?.settings;

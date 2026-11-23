@@ -54,6 +54,7 @@ class OpenFileScope extends InheritedWidget {
 }
 
 //MARK: - ex
+
 extension OpenFileScopeEx on Widget {
   /// 提供一个需要打开的数据[OpenFileScopeData]
   /// - 监听这个值, 并且处理对应的数据
