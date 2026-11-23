@@ -75,6 +75,29 @@ import 'build_config.dart';
 /// 默认输出路径在: `build/windows/x64/runner/Release/xxx.exe`
 /// 默认文件名是: `windows/CMakeLists.txt`中`BINARY_NAME`对应的值
 ///
+/// # 收集symbols
+///
+/// https://docs.flutter.dev/deployment/obfuscate
+/// https://docs.sentry.io/platforms/dart/guides/flutter/debug-symbols/
+///
+/// ## Android
+/// - [build/release_apk_symbols]
+/// - [build/release_appbundle_symbols]
+/// ## iOS
+/// - [build/release_ipa_symbols]
+/// ## Windows
+/// - [build/release_windows_symbols]
+/// ## macOS
+/// - [build/release_macos_symbols]
+///
+/// ```
+/// --obfuscate --split-debug-info=build/release_apk_symbols --extra-gen-snapshot-options=--save-obfuscation-map=build/release_apk_symbols/obfuscation.map.json
+/// --obfuscate --split-debug-info=build/release_appbundle_symbols --extra-gen-snapshot-options=--save-obfuscation-map=build/release_appbundle_symbols/obfuscation.map.json
+/// --obfuscate --split-debug-info=build/release_ipa_symbols --extra-gen-snapshot-options=--save-obfuscation-map=build/release_ipa_symbols/obfuscation.map.json
+/// --obfuscate --split-debug-info=build/release_windows_symbols --extra-gen-snapshot-options=--save-obfuscation-map=build/release_windows_symbols/obfuscation.map.json
+/// --obfuscate --split-debug-info=build/release_macos_symbols --extra-gen-snapshot-options=--save-obfuscation-map=build/release_macos_symbols/obfuscation.map.json
+/// ```
+///
 void main(List<String> arguments) async {
   colorLog('🚀 [$currentFileName]工作路径-> $currentPath');
   final config = $value(currentFileName);
@@ -92,13 +115,10 @@ void main(List<String> arguments) async {
       argBuildFlavor = arg.split("=")[1];
     }
   }
-  String buildTypeTag = argBuildType == null || argBuildType.isEmpty == true
-      ? "-release"
-      : "-$argBuildType";
-  String buildFlavorTag =
-      argBuildFlavor == null || argBuildFlavor.isEmpty == true
-      ? ""
-      : "-$argBuildFlavor";
+  String buildType = argBuildType ?? "release";
+  String buildFlavor = argBuildFlavor ?? "";
+  String buildTypeTag = "-$buildType";
+  String buildFlavorTag = "-$buildFlavor";
 
   //MARK: yaml config
 
@@ -153,6 +173,12 @@ void main(List<String> arguments) async {
           collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+
+          //收集 symbols
+          await copyFolderByPlatform(
+            "$currentPath${kPS}build$kPS${buildType}_apk_symbols",
+            "$to.symbols",
+          );
         }
       }
     }
@@ -185,6 +211,12 @@ void main(List<String> arguments) async {
           collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+
+          //收集 symbols
+          await copyFolderByPlatform(
+            "$currentPath${kPS}build$kPS${buildType}_appbundle_symbols",
+            "$to.symbols",
+          );
         }
       }
     }
@@ -248,6 +280,12 @@ void main(List<String> arguments) async {
           collectProductCount++;
           copiedLines.add(key);
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+
+          //收集 symbols
+          await copyFolderByPlatform(
+            "$currentPath${kPS}build$kPS${buildType}_ipa_symbols",
+            "$to.symbols",
+          );
         }
       }
     }
@@ -296,6 +334,12 @@ void main(List<String> arguments) async {
             collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+
+            //收集 symbols
+            await copyFolderByPlatform(
+              "$currentPath${kPS}build$kPS${buildType}_macos_symbols",
+              "$to.symbols",
+            );
           }
         }
         //使用appdmg打包安装程序
@@ -403,6 +447,12 @@ void main(List<String> arguments) async {
             collectProductCount++;
             copiedLines.add(key);
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
+
+            //收集 symbols
+            await copyFolderByPlatform(
+              "$currentPath${kPS}build$kPS${buildType}_windows_symbols",
+              "$to.symbols",
+            );
           }
         }
         //使用Inno Setup打包安装程序
@@ -726,16 +776,22 @@ Future<bool> zipFolderByPlatform(
 }
 
 /// 使用平台cp命令, 复制文件夹
-/// - windows 使用 `cp`
+/// - windows 使用 `xcopy /E`
 /// - macos 使用 `cp -R`
 /// - [srcPath] 源文件夹路径
 /// - [dstPath] 目标文件夹路径
 Future<bool> copyFolderByPlatform(String srcPath, String dstPath) async {
+  if (!Directory(srcPath).existsSync()) {
+    return false;
+  }
   colorLog('💡准备复制文件夹: $srcPath');
-  final result = await Process.run(Platform.isWindows ? "cp" : "cp", [
-    Platform.isWindows ? "" : "-R",
+  final result = await Process.run(Platform.isWindows ? "xcopy" : "cp", [
+    ?(Platform.isWindows ? null : "-R"),
     srcPath,
     dstPath,
+    ?(Platform.isWindows ? "/I" : null),
+    ?(Platform.isWindows ? "/E" : null),
+    ?(Platform.isWindows ? "/Y" : null),
   ], runInShell: true);
   colorLog('🎉$_rSpace-> $dstPath');
   if (result.exitCode != 0) {
@@ -758,6 +814,9 @@ Future<bool> macOSCopyFolderByDitto(
   String dstPath, {
   bool isCompress = false,
 }) async {
+  if (!Directory(srcPath).existsSync()) {
+    return false;
+  }
   if (isCompress) {
     colorLog('💡准备压缩文件夹: $srcPath');
     final result = await Process.run("ditto", [
