@@ -788,6 +788,11 @@ extension NavigatorEx on BuildContext {
     navigatorOf(rootNavigator).popToRoot(predicate);
   }
 
+  /// 弹出所有路由
+  void popAll([bool rootNavigator = false]) {
+    navigatorOf(rootNavigator).popAll();
+  }
+
   /// 关闭当前路由
   /// - [popCurrentRoute]
   /// - [removeModalRoute]
@@ -934,6 +939,11 @@ extension NavigatorStateEx on NavigatorState {
   void popToRoot([RoutePredicate? predicate]) {
     final root = ModalRoute.withName('/');
     popUntil(predicate ?? root);
+  }
+
+  /// 弹出所有路由
+  void popAll() {
+    popUntil((route) => false);
   }
 
   /// 移除指定的路由

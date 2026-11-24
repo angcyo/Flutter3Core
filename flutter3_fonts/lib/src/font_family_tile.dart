@@ -101,7 +101,7 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
             maxLines: widget.isSingleLine ? 1 : null,
           );
 
-    if (widget.direction == Axis.horizontal) {
+    if (widget.direction == .horizontal) {
       final left = fontFamilyWidget;
       return [
             left.expanded(),
@@ -112,9 +112,7 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
     }
 
     final left = [fontFamilyWidget, previewTextWidget].column(
-      crossAxisAlignment: widget.alignment == Alignment.center
-          ? CrossAxisAlignment.center
-          : CrossAxisAlignment.start,
+      crossAxisAlignment: widget.alignment == .center ? .center : .start,
     );
     return [
           left?.expanded(),
