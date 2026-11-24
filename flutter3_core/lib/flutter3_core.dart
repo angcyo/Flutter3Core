@@ -297,8 +297,16 @@ class RNiceException implements Exception {
 
   final StackTrace? stackTrace;
 
-  RNiceException({this.message, this.cause, StackTrace? stackTrace})
-      : stackTrace = stackTrace ?? StackTrace.current;
+  //--
+
+  /// 默认消息
+  final String? defMessage;
+
+  RNiceException({this.message,
+    this.cause,
+    this.defMessage,
+    StackTrace? stackTrace,
+  }) : stackTrace = stackTrace ?? StackTrace.current;
 
   String? get causeMessage {
     final c = cause;
@@ -316,7 +324,8 @@ class RNiceException implements Exception {
   String toString() {
     final msg = message ?? causeMessage;
     if (!isDebugFlag) {
-      return msg ?? cause?.runtimeType.toString() ?? "Exception!";
+      //混淆之后[runtimeType]没有意义了
+      return msg ?? defMessage ?? "Exception!";
     }
     final result = msg ?? cause?.toString() ?? "[${classHash()}]";
     if (isDebug) {
