@@ -81,28 +81,29 @@ class _HighlightCheckWidgetState extends State<HighlightCheckWidget> {
   Widget build(BuildContext context) {
     final globalTheme = GlobalTheme.of(context);
     return [
-      if (_currentValue)
-        DecoratedBox(
-          decoration: fillDecoration(
-            color: widget.checkedColor ?? globalTheme.accentColor,
-            shadowColor: widget.shadowColor,
-            radius: widget.checkedBorderRadius,
-          ),
-        ).matchParent(debugLabel: widget.runtimeType.toString()),
-      widget.child,
-    ]
+          if (_currentValue)
+            DecoratedBox(
+              decoration: fillDecoration(
+                color: widget.checkedColor ?? globalTheme.accentColor,
+                shadowColor: widget.shadowColor,
+                radius: widget.checkedBorderRadius,
+              ),
+            ).matchParent(debugLabel: widget.runtimeType.toString()),
+          widget.child,
+        ]
         .stack(alignment: Alignment.center)!
         .constrainedMin(minWidth: widget.minWidth, minHeight: widget.minHeight)
         .paddingInsets(widget.margin)
         .click(
-            widget.onTap ??
-                () {
-                  setState(() {
-                    _currentValue = !_currentValue;
-                    widget.onValueChanged?.call(_currentValue);
-                  });
-                },
-            enable: widget.enableTap);
+          widget.onTap ??
+              () {
+                setState(() {
+                  _currentValue = !_currentValue;
+                  widget.onValueChanged?.call(_currentValue);
+                });
+              },
+          enable: widget.enableTap,
+        );
   }
 }
 
@@ -115,9 +116,14 @@ class StrokeFillCheckWidget extends StatefulWidget {
   final Widget child;
   final bool checked;
 
+  /// 选中填充颜色
   /// [GlobalTheme.accentColor]
   @defInjectMark
   final Color? checkedColor;
+
+  /// 未选中填充颜色
+  @defInjectMark
+  final Color? uncheckedColor;
 
   final double strokeWidth;
 
@@ -149,6 +155,7 @@ class StrokeFillCheckWidget extends StatefulWidget {
     this.padding = kHSymInsets,
     this.margin = kMInsets,
     this.checkedColor,
+    this.uncheckedColor,
     this.borderRadius = kDefaultBorderRadiusX,
     this.strokeWidth = 1,
     //--
@@ -202,7 +209,7 @@ class _StrokeFillCheckWidgetState extends State<StrokeFillCheckWidget> {
             ),
           )
         : fillDecoration(
-            color: globalTheme.itemWhiteBgColor,
+            color: widget.uncheckedColor ?? globalTheme.itemWhiteBgColor,
             radius: borderRadius,
             border: strokeBorder(
               color: globalTheme.itemWhiteBgColor,

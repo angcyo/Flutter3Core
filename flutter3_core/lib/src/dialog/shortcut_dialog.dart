@@ -63,8 +63,9 @@ class _KeyboardShortcutDialogState
     final shortcutConfigManager =
         widget.shortcutConfigManager ?? $globalShortcutConfigManager;
     final shortcutIntentList =
-        widget.shortcutIntentList ??
-        shortcutConfigManager.shortcutIntentList.toList();
+        (widget.shortcutIntentList ??
+                shortcutConfigManager.shortcutIntentList.toList())
+            .filter((e) => e.visible);
 
     return [
           (libRes?.libHotkeyList ?? "快捷键列表")
