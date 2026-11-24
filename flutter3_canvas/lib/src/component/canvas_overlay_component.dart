@@ -755,6 +755,28 @@ class CanvasMeasureComponent extends CanvasOverlayComponent {
     this.onMeasureAction,
   });
 
+  /// 测距组件的Canvas焦点监听器
+  late final measureComponentCanvasListener = CanvasListener(
+    onCanvasFocusChanged: (delegate, node, focus, isAttached) {
+      if (!focus) {
+        //丢失焦点, 移除组件
+        delegate.detachOverlay(overlay: this);
+      }
+    },
+  );
+
+  @override
+  void attachToCanvasDelegate(CanvasDelegate canvasDelegate) {
+    super.attachToCanvasDelegate(canvasDelegate);
+    canvasDelegate.addCanvasListener(measureComponentCanvasListener);
+  }
+
+  @override
+  void detachFromCanvasDelegate(CanvasDelegate canvasDelegate) {
+    super.detachFromCanvasDelegate(canvasDelegate);
+    canvasDelegate.removeCanvasListener(measureComponentCanvasListener);
+  }
+
   @override
   void painting(Canvas canvas, PaintMeta paintMeta) {
     super.painting(canvas, paintMeta);
@@ -888,6 +910,7 @@ class CanvasMeasureComponent extends CanvasOverlayComponent {
     } else if (isCompleteKeyEventAction?.call(event) == true) {
       canvasDelegate?.detachOverlay(overlay: this);
     }
-    return true;
+    //*!event.isModifierKey;*/
+    return false;
   }
 }

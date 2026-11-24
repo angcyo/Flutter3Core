@@ -16,6 +16,7 @@ class CanvasKeyManager
   final CanvasDelegate canvasDelegate;
 
   /// 快捷键配置管理器
+  /// - [CanvasKeyManager.handleKeyEvent]驱动
   ShortcutConfigManager? shortcutConfigManager;
 
   CanvasKeyManager(this.canvasDelegate) {

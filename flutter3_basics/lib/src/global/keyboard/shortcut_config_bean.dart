@@ -295,19 +295,19 @@ class ShortcutConfigBean with Equatable, IProviderText {
     final isMac = defaultTargetPlatform == TargetPlatform.macOS;
     final List<String> parts = [];
     if (isMac) {
+      if (meta == true) parts.add('⌘'); //⊞
       if (control == true) parts.add('⌃');
       if (alt == true) parts.add('⌥');
       if (shift == true) parts.add('⇧');
-      if (meta == true) parts.add('⌘'); //⊞
       if (triggerKey != null) {
         parts.add(triggerKey!.formatKeyLabel);
       }
       return parts.join(''); // macOS 风格：⌘⇧S
     } else {
+      if (meta == true) parts.add('Win');
       if (control == true) parts.add('Ctrl');
       if (alt == true) parts.add('Alt');
       if (shift == true) parts.add('Shift');
-      if (meta == true) parts.add('Win');
       if (triggerKey != null) {
         parts.add(triggerKey!.formatKeyLabel);
       }

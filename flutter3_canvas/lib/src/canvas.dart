@@ -251,6 +251,8 @@ class CanvasRenderBox extends RenderBox
   ///
   /// - [parentNode]
   /// - [_canvasFocusNode]
+  ///
+  /// - [onFocusChange]焦点变化
   late final FocusNode _canvasFocusNode = FocusNode(
     debugLabel: "CanvasRenderBoxFocusNode",
     onKeyEvent: (node, event) {
@@ -593,6 +595,7 @@ class CanvasRenderBox extends RenderBox
   //region KeyEvent
 
   /// 画布键盘事件处理
+  /// - [_canvasFocusNode]驱动
   @override
   KeyEventResult handleKeyEventResultMixin(KeyEvent event) {
     KeyEventResult handler = .ignored;

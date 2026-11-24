@@ -54,7 +54,8 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     KeyEventResult handler,
   ) {
     bool handle = canvasEventManager.handleKeyEvent(event, handler);
-    handle = handle || dispatchKeyEvent(render, event, handler);
+    handle =
+        dispatchKeyEvent(render, event, handle ? .handled : handler) || handle;
     //debugger();
     return handle;
   }
