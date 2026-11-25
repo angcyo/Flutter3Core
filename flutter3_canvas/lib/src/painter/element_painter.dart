@@ -447,6 +447,9 @@ class ElementPainter extends IElementPainter {
     _paintProperty = value;
   }
 
+  /// 获取元素的旋转角度, 弧度单位
+  double? get elementAngle => paintProperty?.angle;
+
   @override
   void applyPaintTransform(IPainter child, Matrix4 transform) {
     final operateMatrix = paintProperty?.operateMatrix;

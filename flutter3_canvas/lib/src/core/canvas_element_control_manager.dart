@@ -1286,6 +1286,12 @@ class ElementSelectComponent extends ElementGroupPainter
     super.paintProperty = value;
   }*/
 
+  /// 如果选中的是单元素, 则返回选中元素的角度, 否则返回[ElementGroupPainter.elementAngle]
+  @override
+  double? get elementAngle => selectedElementCount == 1
+      ? selectedChildElement.elementAngle
+      : super.elementAngle;
+
   ElementSelectComponent(this.canvasElementControlManager) {
     attachToCanvasDelegate(
       canvasElementControlManager.canvasElementManager.canvasDelegate,

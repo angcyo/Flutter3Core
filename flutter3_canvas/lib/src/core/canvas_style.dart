@@ -50,7 +50,8 @@ class CanvasStyle {
 
   /// 需要绘制的类型, 用来控制坐标轴和网格的绘制
   /// - [CanvasAxisManager.painting] 绘制坐标轴和网格
-  int drawType = sDrawAxis | sDrawGrid | sDrawRefLine /*| sDrawCenterLine*/;
+  int drawType = sDrawAxis | sDrawGrid | sDrawRefLine
+  /*| sDrawCenterLine*/;
 
   /// 是否绘制网格
   bool get showGrid => drawType.have(sDrawGrid);
@@ -239,8 +240,11 @@ class CanvasStyle {
   /// 绘制信息是否单行格式
   bool paintInfoSingleLine = false;
 
-  /// 是否绘制选中元素的边界
-  bool paintSelectedElementBounds = false;
+  /// 是否绘制选中元素的边界矩形
+  /// - 元素的矩形 / 非包裹框
+  ///
+  /// - [ElementPainter.onPaintingSelf]
+  bool paintSelectedElementBounds = true;
 
   //endregion basics
 

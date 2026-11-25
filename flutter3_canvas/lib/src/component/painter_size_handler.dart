@@ -98,7 +98,7 @@ class PainterSizeHandler {
     _unit = unit ?? _unit;
 
     //角度
-    angle = _targetPainter?.paintProperty?.angle.jd.round();
+    angle = _targetPainter?.elementAngle?.jds.round();
 
     @dp
     final bounds = _targetPainter?.elementsBounds ?? elementsBounds;
@@ -291,7 +291,7 @@ class PainterSizeHandler {
           canvasDelegate?.canvasElementManager.canvasElementControlManager;
       painter ??= _targetPainter;
       if (controlManager != null && painter != null) {
-        final angle = painter.paintProperty?.angle.jd.round() ?? 0;
+        final angle = painter.elementAngle?.jd.round() ?? 0;
         final r = newAngle.hd - angle.hd;
         //debugger();
         controlManager.rotateElement(painter, r, refTargetRadians: newAngle.hd);
