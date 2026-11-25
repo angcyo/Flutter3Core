@@ -244,7 +244,7 @@ class CanvasStyle {
   /// - 元素的矩形 / 非包裹框
   ///
   /// - [ElementPainter.onPaintingSelf]
-  bool paintSelectedElementBounds = true;
+  bool paintSelectedElementBounds = false;
 
   //endregion basics
 
