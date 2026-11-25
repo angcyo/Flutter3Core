@@ -108,11 +108,14 @@ void main(List<String> arguments) async {
   //MARK: input args
   String? argBuildType;
   String? argBuildFlavor;
+  bool argCollectSymbols = false; //是否收集符号表
   for (final arg in arguments) {
     if (arg.startsWith("--buildType=")) {
       argBuildType = arg.split("=")[1];
     } else if (arg.startsWith("--buildFlavor=")) {
       argBuildFlavor = arg.split("=")[1];
+    } else if (arg.startsWith("--collectSymbols=")) {
+      argCollectSymbols = arg.split("=")[1] == "true";
     }
   }
   String buildType = argBuildType ?? "release";
@@ -175,10 +178,12 @@ void main(List<String> arguments) async {
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
 
           //收集 symbols
-          await copyFolderByPlatform(
-            "$currentPath${kPS}build$kPS${buildType}_apk_symbols",
-            "$to.symbols",
-          );
+          if (argCollectSymbols) {
+            await copyFolderByPlatform(
+              "$currentPath${kPS}build$kPS${buildType}_apk_symbols",
+              "$to.symbols",
+            );
+          }
         }
       }
     }
@@ -213,10 +218,12 @@ void main(List<String> arguments) async {
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
 
           //收集 symbols
-          await copyFolderByPlatform(
-            "$currentPath${kPS}build$kPS${buildType}_appbundle_symbols",
-            "$to.symbols",
-          );
+          if (argCollectSymbols) {
+            await copyFolderByPlatform(
+              "$currentPath${kPS}build$kPS${buildType}_appbundle_symbols",
+              "$to.symbols",
+            );
+          }
         }
       }
     }
@@ -282,10 +289,12 @@ void main(List<String> arguments) async {
           copiedFile?.writeAsStringSync(copiedLines.join("\n"));
 
           //收集 symbols
-          await copyFolderByPlatform(
-            "$currentPath${kPS}build$kPS${buildType}_ipa_symbols",
-            "$to.symbols",
-          );
+          if (argCollectSymbols) {
+            await copyFolderByPlatform(
+              "$currentPath${kPS}build$kPS${buildType}_ipa_symbols",
+              "$to.symbols",
+            );
+          }
         }
       }
     }
@@ -336,10 +345,12 @@ void main(List<String> arguments) async {
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
 
             //收集 symbols
-            await copyFolderByPlatform(
-              "$currentPath${kPS}build$kPS${buildType}_macos_symbols",
-              "$to.symbols",
-            );
+            if (argCollectSymbols) {
+              await copyFolderByPlatform(
+                "$currentPath${kPS}build$kPS${buildType}_macos_symbols",
+                "$to.symbols",
+              );
+            }
           }
         }
         //使用appdmg打包安装程序
@@ -449,10 +460,12 @@ void main(List<String> arguments) async {
             copiedFile?.writeAsStringSync(copiedLines.join("\n"));
 
             //收集 symbols
-            await copyFolderByPlatform(
-              "$currentPath${kPS}build$kPS${buildType}_windows_symbols",
-              "$to.symbols",
-            );
+            if (argCollectSymbols) {
+              await copyFolderByPlatform(
+                "$currentPath${kPS}build$kPS${buildType}_windows_symbols",
+                "$to.symbols",
+              );
+            }
           }
         }
         //使用Inno Setup打包安装程序
