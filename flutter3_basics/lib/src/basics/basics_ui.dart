@@ -1051,6 +1051,10 @@ extension WidgetEx on Widget {
   //MARK: - event
 
   /// 焦点域
+  ///
+  /// - [focus]
+  /// - [focusScope]
+  ///
   /// - [FocusScope]
   Widget focusScope({
     //--
@@ -1252,12 +1256,17 @@ extension WidgetEx on Widget {
   /// - [onlyDesktop] 是否只在桌面平台下监听, 否则全部监听
   ///
   /// - [Shortcuts] 也可以通过此小部件实现
+  ///
+  /// 在桌面端会自动响应[LogicalKeyboardKey.escape]按键并执行[_DismissModalAction].
+  /// 触发[NavigatorState.maybePop].
+  /// - [primaryFocus]全局主要的焦点
+  ///
   Widget autoCloseDialog(
     BuildContext? context, {
     bool onlyDesktop = true,
     FocusOnKeyEventCallback? onKeyEvent /*按键回调*/,
     VoidCallback? onEnterAction /*按回车键的回调*/,
-    KeyEventResult otherKeyEventResult = KeyEventResult.ignored,
+    KeyEventResult otherKeyEventResult = .ignored,
     Key? key,
     //--
     Object? result,
@@ -1265,23 +1274,24 @@ extension WidgetEx on Widget {
     //--
     bool autofocus = true,
     //--
-    bool enableAutoClose = true /*激活esc关闭对话框*/,
+    bool? enableAutoClose = true /*激活esc关闭对话框*/,
     bool? enableEnterConfirm /*激活⏎确定对话框*/,
     bool rootNavigator = false,
     String? tag,
     String? debugLabel,
   }) {
     enableEnterConfirm ??= onEnterAction != null;
-    return (!enableAutoClose && !enableEnterConfirm && onKeyEvent == null)
+    final needFocusScope =
+        enableAutoClose != null || enableEnterConfirm || onKeyEvent != null;
+    return !needFocusScope
         ? this
         : focusScope(
             tag: tag,
             enable: onlyDesktop ? isDesktopOrWeb : true,
             autofocus: autofocus,
             onKeyEvent: (node, event) {
-              if (enableAutoClose &&
-                  event.logicalKey == LogicalKeyboardKey.escape) {
-                if (event.isKeyDown) {
+              if (event.logicalKey == LogicalKeyboardKey.escape) {
+                if (enableAutoClose == true && event.isKeyDown) {
                   //系统也是使用[KeyDownEvent]而非[KeyUpEvent]
                   //debugger();
                   if (context?.canPop(rootNavigator: rootNavigator) == true) {
@@ -1296,13 +1306,13 @@ extension WidgetEx on Widget {
                       result: onResultAction?.call() ?? result,
                     );
                   }
-                  return KeyEventResult.handled;
                 }
+                return .handled;
               } else if (enableEnterConfirm == true &&
                   event.logicalKey == LogicalKeyboardKey.enter) {
                 if (event.isKeyDown) {
                   onEnterAction?.call();
-                  return KeyEventResult.handled;
+                  return .handled;
                 }
               }
               if (onKeyEvent != null) {

@@ -88,7 +88,8 @@ extension FutureCancelEx<T> on Future<T> {
   }
 }
 
-/// [FutureCancelToken]
+/// 销毁界面后, 自动取消[Future]
+/// - [FutureCancelToken]
 mixin FutureCancelStateMixin<T extends StatefulWidget> on State<T> {
   /// 当前的[FutureCancelToken]
   FutureCancelToken? _futureCancelTokenMixin;

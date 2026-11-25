@@ -131,7 +131,7 @@ class ShortcutConfigManager {
               l.w("已存在相同的快捷键配置: $config <- $shortcutConfigBean");
               return true;
             }());
-            //debugger();
+            debugger(when: shortcutConfigBean.allowExist != true);
           }
         }
       }

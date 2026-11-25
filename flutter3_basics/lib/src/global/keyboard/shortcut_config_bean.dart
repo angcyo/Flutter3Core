@@ -37,6 +37,9 @@ class ShortcutConfigBean with Equatable, IProviderText {
   /// 是否是默认的
   final bool? isDefault;
 
+  /// 是否允许和其它相同的快捷键共存
+  final bool? allowExist;
+
   //--
 
   /// 主按键，如 keyS
@@ -106,6 +109,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
     this.id,
     this.keyIdList,
     this.isDefault,
+    this.allowExist,
     int? keyId,
     LogicalKeyboardKey? key,
     this.control,
@@ -122,6 +126,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
     String? id,
     List<int>? keyIdList,
     bool? isDefault,
+    bool? allowExist,
     int? keyId,
     LogicalKeyboardKey? key,
     bool? control,
@@ -135,6 +140,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
     id: id ?? this.id,
     keyIdList: keyIdList ?? this.keyIdList,
     isDefault: isDefault ?? this.isDefault,
+    allowExist: allowExist ?? this.allowExist,
     keyId: keyId ?? this.keyId,
     key: key,
     control: control ?? this.control,
@@ -150,6 +156,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
   Map<String, dynamic> toJson() => {
     'id': ?id,
     'isDefault': ?isDefault?.trueOrNull,
+    'allowExist': ?allowExist?.trueOrNull,
     'keyId': ?keyId,
     'keyIdList': ?keyIdList,
     'control': ?control?.trueOrNull,
@@ -169,6 +176,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
           ?.map((e) => (e as num).toInt())
           .toList(),
       isDefault: json['isDefault'],
+      allowExist: json['allowExist'],
       keyId: json['keyId'],
       control: json['control'],
       alt: json['alt'],
@@ -199,6 +207,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
     String? id,
     List<int>? keyIdList,
     bool? isDefault,
+    bool? allowExist,
     bool modifier = true,
     //--
     bool? control,
@@ -214,6 +223,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
     id: id,
     keyIdList: keyIdList,
     isDefault: isDefault,
+    allowExist: allowExist,
     modifier: modifier,
     control: control,
     alt: alt,
@@ -231,6 +241,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
     String? id,
     List<int>? keyIdList,
     bool? isDefault,
+    bool? allowExist,
     bool modifier = true,
     //--
     bool? control,
@@ -246,6 +257,7 @@ class ShortcutConfigBean with Equatable, IProviderText {
       id: id,
       keyIdList: keyIdList,
       isDefault: isDefault,
+      allowExist: allowExist,
       keyId: modifier && key?.isModifier == true ? null : key?.keyId,
       control: modifier && (control == true || key?.isControlKey == true),
       alt: modifier && (alt == true || key?.isAltKey == true),
