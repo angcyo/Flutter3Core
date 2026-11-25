@@ -103,7 +103,8 @@ mixin WindowCloseScopeStateMixin<T extends StatefulWidget> on State<T> {
   /// 处理窗口关闭数据
   @overridePoint
   void onHandleWindowCloseDataMixin(WindowCloseData data) {
-    if (buildContext?.isPopupRoute == true) {
+    if (buildContext?.isAppBarDismissal == true ||
+        buildContext?.isPopupRoute == true) {
       data.canDefaultHandle = false;
       buildContext?.maybePop();
     }
