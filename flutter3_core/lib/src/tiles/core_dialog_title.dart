@@ -211,6 +211,9 @@ class CoreDialogBottomTitle extends StatelessWidget {
   /// 点击确认后的返回值
   final ClickAction? onTrailingTap;
 
+  /// [onTrailingTap]的快捷配置
+  final ShortcutConfigBean? trailingShortcutConfig;
+
   /// 拦截返回值
   final ResultCallback? onPop;
 
@@ -250,6 +253,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
     this.subTitleTextStyle,
     this.onLeadingTap,
     this.onTrailingTap,
+    this.trailingShortcutConfig,
     this.onPop,
     this.enableLine = false,
     this.line,
@@ -313,13 +317,7 @@ class CoreDialogBottomTitle extends StatelessWidget {
                     ? decorationButtonPadding
                     : buttonPadding,
                 onTap: () {
-                  if (onTrailingTap == null) {
-                    context.maybePop(
-                      result: onPop == null ? true : onPop?.call(),
-                    );
-                  } else {
-                    onTrailingTap?.call(context);
-                  }
+                  _doTrailingTap(context);
                 },
               );
 
@@ -336,7 +334,12 @@ class CoreDialogBottomTitle extends StatelessWidget {
 
     return DialogTitleTile(
       leading: leading?.invisible(invisible: invisibleLeading),
-      trailing: trailing?.invisible(invisible: invisibleTrailing),
+      trailing: trailing
+          ?.tooltip(
+            null,
+            shortcut: enableTrailing ? trailingShortcutConfig : null,
+          )
+          .invisible(invisible: invisibleTrailing),
       title: title,
       titleWidget: titleWidget,
       titleTextStyle: titleTextStyle,
@@ -347,6 +350,27 @@ class CoreDialogBottomTitle extends StatelessWidget {
       enableTopLine: enableLine,
       topLine: line,
       padding: padding,
+    ).focus(
+      onKeyEvent: (node, event) {
+        //if($globalShortcutConfigManager.isShortcutMatchEvent(event, intentId)){}
+        if ($globalShortcutConfigManager.isShortcutMatchConfig(
+          event,
+          trailingShortcutConfig,
+        )) {
+          _doTrailingTap(context);
+          return .handled;
+        }
+        return .ignored;
+      },
     );
+  }
+
+  /// 执行[onTrailingTap]
+  void _doTrailingTap(BuildContext context) {
+    if (onTrailingTap == null) {
+      context.maybePop(result: onPop == null ? true : onPop?.call());
+    } else {
+      onTrailingTap?.call(context);
+    }
   }
 }

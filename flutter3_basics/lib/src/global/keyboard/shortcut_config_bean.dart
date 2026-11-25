@@ -200,6 +200,10 @@ class ShortcutConfigBean with Equatable, IProviderText {
   factory ShortcutConfigBean.backspace() =>
       ShortcutConfigBean.fromKey(LogicalKeyboardKey.backspace);
 
+  /// 快捷键 Alt + Enter
+  factory ShortcutConfigBean.altEnter() =>
+      ShortcutConfigBean.fromKey(LogicalKeyboardKey.enter, alt: true);
+
   /// - [modifier] 是否过滤掉修饰符的[key]
   ///   - 修饰键, 不使用 [keyId]
   factory ShortcutConfigBean.fromKeyEvent(
@@ -274,12 +278,12 @@ class ShortcutConfigBean with Equatable, IProviderText {
   /// 仅判断快捷键是否相同
   @api
   bool isSameShortcut(ShortcutConfigBean? other) {
-    return (keyId == other?.keyId ||
-            keyIdList?.contains(other?.keyId) == true) &&
-        isBoolEqual(control, other?.control) &&
-        isBoolEqual(alt, other?.alt) &&
-        isBoolEqual(shift, other?.shift) &&
-        isBoolEqual(meta, other?.meta);
+    if (other == null) return false;
+    return (keyId == other.keyId || keyIdList?.contains(other.keyId) == true) &&
+        isBoolEqual(control, other.control) &&
+        isBoolEqual(alt, other.alt) &&
+        isBoolEqual(shift, other.shift) &&
+        isBoolEqual(meta, other.meta);
   }
 
   /// 转换为 Flutter 官方的 SingleActivator

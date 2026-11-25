@@ -851,6 +851,7 @@ mixin DialogMixin implements TranslationTypeImpl {
     Widget? titleWidget,
     bool enableConfirm = true,
     FutureOr Function()? onConfirm,
+    ShortcutConfigBean? confirmShortcutConfig,
     //--
     bool? useConfirmThemeColor,
     Widget? cancelWidget,
@@ -876,15 +877,17 @@ mixin DialogMixin implements TranslationTypeImpl {
               ))
           .expanded(),
       ConfirmButton(
-        useIcon: true,
-        useThemeColor: useConfirmThemeColor,
-        enable: enableConfirm,
-        widget: confirmWidget,
-        onTap: () async {
-          final result = await onConfirm?.call();
-          closeDialogIf(context, result: result);
-        },
-      ).invisible(invisible: invisibleConfirm),
+            useIcon: true,
+            useThemeColor: useConfirmThemeColor,
+            enable: enableConfirm,
+            widget: confirmWidget,
+            onTap: () async {
+              final result = await onConfirm?.call();
+              closeDialogIf(context, result: result);
+            },
+          )
+          .tooltip(null, shortcut: enableConfirm ? confirmShortcutConfig : null)
+          .invisible(invisible: invisibleConfirm),
     ].row()!;
   }
 

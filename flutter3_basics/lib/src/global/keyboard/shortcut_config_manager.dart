@@ -205,6 +205,20 @@ class ShortcutConfigManager {
     return configList.findFirst((e) => e.id == intentId) != null;
   }
 
+  /// 当前按键是否匹配指定的[ShortcutConfigBean]快捷键配置
+  @api
+  bool isShortcutMatchConfig(KeyEvent? event, ShortcutConfigBean? config) {
+    if (event == null) return false;
+    final keyConfig = ShortcutConfigBean.fromKeyEvent(
+      event,
+      control: isCtrlPressed.trueOrNull,
+      alt: isAltPressed.trueOrNull,
+      shift: isShiftPressed.trueOrNull,
+      meta: isMetaPressed.trueOrNull,
+    );
+    return keyConfig.isSameShortcut(config);
+  }
+
   /// 通过按键查找快捷键配置
   /// - [event] 当前的键盘事件, 为null时, 表示匹配修饰符
   @api
