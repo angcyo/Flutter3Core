@@ -867,8 +867,8 @@ mixin RScrollPage<T extends StatefulWidget> on State<T> {
   /// - [checkScroll] 是否检查滚动位置, 触发加载更多
   ///
   /// - [updateTile]
-  /// - [deleteTile]
-  /// - [removeTile]
+  /// - [deleteTile] 根据条件删除
+  /// - [removeTile] 根据数据移除
   ///
   /// [pageWidgetList]
   /// @return 被删除的小部件列表
