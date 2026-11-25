@@ -99,11 +99,22 @@ extension MimeEx on String {
   /// 'txt': 'text/plain',
   bool get isTextMimeType => toLowerCase().startsWith('text/');
 
-  bool get isGCodeFile => toLowerCase().let(
-    (it) => it.endsWith(".gcode") || it.endsWith(".gc") || it.endsWith(".nc"),
-  );
+  bool get isGCodeFile => toLowerCase().endsWiths([".gcode", ".gc", ".nc"]);
 
+  /// 是否是svg文件
   bool get isSvgFile => toLowerCase().endsWith(".svg");
+
+  /// 是否是plt文件
+  bool get isPltFile => toLowerCase().endsWiths([".plt", ".hpgl"]);
+
+  /// 是否是dxf文件
+  bool get isDxfFile => toLowerCase().endsWith(".dxf");
+
+  /// 是否是dwg文件
+  bool get isDwgFile => toLowerCase().endsWith(".dwg");
+
+  /// 是否是ai文件
+  bool get isAiFile => toLowerCase().endsWith(".ai");
 
   /// 获取文件的Mime类型
   /// ```

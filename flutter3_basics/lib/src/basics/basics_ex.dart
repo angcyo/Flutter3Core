@@ -472,6 +472,12 @@ extension PatternEx on Pattern {
 }
 
 extension StringEx on String {
+  /// - [String.endsWith]
+  bool endsWiths(List<String> otherList) => otherList.any(endsWith);
+
+  /// 获取非空的字符串
+  String? get strOrNull => isNil(this) ? null : this;
+
   /// 默认不区分大小写判断2个字符串是否相等
   /// - [caseSensitive] 是否区分大小写
   bool equalsIgnoreCase(String? other, {bool caseSensitive = false}) {
