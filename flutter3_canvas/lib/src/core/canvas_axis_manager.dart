@@ -273,67 +273,70 @@ class CanvasAxisManager extends IPainter
       }
     }
 
-    // 绘制坐标网格
-    if (canvasStyle.showGrid) {
+    // 绘制坐标网格 / 绘制中心线
+    if (canvasStyle.showGrid || canvasStyle.showCenterLine) {
       canvas.withClipRect(canvasBounds, () /*画布区域裁剪*/ {
         canvasDelegate.canvasPaintManager.contentManager.withCanvasContent(
           canvas,
           () /*内容区域裁剪*/ {
-            for (final axisData in xAxisData) {
-              final paint = axisData.axisType.have(IUnit.axisTypePrimary)
-                  ? primaryPaint
-                  : axisData.axisType.have(IUnit.axisTypeSecondary)
-                  ? secondaryPaint
-                  : normalPaint;
+            // 绘制坐标网格
+            if (canvasStyle.showGrid) {
+              for (final axisData in xAxisData) {
+                final paint = axisData.axisType.have(IUnit.axisTypePrimary)
+                    ? primaryPaint
+                    : axisData.axisType.have(IUnit.axisTypeSecondary)
+                    ? secondaryPaint
+                    : normalPaint;
 
-              canvas.drawLine(
-                Offset(axisData.viewValue, paintBounds.top),
-                Offset(axisData.viewValue, paintBounds.bottom),
-                paint,
-              );
+                canvas.drawLine(
+                  Offset(axisData.viewValue, paintBounds.top),
+                  Offset(axisData.viewValue, paintBounds.bottom),
+                  paint,
+                );
+              }
+
+              for (final axisData in yAxisData) {
+                final paint = axisData.axisType.have(IUnit.axisTypePrimary)
+                    ? primaryPaint
+                    : axisData.axisType.have(IUnit.axisTypeSecondary)
+                    ? secondaryPaint
+                    : normalPaint;
+
+                canvas.drawLine(
+                  Offset(paintBounds.left, axisData.viewValue),
+                  Offset(paintBounds.right, axisData.viewValue),
+                  paint,
+                );
+              }
             }
-
-            for (final axisData in yAxisData) {
-              final paint = axisData.axisType.have(IUnit.axisTypePrimary)
-                  ? primaryPaint
-                  : axisData.axisType.have(IUnit.axisTypeSecondary)
-                  ? secondaryPaint
-                  : normalPaint;
-
-              canvas.drawLine(
-                Offset(paintBounds.left, axisData.viewValue),
-                Offset(paintBounds.right, axisData.viewValue),
-                paint,
-              );
+            //绘制中心线
+            if (canvasStyle.showCenterLine) {
+              final contentRect = canvasDelegate
+                  .canvasPaintManager
+                  .contentManager
+                  .canvasContentFollowRectInner;
+              if (contentRect != null) {
+                primaryPaint
+                  ..strokeWidth =
+                      primaryPaint.strokeWidth / paintMeta.canvasScale
+                  ..color = canvasStyle.axisRefLineHighlightColor;
+                paintMeta.withPaintMatrix(canvas, () {
+                  canvas.drawLine(
+                    Offset(contentRect.left, contentRect.cy),
+                    Offset(contentRect.right, contentRect.cy),
+                    primaryPaint,
+                  );
+                  canvas.drawLine(
+                    Offset(contentRect.cx, contentRect.top),
+                    Offset(contentRect.cx, contentRect.bottom),
+                    primaryPaint,
+                  );
+                });
+              }
             }
           },
         );
       });
-    }
-
-    //绘制中心线
-    if (canvasStyle.showCenterLine) {
-      final contentRect = canvasDelegate
-          .canvasPaintManager
-          .contentManager
-          .canvasContentFollowRectInner;
-      if (contentRect != null) {
-        primaryPaint
-          ..strokeWidth = primaryPaint.strokeWidth / paintMeta.canvasScale
-          ..color = canvasStyle.axisRefLineHighlightColor;
-        paintMeta.withPaintMatrix(canvas, () {
-          canvas.drawLine(
-            Offset(contentRect.left, contentRect.cy),
-            Offset(contentRect.right, contentRect.cy),
-            primaryPaint,
-          );
-          canvas.drawLine(
-            Offset(contentRect.cx, contentRect.top),
-            Offset(contentRect.cx, contentRect.bottom),
-            primaryPaint,
-          );
-        });
-      }
     }
   }
 
