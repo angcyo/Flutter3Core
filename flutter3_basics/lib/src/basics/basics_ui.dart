@@ -638,7 +638,9 @@ extension WidgetEx on Widget {
       return this;
     }
     String? shortcutLabel;
-    if (isDesktopOrWeb) {
+    if (!isDesktopOrWeb) {
+      //非桌面平台不显示快捷键
+    } else {
       shortcut ??= (shortcutConfigManager ?? $globalShortcutConfigManager)
           .findShortcutConfig(id: shortcutId)
           .firstOrNull;
@@ -654,7 +656,7 @@ extension WidgetEx on Widget {
         }
       }
     }
-    return (isNil(tip) && shortcut == null && richMessage == null)
+    return (isNil(tip) && richMessage == null)
         ? this
         : Tooltip(
             message: tip,
