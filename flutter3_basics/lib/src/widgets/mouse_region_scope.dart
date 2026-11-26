@@ -6,9 +6,12 @@ part of '../../flutter3_basics.dart';
 ///
 /// 鼠标区域相关小部件
 /// - 先使用[MouseHoverProvider]小部件创建一个鼠标区域状态提供者
+///   - [MouseHoverScopeEx.mouseHoverProvider]
 /// - 在鼠标区域内使用[MouseHoverVisibility]控制鼠标悬停可见性
+///   - [MouseHoverScopeEx.mouseHoverVisibility]
 
 /// 鼠标区域悬停状态域
+/// - 提供鼠标悬停状态监听
 class MouseHoverScope extends InheritedWidget {
   /// 获取鼠标域内的数据
   static ValueNotifier<bool>? get(
@@ -108,6 +111,34 @@ class MouseHoverVisibility extends StatefulWidget {
   /// 可见性的回调
   final KeyValueCallback<bool>? onVisibilityChanged;
 
+  /// 自定义悬停时显示的小部件
+  ///
+  /// ```
+  /// .mouseHoverVisibility(
+  ///   hoverBuilder: (widget, isHover) {
+  ///     final offsetX = 30.0;
+  ///     return widget.child
+  ///         .animate(
+  ///           key: ValueKey(nowTime()) /*小部件变化了才有动画*/,
+  ///         )
+  ///         .fade(
+  ///           begin: isHover ? 0.0 : 1.0,
+  ///           end: isHover ? 1.0 : 0.0,
+  ///         )
+  ///         .moveX(
+  ///           begin: isHover ? offsetX : 0,
+  ///           end: isHover ? 0 : offsetX,
+  ///           duration: widget.duration,
+  ///           curve: isHover
+  ///               ? Curves.easeIn
+  ///               : Curves.easeOut,
+  ///         );
+  ///   },
+  /// )
+  /// ```
+  final Widget Function(MouseHoverVisibility widget, bool isHover)?
+  hoverBuilder;
+
   const MouseHoverVisibility({
     super.key,
     required this.child,
@@ -115,6 +146,7 @@ class MouseHoverVisibility extends StatefulWidget {
     this.duration = kDefaultAnimationDuration,
     this.curve = Curves.linear,
     this.onVisibilityChanged,
+    this.hoverBuilder,
   });
 
   @override
@@ -123,41 +155,48 @@ class MouseHoverVisibility extends StatefulWidget {
 
 class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
   /// 当前是否处于鼠标悬停, 悬停时可见, 非悬停时隐藏
-  bool isHover = false;
+  @tempFlag
+  bool _isHover = false;
 
-  ValueNotifier<bool>? hover;
+  @tempFlag
+  ValueNotifier<bool>? _hover;
 
   @override
   void initState() {
     super.initState();
-    hover = MouseHoverScope.get(buildContext);
-    isHover = hover?.value ?? isHover;
-    widget.onVisibilityChanged?.call(widget.key, isHover);
-    hover?.addListener(handleMouseHoverMixin);
-    debugger(when: hover == null);
+    _hover = MouseHoverScope.get(buildContext);
+    _isHover = _hover?.value ?? _isHover;
+    widget.onVisibilityChanged?.call(widget.key, _isHover);
+    _hover?.addListener(handleMouseHoverMixin);
+    debugger(when: _hover == null);
   }
 
   @override
   void dispose() {
-    hover?.removeListener(handleMouseHoverMixin);
+    _hover?.removeListener(handleMouseHoverMixin);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    //l.d("${classHash()} build isHover:$isHover");
+    //l.d("${classHash()} build isHover:$_isHover");
+    if (widget.hoverBuilder != null) {
+      return widget.hoverBuilder!(widget, _isHover);
+    }
+
     final normalChild = widget.normalChild;
     if (normalChild != null) {
+      // 悬停时显示[this], 非悬停时显示[normalChild]
       return AnimatedSwitcher(
         duration: widget.duration,
         reverseDuration: widget.duration,
         switchInCurve: widget.curve,
         switchOutCurve: widget.curve,
-        child: isHover ? widget.child : normalChild,
+        child: _isHover ? widget.child : normalChild,
       );
     }
     return AnimatedOpacity(
-      opacity: isHover ? 1 : 0,
+      opacity: _isHover ? 1 : 0,
       duration: widget.duration,
       curve: widget.curve,
       child: widget.child,
@@ -166,12 +205,12 @@ class _MouseHoverVisibilityState extends State<MouseHoverVisibility> {
 
   @overridePoint
   void handleMouseHoverMixin() {
-    final value = hover?.value ?? isHover;
+    final value = _hover?.value ?? _isHover;
     //l.i("${classHash()} handleMouseHoverMixin $value isHover:$isHover");
-    if (value != isHover) {
+    if (value != _isHover) {
       widget.onVisibilityChanged?.call(widget.key, value);
       setState(() {
-        isHover = value;
+        _isHover = value;
       });
     }
   }
@@ -190,6 +229,9 @@ extension MouseHoverScopeEx on Widget {
   }
 
   /// 悬停时可见的小部件
+  /// - [hoverBuilder] 自定义悬停时显示的小部件
+  /// - [hoverProvider] 是否启用自身的鼠标悬停状态提供者
+  ///
   /// - 需要在外层使用[MouseHoverProvider]
   Widget mouseHoverVisibility({
     Key? key,
@@ -197,6 +239,7 @@ extension MouseHoverScopeEx on Widget {
     Curve curve = Curves.linear,
     KeyValueCallback<bool>? onVisibilityChanged,
     Widget? normalChild,
+    Widget Function(MouseHoverVisibility widget, bool isHover)? hoverBuilder,
     //--
     bool? enable,
     //--
@@ -209,6 +252,7 @@ extension MouseHoverScopeEx on Widget {
             curve: curve,
             normalChild: normalChild,
             onVisibilityChanged: onVisibilityChanged,
+            hoverBuilder: hoverBuilder,
             child: this,
           ).mouseHoverProvider(enable: hoverProvider == true)
         : this;
