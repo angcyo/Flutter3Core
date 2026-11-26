@@ -41,15 +41,21 @@ class CoreFileType {
   bool get isGCode => ext.isGCodeFile == true;
 
   bool get isText =>
-      mimeType?.isTextMimeType == true ||
-      ext.endsWith(".log") ||
-      ext.endsWith(".html");
+      mimeType?.isTextMimeType == true || ext.endsWiths([".log", ".html"]);
 
   bool get isFont => mimeType?.isFontMimeType == true;
 
-  bool get isXlsx => ext.endsWith(".xlsx");
+  bool get isXlsx => ext.isXlsxFile;
 
-  bool get isApk => ext.endsWith(".apk") || url.endsWith(".apk.1");
+  bool get isApk => ext.isApkFile;
+
+  bool get isPlt => ext.isPltFile;
+
+  bool get isDxf => ext.isDxfFile;
+
+  bool get isDwg => ext.isDwgFile;
+
+  bool get isAi => ext.isAiFile;
 
   /// 判断后缀是否是指定的后缀
   bool isExt(String other) => ext.endsWith(other.toLowerCase());
@@ -103,6 +109,12 @@ extension MimeEx on String {
 
   /// 是否是svg文件
   bool get isSvgFile => toLowerCase().endsWith(".svg");
+
+  /// 是否是xlsx文件
+  bool get isXlsxFile => toLowerCase().endsWith(".xlsx");
+
+  /// 是否是apk文件
+  bool get isApkFile => toLowerCase().endsWiths([".apk", ".apk.1"]);
 
   /// 是否是plt文件
   bool get isPltFile => toLowerCase().endsWiths([".plt", ".hpgl"]);
