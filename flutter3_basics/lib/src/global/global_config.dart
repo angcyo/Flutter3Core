@@ -26,19 +26,18 @@ typedef GlobalSaveFileFn =
 
 /// 全局写入文件的回调方法, 返回文件路径
 typedef GlobalWriteFileFn =
-    Future<String?> Function(String fileName, String? folder, dynamic content);
+    Future<String?> Function(String fileName, String? folder, Object? content);
 
 /// 全局分享[data]的回调方法, 返回成功or失败
 typedef GlobalShareDataFn =
-    Future<bool> Function(BuildContext? context, dynamic data);
+    Future<bool> Function(BuildContext? context, Object? data);
 
 /// 全局复制图片的回调方法, 返回成功or失败
-typedef GlobalCopyImageFn =
-    Future<bool> Function(BuildContext? context, UiImage? image);
+typedef GlobalWriteClipboardFn =
+    Future<bool> Function(BuildContext? context, Object? data);
 
-/// 全局复制文件的回调方法, 返回成功or失败
-typedef GlobalCopyFilesFn =
-    Future<bool> Function(BuildContext? context, List<String>? files);
+/// 全局读取剪切板数据的回调方法, 返回数据
+typedef GlobalReadClipboardFn = Future<Object?> Function(BuildContext? context);
 
 /// 获取[GlobalConfig]的方法
 typedef GlobalConfigGetFn = GlobalConfig Function();
@@ -713,21 +712,21 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     return Future.value(false);
   };
 
-  /// 注册一个全局的复制图片的方法
-  GlobalCopyImageFn? copyImageFn;
+  /// 注册一个全局的读取剪切板数据的方法
+  GlobalReadClipboardFn? readClipboardFn = (context) {
+    l.w("企图读取剪切板数据!");
+    return getClipboardText();
+  };
 
-  /*(context, image) {
-    l.w("企图复制图片:${image?.imageSize}");
+  /// 注册一个全局的写入剪切板数据的方法
+  GlobalWriteClipboardFn? writeClipboardFn = (context, data) {
+    l.w("企图写入剪切板数据[${data?.runtimeType}]!");
+    if (data is String) {
+      setClipboardText(data);
+      return Future.value(true);
+    }
     return Future.value(false);
-  };*/
-
-  /// 注册一个全局的复制文件的方法
-  GlobalCopyFilesFn? copyFilesFn;
-
-  /*(context, files) {
-    l.w("企图复制文件:${files?.length}");
-    return Future.value(false);
-  };*/
+  };
 
   //region Widget
 
@@ -1197,6 +1196,18 @@ class PlaceholderBuildContext extends BuildContext {
   }
 }
 
+/// 读取剪贴板数据
+Future<Object?> $readClipboardFn([BuildContext? context]) async =>
+    GlobalConfig.def.readClipboardFn?.call(context ?? $globalAppContext);
+
+/// 写入剪贴板数据
+Future<bool> $writeClipboardFn(Object? data, [BuildContext? context]) async =>
+    await (GlobalConfig.def.writeClipboardFn?.call(
+      context ?? $globalAppContext,
+      data,
+    )) ==
+    true;
+
 //endregion 全局
 
 //region Mixin
@@ -1273,6 +1284,7 @@ T? $darkOr<T>([T? dark, T? light]) =>
     GlobalConfig.def.isThemeDark ? dark : light;
 
 /// 获取全局App上下文
+/// - 此上下文可以获取到导航[Navigator]/覆盖层[Overlay]
 BuildContext? get $globalAppContext => GlobalConfig.def.globalAppContext;
 
 //endregion Mixin

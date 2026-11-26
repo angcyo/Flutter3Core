@@ -37,6 +37,7 @@ export 'src/pages/app_about_dialog.dart';
 export 'src/pages/app_update_dialog.dart';
 export 'src/pages/app_update_handler.dart';
 
+//@formatter:off
 part 'src/android_app.dart';
 part 'src/app_ex.dart';
 part 'src/app_info_interceptor.dart';
@@ -50,6 +51,7 @@ part 'src/plugins/plugin_install_dialog.dart';
 part 'src/plugins/process_plugin.dart';
 part 'src/receive/receive_intent.dart';
 part 'src/test/http_api_mix.dart';
+//@formatter:on
 
 /// - [runGlobalApp]启动的时间
 @output
@@ -156,14 +158,39 @@ Future runGlobalApp(
     }
   };
 
-  // 复制图片
-  GlobalConfig.def.copyImageFn = (context, image) async {
-    return await $setPasteboardImage(image);
+  // 读取剪切板数据
+  GlobalConfig.def.readClipboardFn = (context) async {
+    final image = await $pasteboardImage;
+    if (image != null) {
+      return image;
+    }
+    final files = await $pasteboardFiles;
+    if (files != null && files.isNotEmpty) {
+      return files;
+    }
+
+    final text = await $pasteboardText;
+    if (text != null) {
+      return text;
+    }
+
+    return null;
   };
 
-  // 复制文件
-  GlobalConfig.def.copyFilesFn = (context, files) async {
-    return await $setPasteboardFiles(files);
+  // 写入剪切板数据
+  GlobalConfig.def.writeClipboardFn = (context, data) async {
+    if (data is File) {
+      return $setPasteboardFiles([data.path]);
+    } else if (data is List<File>) {
+      return $setPasteboardFiles(data.map((e) => e.path).toList());
+    } else if (data is List<String>) {
+      return $setPasteboardFiles(data);
+    } else if (data is UiImage) {
+      return $setPasteboardImage(data);
+    } else if (data is String) {
+      return $setPasteboardText(data);
+    }
+    return false;
   };
 
   // FlutterError.onError

@@ -10,9 +10,17 @@ import 'package:pasteboard/pasteboard.dart';
 /// 读取剪切板中的图像
 /// available on iOS, Desktop, Web, Android
 Future<UiImage?> get $pasteboardImage async {
-  final imageBytes = await Pasteboard.image;
-  //print(imageBytes?.length);
-  return imageBytes?.toImage();
+  try {
+    final imageBytes = await Pasteboard.image;
+    //print(imageBytes?.length);
+    return imageBytes?.toImage();
+  } catch (e) {
+    assert(() {
+      l.e(e);
+      return true;
+    }());
+    return null;
+  }
 }
 
 /// 写入剪切板中的图像
@@ -38,10 +46,18 @@ Future<bool> $setPasteboardImage(UiImage? image) async {
 /// 读取剪切板中的文件路径
 /// available on Desktop, Android.
 /// - Windows 测试有效
-Future<List<String>> get $pasteboardFiles async {
-  final files = await Pasteboard.files();
-  //print(imageBytes?.length);
-  return files;
+Future<List<String>?> get $pasteboardFiles async {
+  try {
+    final files = await Pasteboard.files();
+    //print(imageBytes?.length);
+    return files;
+  } catch (e) {
+    assert(() {
+      l.e(e);
+      return true;
+    }());
+    return null;
+  }
 }
 
 /// 写入剪切板中的文件路径
@@ -50,6 +66,41 @@ Future<bool> $setPasteboardFiles(List<String>? files) async {
   try {
     if (files != null) {
       await Pasteboard.writeFiles(files);
+      return true;
+    }
+    return false;
+  } catch (e) {
+    assert(() {
+      l.e(e);
+      return true;
+    }());
+    return false;
+  }
+}
+
+/// 读取剪切板中的文本
+/// available on iOS, Desktop, Web, Android
+Future<String?> get $pasteboardText async {
+  try {
+    final text = await Pasteboard.text;
+    //print(imageBytes?.length);
+    return text;
+  } catch (e) {
+    assert(() {
+      l.e(e);
+      return true;
+    }());
+    return null;
+  }
+}
+
+/// 写入剪切板中的文本
+/// available on iOS, Android, Web
+/// - Windows 测试有效
+bool $setPasteboardText(String? text) {
+  try {
+    if (text != null) {
+      Pasteboard.writeText(text);
       return true;
     }
     return false;

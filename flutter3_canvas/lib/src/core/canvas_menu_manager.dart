@@ -199,14 +199,14 @@ class CanvasMenuManager
         canvasDelegate.canvasKeyManager.shortcutConfigManager;
     return [
       //复制图片
-      if (element != null && globalConfig.copyImageFn != null)
+      if (element != null && globalConfig.writeClipboardFn != null)
         buildMenuItem(globalTheme, libRes?.libCopyAsImage, () {
           final image = element.elementOutputImage;
           /*element.originImage ??
                   element.painterImage ??
                   element.operateImage;*/
           if (image != null) {
-            globalConfig.copyImageFn?.call(context, image);
+            globalConfig.writeClipboardFn?.call(context, image);
           }
         }),
       //导出

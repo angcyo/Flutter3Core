@@ -152,7 +152,7 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
         /*.hero(widget.heroTag)*/
         .mouseRightMenu(
           menus: [
-            if (globalConfig.copyImageFn != null)
+            if (globalConfig.writeClipboardFn != null)
               LabelMenuTile(
                 label: libRes?.libCopyImage,
                 labelTextStyle: globalTheme.textBodyStyle,
@@ -163,10 +163,10 @@ class _SinglePhotoDialogState extends State<SinglePhotoDialog> {
             ),
           ],
           onMenusTap: [
-            if (globalConfig.copyImageFn != null)
+            if (globalConfig.writeClipboardFn != null)
               () {
                 _imageProvider?.toImage().then((image) {
-                  globalConfig.copyImageFn?.call(context, image);
+                  globalConfig.writeClipboardFn?.call(context, image);
                 });
               },
             () {
