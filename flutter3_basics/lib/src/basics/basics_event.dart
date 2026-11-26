@@ -550,6 +550,10 @@ mixin IHandlePointerEventMixin {
   PointerEvent? firstMoveEvent;
   PointerEvent? _firstLastMoveEvent;
 
+  /// 最后一个有效的手指移动事件
+  /// - 自定义处理
+  PointerEvent? lastMoveEvent;
+
   /// 第一个手指每次[PointerMoveEvent]事件的移动距离
   Offset firstMoveOffset = Offset.zero;
 

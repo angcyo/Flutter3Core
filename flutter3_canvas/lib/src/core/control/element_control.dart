@@ -433,9 +433,9 @@ class BaseControl
         l.d('无目标控制元素[$controlType]');
         return true;
       }());
-    } else if (controlType == ControlTypeEnum.rotate) {
+    } else if (controlType == .rotate) {
       _targetElement?.rotateElement(matrix, fromObj: this);
-    } else if (controlType == ControlTypeEnum.translate) {
+    } else if (controlType == .translate) {
       //l.e("restore...start2 ${_targetElement?.elementsBounds?.toRectMm()}");
       _targetElement?.translateElement(matrix, fromObj: this);
       //l.e("restore...end2 ${_targetElement?.elementsBounds?.toRectMm()}");
@@ -546,10 +546,23 @@ class DeleteControl extends BaseControl {
 
 /// 旋转元素控制
 class RotateControl extends BaseControl {
+  /// 吸附控制
+  ElementAdsorbControl get adsorbControl => canvasDelegate
+      .canvasElementManager
+      .canvasElementControlManager
+      .elementAdsorbControl;
+
+  /// 是否要查找吸附
+  bool get findAdsorb =>
+      adsorbControl.isCanvasComponentEnable && !adsorbControl.isIgnoreAdsorb;
+
   RotateControl(CanvasElementControlManager canvasElementControlManager)
     : super(canvasElementControlManager, ControlTypeEnum.rotate) {
     loadControlPicture('canvas_rotate_point.svg');
   }
+
+  /// 元素开始时的弧度
+  double _startElementAngle = 0;
 
   @override
   bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) {
@@ -558,7 +571,9 @@ class RotateControl extends BaseControl {
     if (isPointerDownIn) {
       if (event.isPointerDown) {
         //按下时, 就更新绘制的控制信息
-        canvasElementControlManager.updatePaintInfoType(PaintInfoType.rotate);
+        canvasElementControlManager.updatePaintInfoType(.rotate);
+        lastMoveEvent ??= event;
+        _startElementAngle = _targetElement?.elementAngle ?? 0;
       } else if (event.isPointerMove) {
         if (isFirstHandle) {
           if (firstDownEvent?.isMoveExceed(event.localPosition) == true) {
@@ -569,18 +584,41 @@ class RotateControl extends BaseControl {
             );
           }
         }
-        if (!isFirstHandle) {
+        if (!isFirstHandle &&
+            lastMoveEvent?.isMoveExceed(event.localPosition) == true) {
+          //移动超过阈值
+          lastMoveEvent = event;
           final moveScenePoint = canvasViewBox.toScenePoint(
             event.localPosition,
           );
           _downTargetElementCenter?.let((it) {
-            final angle = angleBetween(it, downScenePoint, it, moveScenePoint);
-            final matrix = Matrix4.identity()..rotateBy(angle, anchor: it);
-            assert(() {
-              //l.d('旋转元素[${angle.jd}]:$angle $it');
-              return true;
-            }());
-            applyTargetMatrix(matrix);
+            final elementAngle = _startElementAngle;
+            double angle = angleBetween(it, downScenePoint, it, moveScenePoint);
+            if (findAdsorb) {
+              final adsorbValue = adsorbControl.findElementRotateAdsorbRefValue(
+                elementAngle,
+                elementAngle + angle,
+              );
+              final refAngle = adsorbValue?.refValue;
+              if (refAngle != null) {
+                assert(() {
+                  //l.d("吸附角度:${refAngle.jd}° 元素角度:${elementAngle.jd}°");
+                  return true;
+                }());
+                angle = refAngle - elementAngle;
+              }
+            }
+            if (angle != 0.0) {
+              final matrix = Matrix4.identity()..rotateBy(angle, anchor: it);
+              assert(() {
+                /*l.d(
+                  '旋转元素[${angle.jd}°]:$angle $it -> ${(angle + elementAngle).jd}°',
+                );*/
+                return true;
+              }());
+              applyTargetMatrix(matrix);
+              _targetElement?.refresh();
+            }
             //debugger();
           });
         }
@@ -882,9 +920,7 @@ class TranslateControl extends BaseControl
             isPointerDownIn = true;
             isFirstHandle = true;
             _isDownSelectComponent = true;
-            canvasElementControlManager.updatePaintInfoType(
-              PaintInfoType.location,
-            );
+            canvasElementControlManager.updatePaintInfoType(.location);
             //在元素上点击, 就需要拦截事件, 因为还有双击操作
             startControlTarget(selectComponent);
             return true;
@@ -959,9 +995,7 @@ class TranslateControl extends BaseControl
           if (firstDownEvent?.isMoveExceed(localPosition) == true) {
             //首次移动, 并且超过了阈值
             isFirstHandle = false;
-            canvasElementControlManager.updatePaintInfoType(
-              PaintInfoType.location,
-            );
+            canvasElementControlManager.updatePaintInfoType(.location);
           }
         }
         //debugger();

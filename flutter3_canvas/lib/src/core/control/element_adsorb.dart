@@ -11,6 +11,7 @@ part of '../../../flutter3_canvas.dart';
 /// - [findElementYAdsorbRefValue]
 /// - [findXAdsorbRefValue]
 /// - [findYAdsorbRefValue]
+/// - [findRotateAdsorbRefValue]
 ///
 /// - [CanvasElementControlManager] in
 /// - [CanvasElementControlManager.elementAdsorbControl] in
@@ -55,18 +56,22 @@ class ElementAdsorbControl
     if (isIgnoreAdsorb) {
       return;
     }
+    final controlElement =
+        canvasElementControlManager._currentControlElementRef?.target;
     final controlElementBounds =
-        canvasElementControlManager
-            ._currentControlElementRef
-            ?.target
-            ?.elementsBounds ??
-        _controlElementsBounds;
+        controlElement?.elementsBounds ?? _controlElementsBounds;
     if (controlElementBounds == null) {
       return;
     }
     paintMeta.withPaintMatrix(canvas, () {
       _paintXAdsorb(canvas, paintMeta, controlElementBounds);
       _paintYAdsorb(canvas, paintMeta, controlElementBounds);
+      _paintRotateAdsorb(
+        canvas,
+        paintMeta,
+        controlElement,
+        controlElementBounds,
+      );
     });
   }
 
@@ -204,6 +209,42 @@ class ElementAdsorbControl
     }
   }
 
+  /// 绘制旋转的吸附线
+  void _paintRotateAdsorb(
+    Canvas canvas,
+    PaintMeta paintMeta,
+    ElementPainter? controlElement,
+    Rect controlElementBounds,
+  ) {
+    final rotateRefValue = _rotateAdsorbRefValue;
+    final angle = rotateRefValue?.refValue;
+    if (angle != null) {
+      final maxSize = maxOf(
+        controlElementBounds.width,
+        controlElementBounds.height,
+      );
+      final left = controlElementBounds.cx - maxSize * 2;
+      final right = controlElementBounds.cx + maxSize * 2;
+      final y = controlElementBounds.cy;
+
+      //绘制吸附线
+      final jd = (angle /*+ (controlElement?.elementAngle ?? 0)*/ ).jd;
+      /*assert(() {
+        l.d("绘制角度:$jd° ${angle.jd}°");
+        return true;
+      }());*/
+      canvas.withRotate(jd, () {
+        canvas.drawLine(
+          Offset(left, y),
+          Offset(right, y),
+          Paint()
+            ..color = canvasStyle.adsorbLineColor
+            ..strokeWidth = 1 / paintMeta.canvasScale,
+        );
+      }, anchor: controlElementBounds.center);
+    }
+  }
+
   /// 初始化吸附参数/参考值信息
   /// [CanvasElementControlManager.onHandleControlStateChanged] 驱动
   @callPoint
@@ -231,6 +272,12 @@ class ElementAdsorbControl
         includeCenterLine: includeCenterLine,
       );
       //debugger();
+    } else if (controlType == .rotate) {
+      //旋转时也支持吸附
+      _initRotateRefValue(
+        controlElement: controlElement,
+        includeElement: includeElement,
+      );
     } else {
       assert(() {
         l.d("不支持吸附的控制行为[$controlType]");
@@ -246,8 +293,10 @@ class ElementAdsorbControl
     //debugger();
     _xAdsorbRefValue = null;
     _yAdsorbRefValue = null;
+    _rotateAdsorbRefValue = null;
     _xRefValueList.clear();
     _yRefValueList.clear();
+    _rotateRefValueList.clear();
   }
 
   /// 查找元素x轴上的吸附参考值
@@ -626,9 +675,11 @@ class ElementAdsorbControl
   AdsorbRefValue? _yAdsorbRefValue;
 
   /// x轴需要查找的参考值集合
+  /// - [ElementAdsorbControl.dispose]
   final List<AdsorbRefValue> _xRefValueList = [];
 
   /// y轴需要查找的参考值集合
+  /// - [ElementAdsorbControl.dispose]
   final List<AdsorbRefValue> _yRefValueList = [];
 
   /// 开始控制时元素边界
@@ -876,10 +927,147 @@ class ElementAdsorbControl
   }
 
   //endregion --辅助--
+
+  //region --旋转吸附--
+
+  /// 旋转需要查找的参考值集合
+  /// - 弧度值
+  /// - [ElementAdsorbControl.dispose]
+  final List<AdsorbRefValue> _rotateRefValueList = [];
+
+  /// 上一次旋转的吸附值
+  AdsorbRefValue? _rotateAdsorbRefValue;
+
+  /// 初始化旋转吸附的参考值
+  void _initRotateRefValue({
+    ElementPainter? controlElement,
+    //--
+    bool includeElement = true,
+  }) {
+    _rotateRefValueList.clear();
+    for (var i = 0; i < 360; i++) {
+      if (i % 15 == 0) {
+        _rotateRefValueList.add(
+          AdsorbRefValue(
+            refType: .rotate,
+            refValue: i.hd,
+            refElement: null,
+            refBounds: null,
+          ),
+        );
+      }
+    }
+    // 要排除的元素
+    final exclude = [
+      if (controlElement is ElementSelectComponent) ...?controlElement.children,
+      if (controlElement is! ElementSelectComponent) controlElement,
+    ];
+    //计算需要吸附的元素
+    if (includeElement) {
+      for (final element in canvasElementManager.elements) {
+        if (!element.isVisible /*元素不可见*/ ||
+            exclude.contains(element) /*需要排除元素*/ ||
+            !element.isVisibleInCanvasBox(canvasViewBox) /*元素不在画布内*/ ) {
+          continue;
+        }
+        element.elementAngle?.let((it) {
+          _rotateRefValueList.add(
+            AdsorbRefValue(
+              refType: .rotate,
+              refValue: it,
+              refElement: element,
+              refBounds: null,
+            ),
+          );
+        });
+      }
+    }
+  }
+
+  /// 查找元素对应的旋转吸附值
+  /// - [elementStartAngle] 元素开始的角度, 弧度值
+  /// - [angle] 当前的角度, 弧度值
+  AdsorbRefValue? findElementRotateAdsorbRefValue(
+    double? elementStartAngle,
+    double? angle,
+  ) {
+    elementStartAngle ??= 0;
+    if (angle != null) {
+      if (_rotateAdsorbRefValue != null) {
+        //之前已有吸附
+        final da =
+            _rotateAdsorbRefValue!.refValue - (angle - elementStartAngle);
+        if (da.abs() < canvasStyle.adsorbRotateEscapeThreshold) {
+          // 吸附
+          return _rotateAdsorbRefValue;
+        }
+        _rotateAdsorbRefValue = null;
+      }
+
+      final refValue = _findMinRefValue(
+        _rotateRefValueList,
+        angle.sanitizeRadians,
+        includeEqual: true,
+        includeLess: true,
+        includeGreater: true,
+        minThreshold: canvasStyle.adsorbRotateEscapeThreshold,
+      );
+      if (refValue != null) {
+        if (_rotateAdsorbRefValue == null) {
+          _rotateAdsorbRefValue = refValue;
+        } else {
+          final da = _rotateAdsorbRefValue!.refValue - refValue.refValue;
+          if (da.abs() < canvasStyle.adsorbRotateEscapeThreshold) {
+            // 吸附
+          } else {
+            _rotateAdsorbRefValue = refValue;
+          }
+        }
+      }
+      return _rotateAdsorbRefValue;
+    }
+    return null;
+  }
+
+  /// 查找旋转的吸附值
+  /// - [angle] 当前的角度, 弧度值
+  /// @return 找到与[angle]最接近的吸附值
+  AdsorbRefValue? findRotateAdsorbRefValue(double angle) {
+    return _findMinRefValue(
+      _rotateRefValueList,
+      angle,
+      includeEqual: true,
+      includeLess: true,
+      includeGreater: true,
+    );
+  }
+
+  //endregion --旋转吸附--
 }
 
 /// 引用值的类型, 表示对齐目标的什么位置
-enum RefValueType { none, left, top, center, right, bottom }
+enum RefValueType {
+  /// 无
+  none,
+
+  /// 左
+  left,
+
+  /// 上
+  top,
+
+  /// 中心
+  center,
+
+  /// 右
+  right,
+
+  /// 下
+  bottom,
+
+  /// 旋转
+  rotate,
+}
 
 /// 吸附参考值结构
 class AdsorbRefValue {
@@ -888,6 +1076,8 @@ class AdsorbRefValue {
   final RefValueType refType;
 
   /// 场景中的参考值, 这个值通常也是用来吸附的值
+  /// - 单位是dp
+  /// - 旋转值, 则是弧度
   @dp
   @sceneCoordinate
   final double refValue;

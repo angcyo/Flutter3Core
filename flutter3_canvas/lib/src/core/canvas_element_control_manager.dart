@@ -189,6 +189,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           _paintControlRotateInfo(
             canvas,
             paintMeta,
+            elementSelectComponent,
             elementSelectComponent.paintProperty,
           );
         } else if (_paintInfoType == .location) {
@@ -290,7 +291,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 根据选中元素的状态, 重置绘制信息类型
   @flagProperty
   void resetPaintInfoType() {
-    updatePaintInfoType(PaintInfoType.size);
+    updatePaintInfoType(.size);
   }
 
   /// 绘制选中元素的控制信息
@@ -401,10 +402,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   void _paintControlRotateInfo(
     Canvas canvas,
     PaintMeta paintMeta,
+    ElementPainter painter,
     PaintProperty? paintProperty,
   ) {
     paintProperty?.let((it) {
-      final text = '${it.angle.jd.sanitizeDegrees.toDigits()}°';
+      final text =
+          '${(painter.elementAngle ?? it.angle).jd.sanitizeDegrees.toDigits()}°';
       _paintControlInfo(canvas, paintMeta, paintProperty, text);
     });
   }
@@ -484,12 +487,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
 
     //更新绘制信息
     final controlType = control.controlType;
-    if (state == ControlStateEnum.start) {
-      if (controlType == ControlTypeEnum.rotate) {
-        updatePaintInfoType(PaintInfoType.rotate);
-      } else if (controlType == ControlTypeEnum.translate) {
+    if (state == .start) {
+      if (controlType == .rotate) {
+        updatePaintInfoType(.rotate);
+      } else if (controlType == .translate) {
         //按下时, 就显示元素的位置信息
-        updatePaintInfoType(PaintInfoType.location);
+        updatePaintInfoType(.location);
         //关闭双击缩放画布的检查
         canvasDelegate
                 .canvasEventManager
@@ -497,8 +500,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
                 .isDoubleFirstTouch =
             true;
       }
-    } else if (state == ControlStateEnum.end) {
-      if (controlType == ControlTypeEnum.rotate) {
+    } else if (state == .end) {
+      if (controlType == .rotate) {
         //旋转结束之后
         if (enableResetElementAngle) {
           //更新group中的group旋转属性
@@ -521,14 +524,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     //初始化智能吸附
     if (elementAdsorbControl.isCanvasComponentEnable) {
       //激活了吸附
-      if (controlElement != null &&
-          (state == ControlStateEnum.start ||
-              state == ControlStateEnum.update)) {
+      if (controlElement != null && (state == .start || state == .update)) {
         elementAdsorbControl.initAdsorbRefValueList(
           controlType,
           controlElement: controlElement,
         );
-      } else if (state == ControlStateEnum.end) {
+      } else if (state == .end) {
         elementAdsorbControl.dispose(controlType);
       }
     }

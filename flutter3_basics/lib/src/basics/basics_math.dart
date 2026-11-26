@@ -97,6 +97,7 @@ double $a(double x1, double y1, double x2, double y2) {
 /// [sp1].[sp2] 第二根线的2个点
 /// - [$a]
 /// - [angleBetween]
+/// @return 夹角 弧度
 double angleBetween(Offset fp1, Offset fp2, Offset sp1, Offset sp2) {
   double angle1 = math.atan2(fp2.dy - fp1.dy, fp2.dx - fp1.dx);
   double angle2 = math.atan2(sp2.dy - sp1.dy, sp2.dx - sp1.dx);

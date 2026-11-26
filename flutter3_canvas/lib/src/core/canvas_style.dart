@@ -403,6 +403,10 @@ class CanvasStyle {
   @viewCoordinate
   double adsorbEscapeThreshold = 10;
 
+  /// 旋转逃离吸附阈值, 当手指旋转移动的距离>=此值时, 逃离吸附
+  /// 弧度
+  double adsorbRotateEscapeThreshold = 5.hd;
+
   //endregion adsorb
 
   //region method
