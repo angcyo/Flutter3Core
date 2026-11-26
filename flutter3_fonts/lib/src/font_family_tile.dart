@@ -66,8 +66,9 @@ class _FontFamilyTileState extends State<FontFamilyTile> {
   @override
   void initState() {
     super.initState();
-    if (widget.fontFamilyMeta != null) {
-      $fontsManager.loadFontFamily(widget.fontFamilyMeta!).get((value, error) {
+    final fontFamilyMeta = widget.fontFamilyMeta;
+    if (fontFamilyMeta != null) {
+      $fontsManager.loadFontFamily(fontFamilyMeta).get((value, error) {
         if (value is bool && value) {
           updateState();
         }

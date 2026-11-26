@@ -6,6 +6,7 @@ part of '../flutter3_fonts.dart';
 /// @date 2024/06/15
 ///
 /// 字体描述元数据
+/// - [variantList] 字体变种列表
 class FontFamilyMeta with Equatable {
   /// 字体名称, 不包含字宽和字体的样式
   /// 用来显示的字体名称

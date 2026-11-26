@@ -465,8 +465,8 @@ BoxDecoration lineaGradientDecoration(
   BuildContext? context,
   Color? fillColor,
   double borderRadius = 0,
-  AlignmentGeometry begin = Alignment.centerLeft,
-  AlignmentGeometry end = Alignment.centerRight,
+  AlignmentGeometry begin = .centerLeft,
+  AlignmentGeometry end = .centerRight,
 }) {
   final color = fillColor ?? GlobalTheme.of(context).accentColor;
   return BoxDecoration(
