@@ -252,7 +252,7 @@ class CanvasElementManager with DiagnosticableTreeMixin, DiagnosticsMixin {
     //画布菜单
     if (canvasElementControlManager.enableElementControl ||
         canvasStyle.enableCanvasMenu == true) {
-      if (event.isMouseRightUp) {
+      if (event.isMouseRightDown) {
         //鼠标右键点击, 显示菜单
         final localPosition = event.localPosition;
         final canvasMenuManager = canvasDelegate.canvasMenuManager;

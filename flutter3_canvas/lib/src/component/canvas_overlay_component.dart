@@ -317,6 +317,8 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   @output
   bool _isPointerDown = false;
 
+  /// - [handlePainterPointerEvent] 手势事件
+  /// - [handleKeyEvent] 按键事件
   @override
   bool handlePainterPointerEvent(@viewCoordinate PointerEvent event) {
     //l.d("handleEvent->$event");
@@ -329,16 +331,21 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
     if (_isEditMode) {
       //二次编辑模式
       if (event.isPointerDown) {
-        final find = findPoint(point);
-        canvasDelegate?.removeCursorStyle(
-          "cursor_pen",
-          SystemMouseCursors.click,
-        );
-        if (find != null) {
-          canvasDelegate?.addCursorStyle(
+        if (event.isMouseRightDown) {
+          //鼠标右键
+          _handleOutputAction();
+        } else {
+          final find = findPoint(point);
+          canvasDelegate?.removeCursorStyle(
             "cursor_pen",
             SystemMouseCursors.click,
           );
+          if (find != null) {
+            canvasDelegate?.addCursorStyle(
+              "cursor_pen",
+              SystemMouseCursors.click,
+            );
+          }
         }
       } else if (event.isPointerMove) {
         updateEditPoint(point);
@@ -356,10 +363,15 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
         _hoverPoint = Point(point.x, point.y, null);
         _updatePoint(point);
       } else if (event.isPointerDown) {
-        _hoverPoint = null;
-        _isPointerDown = true;
-        _addPoint(point);
-        _updatePoint(point);
+        if (event.isMouseRightDown) {
+          //鼠标右键
+          _handleOutputAction();
+        } else if (event.isMouseLeftDown) {
+          _hoverPoint = null;
+          _isPointerDown = true;
+          _addPoint(point);
+          _updatePoint(point);
+        }
       } else if (event.isPointerMove) {
         _updatePoint(point);
       } else if (event.isPointerFinish) {
@@ -376,26 +388,33 @@ class CanvasPenOverlayComponent extends CanvasOverlayComponent {
   @output
   bool _isEditMode = false;
 
+  /// - [handlePainterPointerEvent] 手势事件
+  /// - [handleKeyEvent] 按键事件
   @override
   bool handleKeyEvent(KeyEvent event) {
     //l.d("handleKeyEvent->$event");
-    if (event.isKeyDown && event.isEscKey) {
-      if (_isEditMode) {
-        //如果已经是编辑模式, 则输出数据并上屏
-        //l.d(outputSvgPath);
-        handleOutputAction();
-      } else {
-        _hoverPoint = null;
-        _isPointerDown = false;
-        _isEditMode = true;
-        canvasDelegate?.removeCursorStyle(
-          "cursor_pen",
-          SystemMouseCursors.precise,
-        );
-        canvasDelegate?.addCursorStyle("cursor_pen", SystemMouseCursors.basic);
-      }
+    if (event.isKeyDown && (event.isEscKey || event.isEnterKey)) {
+      _handleOutputAction();
     }
     return true;
+  }
+
+  /// 处理输出行为
+  void _handleOutputAction() {
+    if (_isEditMode) {
+      //如果已经是编辑模式, 则输出数据并上屏
+      //l.d(outputSvgPath);
+      handleOutputAction();
+    } else {
+      _hoverPoint = null;
+      _isPointerDown = false;
+      _isEditMode = true;
+      canvasDelegate?.removeCursorStyle(
+        "cursor_pen",
+        SystemMouseCursors.precise,
+      );
+      canvasDelegate?.addCursorStyle("cursor_pen", SystemMouseCursors.basic);
+    }
   }
 
   //MARK: - op

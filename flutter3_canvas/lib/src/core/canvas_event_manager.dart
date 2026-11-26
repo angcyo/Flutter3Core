@@ -151,7 +151,8 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
         }
       } else {
         //有覆盖层
-        overlayComponent.handlePainterPointerEvent(event);
+        final result = overlayComponent.handlePainterPointerEvent(event);
+        //no op
       }
     }
     //--canvasListeners
