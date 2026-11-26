@@ -42,9 +42,9 @@ class TextElementPainter extends ElementPainter {
   }
 
   @override
-  Path? get elementOutputPath => elementOutputPathList?.reduce((path, element) {
-    path.addPath(element, .zero);
-    return path;
+  Path? get elementOutputPath => elementOutputPathList?.reduce((prev, path) {
+    prev.addPath(path, .zero);
+    return prev;
   });
 
   /// 进行了矩阵变换后的[vectorCharPathList]路径数据

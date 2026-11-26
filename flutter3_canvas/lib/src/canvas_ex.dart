@@ -8,6 +8,7 @@ part of '../flutter3_canvas.dart';
 /// 画布扩展方法
 /// `on List<ElementPainter>`
 extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
+  /// 转换为 [List<ElementPainter>]
   List<ElementPainter> get listPainter {
     if (this is List<ElementPainter>) {
       return this as List<ElementPainter>;
@@ -136,6 +137,17 @@ extension CanvasElementPainterIterableEx on Iterable<ElementPainter> {
       }
     }
     return result;
+  }
+
+  /// 所有选中的元素是否都是同一种类型
+  bool isAllSameElementType(bool Function(ElementPainter element) test) {
+    return getAllSingleElement().all(test) ?? false;
+  }
+
+  /// 所有元素是否都是图片元素
+  bool isAllImageElement() {
+    final elementList = getAllSingleElement();
+    return elementList.all((e) => e is ImageElementPainter);
   }
 
   /// 所有元素是否都是矢量元素
