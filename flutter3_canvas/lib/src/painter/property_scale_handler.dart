@@ -9,25 +9,31 @@ part of '../../flutter3_canvas.dart';
 /// 当元素的缩放属性发生变化时，将缩放属性直接作用到宽高中, 并实时改变原始数据
 ///
 mixin PropertyScaleHandler on ElementPainter {
+  /// 是否启用缩放属性处理
+  /// - [onSelfScalePropertyChanged]
+  bool get isScalePropertyEnabled => true;
+
   /// [ElementPainter.updatePaintProperty]驱动
   @callPoint
   void onUpdatePaintProperty(PaintProperty value) {
-    final sx = value.scaleX;
-    final sy = value.scaleY;
-    if (sx != 1 || sy != 1) {
-      // 缩放属性不为1时，将缩放属性作用到宽高中
-      final beforeBounds = value.paintBounds;
-      value.width *= sx;
-      value.height *= sy;
-      value.scaleX = 1;
-      value.scaleY = 1;
-      onSelfScalePropertyChanged(value, fromSx: sx, fromSy: sy);
-      final afterBounds = value.paintBounds;
-      value.left += (beforeBounds.left - afterBounds.left);
-      value.top += (beforeBounds.top - afterBounds.top);
-      /*l.d(
+    if (isScalePropertyEnabled) {
+      final sx = value.scaleX;
+      final sy = value.scaleY;
+      if (sx != 1 || sy != 1) {
+        // 缩放属性不为1时，将缩放属性作用到宽高中
+        final beforeBounds = value.paintBounds;
+        value.width *= sx;
+        value.height *= sy;
+        value.scaleX = 1;
+        value.scaleY = 1;
+        onSelfScalePropertyChanged(value, fromSx: sx, fromSy: sy);
+        final afterBounds = value.paintBounds;
+        value.left += (beforeBounds.left - afterBounds.left);
+        value.top += (beforeBounds.top - afterBounds.top);
+        /*l.d(
         "left: ${beforeBounds.left} -> ${afterBounds.left} top: ${beforeBounds.top} -> ${afterBounds.top}",
       );*/
+      }
     }
   }
 
