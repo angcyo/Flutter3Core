@@ -432,7 +432,7 @@ typedef TabEntryWidgetBuilder<T> =
     Widget Function(
       TabEntryInfo tabEntry,
       BuildContext context,
-      Widget widget,
+      Widget? child,
       int index,
       T data,
       bool? isSelected,
@@ -545,8 +545,7 @@ class TabEntryInfo with Equatable {
     return tabInfoLive.buildFn(() {
       final child =
           tabWidget ??
-          widgetOf(context, tabInfoLive.value, tryTextWidget: true) ??
-          empty;
+          widgetOf(context, tabInfoLive.value, tryTextWidget: true);
       if (tabBuilder != null) {
         return tabBuilder!.call(
           this,
