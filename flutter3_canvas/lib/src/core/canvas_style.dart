@@ -238,6 +238,8 @@ class CanvasStyle {
   bool paintInfoShowUnitSuffix = false;
 
   /// 绘制信息是否单行格式
+  /// - 大小w/h信息
+  /// - 位置x/y信息
   bool paintInfoSingleLine = false;
 
   /// 是否绘制选中元素的边界矩形

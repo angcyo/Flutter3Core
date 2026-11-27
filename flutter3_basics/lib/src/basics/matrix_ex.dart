@@ -133,7 +133,9 @@ extension Matrix4Ex on vector.Matrix4 {
   }
 
   /// 返回一个新的矩阵
-  Matrix4 postConcatIt(Matrix4 other) => Matrix4.copy(this)..postConcat(other);
+  Matrix4 postConcatIt(Matrix4? other) =>
+      other == null ? this : Matrix4.copy(this)
+        ..postConcat(other);
 
   /// 平移到指定位置
   Matrix4 translateTo({ui.Offset? offset, double? x, double? y, double? z}) {

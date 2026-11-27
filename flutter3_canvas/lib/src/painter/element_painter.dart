@@ -498,8 +498,8 @@ class ElementPainter extends IElementPainter {
     _paintProperty = value;
 
     //handler
-    if (value != null && this is PropertyScaleHandler) {
-      (this as PropertyScaleHandler).onUpdatePaintProperty(value);
+    if (value != null && this is PropertyScaleHandlerMixin) {
+      (this as PropertyScaleHandlerMixin).onUpdatePaintProperty(value);
     }
 
     if (fromUndoType == .undo || fromUndoType == .redo) {
@@ -1237,14 +1237,14 @@ class ElementPainter extends IElementPainter {
   /// 当前选中的元素是否支持指定的控制点
   /// [ControlTypeEnum]
   bool isElementSupportControl(ControlTypeEnum type) {
-    if (type == ControlTypeEnum.lock) {
+    if (type == .lock) {
       final bounds = elementsBounds;
       if (bounds?.width == 0 || bounds?.height == 0) {
         return false;
       }
-    } else if (type == ControlTypeEnum.width) {
+    } else if (type == .width) {
       return (elementsBounds?.width ?? 0).notEqualTo(0);
-    } else if (type == ControlTypeEnum.height) {
+    } else if (type == .height) {
       return (elementsBounds?.height ?? 0).notEqualTo(0);
     }
     return true;
@@ -2477,7 +2477,7 @@ class ElementGroupPainter extends ElementPainter {
     UndoType? fromUndoType,
     String? debugLabel,
   }) {
-    final beforeBounds = elementsBounds;
+    //final beforeBounds = elementsBounds;
     double angle = paintProperty?.angle ?? 0; //弧度
     anchor ??=
         (anchorAlignment != null

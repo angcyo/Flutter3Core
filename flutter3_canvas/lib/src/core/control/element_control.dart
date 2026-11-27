@@ -35,6 +35,9 @@ enum ControlTypeEnum {
 
   /// 控制行为: 显示菜单
   menu,
+
+  /// 控制行为: 覆盖层
+  overlay,
 }
 
 /// [CanvasElementControlManager]
@@ -113,6 +116,7 @@ class BaseControl
 
   BaseControl(this.canvasElementControlManager, this.controlType);
 
+  /// - [CanvasElementControlManager.paint] 驱动
   @entryPoint
   void paintControl(Canvas canvas, PaintMeta paintMeta) {
     if (controlPainter != null || controlPainterFn != null) {
@@ -207,15 +211,20 @@ class BaseControl
   void onFirstPointerTap(PointerEvent event) {}
 
   /// 重写此方法, 更新控制点的位置
+  /// - [selectComponentProperty] :null 表示未选中元素
   @overridePoint
-  void updatePaintControlBounds(PaintProperty selectComponentProperty) {
-    if (controlType == ControlTypeEnum.delete) {
+  void updatePaintControlBounds(PaintProperty? selectComponentProperty) {
+    if (selectComponentProperty == null) {
+      controlBounds = null;
+      return;
+    }
+    if (controlType == .delete) {
       controlBounds = getLTControlBounds(selectComponentProperty);
-    } else if (controlType == ControlTypeEnum.rotate) {
+    } else if (controlType == .rotate) {
       controlBounds = getRTControlBounds(selectComponentProperty);
-    } else if (controlType == ControlTypeEnum.scale) {
+    } else if (controlType == .scale) {
       controlBounds = getRBControlBounds(selectComponentProperty);
-    } else if (controlType == ControlTypeEnum.lock) {
+    } else if (controlType == .lock) {
       controlBounds = getLBControlBounds(selectComponentProperty);
     }
   }
@@ -533,7 +542,7 @@ class BaseControl
 /// 删除元素控制
 class DeleteControl extends BaseControl {
   DeleteControl(CanvasElementControlManager canvasElementControlManager)
-    : super(canvasElementControlManager, ControlTypeEnum.delete) {
+    : super(canvasElementControlManager, .delete) {
     loadControlPicture('canvas_delete_point.svg');
   }
 
@@ -556,7 +565,7 @@ class RotateControl extends BaseControl {
       adsorbControl.isCanvasComponentEnable && !adsorbControl.isIgnoreAdsorb;
 
   RotateControl(CanvasElementControlManager canvasElementControlManager)
-    : super(canvasElementControlManager, ControlTypeEnum.rotate) {
+    : super(canvasElementControlManager, .rotate) {
     loadControlPicture('canvas_rotate_point.svg');
   }
 
@@ -633,7 +642,7 @@ class RotateControl extends BaseControl {
 /// 缩放元素控制
 class ScaleControl extends BaseControl {
   ScaleControl(CanvasElementControlManager canvasElementControlManager)
-    : super(canvasElementControlManager, ControlTypeEnum.scale) {
+    : super(canvasElementControlManager, .scale) {
     loadControlPicture('canvas_scale_point.svg');
   }
 
@@ -816,7 +825,7 @@ class LockControl extends BaseControl {
   PictureInfo? _unlockPictureInfo;
 
   LockControl(CanvasElementControlManager canvasElementControlManager)
-    : super(canvasElementControlManager, ControlTypeEnum.lock) {
+    : super(canvasElementControlManager, .lock) {
     loadControlPicture('canvas_lock_point.svg', (value) {
       _lockPictureInfo = value;
       if (isLock) {
@@ -857,7 +866,7 @@ class LockControl extends BaseControl {
 class TranslateControl extends BaseControl
     with DoubleTapDetectorMixin, TouchDetectorMixin {
   TranslateControl(CanvasElementControlManager canvasElementControlManager)
-    : super(canvasElementControlManager, ControlTypeEnum.translate);
+    : super(canvasElementControlManager, .translate);
 
   //--
 

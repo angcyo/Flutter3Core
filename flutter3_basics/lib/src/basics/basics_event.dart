@@ -628,18 +628,21 @@ mixin IHandlePointerEventMixin {
   //---
 
   /// 只回调第一个点的事件
+  /// - [dispatchPointerEvent] 驱动
   void dispatchFirstPointerEvent(
     PointerDispatchMixin dispatch,
     PointerEvent event,
   ) {}
 
   /// 只回调第一个点的事件
+  /// - [interceptPointerEvent] 驱动
   bool onInterceptFirstPointerEvent(
     PointerDispatchMixin dispatch,
     PointerEvent event,
   ) => false;
 
   /// 只回调第一个点的事件
+  /// - [onPointerEvent] 驱动
   bool onFirstPointerEvent(PointerDispatchMixin dispatch, PointerEvent event) =>
       false;
 

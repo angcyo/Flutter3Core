@@ -93,6 +93,12 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   /// 元素智能吸附
   late ElementAdsorbControl elementAdsorbControl = ElementAdsorbControl(this);
 
+  /// 额外的控制覆盖层
+  /// - 支持元素自定义的控制点
+  late ElementOverlayControl elementOverlayControl = ElementOverlayControl(
+    this,
+  );
+
   //--get--
 
   CanvasDelegate get canvasDelegate => canvasElementManager.canvasDelegate;
@@ -157,6 +163,8 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   bool get paintInfoSingleLine =>
       canvasDelegate.canvasStyle.paintInfoSingleLine;
 
+  /// 控制点的绘制由[paint]方法驱动
+  /// 事件由[PointerDispatchMixin]驱动
   CanvasElementControlManager(this.canvasElementManager) {
     addHandleEventClient(elementSelectComponent);
     addHandleEventClient(deleteControl);
@@ -164,6 +172,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     addHandleEventClient(scaleControl);
     addHandleEventClient(lockControl);
     addHandleEventClient(translateControl);
+    addHandleEventClient(elementOverlayControl);
   }
 
   //region --paint/event--
@@ -200,32 +209,45 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
           );
         }
       }
-      if (enableElementControl && !isPointerDownElement) {
-        //绘制控制点
-        if (deleteControl.isCanvasComponentEnable &&
-            elementSelectComponent.isElementSupportControl(
-              deleteControl.controlType,
-            )) {
-          deleteControl.paintControl(canvas, paintMeta);
+      //控制点
+      if (enableElementControl) {
+        if (isPointerDownElement) {
+          //按下时, 不绘制控制点, 防止视觉干扰
+        } else {
+          //无手势按下时, 绘制控制点
+          if (deleteControl.isCanvasComponentEnable &&
+              elementSelectComponent.isElementSupportControl(
+                deleteControl.controlType,
+              )) {
+            deleteControl.paintControl(canvas, paintMeta);
+          }
+          if (rotateControl.isCanvasComponentEnable &&
+              elementSelectComponent.isElementSupportControl(
+                rotateControl.controlType,
+              )) {
+            rotateControl.paintControl(canvas, paintMeta);
+          }
+          if (scaleControl.isCanvasComponentEnable &&
+              elementSelectComponent.isElementSupportControl(
+                scaleControl.controlType,
+              )) {
+            scaleControl.paintControl(canvas, paintMeta);
+          }
+          if (lockControl.isCanvasComponentEnable &&
+              elementSelectComponent.isElementSupportControl(
+                lockControl.controlType,
+              )) {
+            lockControl.paintControl(canvas, paintMeta);
+          }
+          if (elementOverlayControl.isCanvasComponentEnable &&
+              elementSelectComponent.isElementSupportControl(
+                elementOverlayControl.controlType,
+              )) {
+            //--
+            elementOverlayControl.paintControl(canvas, paintMeta);
+          }
         }
-        if (rotateControl.isCanvasComponentEnable &&
-            elementSelectComponent.isElementSupportControl(
-              rotateControl.controlType,
-            )) {
-          rotateControl.paintControl(canvas, paintMeta);
-        }
-        if (scaleControl.isCanvasComponentEnable &&
-            elementSelectComponent.isElementSupportControl(
-              scaleControl.controlType,
-            )) {
-          scaleControl.paintControl(canvas, paintMeta);
-        }
-        if (lockControl.isCanvasComponentEnable &&
-            elementSelectComponent.isElementSupportControl(
-              lockControl.controlType,
-            )) {
-          lockControl.paintControl(canvas, paintMeta);
-        }
+        //--
       }
       //绘制菜单, 这里绘制的菜单无法再坐标轴上
       /*if (elementMenu.isCanvasComponentEnable &&
@@ -665,20 +687,23 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
   //endregion --回调处理--
 
   /// 仅更新控制点的位置
+  /// - [CanvasDelegate.dispatchCanvasViewBoxChanged] 会触发.
+  /// - [ElementSelectComponent] 中会触发
   @property
   void updateControlBounds() {
     if (enableElementControl && isSelectedElement) {
-      elementSelectComponent.paintProperty?.let((it) {
-        deleteControl.updatePaintControlBounds(it);
-        rotateControl.updatePaintControlBounds(it);
-        scaleControl.updatePaintControlBounds(it);
-        lockControl.updatePaintControlBounds(it);
-      });
+      final paintProperty = elementSelectComponent.paintProperty;
+      deleteControl.updatePaintControlBounds(paintProperty);
+      rotateControl.updatePaintControlBounds(paintProperty);
+      scaleControl.updatePaintControlBounds(paintProperty);
+      lockControl.updatePaintControlBounds(paintProperty);
+      elementOverlayControl.updatePaintControlBounds(paintProperty);
     } else {
-      deleteControl.controlBounds = null;
-      rotateControl.controlBounds = null;
-      scaleControl.controlBounds = null;
-      lockControl.controlBounds = null;
+      deleteControl.updatePaintControlBounds(null);
+      rotateControl.updatePaintControlBounds(null);
+      scaleControl.updatePaintControlBounds(null);
+      lockControl.updatePaintControlBounds(null);
+      elementOverlayControl.updatePaintControlBounds(null);
     }
     if (elementMenuControl.isCanvasComponentEnable) {
       elementMenuControl.updateMenuLayoutBounds(elementSelectComponent);

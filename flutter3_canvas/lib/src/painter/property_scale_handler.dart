@@ -8,7 +8,7 @@ part of '../../flutter3_canvas.dart';
 ///
 /// 当元素的缩放属性发生变化时，将缩放属性直接作用到宽高中, 并实时改变原始数据
 ///
-mixin PropertyScaleHandler on ElementPainter {
+mixin PropertyScaleHandlerMixin on ElementPainter {
   /// 是否启用缩放属性处理
   /// - [onSelfScalePropertyChanged]
   bool get isScalePropertyEnabled => true;
