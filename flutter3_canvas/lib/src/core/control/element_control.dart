@@ -469,9 +469,8 @@ class BaseControl
   @supportUndo
   void endControlTarget() {
     final element = _targetElement;
-
     canvasElementControlManager.onHandleControlStateChanged(
-      state: ControlStateEnum.end,
+      state: .end,
       control: this,
       controlElement: element,
     );

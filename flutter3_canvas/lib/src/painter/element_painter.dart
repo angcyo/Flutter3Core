@@ -495,7 +495,7 @@ class ElementPainter extends IElementPainter {
   }) {
     final old = _paintProperty;
     _paintProperty = value;
-    if (fromUndoType == UndoType.undo || fromUndoType == UndoType.redo) {
+    if (fromUndoType == .undo || fromUndoType == .redo) {
       //撤销重做时, 不触发通知
       notify ??= false;
     }
