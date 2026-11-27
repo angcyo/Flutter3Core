@@ -121,7 +121,7 @@ class CanvasShortcutHelper {
       isDefault: true,
       meta: isMacOS,
       control: !isMacOS,
-      shift: !isMacOS,
+      shift: true,
     ),
     ShortcutConfigBean.fromKey(
       id: CanvasIntentActions.copyElement.id,
