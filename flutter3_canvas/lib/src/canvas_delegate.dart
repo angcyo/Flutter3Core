@@ -1102,7 +1102,7 @@ class CanvasDelegate with Diagnosticable implements TickerProvider {
     if (old != to) {
       if (to == .dragMode) {
         //进入拖拽模式, 需要取消当前所有手势事件, 否则会导致手势异常冲突
-        canvasEventManager.cancelDispatchEvent();
+        canvasEventManager.cancelDispatchPointerEvent();
       }
       canvasStyleModeValue.value = to;
       dispatchCanvasStyleModeChanged(old, to);

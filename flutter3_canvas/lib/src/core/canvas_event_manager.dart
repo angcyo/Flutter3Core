@@ -72,7 +72,9 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
     addHandleEventClient(canvasBoundsEventComponent);
   }
 
-  /// [event] 最原始的事件参数, 未经过加工处理
+  /// [event] 最原始的手势事件参数, 未经过加工处理
+  /// - 手势事件
+  /// - 悬停事件
   /// [CanvasDelegate.handlePointerEvent] 驱动 -> [handlePointerEvent]
   @entryPoint
   void handlePointerEvent(@viewCoordinate PointerEvent event) {
@@ -316,13 +318,13 @@ class CanvasEventManager with Diagnosticable, PointerDispatchMixin {
 
   /// 临时取消事件调度派发, 抬手后恢复
   ///
-  /// - [cancelDispatchEvent]
+  /// - [cancelDispatchPointerEvent]
   @flagProperty
   bool _cancelDispatchEvent = false;
 
-  /// 临时取消所有事件的派发
+  /// 临时取消所有手势事件的派发
   @callPoint
-  void cancelDispatchEvent([PointerEvent? seedEvent]) {
+  void cancelDispatchPointerEvent([PointerEvent? seedEvent]) {
     seedEvent ??= _pointerDownEvent;
     if (seedEvent != null) {
       final cancelEvent = createPointerCancelEvent(seedEvent);
