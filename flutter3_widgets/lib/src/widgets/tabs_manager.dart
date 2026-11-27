@@ -646,6 +646,11 @@ class TabsManagerWidget extends StatefulWidget {
   @defInjectMark
   final Decoration? tabSelectedDecoration;
 
+  /// 选中的颜色, [tabSelectedDecoration]的细分
+  /// - 同时也决定鼠标悬停的颜色
+  @defInjectMark
+  final Color? tabSelectedColor;
+
   /// 内容的背景装饰
   final Decoration? contentDecoration;
 
@@ -672,6 +677,7 @@ class TabsManagerWidget extends StatefulWidget {
     this.tabMinHeight = kTabsItemHeight,
     this.tabDecoration,
     this.tabSelectedDecoration,
+    this.tabSelectedColor,
     this.contentDecoration,
     //--
     this.onKeyEvent,
@@ -817,13 +823,19 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
   //MARK: - build
 
   /// 获取悬浮颜色
-  Color _getHoverColor(BuildContext context, GlobalTheme globalTheme) {
-    return globalTheme.itemWhiteSubBgColor.withAlpha(30);
+  Color _getHoverColor(
+    BuildContext context,
+    GlobalTheme globalTheme, {
+    int alpha = 30,
+  }) {
+    return (widget.tabSelectedColor ?? globalTheme.itemWhiteSubBgColor)
+        .withAlpha(alpha);
   }
 
   /// 创建标签列表
-  /// - [buildTabList] 创建标签列表
-  /// - [buildContentList] 创建内容列表
+  /// - [build]
+  ///   - [buildTabList] 创建标签列表
+  ///   - [buildContentList] 创建内容列表
   @callPoint
   WidgetList buildTabList(BuildContext context, GlobalTheme globalTheme) {
     final tabList = widget.controller.buildTabList(
@@ -847,7 +859,11 @@ class _TabsManagerWidgetState extends State<TabsManagerWidget>
                   ? widget.tabSelectedDecoration ??
                         fillDecoration(
                           radius: radius,
-                          color: _getHoverColor(context, globalTheme),
+                          color: _getHoverColor(
+                            context,
+                            globalTheme,
+                            alpha: 255,
+                          ),
                         )
                   : null,
             )
