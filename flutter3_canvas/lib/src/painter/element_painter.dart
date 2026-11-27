@@ -442,7 +442,8 @@ class ElementPainter extends IElementPainter {
 
   PaintProperty? get paintProperty => _paintProperty;
 
-  /// 请尽量使用[updatePainterPaintProperty]方法更新绘制属性信息
+  /// 请尽量使用[updatePaintProperty]方法更新绘制属性信息
+  /// - [updatePainterPaintProperty]
   set paintProperty(PaintProperty value) {
     _paintProperty = value;
   }
@@ -495,6 +496,12 @@ class ElementPainter extends IElementPainter {
   }) {
     final old = _paintProperty;
     _paintProperty = value;
+
+    //handler
+    if (value != null && this is PropertyScaleHandler) {
+      (this as PropertyScaleHandler).onUpdatePaintProperty(value);
+    }
+
     if (fromUndoType == .undo || fromUndoType == .redo) {
       //撤销重做时, 不触发通知
       notify ??= false;
@@ -503,7 +510,7 @@ class ElementPainter extends IElementPainter {
       dispatchSelfPaintPropertyChanged(
         old,
         value,
-        PainterPropertyType.paint,
+        .paint,
         fromObj,
         fromUndoType,
         debugLabel: debugLabel,
@@ -1271,7 +1278,7 @@ class ElementPainter extends IElementPainter {
       return true;
     }());*/
     debugger(when: !isIos && debugLabel != null);
-    if (propertyType == PainterPropertyType.paint) {
+    if (propertyType == .paint) {
       painterTouchSpotHandler?.parentMatrix = paintProperty?.operateMatrix;
     }
     parentGroupPainter?.onChildPaintPropertyChanged(
@@ -1331,7 +1338,7 @@ class ElementPainter extends IElementPainter {
       );
     });
     dispatchSelfElementRawChanged(
-      ElementDataType.size,
+      .size,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
@@ -1653,7 +1660,7 @@ class ElementPainter extends IElementPainter {
       );
     });
     dispatchSelfElementRawChanged(
-      ElementDataType.size,
+      .size,
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
@@ -2470,6 +2477,7 @@ class ElementGroupPainter extends ElementPainter {
     UndoType? fromUndoType,
     String? debugLabel,
   }) {
+    final beforeBounds = elementsBounds;
     double angle = paintProperty?.angle ?? 0; //弧度
     anchor ??=
         (anchorAlignment != null
@@ -2518,6 +2526,17 @@ class ElementGroupPainter extends ElementPainter {
         debugLabel: debugLabel,
       );
     });
+    //--
+    /*updatePaintPropertyFromChildren(fromObj: fromObj, fromUndoType: .redo);
+    final afterBounds = elementsBounds;
+    */ /*debugger(
+      when:
+      afterBounds?.left != beforeBounds?.left ||
+          afterBounds?.top != beforeBounds?.top,
+    );*/ /*
+    final tx = (afterBounds?.left ?? 0) - (beforeBounds?.left ?? 0);
+    final ty = (afterBounds?.top ?? 0) - (beforeBounds?.top ?? 0);
+    translateElementBy(tx: tx, ty: ty);*/
   }
 
   @override

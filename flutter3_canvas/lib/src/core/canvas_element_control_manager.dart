@@ -586,7 +586,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
         //no op
       }
     }
-    if (isSelectedElement && propertyType == PainterPropertyType.paint) {
+    if (isSelectedElement && propertyType == .paint) {
       if (element.isInElementSelectComponent /*属性变化的额元素是被选中的*/ &&
           (fromUndoType == null || fromUndoType.isUndoRedo) /*合规的操作*/ &&
           fromObj != rotateControl /*非来自旋转控制的操作*/ ) {
@@ -786,7 +786,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     Alignment? anchorAlignment,
     //--
     bool? isLockRatio,
-    UndoType undoType = UndoType.normal,
+    UndoType undoType = .normal,
     String? debugLabel,
     //--
     VoidAction? afterAction,
@@ -863,7 +863,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     Alignment? anchorAlignment,
     //--
     bool? isLockRatio,
-    UndoType undoType = UndoType.normal,
+    UndoType undoType = .normal,
     String? debugLabel,
     //--
     VoidAction? afterAction,
@@ -882,7 +882,7 @@ class CanvasElementControlManager with Diagnosticable, PointerDispatchMixin {
     );
     sx = limit[0];
     sy = limit[1];
-    if (undoType == UndoType.normal) {
+    if (undoType == .normal) {
       final undoStateStack = elementPainter.createStateStack();
       elementPainter.scaleElement(
         sx: sx,
@@ -1625,7 +1625,7 @@ class ElementSelectComponent extends ElementGroupPainter
       fromObj: fromObj,
       fromUndoType: fromUndoType,
     );
-    if (fromUndoType == UndoType.redo) {
+    if (fromUndoType == .redo) {
       //来自重做, 更新自身的属性
       canvasElementControlManager.updateControlBounds();
     }

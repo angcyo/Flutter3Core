@@ -58,6 +58,7 @@ part 'src/painter/loading_element_painter.dart';
 part 'src/painter/painter.dart';
 part 'src/painter/path_element_painter.dart';
 part 'src/painter/path_simulation_painter.dart';
+part 'src/painter/property_scale_handler.dart';
 part 'src/painter/text_element_painter.dart';
 part 'src/painter/widget_element_painter.dart';
 part 'src/tests/tests_canvas_follow.dart';
