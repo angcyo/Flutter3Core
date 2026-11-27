@@ -628,6 +628,7 @@ class CanvasScaleComponent extends BaseCanvasViewBoxEventComponent
       //拖拽模式/拖拽按键按下时, 不识别双击缩放操作
       return false;
     }
+
     if (event.isTouchEventKind ||
         (event.isMouseEventKind && lastDownButtons.isMouseLeft)) {
       final scale = doubleScaleValue;

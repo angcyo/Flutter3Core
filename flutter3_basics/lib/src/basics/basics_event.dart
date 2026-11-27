@@ -1160,8 +1160,9 @@ mixin DoubleTapDetectorMixin {
       if (isDoubleFirstTouch) {
         lastDownTime = DateTime.now();
         lastDownPoint = point;
-        lastDownButtons = event.buttons;
       }
+      //--鼠标按键
+      lastDownButtons = event.buttons;
     } else if (event.isPointerUp) {
       if (!isDoubleFirstTouch) {
         //debugger();
