@@ -495,6 +495,9 @@ class DesktopIconMenuTile extends StatefulWidget {
   /// 中间的图标
   final Widget? iconWidget;
 
+  /// 底部的文本
+  final String? label;
+
   //--
 
   final MainAxisAlignment? mainAxisAlignment;
@@ -555,6 +558,8 @@ class DesktopIconMenuTile extends StatefulWidget {
     this.autoCloseMenu = false,
     this.tooltip,
     this.shortcutId,
+    //--
+    this.label,
   });
 
   @override
@@ -593,6 +598,12 @@ class _DesktopIconMenuTileState extends State<DesktopIconMenuTile>
         .row(mainAxisAlignment: widget.mainAxisAlignment)!
         .colorFiltered(
           color: isEnableTap ? null : globalTheme.textDisableStyle.color,
+        )
+        .columnOf(
+          widget.label
+              ?.text(textStyle: globalTheme.textDesStyle, maxLines: 1)
+              .constrainedMax(maxWidth: 80)
+              .insets(h: kL),
         )
         .backgroundColor(
           isSelected ? globalTheme.hoverColor : Colors.transparent,
