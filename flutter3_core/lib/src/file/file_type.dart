@@ -162,9 +162,14 @@ extension MimeEx on String {
     return startsWith('file://');
   }
 
-  ///判断当前字符串是否是文件路径
+  ///判断当前字符串路径是否是文件路径
   bool get isFilePath {
     return File(this).existsSync();
+  }
+
+  /// 判断当前字符串路径是否是目录路径
+  bool get isDirectoryPath {
+    return Directory(this).existsSync();
   }
 
   /// 判断是否是svg
