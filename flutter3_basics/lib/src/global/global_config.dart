@@ -319,7 +319,11 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// - [ThemeMode.light] 亮色模式/浅色模式
   /// - [ThemeMode.dark] 暗色模式
   @configProperty
-  ThemeMode themeMode = ThemeMode.system;
+  ThemeMode themeMode = .system;
+
+  /// 当[themeMode]为[ThemeMode.system]时, 此值用于判断系统的主题模式是否变化
+  @tempFlag
+  Brightness? _platformBrightness;
 
   /// 根据主题模式获取当前的[Brightness]
   Brightness get themeModeBrightness => themeMode == .system
@@ -410,15 +414,15 @@ class GlobalConfig with Diagnosticable, OverlayManage {
   /// 当前是否是亮色主题模式
   @api
   bool isThemeLight([BuildContext? context]) {
-    if (themeMode == ThemeMode.system) {
+    if (themeMode == .system) {
       context ??= globalContext;
       if (context == null) {
         return true;
       }
       final platformBrightness = MediaQuery.platformBrightnessOf(context);
-      return platformBrightness == Brightness.light;
+      return platformBrightness == .light;
     }
-    return themeMode == ThemeMode.light;
+    return themeMode == .light;
   }
 
   /// 如果当前是暗色主题, 则返回[dark]否则返回[light]
@@ -460,6 +464,18 @@ class GlobalConfig with Diagnosticable, OverlayManage {
     //主题数据
     final themeData = onGetThemeData(globalTheme, isLight, this.themeMode);
     this.themeData = themeData;
+
+    //系统主题变化检测
+    if (this.themeMode == .system) {
+      _platformBrightness ??= platformBrightness;
+      if (_platformBrightness != platformBrightness) {
+        _platformBrightness = platformBrightness;
+        //系统主题模式变化
+        postFrame(() {
+          notifyThemeChanged();
+        });
+      }
+    }
 
     return themeData;
   }
